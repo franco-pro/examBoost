@@ -1,16 +1,19 @@
-import { Tabs } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
+import { Tabs } from 'expo-router'
+import AppLayout from '../styles/AppLayout'
 
 export default function RootLayout(){
     return(
-        <Tabs screenOptions={{animation: 'none', tabBarActiveTintColor:'#1d1d5a',
+        <AppLayout>
+        <Tabs screenOptions={{animation: 'none', tabBarActiveTintColor:'#181c5c',
             headerStyle:{
-            backgroundColor: '#f07e34'
+            backgroundColor: '#181c5c'
         },
         headerShadowVisible:false,
-        headerTintColor:'#fff',
+        tabBarInactiveTintColor: '#FFFFFF',
+        headerTintColor:'#FFFFFF',
         tabBarStyle: {
-            backgroundColor: '#fff'
+            backgroundColor: '#ff894f'
         }
         
         }}>
@@ -37,5 +40,6 @@ export default function RootLayout(){
             )
             }}/>
         </Tabs>
+        </AppLayout>
     )
 }

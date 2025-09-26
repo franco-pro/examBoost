@@ -1,10 +1,14 @@
-import { View,Text } from 'react-native'
-import styles from '../styles/style'
+import { Button, ButtonText } from '@/components/ui/button';
+import { Text, View } from 'react-native';
 
 export default function Transaction(){
     return(
-        <View style={styles.container}>
-            <Text style={styles.text}>Transaction screen</Text>
+        <View>
+            <Text>Transaction screen</Text>
+
+            <Button variant="solid" size="md" action="primary">
+                    <ButtonText>Click me</ButtonText>
+            </Button>
         </View>
     )
 }

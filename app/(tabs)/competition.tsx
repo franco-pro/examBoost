@@ -1,10 +1,9 @@
-import { View,Text } from 'react-native'
-import styles from '../styles/style'
+import { Text, View } from 'react-native'
 
 export default function Competition(){
     return(
-        <View style={styles.container}>
-            <Text style={styles.text}>Competition screen</Text>
+        <View>
+            <Text>Competition screen</Text>
         </View>
     )
 }

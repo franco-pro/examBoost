@@ -1,21 +1,22 @@
-import { StatusBar, Text, View } from "react-native";
-import styles from "../styles/style";
-import { Link } from 'expo-router'
+import { Button } from '@/components/ui/button';
+import { Text } from '@/components/ui/text';
+import { View } from '@/components/ui/view';
+
+
 
 export default function Index() {
+  
   return (
-    <View style={styles.container}
-    >
-      <StatusBar
-            backgroundColor="your_desired_color" // e.g., "#61dafb"
-            barStyle="light-content" // or "dark-content", "default"
-            animated={true}
-            hidden={false}
-          />
-      <Text style={styles.text}>Edit app/index.tsx to edit this screen.</Text>
-      <Link style={styles.button} href={"/pack"}>Nos Packs</Link>
 
-    </View>
+    <View className="flex-1 bg-primary-defaultBlue items-center justify-center">
+      <Text className="text-error-500 text-lg font-bold">
+        Hello world, this is the main screen!
+      </Text>
+      <Button className="bg-primary-defaultOrange mt-4">
+        <Text className="text-white">Bouton principal</Text>
+      </Button>
+   </View>
+
   );
 }
 
