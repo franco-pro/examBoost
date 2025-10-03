@@ -76,6 +76,20 @@ export default function RootLayout() {
             ),
           }}
         />
+
+        <Tabs.Screen
+          name="notifications"
+          options={{
+            title: "Notifications",
+            tabBarIcon: ({ focused, color }) => (
+              <Ionicons
+                name={focused ? "notifications" : "notifications-outline"}
+                color={color}
+                size={24}
+              />
+            ),
+          }}
+        />
       </Tabs>
     </AppLayout>
   );

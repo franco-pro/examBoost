@@ -1,28 +1,28 @@
 'use client';
-import React from 'react';
 import { H4 } from '@expo/html-elements';
 import { createActionsheet } from '@gluestack-ui/core/actionsheet/creator';
-import {
-  Pressable,
-  View,
-  Text,
-  ScrollView,
-  VirtualizedList,
-  FlatList,
-  SectionList,
-  PressableProps,
-  ViewStyle,
-} from 'react-native';
 import { PrimitiveIcon, UIIcon } from '@gluestack-ui/core/icon/creator';
-import { tva } from '@gluestack-ui/utils/nativewind-utils';
 import type { VariantProps } from '@gluestack-ui/utils/nativewind-utils';
-import { cssInterop } from 'nativewind';
+import { tva } from '@gluestack-ui/utils/nativewind-utils';
 import {
-  Motion,
   AnimatePresence,
   createMotionAnimatedComponent,
+  Motion,
   MotionComponentProps,
 } from '@legendapp/motion';
+import { cssInterop } from 'nativewind';
+import React from 'react';
+import {
+  FlatList,
+  Pressable,
+  PressableProps,
+  ScrollView,
+  SectionList,
+  Text,
+  View,
+  ViewStyle,
+  VirtualizedList,
+} from 'react-native';
 
 const ItemWrapper = React.forwardRef<
   React.ComponentRef<typeof Pressable>,
@@ -356,7 +356,7 @@ const ActionsheetItemText = React.forwardRef<
         bold: Boolean(bold),
         underline: Boolean(underline),
         strikeThrough: Boolean(strikeThrough),
-        size,
+        size: size as '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl',
       })}
       ref={ref}
       {...props}
@@ -504,7 +504,7 @@ const ActionsheetSectionHeaderText = React.forwardRef<
         bold: Boolean(bold),
         underline: Boolean(underline),
         strikeThrough: Boolean(strikeThrough),
-        size,
+        size: size as 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | undefined,
         sub: Boolean(sub),
         italic: Boolean(italic),
         highlight: Boolean(highlight),
@@ -544,7 +544,7 @@ const ActionsheetIcon = React.forwardRef<
     <UIActionsheet.Icon
       className={actionsheetIconStyle({
         class: className,
-        size,
+        size: size as '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | undefined,
       })}
       ref={ref}
       {...props}
@@ -553,17 +553,8 @@ const ActionsheetIcon = React.forwardRef<
 });
 
 export {
-  Actionsheet,
-  ActionsheetContent,
-  ActionsheetItem,
-  ActionsheetItemText,
-  ActionsheetDragIndicator,
-  ActionsheetDragIndicatorWrapper,
-  ActionsheetBackdrop,
-  ActionsheetScrollView,
-  ActionsheetVirtualizedList,
-  ActionsheetFlatList,
-  ActionsheetSectionList,
-  ActionsheetSectionHeaderText,
-  ActionsheetIcon,
+  Actionsheet, ActionsheetBackdrop, ActionsheetContent, ActionsheetDragIndicator,
+  ActionsheetDragIndicatorWrapper, ActionsheetFlatList, ActionsheetIcon, ActionsheetItem,
+  ActionsheetItemText, ActionsheetScrollView, ActionsheetSectionHeaderText, ActionsheetSectionList, ActionsheetVirtualizedList
 };
+
