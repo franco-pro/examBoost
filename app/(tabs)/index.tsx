@@ -8,7 +8,7 @@ export default function Index() {
   
   return (
 
-    <View className="flex-1 bg-primary-defaultBlue items-center justify-center">
+    <View className="flex-1 items-center justify-center">
       <Text className="text-error-500 text-lg font-bold">
         Hello world, this is the main screen!
       </Text>

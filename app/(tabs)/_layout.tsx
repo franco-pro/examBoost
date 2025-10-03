@@ -5,7 +5,7 @@ import AppLayout from '../styles/AppLayout'
 export default function RootLayout(){
     return(
         <AppLayout>
-        <Tabs screenOptions={{animation: 'none', tabBarActiveTintColor:'#181c5c',
+        <Tabs screenOptions={{animation: 'none', tabBarActiveTintColor:'#ff894f',
             headerStyle:{
             backgroundColor: '#181c5c'
         },
@@ -13,7 +13,7 @@ export default function RootLayout(){
         tabBarInactiveTintColor: '#FFFFFF',
         headerTintColor:'#FFFFFF',
         tabBarStyle: {
-            backgroundColor: '#ff894f'
+            backgroundColor: '#181c5c'
         }
         
         }}>
