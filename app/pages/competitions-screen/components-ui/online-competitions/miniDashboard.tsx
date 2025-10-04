@@ -36,7 +36,7 @@ export default function MiniDashboard() {
           {'\n'}
           <View className='mt-2 mb-0 items-center justify-center'>
             <Text className="text-sm font-normal mb-2 text-typography-white text-center">
-              Gain:  <Text size='xl' className='text-primary-defaultOrange'> + 45 000 crédits </Text>
+              Gain:  <Text size='xl' className='text-primary-defaultOrange'> + 45 000 💰 </Text>
             </Text>
           </View>
 

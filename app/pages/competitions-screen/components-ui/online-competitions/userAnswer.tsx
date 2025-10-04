@@ -52,10 +52,14 @@ export default function UsersAnswers({isIA, questions, question, competitionName
                 ) : isIA ? (
                     IAquestions.length > 0 ? (
 
-                    IAquestions.map((q, index) => (
                         
-                    <Accordion className="w-[100%] bg-transparent">
-                        <AccordionItem value="item-1" className="rounded-lg">
+                    <Accordion className="w-[100%] bg-transparent" >
+                    {
+
+                     IAquestions.map((q, index) => (
+
+                        <AccordionItem key={q.id ?? index}
+                        value={"item-" + index} className="rounded-lg">
                           <AccordionHeader className="bg-primary-defaultBlue">
                             <AccordionTrigger className="focus:web:rounded-lg">
                             {({ isExpanded }: { isExpanded: boolean }) => {
@@ -112,8 +116,9 @@ export default function UsersAnswers({isIA, questions, question, competitionName
 
                           </AccordionContent>
                         </AccordionItem>
+                    ))}
+
                       </Accordion>
-                    ))
 
                     ): (
                      <View className="justify-center items-center">
@@ -130,7 +135,7 @@ export default function UsersAnswers({isIA, questions, question, competitionName
                     ) 
                 ) : (
                      <Accordion className="w-[100%] bg-transparent">
-                        <AccordionItem value="item-1" className="rounded-lg">
+                        <AccordionItem value="item-u" className="rounded-lg">
                           <AccordionHeader className="bg-primary-defaultBlue">
                             <AccordionTrigger className="focus:web:rounded-lg">
                             {({ isExpanded }: { isExpanded: boolean }) => {

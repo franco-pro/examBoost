@@ -8,8 +8,8 @@ import UsersAnswers from "./components-ui/online-competitions/userAnswer";
 
 export default function OwnerCompetitionsScreen() {
     const user = [
-        {name: 'John Doe', avatarUrl: 'https://gluestack.github.io/public-blog-video-assets/john.png', score: 1500, isConnected: true, isWinner: true},
-        {name: 'Jane Smith', avatarUrl: 'https://gluestack.github.io/public-blog-video-assets/john.png', score: 1450, isConnected: true, isWinner: false},
+        {name: 'John Doe', avatarUrl: 'https://png.pngtree.com/png-clipart/20230927/original/pngtree-man-avatar-image-for-profile-png-image_13001882.png', score: 1500, isConnected: true, isWinner: true},
+        {name: 'Jane Smith', avatarUrl: 'https://png.pngtree.com/png-clipart/20230927/original/pngtree-man-avatar-image-for-profile-png-image_13001882.png', score: 1450, isConnected: true, isWinner: false},
         {name: 'Alice Johnson', avatarUrl: 'https://gluestack.github.io/public-blog-video-assets/john.png', score: 1400, isConnected: false, isWinner: false},
         {name: 'Connor Sarah', avatarUrl: 'https://gluestack.github.io/public-blog-video-assets/john.png', score: 1450, isConnected: true, isWinner: false},
         {name: 'Steph Greps', avatarUrl: 'https://gluestack.github.io/public-blog-video-assets/john.png', score: 1400,  isConnected: false, isWinner: false},
@@ -24,7 +24,7 @@ export default function OwnerCompetitionsScreen() {
         creatorAvatarUrl: 'https://gluestack.github.io/public-blog-video-assets/john.png',
         description: 'Test your general knowledge with this fun and engaging quiz!',
         totalQuestions: 10,
-        isAI: false,
+        isAI: true,
       };
 
       const question = [

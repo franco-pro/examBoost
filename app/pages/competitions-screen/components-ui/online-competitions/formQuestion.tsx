@@ -141,161 +141,162 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
             {competitionInfo.competitionName}
           </Heading>
 
-      <FormControl isInvalid={!!errors.timeToAnswer} isRequired className='pt-2'>
-        <FormControlLabel>
-          <FormControlLabelText> Temps de Réponse(en s): </FormControlLabelText>
-        </FormControlLabel>
-        <Input>
-          <InputField
-            value={form.timeToAnswer}
-            onChangeText=
-            {(text) => {
-              const numericValue = text.replace(/[^0-9]/g, "");
-              updateField("timeToAnswer", numericValue)
-            }}
-            keyboardType="numeric"
-          />
-        </Input>
-        {errors.timeToAnswer ? (
-          <FormControlError>
-            <FormControlErrorText>{errors.timeToAnswer}</FormControlErrorText>
-          </FormControlError>
-        ) : (
-          <FormControlHelper>
-            <FormControlHelperText>Le temps doit etre suppérieur à 5 secondes.</FormControlHelperText>
-          </FormControlHelper>
-        )}
-      </FormControl>
+          <FormControl isInvalid={!!errors.timeToAnswer} isRequired className='pt-2'>
+            <FormControlLabel>
+              <FormControlLabelText> Temps de Réponse(en s): </FormControlLabelText>
+            </FormControlLabel>
+            <Input> 
+              <InputField
+                value={form.timeToAnswer}
+                onChangeText=
+                {(text) => {
+                  const numericValue = text.replace(/[^0-9]/g, "");
+                  updateField("timeToAnswer", numericValue)
+                }}
+                keyboardType="numeric"
+              />
+            </Input>
+            {errors.timeToAnswer.length != 0 ? (
+              <FormControlError>
+                <FormControlErrorText>{errors.timeToAnswer}</FormControlErrorText>
+              </FormControlError>
+            ) : (
+              <FormControlHelper>
+                <FormControlHelperText>Le temps doit etre suppérieur à 5 secondes.</FormControlHelperText>
+              </FormControlHelper>
+            )}
+          </FormControl>
 
-      <FormControl isInvalid={!!errors.points} isRequired className='mt-3'>
-        <FormControlLabel>
-          <FormControlLabelText>Points</FormControlLabelText>
-        </FormControlLabel>
-        <Input>
-          <InputField
-            placeholder=""
-            value={form.points}
-            onChangeText=
-            {(text) => {
-              const numericValue = text.replace(/[^0-9]/g, "");
-              updateField("points", numericValue)
-            }}
-            keyboardType="numeric"
-          />
-        </Input>
-        {errors.points && (
-          <FormControlError>
-            <FormControlErrorText>{errors.points}</FormControlErrorText>
-          </FormControlError>
-        )}
-      </FormControl>
+          <FormControl isInvalid={!!errors.points} isRequired className='mt-3'>
+            <FormControlLabel>
+              <FormControlLabelText>Points</FormControlLabelText>
+            </FormControlLabel>
+            <Input>
+              <InputField
+                placeholder=""
+                value={form.points}
+                onChangeText=
+                {(text) => {
+                  const numericValue = text.replace(/[^0-9]/g, "");
+                  updateField("points", numericValue)
+                }}
+                keyboardType="numeric"
+              />
+            </Input>
+            {errors.points.length != 0 ? (
+              <FormControlError>
+                <FormControlErrorText>{errors.points ?? String(errors.points)}</FormControlErrorText>
+              </FormControlError>
+            ): null }
+          </FormControl>
 
-      <FormControl isInvalid={!!errors.firsChoice} isRequired className='mt-3'>
-        <FormControlLabel>
-          <FormControlLabelText>Premier Choix</FormControlLabelText>
-        </FormControlLabel>
-        <Input>
-          <InputField
-            type="text"
-            placeholder="First Choice"
-            value={form.firsChoice}
-            onChangeText={(text) => updateField("firsChoice", text)}
-          />
-        </Input>
-        {errors.firsChoice && (
-          <FormControlError>
-            <FormControlErrorText>
-              {errors.firsChoice} 
-              </FormControlErrorText>
-          </FormControlError>
-        )}
-      </FormControl>
+          <FormControl isInvalid={!!errors.firsChoice} isRequired className='mt-3'>
+            <FormControlLabel>
+              <FormControlLabelText>Premier Choix</FormControlLabelText>
+            </FormControlLabel>
+            <Input>
+              <InputField
+                type="text"
+                placeholder="First Choice"
+                value={form.firsChoice}
+                onChangeText={(text) => updateField("firsChoice", text)}
+              />
+            </Input>
+            {errors.firsChoice.length == 0 ? (
+              <FormControlError>
+                <FormControlErrorText>
+                  {String(errors.firsChoice)} 
+                  </FormControlErrorText>
+              </FormControlError>
+            ): null }
+          </FormControl>
 
-      <FormControl isInvalid={!!errors.secondChoice} isRequired className='mt-3'>
-        <FormControlLabel>
-          <FormControlLabelText>Second Choix</FormControlLabelText>
-        </FormControlLabel>
-        <Input>
-          <InputField
-            type="text"
-            placeholder="Second Choice"
-            value={form.secondChoice}
-            onChangeText={(text) => updateField("secondChoice", text)}
-          />
-        </Input>
-        {errors.secondChoice && (
-          <FormControlError>
-            <FormControlErrorText>{errors.secondChoice}</FormControlErrorText>
-          </FormControlError>
-        )}
-      </FormControl>
+          <FormControl isInvalid={!!errors.secondChoice} isRequired className='mt-3'>
+            <FormControlLabel>
+              <FormControlLabelText>Second Choix</FormControlLabelText>
+            </FormControlLabel>
+            <Input>
+              <InputField
+                type="text"
+                placeholder="Second Choice"
+                value={form.secondChoice}
+                onChangeText={(text) => updateField("secondChoice", text)}
+              />
+            </Input>
+            {errors.secondChoice.length != 0 ? (
+              <FormControlError>
+                <FormControlErrorText>{errors.secondChoice ?? String(errors.secondChoice)}</FormControlErrorText>
+              </FormControlError>
+            ): null}
+          </FormControl>
 
-      <FormControl isInvalid={!!errors.thirdChoice} isRequired className='mt-3'>
-        <FormControlLabel>
-          <FormControlLabelText>Troisième Choix</FormControlLabelText>
-        </FormControlLabel>
-        <Input>
-          <InputField
-            type='text'
-            placeholder="Third Choice"
-            value={form.thirdChoice}
-            onChangeText={(text) => updateField("thirdChoice", text)}
-          />
-        </Input>
-        {errors.thirdChoice && (
-          <FormControlError>
-            <FormControlErrorText>{errors.thirdChoice}</FormControlErrorText>
-          </FormControlError>
-        )}
-      </FormControl>
+          <FormControl isInvalid={!!errors.thirdChoice} isRequired className='mt-3'>
+            <FormControlLabel>
+              <FormControlLabelText>Troisième Choix</FormControlLabelText>
+            </FormControlLabel>
+            <Input>
+              <InputField
+                type='text'
+                placeholder="Third Choice"
+                value={form.thirdChoice}
+                onChangeText={(text) => updateField("thirdChoice", text)}
+              />
+            </Input>
+            {errors.thirdChoice.length != 0 ? (
+              <FormControlError>
+                <FormControlErrorText>{errors.thirdChoice ?? String(errors.thirdChoice)}</FormControlErrorText>
+              </FormControlError>
+            ): null}
+          </FormControl>
 
-      <FormControl isInvalid={!!errors.corretAnswer} isRequired className='mt-3'>
-        <FormControlLabel>
-          <FormControlLabelText>Reponse correct</FormControlLabelText>
-        </FormControlLabel>
-        <Input>
-          <InputField
-            type='text'
-            placeholder="The Correct Answer"
-            value={form.corretAnswer}
-            onChangeText={(text) => updateField("corretAnswer", text)}
-          />
-        </Input>
-        {errors.corretAnswer && (
-          <FormControlError>
-            <FormControlErrorText>{errors.corretAnswer}</FormControlErrorText>
-          </FormControlError>
-        )}
-      </FormControl>
+        <FormControl isInvalid={!!errors.corretAnswer} isRequired className='mt-3'>
+          <FormControlLabel>
+            <FormControlLabelText>Reponse correct</FormControlLabelText>
+          </FormControlLabel>
+          <Input>
+            <InputField
+              type='text'
+              placeholder="The Correct Answer"
+              value={form.corretAnswer}
+              onChangeText={(text) => updateField("corretAnswer", text)}
+            />
+          </Input>
+          {errors.corretAnswer.length != 0 ? (
+            <FormControlError>
+              <FormControlErrorText>{errors.corretAnswer ?? String(errors.corretAnswer)}</FormControlErrorText>
+            </FormControlError>
+          ): null}
+        </FormControl>
 
-      <FormControl isInvalid={!!errors.text} isRequired size="sm" className=" mt-3 max-w-[100%] w-full">
-      <FormControlLabel>
-        <FormControlLabelText>Question</FormControlLabelText>
-      </FormControlLabel>
-      <Textarea>
-        <TextareaInput className='w-[100%]' placeholder="Enter the question..."
-        
-            value={form.text}
-            onChangeText={(text) => updateField("text", text)}/>
-      </Textarea>
-      {errors.text && (
-          <FormControlError>
-            <FormControlErrorText>{errors.text}</FormControlErrorText>
-          </FormControlError>
-        )}
+          <FormControl isInvalid={!!errors.text} isRequired size="sm" className=" mt-3 max-w-[100%] w-full">
+          <FormControlLabel>
+            <FormControlLabelText>
+            </FormControlLabelText>
+          </FormControlLabel>
+          <Textarea>
+            <TextareaInput className='w-[100%]' placeholder="Enter the question..."
+            
+                value={form.text}
+                onChangeText={(text) => updateField("text", text)}/>
+          </Textarea>
+          {errors.text.length != 0 ? (
+              <FormControlError>
+                <FormControlErrorText>
+                  {String(errors.text)} 
+                </FormControlErrorText>
+              </FormControlError>
+            ) : (
+                <FormControlHelper>
+                  <FormControlHelperText>Soyez bref...</FormControlHelperText>
+                </FormControlHelper>
+            )}
 
-        {!errors.text && (
-            <FormControlHelper>
-              <FormControlHelperText>Soyez bref...</FormControlHelperText>
-            </FormControlHelper>
-        )}
-
-    </FormControl>
+        </FormControl>
 
       <Button disabled={competitionInfo.isAI} className="mt-4 bg-primary-defaultBlue" onPress={handleSubmitForm}>
         <ButtonText>Envoyer</ButtonText>
       </Button>
-    </ScrollView>
+        </ScrollView>
 
     </VStack>
 
