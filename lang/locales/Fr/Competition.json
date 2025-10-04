@@ -1,0 +1,77 @@
+{
+"accueil":  {"greeting": "Bonjour Jean 👋",
+  "subtitle": "Voici un résumé de vos activités compétitives",
+  "statistics": {
+    "created_competitions": "Compétitions créées",
+    "total_participations": "Participations totales",
+    "total_wins": "Total gagnés",
+    "total_deposits": "Total dépôts"
+  },
+  "actions_title": "Que souhaitez-vous faire ?",
+  "actions": {
+    "my_creations": {
+      "title": "Mes créations",
+      "description": "Voir vos compétitions créées"
+    },
+    "my_participations": {
+      "title": "Mes participations",
+      "description": "Voir vos participations et résultats"
+    }
+  }},
+  "mycompetition" : {
+  "transaction": {
+    "payment_success": "Payment successful!",
+    "payment_failed": "Payment failed!"
+  },
+  "competition": {
+    "greeting": "Hello Jean 👋",
+    "subtitle": "Here’s a summary of your competition activities",
+    "statistics": {
+      "created_competitions": "Created competitions",
+      "total_participations": "Total participations",
+      "total_wins": "Total wins",
+      "total_deposits": "Total deposits"
+    },
+    "actions_title": "What would you like to do?",
+    "actions": {
+      "my_creations": {
+        "title": "My creations",
+        "description": "View your created competitions"
+      },
+      "my_participations": {
+        "title": "My participations",
+        "description": "View your participations and results"
+      }
+    }
+  }
+}
+,
+"participation": {
+  "back": "Retour",
+  "greeting": "Bonjour Jean 👋",
+  "subtitle": "Retrouvez ici toutes les compétitions auxquelles vous participez et leur statut actuel",
+  "search_placeholder": "Rechercher une compétition",
+  "statistics": {
+    "completed": "Nombre terminées",
+    "wins": "Nombre gagnées"
+  },
+  "discover": {
+    "title": "+20 compétitions vous attendent",
+    "subtitle": "Explorez-les maintenant",
+    "button": "Rejoindre une compétition"
+  },
+  "section_title": "Mes participations",
+  "labels": {
+    "joined": "participants",
+    "time_left": "{{days}} jours {{hours}} h restantes",
+    "time_passed": "Le temps d'inscription est dépassé",
+    "status": {
+      "UPCOMING": "À venir",
+      "ONGOING": "En cours",
+      "COMPLETED": "Terminée",
+      "CANCELLED": "Annulée"
+    }
+  }
+}
+
+}

@@ -3,13 +3,13 @@ import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import { JSX } from "react";
 import { ScrollView } from "react-native-gesture-handler";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next"; // <- import i18n
 import Filter from "@/components/layouts/filter/searchBar";
 import CardStat from "@/components/layouts/statistique/cardStat";
 
 export default function Participation() {
+  const { t } = useTranslation("competition"); // <- hook i18n
   const router = useRouter();
-  const { t } = useTranslation("competition");
 
   const statistique: {
     nom: string;
@@ -19,14 +19,14 @@ export default function Participation() {
     textColor: string;
   }[] = [
     {
-      nom: t("mycompetition.ended"),
+      nom: t("participation.statistics.completed"), // Nombre terminees
       chiffre: 12,
       icone: <Ionicons name="trophy-outline" size={28} color="#f97316" />,
       bgColor: "bg-orange-100",
       textColor: "text-orange-600",
     },
     {
-      nom: t("mycompetition.won"),
+      nom: t("participation.statistics.wins"), // Nombre gagnes
       chiffre: 8,
       icone: <FontAwesome5 name="users" size={25} color="#3b82f6" />,
       bgColor: "bg-blue-100",
@@ -54,10 +54,16 @@ export default function Participation() {
       | "PAID_REGISTRATION_WITH_WINNER_PRICE"
       | "TOTAL_FREE_NO_PRICE_TO_WIN";
     creatorID: number;
-    creatorData: { id: number; name: string };
+    creatorData: {
+      id: number;
+      name: string;
+    };
     created_at: string; // ISO string
     updated_at: string; // ISO string
-    users: { id: number; name: string }[];
+    users: {
+      id: number;
+      name: string;
+    }[];
   }[] = [
     {
       id: 1,
@@ -245,19 +251,22 @@ export default function Participation() {
 
   function timePassed(date: string): string {
     const date2 = new Date(date);
-    if (date2 < new Date()) return t("mycompetition.time_passed");
 
-    const diffMs = date2.getTime() - new Date().getTime();
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    const diffHrs = Math.floor(
-      (diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-    );
+    if (date2 < new Date()) {
+      return "Time passed to register";
+    } else {
+      // Calcul de la différence
+      const diffMs = date2.getTime() - new Date().getTime(); // .getTime() renvoie un number
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      const diffHrs = Math.floor(
+        (diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
 
-    return t("mycompetition.days_left", { days: diffDays, hours: diffHrs });
+      return `${diffDays} days ${diffHrs} hr left`;
+    }
   }
-
   return (
-    <View className="flex-1 w-full max-w-full bg-gray-50 p-4">
+    <View className="flex-1 w-full max-w-full  bg-gray-50 p-4">
       {/* Back Button */}
       <TouchableOpacity
         className="flex-row items-center mb-4"
@@ -265,15 +274,17 @@ export default function Participation() {
       >
         <Ionicons name="arrow-back" size={24} color="#181c5c" />
         <Text className="ml-2 text-lg font-semibold text-gray-800">
-          {t("mycompetition.back")}
+          {t("participation.back")}
         </Text>
       </TouchableOpacity>
 
-      <View className="bg-white p-4 rounded-2xl">
+      <View className="bg-white p-4 rounded-2xl  ">
         <Text className="text-lg font-semibold">
-          {t("mycompetition.hello", { name: "Jean" })}
+          {t("participation.greeting")}
         </Text>
-        <Text className="text-gray-500 mt-1">{t("mycompetition.welcome")}</Text>
+        <Text className="text-gray-500 mt-1">
+          {t("participation.subtitle")}
+        </Text>
       </View>
 
       {/* Barre de recherche */}
@@ -293,27 +304,27 @@ export default function Participation() {
         ))}
       </View>
 
-      {/* Bloc découverte */}
+      {/* Section découverte */}
       <View className="flex-column bg-orange-50 py-4 px-4 rounded-xs">
         <View>
-          <Text className="text-sm font-bold">
-            {t("mycompetition.discover")}
+          <Text className="text-sm  font-bold">
+            {t("participation.discover.title")}
           </Text>
           <Text className="text-xs text-gray-400 font-semiBold">
-            {t("mycompetition.explore")}
+            {t("participation.discover.subtitle")}
           </Text>
         </View>
         <TouchableOpacity className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full mt-4">
           <Text className="text-white text-xs font-semibold mr-2">
-            {t("mycompetition.join")}
+            {t("participation.discover.button")}
           </Text>
           <Ionicons name="chevron-forward" size={22} color="#ffffff" />
         </TouchableOpacity>
       </View>
 
-      {/* Liste des participations */}
+      {/* Mes participations */}
       <Text className="text-lg font-semibold my-4">
-        {t("mycompetition.my_participations")}
+        {t("participation.section_title")}
       </Text>
 
       <ScrollView
@@ -322,57 +333,83 @@ export default function Participation() {
         horizontal={false}
         showsHorizontalScrollIndicator={false}
       >
-        {competitions.map((comp, index) => (
-          <TouchableOpacity
-            key={index}
-            className="bg-white rounded-2xl flex-row p-4 mb-3 items-center shadow-sm"
-          >
-            <View className="ml-3 pr-2 flex-1">
-              <View className="flex-row items-center justify-between">
-                <Text className="text-lg font-semibold">{comp.name}</Text>
-                <Text className="text-xs text-gray-400">
-                  {timePassed(comp.date)}
+        {competitions.map((comp, index) => {
+          return (
+            <TouchableOpacity
+              key={index}
+              className="bg-white rounded-2xl flex-row p-4 mb-3  items-center"
+              style={{
+                backgroundColor: "white",
+                borderRadius: 16,
+                flexDirection: "row",
+                padding: 16,
+                marginBottom: 12,
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+                elevation: 2,
+              }}
+            >
+              <View className="ml-3 pr-2 flex-1">
+                {/* Nom de la compétition et deadline */}
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-lg font-semibold">{comp.name}</Text>
+                  <Text className="text-xs text-gray-400">
+                    {comp.statut === "UPCOMING" &&
+                      t("participation.labels.time_left", {
+                        days: 2,
+                        hours: 5,
+                      })}
+                    {comp.statut !== "UPCOMING" &&
+                      t("participation.labels.time_passed")}
+                  </Text>
+                </View>
+
+                {/* Sujet / date */}
+                <Text className="text-gray-500 text-sm mt-1">
+                  {new Date(comp.date).toLocaleDateString("fr-FR", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
                 </Text>
-              </View>
 
-              <Text className="text-gray-500 text-sm mt-1">
-                {new Date(comp.date).toLocaleDateString("fr-FR", {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                })}
-              </Text>
-
-              <View className="flex-row justify-between items-center mt-2">
-                <View className="flex-row items-center">
-                  <Ionicons name="people" size={16} color="#4B5563" />
-                  <Text className="text-sm text-gray-700 ml-1">
-                    {t("mycompetition.participants", {
-                      count: comp.users.length,
-                    })}
-                  </Text>
-                </View>
-                <View
-                  className={`rounded-full px-3 py-1 ${
-                    comp.statut === "UPCOMING"
-                      ? "bg-green-200"
-                      : comp.statut === "ONGOING"
-                      ? "bg-yellow-200"
-                      : comp.statut === "CANCELLED"
-                      ? "bg-error-300"
-                      : "bg-gray-300"
-                  }`}
-                >
-                  <Text className="text-xs font-semibold text-black">
-                    {t(`mycompetition.status.${comp.statut}`)}
-                  </Text>
+                {/* Participants et statut */}
+                <View className="flex-row justify-between items-center mt-2">
+                  <View className="flex-row items-center">
+                    <Ionicons
+                      name="people"
+                      size={16}
+                      color="#4B5563"
+                      className="mr-1"
+                    />
+                    <Text className="text-sm text-gray-700">
+                      {comp.users.length} {t("participation.labels.joined")}
+                    </Text>
+                  </View>
+                  <View
+                    className={`rounded-full px-3 py-1 ${
+                      comp.statut === "UPCOMING"
+                        ? "bg-green-200"
+                        : comp.statut === "ONGOING"
+                        ? "bg-yellow-200"
+                        : comp.statut === "CANCELLED"
+                        ? "bg-error-300"
+                        : "bg-gray-300"
+                    }`}
+                  >
+                    <Text className="text-xs font-semibold text-black">
+                      {t(`participation.labels.status.${comp.statut}`)}
+                    </Text>
+                  </View>
                 </View>
               </View>
-            </View>
 
-            <Ionicons name="chevron-forward" size={22} color="#9ca3af" />
-          </TouchableOpacity>
-        ))}
+              <Ionicons name="chevron-forward" size={22} color="#9ca3af" />
+            </TouchableOpacity>
+          );
+        })}
       </ScrollView>
     </View>
   );
