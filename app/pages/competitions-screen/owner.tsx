@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ScrollView, View } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import CompetitionInfos from "./components-ui/online-competitions/competitionInfos";
 import FormQuestion from "./components-ui/online-competitions/formQuestion";
 import OnlineUsers from "./components-ui/online-competitions/onlineusers";
@@ -44,6 +45,7 @@ export default function OwnerCompetitionsScreen() {
       
 
     return (
+      <SafeAreaView style={{ flex: 1 }}>
             <ScrollView   style={{ flex: 1, backgroundColor: "#E8F5FA" }}
             contentContainerStyle={{ flexGrow: 1 }}>
         
@@ -74,6 +76,7 @@ export default function OwnerCompetitionsScreen() {
             </View>
         
             </ScrollView>
+          </SafeAreaView>
     );
 
 

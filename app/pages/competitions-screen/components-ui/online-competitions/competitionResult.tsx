@@ -4,6 +4,7 @@ import { HStack } from "@/components/ui/hstack";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { FlatList } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface LeaderboardProps {
   competitionName: string;
@@ -30,6 +31,8 @@ const Leaderboard = () => {
     const others = data.slice(3);
   
     return (
+    <SafeAreaView style={{ flex: 1 }}>
+      
         <Box className="flex-1 bg-sky-100 p-4">
             
           <Text className="text-2xl font-bold text-center mb-6">
@@ -106,6 +109,8 @@ const Leaderboard = () => {
             )}
           />
         </Box>
+    </SafeAreaView>
+
       );
     };
 

@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 import { ScrollView, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import CompetitionInfos from './components-ui/online-competitions/competitionInfos';
 import MiniDashboard from './components-ui/online-competitions/miniDashboard';
 import OnlineUsers from './components-ui/online-competitions/onlineusers';
@@ -39,6 +40,8 @@ export default function User() {
   };
 
   return (
+  <SafeAreaView style={{ flex: 1 }}>
+    
     <ScrollView style={{ flex: 1, backgroundColor: "#E8F5FA" }}
     contentContainerStyle={{ flexGrow: 1 }}>
 
@@ -53,6 +56,7 @@ export default function User() {
     </View>
 
     </ScrollView>
+    </SafeAreaView>
     
   );
 }
