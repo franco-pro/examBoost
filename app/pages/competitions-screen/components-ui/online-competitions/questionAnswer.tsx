@@ -27,6 +27,7 @@ interface ComepetitionInfo{
   totalQuestions?: number; 
 }
 export default function QuestionAnswer({question, competitionInfo}: {question: Question, competitionInfo: ComepetitionInfo}) {
+  const router = useRouter();
 
   const [isOpen, setIsOpen] =  useState(false);
 
@@ -34,8 +35,17 @@ export default function QuestionAnswer({question, competitionInfo}: {question: Q
     onLeavingCompetition();
     setIsOpen(false);
   }
+
+  function onLeavingCompetition() {
+    // Logic to handle leaving the competition
+
+
+    console.log("User has chosen to leave the competition.");
+
+    router.back()
+  }
     return (
-      <Card size="lg" variant="ghost" className="p-5  shadow-xl rounded-lg w-[90%] mt-1">
+      <Card size="lg" variant="elevated" className="p-5  shadow-xl rounded-lg w-[90%] mt-1">
         <Text className="text-sm font-normal mb-2 text-typography-700">
           Created At: {competitionInfo.createdAt}
         </Text>
@@ -66,12 +76,3 @@ export default function QuestionAnswer({question, competitionInfo}: {question: Q
     );
   }  
 
-  function onLeavingCompetition() {
-    // Logic to handle leaving the competition
-
-    const router = useRouter();
-
-    console.log("User has chosen to leave the competition.");
-
-    router.back()
-  }

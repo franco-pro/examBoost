@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ScrollView, View } from "react-native";
+import React, { useState } from "react";
+import { ScrollView, StatusBar, View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CompetitionInfos from "./components-ui/online-competitions/competitionInfos";
 import FormQuestion from "./components-ui/online-competitions/formQuestion";
@@ -46,6 +46,7 @@ export default function OwnerCompetitionsScreen() {
 
     return (
       <SafeAreaView style={{ flex: 1 }}>
+        <StatusBar hidden={true} />
             <ScrollView   style={{ flex: 1, backgroundColor: "#E8F5FA" }}
             contentContainerStyle={{ flexGrow: 1 }}>
         
@@ -54,7 +55,7 @@ export default function OwnerCompetitionsScreen() {
              <CompetitionInfos/>
         
              
-             <View className="mt-[300px] mb-[10px] justify-center items-center"> 
+             <View className="mt-[65%] mb-[10px] justify-center items-center"> 
             
              <SwitchQuestionAnswer value={switchQA} onValueChange={setSwitchQA}/>
              {

@@ -8,12 +8,12 @@ export default function Competition(){
     return(
        <VStack>
         <Button className="bg-primary-defaultOrange mt-4"
-      onPress={() => router.push('/pages/competitions-screen/user')}  
+      onPress={() => router.push('/pages/competitions-screen/online.users')}  
       >
         <Text className="text-white">Rejoindre...</Text>
       </Button>
       <Button className="bg-primary-defaultBlue mt-4"
-      onPress={() => router.push('/pages/competitions-screen/owner')}  
+      onPress={() => router.push('/pages/competitions-screen/owner.online')}  
       >
         <Text className="text-white">Rejoindre owner...</Text>
       </Button>

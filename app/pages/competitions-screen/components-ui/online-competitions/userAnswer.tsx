@@ -37,7 +37,7 @@ export default function UsersAnswers({isIA, questions, question, competitionName
 
     return (
         <>
-        <Card size="lg" variant="ghost" className="p-5  shadow-xl rounded-lg w-[90%] mt-1">
+        <Card size="lg" variant="outline" className="p-5  shadow-xl rounded-lg w-[90%] mt-1">
             <Heading size="md" className="mb-1">
                 {competitionName}
             </Heading>

@@ -31,6 +31,7 @@ interface ComepetitionInfo{
   totalQuestions?: number; 
 }
 export default function FormQuestion({competitionInfo}: { competitionInfo: ComepetitionInfo}) {
+  const router = useRouter();
 
   const [isOpen, setIsOpen] =  useState(false);
 
@@ -128,8 +129,17 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
     validate();
   };
 
+  function onLeavingCompetition() {
+    // Logic to handle leaving the competition
+
+
+    console.log("User has chosen to leave the competition.");
+
+    router.back()
+  }
+
     return (
-      <Card size="lg" variant="ghost" className="p-5 shadow-xl rounded-lg w-[90%]">
+      <Card size="lg" variant="elevated" className="p-5 shadow-xl rounded-lg w-[90%]">
         <Text className="text-sm font-normal mb-2 text-typography-700">
           Created At: {competitionInfo.createdAt}
         </Text>
@@ -271,6 +281,7 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
           <FormControl isInvalid={!!errors.text} isRequired size="sm" className=" mt-3 max-w-[100%] w-full">
           <FormControlLabel>
             <FormControlLabelText>
+              Question
             </FormControlLabelText>
           </FormControlLabel>
           <Textarea>
@@ -308,13 +319,3 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
       </Card>
     );
   }  
-
-  function onLeavingCompetition() {
-    // Logic to handle leaving the competition
-
-    const router = useRouter();
-
-    console.log("User has chosen to leave the competition.");
-
-    router.back()
-  }

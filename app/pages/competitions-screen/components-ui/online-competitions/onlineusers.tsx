@@ -19,12 +19,12 @@ interface OnlineUsersProps {
 export default function OnlineUsers({user}: OnlineUsersProps) {
   return (
     //check if the list contain user
-    <Card size="lg" variant="ghost" className="p-5 shadow-xl w-[48%] max-w-[50%] absolute top-0 right-0 rounded-lg  h-64 m-3">
+    <Card size="lg" variant="elevated" className="p-5 shadow-xl w-[48%] max-w-[50%] absolute top-0 right-0 rounded-lg  h-64 m-3">
     <Text className="text-sm font-normal mb-2 text-typography-700">
       Octobre 04, 2025
     </Text>
-    <VStack className="mb-6">
-      <Heading size="md" className="mb-4">
+    <VStack className="mb-1">
+      <Heading size="md" className="mb-1">
         Connected User ({user.length})
       </Heading>
     </VStack>
