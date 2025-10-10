@@ -4,10 +4,20 @@ import type { Notification } from './types';
 
 const queryKey = (userID?: number) => ['notifications', userID] as const;
 
-export function useNotifications(userID?: number) {
+export function useNotifications(
+  userID?: number,
+  options?: {
+    refetchInterval?: number | false;
+  }
+) {
   return useQuery<Notification[]>({
     queryKey: queryKey(userID),
     queryFn: () => listNotifications(userID),
+    // Rafraîchit en arrière-plan pour tenir à jour le badge 
+    refetchInterval: options?.refetchInterval ?? 1, // 1s par défaut
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+    refetchOnMount: true,
   });
 }
 

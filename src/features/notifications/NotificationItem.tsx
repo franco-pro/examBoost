@@ -8,11 +8,13 @@ export default memo(function NotificationItem({
   onDelete,
   onToggleRead,
   onPress,
+  onOpenLink,
 }: {
   notification: Notification;
   onDelete?: () => void;
   onToggleRead?: () => void;
   onPress?: () => void;
+  onOpenLink?: () => void;
 }) {
   const { title, body, type, read, createdAt, id } = notification;
 
@@ -64,6 +66,18 @@ export default memo(function NotificationItem({
           <Text className="mt-0.5 text-typography-gray" numberOfLines={expanded ? undefined : 3}>
             {body}
           </Text>
+          {/* CTA direct pour les compétitions */}
+          {type === 'warning' && onOpenLink && (
+            <Pressable
+              onPress={onOpenLink}
+              accessibilityRole="button"
+              accessibilityLabel="Rejoindre la compétition"
+              hitSlop={8}
+              className="mt-2 self-start px-2 py-1 rounded-md bg-primary-500 active:opacity-90"
+            >
+              <Text className="text-xs text-white font-semibold">Rejoindre</Text>
+            </Pressable>
+          )}
           {isLong && (
             <Pressable
               onPress={toggleExpanded}
@@ -95,7 +109,7 @@ export default memo(function NotificationItem({
               {onDelete && (
                 <Pressable
                   onPress={onDelete}
-                  className="p-2 rounded-md bg-error-500 active:opacity-80"
+                  className="p-2 rounded-md bg-error-400 active:opacity-80"
                   accessibilityRole="button"
                   accessibilityLabel="Supprimer"
                   accessibilityHint="Supprime cette notification"
