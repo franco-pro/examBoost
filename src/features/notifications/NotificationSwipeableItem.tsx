@@ -11,11 +11,13 @@ export default function NotificationSwipeableItem({
   onDelete,
   onToggleRead,
   onPress,
+  onOpenLink,
 }: {
   notification: Notification;
   onDelete: () => void;
   onToggleRead: () => void;
   onPress?: () => void;
+  onOpenLink?: () => void;
 }) {
   const ref = useRef<Swipeable>(null);
 
@@ -31,7 +33,7 @@ export default function NotificationSwipeableItem({
   );
 
   const RightAction = () => (
-    <View className="flex-1 flex-row justify-end items-center bg-error-500 px-4">
+    <View className="flex-1 flex-row justify-end items-center bg-error-400 px-4">
       <Text className="mr-2 text-white font-semibold">Supprimer</Text>
       <Ionicons name="trash" size={22} color="#FFFFFF" />
     </View>
@@ -81,6 +83,7 @@ export default function NotificationSwipeableItem({
           onToggleRead();
         }}
         onPress={onPress}
+        onOpenLink={onOpenLink}
       />
     </Swipeable>
   );

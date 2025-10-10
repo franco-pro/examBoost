@@ -14,7 +14,8 @@ import * as WebBrowser from 'expo-web-browser';
 export default function NotificationsScreen() {
   // brancher un  userID quand l'auth sera prête
   const userID = 42;
-  const { data, isLoading, isRefetching, refetch, isError } = useNotifications(userID);
+  // Pas de polling sur la page Notifications: on souhaite rafraîchir seulement hors de cette page
+  const { data, isLoading, isRefetching, refetch, isError } = useNotifications(userID, { refetchInterval: false });
   const clearAll = useClearNotifications(userID);
   const delOne = useDeleteNotification(userID);
   const markRead = useMarkRead(userID);
@@ -70,6 +71,15 @@ export default function NotificationsScreen() {
     await WebBrowser.openBrowserAsync(url);
   }, [showToast]);
 
+  const handleOpenCompetition = useCallback(async () => {
+    await Haptics.selectionAsync();
+    showToast('info', 'Ouverture…');
+    // Navigue vers l'onglet Compétitions de l'application
+    // Le Tabs.Screen est nommé 'competition' dans app/(tabs)/_layout.tsx
+    // @ts-ignore – navigate accepte le nom de l'écran de tab
+    navigation.navigate('competition');
+  }, [navigation, showToast]);
+
   const renderItem = useCallback(({ item }: { item: Notification }) => (
     <NotificationSwipeableItem
       notification={item}
@@ -95,6 +105,7 @@ export default function NotificationsScreen() {
         }
         openDetails(item);
       }}
+      onOpenLink={() => handleOpenCompetition()}
     />
   ), [delOne, markRead, openDetails, showToast]);
 
@@ -112,7 +123,7 @@ export default function NotificationsScreen() {
         }
         disabled={clearAll.isPending || (data?.length ?? 0) === 0}
         accessibilityLabel="Supprimer toutes les notifications"
-        className="flex-row items-center gap-2 px-3 py-2 rounded-md bg-error-500 opacity-100 disabled:opacity-50"
+        className="flex-row items-center gap-2 px-3 py-2 rounded-md bg-error-400 opacity-100 disabled:opacity-50"
       >
         <Ionicons name="trash" size={18} color="#FFFFFF" />
         <Text className="text-white font-semibold">Tout supprimer</Text>
@@ -199,10 +210,14 @@ export default function NotificationsScreen() {
             <View className="mt-6 flex-row items-center gap-3">
               {selected?.link && (
                 <Pressable
-                  onPress={() => handleOpenLink(selected?.link)}
+                  onPress={() => (selected?.type === 'warning' ? handleOpenCompetition() : handleOpenLink(selected?.link))}
                   className="px-3 py-2 rounded-md bg-primary-500 active:opacity-90"
+                  accessibilityRole="button"
+                  accessibilityLabel={selected?.type === 'warning' ? 'Rejoindre la compétition' : 'Ouvrir le lien associé'}
                 >
-                  <Text className="text-white font-semibold">Ouvrir</Text>
+                  <Text className="text-white font-semibold">
+                    {selected?.type === 'warning' ? 'Rejoindre la compétition' : 'Ouvrir'}
+                  </Text>
                 </Pressable>
               )}
 
@@ -238,7 +253,7 @@ export default function NotificationsScreen() {
                     });
                     closeDetails();
                   }}
-                  className="px-3 py-2 rounded-md bg-error-500 active:opacity-90 ml-auto"
+                  className="px-3 py-2 rounded-md bg-error-400 active:opacity-90 ml-auto"
                 >
                   <Text className="text-white font-semibold">Supprimer</Text>
                 </Pressable>

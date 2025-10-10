@@ -1,9 +1,27 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Tabs } from "expo-router";
+import { Tabs, usePathname } from "expo-router";
+import { useMemo } from "react";
+import { useNotifications } from "@/src/features/notifications/hooks";
 import AppLayout from "../styles/AppLayout";
 import LanguageSwitcher from "@/components/layouts/LanguageSwitch";
 
 export default function RootLayout() {
+  // TODO: remplacer par l'ID utilisateur réel quand l'auth sera prête
+  const userID = 42;
+  const pathname = usePathname();
+  const isOnNotifications =
+    pathname?.endsWith("/notifications") || pathname === "/notifications";
+
+  // Poll uniquement hors de la page notifications
+  const { data } = useNotifications(userID, {
+    refetchInterval: isOnNotifications ? false : 1000,
+  });
+
+  const unreadCount = useMemo(
+    () => data?.filter((n) => !n.read).length ?? 0,
+    [data]
+  );
+
   return (
     <AppLayout>
       {/* <LanguageSwitcher /> */}
@@ -81,6 +99,7 @@ export default function RootLayout() {
           name="notifications"
           options={{
             title: "Notifications",
+            tabBarBadge: unreadCount > 0 ? unreadCount : undefined,
             tabBarIcon: ({ focused, color }) => (
               <Ionicons
                 name={focused ? "notifications" : "notifications-outline"}
