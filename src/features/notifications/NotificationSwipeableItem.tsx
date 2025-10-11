@@ -49,7 +49,7 @@ export default function NotificationSwipeableItem({
             onToggleRead();
             close();
           }}
-          // full height tap target
+          
           className="h-full"
         >
           <LeftAction />

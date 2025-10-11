@@ -66,7 +66,7 @@ export default memo(function NotificationItem({
           <Text className="mt-0.5 text-typography-gray" numberOfLines={expanded ? undefined : 3}>
             {body}
           </Text>
-          {/* CTA direct pour les compétitions */}
+          {/*  direct pour les compétitions */}
           {type === 'warning' && onOpenLink && (
             <Pressable
               onPress={onOpenLink}
@@ -138,5 +138,5 @@ function timeAgo(date: Date) {
   return `il y a ${d}j`;
 }
 
-export { }; // keep file as a module
+export { };
 
