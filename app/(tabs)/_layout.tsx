@@ -15,7 +15,7 @@ export default function RootLayout(){
 
     return(
         <AppLayout>
-        <Tabs screenOptions={{animation: 'none', tabBarActiveTintColor:'#181c5c',
+        <Tabs initialRouteName="index" screenOptions={{animation: 'none', tabBarActiveTintColor:'#181c5c',
             headerStyle:{
             backgroundColor: '#181c5c'
         },
@@ -27,6 +27,8 @@ export default function RootLayout(){
         }
         
         }}>
+            {/* Masquer le segment "packs" (sous-pages matières) de la barre d'onglets */}
+            <Tabs.Screen name='packs' options={{ href: null }} />
             <Tabs.Screen name='index' options={{title: 'Home',
                 tabBarIcon: ({color,focused})=>(
                     <Ionicons name={focused? 'home-sharp':'home-outline'} color={color} size={24}/>

@@ -8,19 +8,20 @@ import { Toast, ToastDescription, ToastTitle, useToast } from '@/components/ui/t
 import NotificationSwipeableItem from '@/src/features/notifications/NotificationSwipeableItem';
 import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import * as Haptics from 'expo-haptics';
-import { useNavigation } from 'expo-router';
+import { useNavigation, useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 
 export default function NotificationsScreen() {
   // brancher un  userID quand l'auth sera prête
   const userID = 42;
-  // Pas de polling sur la page Notifications: on souhaite rafraîchir seulement hors de cette page
+  //rafraîchir hors de cette page
   const { data, isLoading, isRefetching, refetch, isError } = useNotifications(userID, { refetchInterval: false });
   const clearAll = useClearNotifications(userID);
   const delOne = useDeleteNotification(userID);
   const markRead = useMarkRead(userID);
 
   const navigation = useNavigation();
+  const router = useRouter();
   const unreadCount = useMemo(() => (data?.filter((n) => !n.read).length ?? 0), [data]);
 
   useEffect(() => {
@@ -74,11 +75,9 @@ export default function NotificationsScreen() {
   const handleOpenCompetition = useCallback(async () => {
     await Haptics.selectionAsync();
     showToast('info', 'Ouverture…');
-    // Navigue vers l'onglet Compétitions de l'application
-    // Le Tabs.Screen est nommé 'competition' dans app/(tabs)/_layout.tsx
-    // @ts-ignore – navigate accepte le nom de l'écran de tab
-    navigation.navigate('competition');
-  }, [navigation, showToast]);
+    // Utiliser le chemin Expo Router pour éviter l'erreur de typage
+    router.push('/(tabs)/competition');
+  }, [router, showToast]);
 
   const renderItem = useCallback(({ item }: { item: Notification }) => (
     <NotificationSwipeableItem
@@ -178,7 +177,7 @@ export default function NotificationsScreen() {
           />
         )}
 
-        {/* Bottom Sheet Details */}
+        {/* */}
         <BottomSheetModal
           ref={modalRef}
           snapPoints={snapPoints}

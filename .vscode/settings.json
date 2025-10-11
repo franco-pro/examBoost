@@ -3,5 +3,13 @@
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit",
     "source.sortMembers": "explicit"
-  }
+  },
+  // Eviter que VS Code/TS analyse les projets TypeScript internes des dépendances
+  "typescript.tsserver.experimental.enableProjectDiagnostics": false,
+  // Désactiver l'acquisition automatique de types (réduit l'analyse parasites de node_modules)
+  "typescript.disableAutomaticTypeAcquisition": true,
+  // Réduit le bruit des diagnostics massifs sur des projets non ouverts
+  "typescript.suggest.jsdoc.generateReturns": false,
+  // Optionnel: ne pas valider JS (nous sommes en TS)
+  "javascript.validate.enable": false
 }
