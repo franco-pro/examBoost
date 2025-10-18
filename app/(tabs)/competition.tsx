@@ -11,6 +11,8 @@ export default function Competition(){
   const loading = useSelector((state : any) => state.room.loading)
   const error = useSelector((state: any) => state.room.error)
   const [anError, setError] = useState(false);
+  const router = useRouter();
+
 
   const [launcDone, setLaunchAsDone] = useState(false);
 
@@ -27,7 +29,6 @@ export default function Competition(){
 
   
   function navigate(route: string){
-    const router = useRouter();
     router.push(route as any);
   }
 

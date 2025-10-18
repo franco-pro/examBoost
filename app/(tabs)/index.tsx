@@ -13,7 +13,7 @@ export default function Index() {
       <Text className="text-error-500 text-lg font-bold">
         Hello world, this is the main screen!
       </Text>
-      <Button className="bg-primary-defaultOrange mt-4" onPress={() => router.push('/pages/competitions-screen/components-ui/online-competitions/competitionResult')}>
+      <Button className="bg-primary-defaultOrange mt-4">
         <Text className="text-white">Bouton principal</Text>
       </Button>
    </View>
