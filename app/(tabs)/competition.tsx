@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import {
   Ionicons,
   FontAwesome5,
@@ -67,7 +67,7 @@ export default function Competition() {
       icone: <FontAwesome5 name="users" size={35} color="#181c5c" />,
       text: t("accueil.actions.my_participations.title"),
       other: t("accueil.actions.my_participations.description"),
-      link: "../pages/competitions-screen/participation" as const,
+     link: "../pages/competitions-screen/participation" as const,
     },
   ];
 
@@ -97,13 +97,13 @@ export default function Competition() {
       <Text className="text-lg font-semibold my-4">
         {t("accueil.actions_title")}
       </Text>
-
+<ScrollView>
       <View>
         {actions.map((act, index) => (
           <TouchableOpacity
             key={index}
             className="bg-white rounded-2xl flex-row p-4 mb-3 shadow-sm items-center"
-            onPress={() => router.push(act.link)}
+           onPress={() => router.push(act.link)}
           >
             <View className="bg-blue-50 p-3 rounded-full">{act.icone}</View>
             <View className="ml-3 flex-1">
@@ -114,6 +114,9 @@ export default function Competition() {
           </TouchableOpacity>
         ))}
       </View>
+      </ScrollView>
     </View>
+   
   );
+   
 }

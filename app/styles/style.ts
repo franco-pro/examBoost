@@ -1,6 +1,6 @@
-// import { StyleSheet } from 'react-native'
+ import { StyleSheet } from 'react-native'
 
-// const styles = StyleSheet.create({
+const styles = StyleSheet.create({
 //       container:{
 //     backgroundColor: '#25292e',
 //     flex: 1,
@@ -16,6 +16,6 @@
 //     textDecorationLine:'underline',
 //     color: '#fff'
 //   }
-// });
+});
 
-// export default styles
+ export default styles

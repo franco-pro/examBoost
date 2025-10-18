@@ -117,6 +117,7 @@ export default function Participation() {
         { id: 5, name: "Emma Build" },
       ],
     },
+
     {
       id: 3,
       name: "IA Coding Marathon",
@@ -266,7 +267,8 @@ export default function Participation() {
     }
   }
   return (
-    <View className="flex-1 w-full max-w-full  bg-gray-50 p-4">
+    <View className="flex-1 w-full max-w-full  bg-gray-50 pt-[40px] pb-[50px] px-4">
+      
       {/* Back Button */}
       <TouchableOpacity
         className="flex-row items-center mb-4"
@@ -314,7 +316,7 @@ export default function Participation() {
             {t("participation.discover.subtitle")}
           </Text>
         </View>
-        <TouchableOpacity className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full mt-4">
+        <TouchableOpacity className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full mt-4" onPress={()=>{router.push("./allCompetition")}} >
           <Text className="text-white text-xs font-semibold mr-2">
             {t("participation.discover.button")}
           </Text>
@@ -350,11 +352,19 @@ export default function Participation() {
                 shadowRadius: 4,
                 elevation: 2,
               }}
+              onPress={() =>
+                router.push({
+                  pathname: "./information",
+                  params: {
+                    id: comp.id,
+                  },
+                })
+              }
             >
               <View className="ml-3 pr-2 flex-1">
                 {/* Nom de la compétition et deadline */}
                 <View className="flex-row items-center justify-between">
-                  <Text className="text-lg font-semibold">{comp.name}</Text>
+                  <Text className="text-lg font-semibold mr-2">{comp.name}</Text>
                   <Text className="text-xs text-gray-400">
                     {comp.statut === "UPCOMING" &&
                       t("participation.labels.time_left", {

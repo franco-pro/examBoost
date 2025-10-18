@@ -6,7 +6,7 @@ import LanguageSwitcher from "@/components/layouts/LanguageSwitch";
 export default function RootLayout() {
   return (
     <AppLayout>
-      <LanguageSwitcher />
+      {/* <LanguageSwitcher /> */}
       <Tabs
         screenOptions={{
           animation: "none",

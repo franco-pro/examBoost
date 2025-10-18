@@ -42,3 +42,5 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     </LanguageContext.Provider>
   );
 };
+
+export default LanguageProvider;
