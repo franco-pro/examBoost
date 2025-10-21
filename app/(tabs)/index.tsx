@@ -2,11 +2,13 @@ import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { View } from '@/components/ui/view';
 import { useRouter } from 'expo-router';
+import { connectRoomsSocket } from '../hooks/services/socket/socket.init';
 
 
 
 export default function Index() {
   const router = useRouter();
+  const socketIo = connectRoomsSocket();  
   return (
 
     <View className="flex-1 items-center justify-center">

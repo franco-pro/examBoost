@@ -8,6 +8,7 @@ interface RoomData {
     user: {userID: number, score: number, totalTimeTaken: number}[],
     connectedUsers: UserOnline[],
     viewers: number,
+    statut: "ACTIF"|"INACTIF",
     createdAt: Date;
   }
 export default class QuestionAnswerManager{
@@ -31,7 +32,7 @@ export default class QuestionAnswerManager{
         this.current_roomID = roomId;
 
         if(!this.rooms.has(roomId)){
-            this.rooms.set(roomId, {questions, user: [], connectedUsers: [],viewers: 0, createdAt: new Date()});
+            this.rooms.set(roomId, {questions, user: [], connectedUsers: [],viewers: 0, statut: "ACTIF", createdAt: new Date()});
         }
     }
 

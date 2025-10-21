@@ -4,15 +4,18 @@ import { VStack } from '@/components/ui/vstack';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Text } from 'react-native';
-import { useSelector } from 'react-redux';
-import OnlineCompetitionRedux from '../hooks/online-competition.redux';
+
+import { useAppDispatch, useAppSelector } from '../hooks/redux/redux.hooks';
+import { fetchRoomCreate } from '../hooks/redux/rooms/rooms.thunks';
+import { EmitEvent, initializeRoomsGateway } from '../hooks/services/socket/rooms.gateway';
 
 export default function Competition(){
-  const loading = useSelector((state : any) => state.room.loading)
-  const error = useSelector((state: any) => state.room.error)
   const [anError, setError] = useState(false);
-  const router = useRouter();
 
+  const dispatch = useAppDispatch();
+  const { loading, error, room} = useAppSelector((state) => state.rooms);
+  
+  const router = useRouter();
 
   const [launcDone, setLaunchAsDone] = useState(false);
 
@@ -20,6 +23,8 @@ export default function Competition(){
       <Spinner size="large" color="blue" />
       {
         console.log('done')
+        console.log('room:', room)
+
       }
  };
   
@@ -31,35 +36,44 @@ export default function Competition(){
   function navigate(route: string){
     router.push(route as any);
   }
+  
 
   function createRoomOrJoinRoom(){
 
-    if(!launcDone){
+    if(!launcDone || !room){
        let response : any;
-    const {store, fetchRoomCreate} = OnlineCompetitionRedux()
 
-        store.dispatch(fetchRoomCreate({name: 'room test', topic: 'General Knowledge', userID: 1, competitionID: 1, isManagedByIA: false})).unwrap().then((res) => {
+        dispatch(fetchRoomCreate({name: 'room test', topic: 'General Knowledge', userID: 1, competitionID: 1, isManagedByIA: false})).unwrap().then((res) => {
         response = res;
         setLaunchAsDone(true)
         // navigate('/pages/competitions-screen/owner.online')
         console.log("Room created with ID:", response);
-      }).catch((error) => {
+      }).catch((error: any) => {
         setError(true);
         console.log("Error creating room:", error);
       }
       );
     }else{
       // join the room
-    }
-   
 
+      initializeRoomsGateway();
+      const eventManager = EmitEvent();
+      if(room){
+      eventManager.joinRoom({roomId: room.roomId, userID: 1, username: 'Host User', imgUrl: 'https://example.com/avatar.png', surname: 'UserSurname'});
+        if(room.creatorID == 1){
+          navigate('/pages/competitions-screen/owner.online')
+        }else{
+          navigate('/pages/competitions-screen/online.users')
+        }
+      }
+    }
     
   }
 
     return(
        <VStack>
         <Button className="bg-primary-defaultOrange mt-4"
-      onPress={() => navigate('/pages/competitions-screen/online.users')}  
+      onPress={() => createRoomOrJoinRoom()}  
       >
         <Text className="text-white">Rejoindre...</Text>
       </Button>

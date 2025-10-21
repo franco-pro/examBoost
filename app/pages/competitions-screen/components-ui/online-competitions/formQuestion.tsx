@@ -1,4 +1,7 @@
 import StopCompetition from '@/app/helper/Dialogs/stopCompetition';
+import { useAppDispatch } from '@/app/hooks/redux/redux.hooks';
+import { clearRoom } from '@/app/hooks/redux/rooms/rooms.slice';
+import { EmitEvent } from '@/app/hooks/services/socket/rooms.gateway';
 import { Button, ButtonText } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { FormControl, FormControlError, FormControlErrorText, FormControlHelper, FormControlHelperText, FormControlLabel, FormControlLabelText } from '@/components/ui/form-control';
@@ -32,6 +35,7 @@ interface ComepetitionInfo{
 }
 export default function FormQuestion({competitionInfo}: { competitionInfo: ComepetitionInfo}) {
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const [isOpen, setIsOpen] =  useState(false);
 
@@ -131,7 +135,10 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
 
   function onLeavingCompetition() {
     // Logic to handle leaving the competition
+    const event = EmitEvent();
 
+    event.closeRoom();
+    dispatch(clearRoom())
 
     console.log("User has chosen to leave the competition.");
 

@@ -3,6 +3,7 @@ import { IncomingAnswer } from "../../entities/incoming-answer";
 import { JoinRoomDto } from "../../entities/joinRoom.dto";
 import { NewQuestionDto } from "../../entities/new-question.dto";
 import { Question } from "../../entities/question";
+import RoomClosedDto from "../../entities/room-closed.dto";
 import { RoomJoined } from "../../entities/roomJoined.dto";
 import { UserOnline } from "../../entities/user.online.entity";
 import QuestionAnswerManager from "../rooms-services/question-answer";
@@ -18,13 +19,15 @@ export function initializeRoomsGateway(token?: string) {
   });
 
   socket.on("room-joined", (RoomInfo: RoomJoined) => {
-    console.error("room joined, info:", RoomInfo);
-    RoomsQuestionManager.addRoom(RoomInfo.roomId, RoomInfo.question);
+    console.log("room joined, info:", RoomInfo);
+    RoomsQuestionManager.addRoom(RoomInfo.roomId, RoomInfo.questions);
     RoomsQuestionManager.addConnectedUsers(RoomInfo.roomId, RoomInfo.users);
 
   });
 
   socket.on("user-joined", (userInfo: UserOnline) => {
+    console.log("user joined, info:", userInfo);
+
     RoomsQuestionManager.addConnectedUser(userInfo.roomId, userInfo);
   });
 
@@ -37,8 +40,14 @@ export function initializeRoomsGateway(token?: string) {
       RoomsQuestionManager.rangking(answer.roomId, answer.rangking);
   });
 
+  socket.on("room-closed", (data: RoomClosedDto) => {
+    console.log('room closed:', data.message);
+  })
 
-  return socket;
+  socket.on("error", (error: any) => {
+    console.log("Socket error:", error.message);
+  });
+
 }
 
 
@@ -59,8 +68,8 @@ export function EmitEvent(){
         createRoom: (roomName: string) => {
             socket.emit("createRoom", { roomName });
         },
-        closeRoom: (roomId: string) => {
-            socket.emit("closeRoom", { roomId });
+        closeRoom: () => {
+            socket.emit("close-Room");
         }
     }
 }

@@ -1,6 +1,6 @@
 import { io, Socket } from "socket.io-client";
 
-const SOCKET_URL = "http://localhost/rooms";
+const SOCKET_URL = "http://172.20.10.2:3000/rooms";
 
 let socket: Socket | null = null;
 
@@ -8,7 +8,6 @@ export function connectRoomsSocket(token?: string) {
   if (!socket) {
     socket = io(SOCKET_URL, {
       transports: ["websocket"],
-      auth: { token },
     });
   }
   return socket;

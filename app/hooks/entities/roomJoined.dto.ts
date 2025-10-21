@@ -7,7 +7,7 @@ export interface RoomJoined{
     roomTopic: string;
     isManagedByIA: boolean;
     competitionID: number;
-    question : Question[];
+    questions: Question[];
     creatorID: number;
     users: UserOnline[];
     
