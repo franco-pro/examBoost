@@ -1,3 +1,5 @@
+import { useAppSelector } from "@/app/hooks/redux/redux.hooks";
+import { useFocusEffect } from "@react-navigation/native";
 import React from "react";
 import { ScrollView, StatusBar, View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -39,6 +41,20 @@ export default function ViewerScreen() {
         }
       ]
 
+      const {room, loading, error} = useAppSelector(state => state.rooms);
+
+         useFocusEffect(
+            React.useCallback(() => {
+                  //ecran actif
+            
+                  return () => {
+                   //ecran quitté diminué le nbr vues sur le socket.
+                    
+        
+                  };
+              }, [])
+          );
+
       
 
     return (
@@ -48,8 +64,15 @@ export default function ViewerScreen() {
             contentContainerStyle={{ flexGrow: 1 }}>
         
             <View>
-             <OnlineUsers user={user}/>
-             <CompetitionInfos/>
+             <OnlineUsers user={room ? (room.users ?? []):[]} max={room ? (room.competitionInfo ? room.competitionInfo.maxUsers: 0):0} />
+             <CompetitionInfos data={{
+                                      creatorName: room ? (room.creatorInfo ? room.creatorInfo.username: ''):'',
+                                      creatorSurname: room ? (room.creatorInfo ? room.creatorInfo.surname: ''):'',
+                                      imgUrl : room ? (room.creatorInfo ? room.creatorInfo.imgUrl: ''):'',
+                                      roomName: room ? (room.roomName ? room.roomName : ''):'',
+                                      viewers: room ? (room.viewers ? room.viewers : 0):0
+                                      }}
+              />
         
              
              <View className="mt-[65%] mb-[10px] justify-center items-center"> 

@@ -4,23 +4,23 @@ import { JoinRoomDto } from "../../entities/joinRoom.dto";
 import { NewQuestionDto } from "../../entities/new-question.dto";
 import { Question } from "../../entities/question";
 import RoomClosedDto from "../../entities/room-closed.dto";
-import { RoomJoined } from "../../entities/roomJoined.dto";
+import { Room } from "../../entities/rooms.entity";
 import { UserOnline } from "../../entities/user.online.entity";
 import QuestionAnswerManager from "../rooms-services/question-answer";
 import { connectRoomsSocket, getSocket } from "./socket.init";
 
-export function initializeRoomsGateway(token?: string) {
-  const socket = connectRoomsSocket(token);
+export function initializeRoomsGateway(dispatch: any, room: Room) {
+  const socket = connectRoomsSocket();
 
-  const RoomsQuestionManager = new QuestionAnswerManager();
+  const RoomsQuestionManager = new QuestionAnswerManager(dispatch, room);
 
   socket.on("connect", () => {
     console.log("Connected to rooms gateway with ID:", socket.id);
   });
 
-  socket.on("room-joined", (RoomInfo: RoomJoined) => {
+  socket.on("room-joined", (RoomInfo: Room) => {
     console.log("room joined, info:", RoomInfo);
-    RoomsQuestionManager.addRoom(RoomInfo.roomId, RoomInfo.questions);
+    RoomsQuestionManager.addRoom(RoomInfo);
     RoomsQuestionManager.addConnectedUsers(RoomInfo.roomId, RoomInfo.users);
 
   });
@@ -40,12 +40,19 @@ export function initializeRoomsGateway(token?: string) {
       RoomsQuestionManager.rangking(answer.roomId, answer.rangking);
   });
 
+  socket.on("user-left", (data: {userID: number, totalUsers: number, roomId: number}) => {
+    console.log('user left competition:', data);
+      RoomsQuestionManager.removeConnectedUser(data.roomId.toString(), data.userID);
+  })
+
   socket.on("room-closed", (data: RoomClosedDto) => {
     console.log('room closed:', data.message);
+    RoomsQuestionManager.closeRoom(data.roomId);
   })
 
   socket.on("error", (error: any) => {
     console.log("Socket error:", error.message);
+    
   });
 
 }
@@ -68,7 +75,10 @@ export function EmitEvent(){
         createRoom: (roomName: string) => {
             socket.emit("createRoom", { roomName });
         },
-        closeRoom: () => {
+        leaveCompetition: ()=>{
+            socket.emit('leave-room')
+        },
+        closeCompetition: () => {
             socket.emit("close-Room");
         }
     }

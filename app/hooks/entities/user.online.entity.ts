@@ -10,6 +10,6 @@ export interface UserOnline{
         clientId: string;
         totalUsers: number;
         timestamp: number;
-
+        isConnected: boolean;
         totalTimeTaken: number;
 }

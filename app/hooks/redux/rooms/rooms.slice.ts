@@ -19,6 +19,64 @@ import { fetchRoomCreate } from './rooms.thunks';
                 state.room = action.payload;
             },
 
+            addConnectedUsers(state, action){
+                if(state.room){
+                    state.room.users.push(...action.payload);
+                }
+            },
+
+            addConnetedUser(state, action){
+                if(state.room){
+                    //remove creator 
+                    state.room.users.push(action.payload.filter((user: any) => user.userID !== state.room?.creatorID));
+                }
+            },
+
+            setUserDeconnected(state, action){
+                if(state.room){
+                    state.room.users.findIndex((user)=>{
+                        user.id === action.payload ? (user.isConnected = false) : null;
+                    });
+                }
+            },
+
+            rangking(state, action){
+                if(state.room){
+                    state.room.rangking = action.payload;
+                }
+            },
+
+            addViewerr(state){
+                if(state.room){
+                    state.room.viewers += 1;
+                }
+            },
+
+            removeViewer(state){
+                if(state.room){
+                    state.room.viewers -= 1;
+                }
+            },
+
+            addQuestion(state, action){
+                if(state.room){
+                    state.room.questions.push(action.payload);   
+                }
+            },
+
+            addAnswer(state, action){
+                if(state.room){
+                    const index = state.room.questions.findIndex(question => question.id == action.payload.questionID)
+                    state.room.questions[index].answers.push(action.payload);
+                }
+            },
+
+            setRoomQuestion(state, action){
+                if(state.room){
+                    state.room.questions = action.payload;
+                }
+            },
+
             clearRoom(state) {
                 state.room = null
                 state.loading = false
@@ -45,4 +103,18 @@ import { fetchRoomCreate } from './rooms.thunks';
     })
 
     export default roomSlice.reducer;
-    export const { clearRoom, setRoomId, setRomm } = roomSlice.actions;
+    export const { 
+        clearRoom, 
+        setRoomId, 
+        setRomm, 
+        setRoomQuestion,
+        addConnectedUsers,
+        addConnetedUser,
+        setUserDeconnected,
+        rangking,
+        addViewerr,
+        removeViewer,
+        addAnswer,
+        addQuestion
+
+    } = roomSlice.actions;

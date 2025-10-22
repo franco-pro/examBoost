@@ -1,22 +1,19 @@
+import { UserOnline } from "@/app/hooks/entities/user.online.entity";
 import { Avatar, AvatarBadge, AvatarFallbackText, AvatarImage } from "@/components/ui/avatar";
 import { Box } from "@/components/ui/box";
 import { Card } from "@/components/ui/card";
 import { Heading } from "@/components/ui/heading";
+import { Image } from '@/components/ui/image';
 import { ScrollView } from "@/components/ui/scroll-view";
 import { Text } from "@/components/ui/text";
+import { View } from "@/components/ui/view";
 import { VStack } from "@/components/ui/vstack";
 
 interface OnlineUsersProps {
-    user: {
-            name: string, 
-            avatarUrl: string, 
-            score: number, 
-            isConnected: boolean,
-            isWinner: boolean
-        }[];
-
+    user: UserOnline[];
+    max: number
 }
-export default function OnlineUsers({user}: OnlineUsersProps) {
+export default function OnlineUsers({user, max}: OnlineUsersProps) {
   return (
     //check if the list contain user
     <Card size="lg" variant="elevated" className="p-5 shadow-xl w-[48%] max-w-[50%] absolute top-0 right-0 rounded-lg  h-64 m-3">
@@ -25,23 +22,34 @@ export default function OnlineUsers({user}: OnlineUsersProps) {
     </Text>
     <VStack className="mb-1">
       <Heading size="md" className="mb-1">
-        Connected User ({user.length})
+        Connected User ({user.filter(user => user.isConnected).length})/{max}
       </Heading>
     </VStack>
     <ScrollView className="mt-3">
     {
      user.length === 0 ? (
-        <Text className="text-sm font-normal mb-2 text-typography-700">
-          No user connected
-        </Text>
+      <View className="justify-center items-center">
+            <VStack>
+                <Image
+                      size="xl"
+                      alt="image"
+                      source={require('../../../../../assets/others/nodata.png')}
+                  />
+            <Text className="text-sm font-normal mb-2 text-typography-700">
+              No user connected
+            </Text>
+
+            </VStack>
+       </View>
+       
      ) : user.map((u, index) => (
       <Box key={index} className="flex-row mb-4 items-center">
         <Avatar className="mr-3">
           <AvatarFallbackText>
-            {u.name.split(" ").map((n) => n[0]).join("")}
+            {u.username.split(" ").map((n) => n[0]).join("")}
           </AvatarFallbackText>
-          {u.avatarUrl ? (
-            <AvatarImage source={{ uri: u.avatarUrl }} alt="image" />
+          {u.imgUrl ? (
+            <AvatarImage source={{ uri: u.imgUrl }} alt="image" />
           ) : null}
           {
             u.isConnected ? (
@@ -52,7 +60,7 @@ export default function OnlineUsers({user}: OnlineUsersProps) {
         
         <VStack>
           <Heading size="sm" className="mb-1">
-            {u.name}
+            {u.username}
           </Heading>
           <Text size="sm">Score: 
           <Text size="sm" className="text-primary-defaultBlue"> {u.score} </Text> 

@@ -56,7 +56,7 @@ export default function Competition(){
     }else{
       // join the room
 
-      initializeRoomsGateway();
+      initializeRoomsGateway(dispatch, room);
       const eventManager = EmitEvent();
       if(room){
       eventManager.joinRoom({roomId: room.roomId, userID: 1, username: 'Host User', imgUrl: 'https://example.com/avatar.png', surname: 'UserSurname'});

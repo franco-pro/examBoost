@@ -1,7 +1,7 @@
-import { RoomCreatedDto } from "../../entities/roomCreated.dto";
+import { Room } from "../../entities/rooms.entity";
 
 export  interface RoomState {
-    room: RoomCreatedDto | null;
+    room: Room | null;
     loading: boolean;
     error: string | null;
 }

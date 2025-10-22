@@ -1,4 +1,7 @@
 import DialogConfirm from '@/app/helper/Dialogs/confirm';
+import { useAppDispatch } from '@/app/hooks/redux/redux.hooks';
+import { clearRoom } from '@/app/hooks/redux/rooms/rooms.slice';
+import { EmitEvent } from '@/app/hooks/services/socket/rooms.gateway';
 import { Box } from '@/components/ui/box';
 import { Button, ButtonText } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -28,6 +31,7 @@ interface ComepetitionInfo{
 }
 export default function QuestionAnswer({question, competitionInfo}: {question: Question, competitionInfo: ComepetitionInfo}) {
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const [isOpen, setIsOpen] =  useState(false);
 
@@ -39,7 +43,11 @@ export default function QuestionAnswer({question, competitionInfo}: {question: Q
   function onLeavingCompetition() {
     // Logic to handle leaving the competition
 
+    const Envets = EmitEvent();
+    Envets.leaveCompetition();
 
+    dispatch(clearRoom());
+    
     console.log("User has chosen to leave the competition.");
 
     router.back()

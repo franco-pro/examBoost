@@ -1,5 +1,9 @@
+import { useAppSelector } from '@/app/hooks/redux/redux.hooks';
+import { EmitEvent } from '@/app/hooks/services/socket/rooms.gateway';
+import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import { ScrollView, StatusBar, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { AppState, ScrollView, StatusBar, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CompetitionInfos from './components-ui/online-competitions/competitionInfos';
 import MiniDashboard from './components-ui/online-competitions/miniDashboard';
@@ -39,6 +43,41 @@ export default function User() {
     isAI: true,
   };
 
+  const [appState, setAppState] = useState(AppState.currentState);
+  const {room, loading, error} = useAppSelector(state => state.rooms);
+
+  const Events = EmitEvent()
+
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      console.log('Changement d’état de l’application :', nextAppState);
+
+      if (nextAppState === 'background') {
+        Events.leaveCompetition();
+        router.back()
+      }
+
+      setAppState(nextAppState);
+    });
+
+    // Nettoyage à la sortie du composant
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+  
+        useFocusEffect(
+          React.useCallback(() => {
+            //ecran actif
+      
+            return () => {
+             //ecran quitté deconnecté de la competition.
+              Events.leaveCompetition();
+            };
+          }, [])
+        );
+
   return (
   <SafeAreaView style={{ flex: 1 }}>
     <StatusBar hidden={true} />
@@ -47,8 +86,15 @@ export default function User() {
     contentContainerStyle={{ flexGrow: 1 }}>
 
     <View>
-     <OnlineUsers user={user}/>
-     <CompetitionInfos/>
+     <OnlineUsers user={room ? (room.users ?? []) : []} max={room ? (room.competitionInfo ? room.competitionInfo.maxUsers: 0):0}/>
+    <CompetitionInfos data={{
+                                          creatorName: room ? (room.creatorInfo ? room.creatorInfo.username: ''):'',
+                                          creatorSurname: room ? (room.creatorInfo ? room.creatorInfo.surname: ''):'',
+                                          imgUrl : room ? (room.creatorInfo ? room.creatorInfo.imgUrl: ''):'',
+                                          roomName: room ? (room.roomName ? room.roomName : ''):'',
+                                          viewers: room ? (room.viewers ? room.viewers : 0):0
+                                          }}
+      />
 
      <View className="mt-[50%] mb-[10px] justify-center items-center">
          <MiniDashboard />

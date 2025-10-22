@@ -137,7 +137,7 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
     // Logic to handle leaving the competition
     const event = EmitEvent();
 
-    event.closeRoom();
+    event.closeCompetition();
     dispatch(clearRoom())
 
     console.log("User has chosen to leave the competition.");
