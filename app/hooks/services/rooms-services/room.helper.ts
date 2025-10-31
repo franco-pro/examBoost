@@ -1,17 +1,23 @@
 import { UserOnline } from "../../entities/user.online.entity";
 
 export default function Rangking(usersOnline: UserOnline[], rangkingByID: {userID: number, score: number, totalTimeTaken: number}[]) {
-    const rankedUsers: UserOnline[] = [];
+    let rankedUsers: UserOnline[] = [];
 
     rangkingByID.forEach((incomingRanking) => {
-        const user = usersOnline.find((u) => u.userID === incomingRanking.userID);
+        let user = usersOnline.find((u) => u.userID === incomingRanking.userID);
         
         if (user) {
-            user.totalTimeTaken = incomingRanking.totalTimeTaken;
-            user.score = incomingRanking.score;
+            user = {
+                ...user,
+                score: incomingRanking.score,
+                totalTimeTaken: incomingRanking.totalTimeTaken
+            }
             rankedUsers.push(user);
         }
     });
 
+    if(rankedUsers.length != 0){
+      rankedUsers[0].isWinner = true;
+    }
     return rankedUsers;
 }

@@ -6,6 +6,7 @@ import { Question } from "../../entities/question";
 import RoomClosedDto from "../../entities/room-closed.dto";
 import { Room } from "../../entities/rooms.entity";
 import { UserOnline } from "../../entities/user.online.entity";
+import { setSocketWaiting } from "../../redux/rooms/rooms.slice";
 import QuestionAnswerManager from "../rooms-services/question-answer";
 import { connectRoomsSocket, getSocket } from "./socket.init";
 
@@ -19,14 +20,12 @@ export function initializeRoomsGateway(dispatch: any, room: Room) {
   });
 
   socket.on("room-joined", (RoomInfo: Room) => {
-    console.log("room joined, info:", RoomInfo);
     RoomsQuestionManager.addRoom(RoomInfo);
     RoomsQuestionManager.addConnectedUsers(RoomInfo.roomId, RoomInfo.users);
 
   });
 
   socket.on("user-joined", (userInfo: UserOnline) => {
-    console.log("user joined, info:", userInfo);
 
     RoomsQuestionManager.addConnectedUser(userInfo.roomId, userInfo);
   });
@@ -45,9 +44,14 @@ export function initializeRoomsGateway(dispatch: any, room: Room) {
       RoomsQuestionManager.removeConnectedUser(data.roomId.toString(), data.userID);
   })
 
+  socket.on("competition-ended", (rangking: UserOnline[]) => {
+    console.log('competition finished:', rangking);
+    
+  })
+
   socket.on("room-closed", (data: RoomClosedDto) => {
     console.log('room closed:', data.message);
-    RoomsQuestionManager.closeRoom(data.roomId);
+    RoomsQuestionManager.closeRoom(data.roomId, data.message);
   })
 
   socket.on("error", (error: any) => {
@@ -55,31 +59,53 @@ export function initializeRoomsGateway(dispatch: any, room: Room) {
     
   });
 
+
 }
 
 
 
-export function EmitEvent(){
+export function EmitEvent(dispatch: any, room: any){
     const socket = getSocket();
-
+    const RoomsQuestionManager = new QuestionAnswerManager(dispatch, room);
+    
     return {
         joinRoom: (data: JoinRoomDto) => {
             socket.emit("join", data);
         },
         sendQuestion: (question: Question) => {
-            socket.emit("competition-question", question);
+          // setTimeout(() => {
+          //   RoomsQuestionManager.addQuestion(room.id, question)
+          // }, 50);
+          socket.emit("competition-question", question);
         },
         sendAnswer: (answer: Answer) => {
+          if(!room.isManagedByIA){
+            setTimeout(() => {
+              dispatch(setSocketWaiting(true));
+            }, 50);
+          }
             socket.emit("question-answered", answer);
+            
         },
         createRoom: (roomName: string) => {
             socket.emit("createRoom", { roomName });
         },
-        leaveCompetition: ()=>{
+        leaveCompetition: (userId: number)=>{
             socket.emit('leave-room')
+            RoomsQuestionManager.removeConnectedUser(room.roomId, userId);
         },
+        
+        end: ()=>{
+            socket.emit('end-competition')
+        },
+
+        ViewerLeave: ()=>{
+          socket.emit('leave-room')
+          RoomsQuestionManager.removeViewer(room.roomId);
+      },
         closeCompetition: () => {
             socket.emit("close-Room");
+            RoomsQuestionManager.quitRoom();
         }
     }
 }

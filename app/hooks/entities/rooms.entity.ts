@@ -12,9 +12,13 @@ export interface Room {
     questions: Question[];
     rangking: UserOnline[];
     isManagedByIA: boolean;
-    createdAt: Date;
+    createdAt: any;
     isActive: boolean;
+    totalTimes: number | null;
+    finalHour: Date | null;
+    instructions: {participant: string, owner: string, viewer: string} | null;
     creatorInfo: {username: string, surname: string, imgUrl: string};
-    competitionInfo: {winnerPrice: number, maxUsers: number}
+    competitionInfo: {winnerPrice: number, maxUsers: number, questionsNbr: number},
+    oldParticipantsID: number[]
   }
   

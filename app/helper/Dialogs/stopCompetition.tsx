@@ -17,20 +17,20 @@ export default function StopCompetition({isOpen, onClose, onConfirm, isAI}: Dial
           <AlertDialogBackdrop />
           <AlertDialogContent className="w-[85%] max-w-[90%] gap-4 items-center">
             <AlertDialogHeader>
-            <Heading className="text-typography-950 font-semibold" size="md">
+            <Heading className="text-typography-950 font-semibold" size="xl">
                 Êtes-vous sur de vouloir quitter cette compétition ?
             </Heading>
           </AlertDialogHeader>
           <AlertDialogBody className="mt-3 mb-4">
             {
                 isAI ? (
-                    <Text size="sm">
+                    <Text size="xl">
                     Quitter cette competition, vous fera perdre votre progression actuelle! En mode IA, vous pourrez y revenir uniquement en mode spectacteur.
                     {' \n'}
                     Êtes-vous sûr de vouloir continuer ? 
                    </Text>
                 ): (
-                    <Text size="sm">
+                    <Text size="xl">
                     Quitter cette competition, vous fera perdre votre progression actuelle et vous ne pourrez plus y revenir. Et la competition sera annulée et terminée.
                     {' \n'}
                     

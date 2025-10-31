@@ -5,8 +5,17 @@ import { fetchRoomCreate } from './rooms.thunks';
    
     const initialState: RoomState = {
         room: null,
+        roomLeaveed: [],
+        roomResult: null,
         loading: false,
         error: null,
+        socketWaiting: true,
+        competitionFinished: false,
+        competitionStop : false,
+        timerOff: false,
+        nextQuestion: false,
+        message: null
+
     }
    const roomSlice = createSlice({
         name: 'room',
@@ -17,31 +26,58 @@ import { fetchRoomCreate } from './rooms.thunks';
             },
             setRomm(state, action){
                 state.room = action.payload;
+                state.roomResult = null; 
+                state.competitionFinished = false;
+                state.competitionStop = false;
+                state.timerOff = false;
+                state.message = null;
             },
 
             addConnectedUsers(state, action){
                 if(state.room){
-                    state.room.users.push(...action.payload);
+                    //remove creator 
+                    if(state.room.users.length == 0){
+                        state.room.users = action.payload.filter((user: any) => user.userID !== state.room?.creatorID);
+                    }else{
+                        const data_withoutOwner = action.payload.filter((user: any) => user.userID !== state.room?.creatorID);
+                        state.room.users.concat(data_withoutOwner);
+                    }
+                    
                 }
             },
 
+            passToNextQuestion(state){
+                state.nextQuestion = state.nextQuestion ? false:true;
+            },
+
+            setSocketWaiting(state, action){
+                state.socketWaiting = action.payload;
+            },
             addConnetedUser(state, action){
                 if(state.room){
-                    //remove creator 
-                    state.room.users.push(action.payload.filter((user: any) => user.userID !== state.room?.creatorID));
+                    const currentUserIndex = state.room.users.findIndex(user => user.userID == action.payload.userID);
+                    if(currentUserIndex == -1){
+                        //without creator
+                        let isCreator = action.payload.userID === state.room.creatorID;
+                        if(!isCreator){
+                          state.room.users.push(action.payload);
+                        }
+                    }
                 }
             },
 
             setUserDeconnected(state, action){
                 if(state.room){
                     state.room.users.findIndex((user)=>{
-                        user.id === action.payload ? (user.isConnected = false) : null;
+                        user.userID === action.payload ? (user.isConnected = false) : null;
                     });
+
                 }
             },
 
             rangking(state, action){
                 if(state.room){
+                    state.room.users = action.payload
                     state.room.rangking = action.payload;
                 }
             },
@@ -60,7 +96,7 @@ import { fetchRoomCreate } from './rooms.thunks';
 
             addQuestion(state, action){
                 if(state.room){
-                    state.room.questions.push(action.payload);   
+                    state.room.questions.unshift(action.payload);   
                 }
             },
 
@@ -71,16 +107,63 @@ import { fetchRoomCreate } from './rooms.thunks';
                 }
             },
 
-            setRoomQuestion(state, action){
+            reduiceQuestionNbr(state){
                 if(state.room){
-                    state.room.questions = action.payload;
+                    if(state.room.competitionInfo.questionsNbr != 0){
+                        state.room.competitionInfo.questionsNbr--;
+                    }
                 }
             },
 
-            clearRoom(state) {
+            setRoomQuestion(state, action){
+                if(state.room){
+                    state.room.questions = action.payload;
+                    state.socketWaiting = false;
+                }
+            },
+
+            setEndOfCompetition(state){
+                state.roomResult = state.room;
                 state.room = null
                 state.loading = false
                 state.error = null
+                state.socketWaiting = false;
+                state.competitionStop = false;
+                state.competitionFinished = true;
+                state.message = null;  
+                state.timerOff = false; 
+                state.nextQuestion = false;  
+            },
+
+            setTimeOff(state, action){
+                state.timerOff = true;
+            },
+
+            userLeaveRoom(state){
+               state.roomLeaveed.push(state.room ? state.room.roomId : 'null');
+
+                state.room = null
+                state.loading = false
+                state.error = null
+                state.socketWaiting = false;
+                state.competitionFinished = false;
+                state.competitionStop = false;
+                state.message = null
+                state.timerOff = false;  
+                state.nextQuestion = false;  
+
+            },
+
+            clearRoom(state, action) {
+                state.room = null
+                state.loading = false
+                state.error = null
+                state.socketWaiting = false;
+                state.competitionFinished = false;
+                state.competitionStop = true;
+                state.timerOff = false;   
+                state.nextQuestion = false;  
+                state.message = action.payload;
 
                 console.log('room clear')
             },
@@ -94,6 +177,10 @@ import { fetchRoomCreate } from './rooms.thunks';
                 .addCase(fetchRoomCreate.fulfilled, (state, action) => {
                     state.loading = false
                     state.room = action.payload
+                    state.competitionFinished = false;
+                    state.competitionStop = false;
+                    state.message = null;
+
                 })
                 .addCase(fetchRoomCreate.rejected, (state, action) => {
                     state.loading = false
@@ -115,6 +202,11 @@ import { fetchRoomCreate } from './rooms.thunks';
         addViewerr,
         removeViewer,
         addAnswer,
-        addQuestion
-
+        setTimeOff,
+        addQuestion,
+        setSocketWaiting,
+        setEndOfCompetition,
+        userLeaveRoom,
+        reduiceQuestionNbr,
+        passToNextQuestion
     } = roomSlice.actions;

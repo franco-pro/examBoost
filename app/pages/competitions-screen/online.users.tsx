@@ -1,5 +1,8 @@
-import { useAppSelector } from '@/app/hooks/redux/redux.hooks';
+import { useAppDispatch, useAppSelector } from '@/app/hooks/redux/redux.hooks';
+import { setEndOfCompetition } from '@/app/hooks/redux/rooms/rooms.slice';
 import { EmitEvent } from '@/app/hooks/services/socket/rooms.gateway';
+import Question from '@/app/services/entities/question.entity';
+import { UsersTest } from '@/app/services/entities/users.test';
 import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -12,49 +15,93 @@ import QuestionAnswer from './components-ui/online-competitions/questionAnswer';
 
 export default function User() {
   const router = useRouter();
-  const user = [
-    {name: 'John Doe', avatarUrl: 'https://png.pngtree.com/png-clipart/20230927/original/pngtree-man-avatar-image-for-profile-png-image_13001882.png', score: 1500, isConnected: true, isWinner: true},
-    {name: 'Jane Smith', avatarUrl: 'https://png.pngtree.com/png-clipart/20230927/original/pngtree-man-avatar-image-for-profile-png-image_13001882.png', score: 1450, isConnected: true, isWinner: false},
-    {name: 'Alice Johnson', avatarUrl: 'https://gluestack.github.io/public-blog-video-assets/john.png', score: 1400, isConnected: false, isWinner: false},
-    {name: 'Connor Sarah', avatarUrl: 'https://gluestack.github.io/public-blog-video-assets/john.png', score: 1450, isConnected: true, isWinner: false},
-    {name: 'Steph Greps', avatarUrl: 'https://gluestack.github.io/public-blog-video-assets/john.png', score: 1400,  isConnected: false, isWinner: false},
-    {name: 'Hit Karl', avatarUrl: 'https://gluestack.github.io/public-blog-video-assets/john.png', score: 1450, isConnected: true, isWinner: false},
-    {name: 'Doobit', avatarUrl: 'https://gluestack.github.io/public-blog-video-assets/john.png', score: 1400, isConnected: false, isWinner: false},
-  ]
-
-  const question = {
-    id: 1,
-    text: 'What is the capital of France',
-    choices: ['Berlin', 'Madrid', 'Paris'],
-    correctAnswer: 'Paris',
-    timeToAnswer: 30,
-    points: 10,
-    explanation: 'Paris is the capital and most populous city of France.',
-    answers: [],
-  };
-
-  const competitionInfo = {
-    competitionName: 'General Knowledge Quiz',
-    createdAt: 'October 01, 2025',
-    creatorName: 'Admin',
-    creatorAvatarUrl: 'https://gluestack.github.io/public-blog-video-assets/john.png',
-    description: 'Test your general knowledge with this fun and engaging quiz!',
-    totalQuestions: 10,
-    isAI: true,
-  };
+  const dispatch = useAppDispatch()
 
   const [appState, setAppState] = useState(AppState.currentState);
-  const {room, loading, error} = useAppSelector(state => state.rooms);
+  const {room, socketWaiting, error, nextQuestion} = useAppSelector(state => state.rooms);
+  
 
-  const Events = EmitEvent()
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentQuestion, setCurrentQuestion] = useState<Question>();
+  // secondes avant de passer à la question suivante
+  let currentUserId = 10;
+  //find the current user  score by id 
+  const score = room && room.users ? (room.users.find(u => u.userID === currentUserId)?.score ?? 0) : 0;
 
+  let questionAnswered = 0;
+
+  if(room && room.questions){
+    if(room.questions.length > 0){
+      room.questions.forEach(q => {
+        const answered = q.answers.find(a => a.userID === currentUserId);
+        if(answered){
+          questionAnswered += 1;
+          if(questionAnswered == room.competitionInfo.questionsNbr){
+              setTimeout(() => {
+                dispatch(setEndOfCompetition())
+              }, room.isManagedByIA ? 0 : 2500);
+          }
+        }
+      }
+      )  
+    }
+  }
+
+  useEffect(() => {
+    // ⏱️ Définir un timer pour passer à la question suivante
+    if(room && room.questions){
+      if (currentIndex < room.questions.length - 1) {
+        let delay = room.questions[currentIndex+1].timeToAnswer; 
+
+        // const timer = setTimeout(() => {
+        //   console.log('execute')
+        //   setCurrentIndex(prev => prev + 1);
+        // }, delay * 1000);
+
+        // return () => clearTimeout(timer);
+     }
+    }
+
+  }, [currentIndex]);
+
+  useEffect(()=>{
+    if(room && room.questions){
+      setCurrentQuestion(room.questions[0])
+
+    }
+  }, [room?.questions])
+
+  useEffect(()=>{
+      if(nextQuestion){
+          setCurrentIndex((currentIndex+1));
+      }
+  }, [nextQuestion])
+
+  // Met à jour la question affichée
+  useEffect(() => {
+    if(room && room.questions){
+      setCurrentQuestion(room.questions[currentIndex]);
+    }
+  }, [currentIndex]);
+
+
+
+  const Events = EmitEvent(dispatch, room);
+  const user : UsersTest = {
+    id: currentUserId,
+    username: 'Current User',
+    surname: 'Test',
+    email: "test@gmail.com",
+    imgUrl: "",
+    score: score,
+  }
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', nextAppState => {
       console.log('Changement d’état de l’application :', nextAppState);
 
       if (nextAppState === 'background') {
-        Events.leaveCompetition();
+        Events.leaveCompetition(user.id);
         router.back()
       }
 
@@ -73,11 +120,10 @@ export default function User() {
       
             return () => {
              //ecran quitté deconnecté de la competition.
-              Events.leaveCompetition();
+              Events.leaveCompetition(user.id);
             };
           }, [])
         );
-
   return (
   <SafeAreaView style={{ flex: 1 }}>
     <StatusBar hidden={true} />
@@ -93,12 +139,44 @@ export default function User() {
                                           imgUrl : room ? (room.creatorInfo ? room.creatorInfo.imgUrl: ''):'',
                                           roomName: room ? (room.roomName ? room.roomName : ''):'',
                                           viewers: room ? (room.viewers ? room.viewers : 0):0
-                                          }}
+                            }}
+                      competitionInfo={{
+                                questionNbr: room ? (room.competitionInfo ? room.competitionInfo.questionsNbr : 0):0,
+                                CreatorName: room ? (room.creatorInfo ? room.creatorInfo.username: ''):'',
+                                CreatorSurname: room ? (room.creatorInfo ? room.creatorInfo.surname: ''):'',
+                                instrunctions: room && room.instructions ? room.instructions.participant:null,
+                                isIA: room ? room.isManagedByIA: false,
+                                totalMinutes: room ? room.totalTimes: null,
+                                endTime: room ? room.finalHour : null
+                      }}          
       />
 
      <View className="mt-[50%] mb-[10px] justify-center items-center">
-         <MiniDashboard />
-        <QuestionAnswer competitionInfo={competitionInfo} question={question} />
+         <MiniDashboard 
+              questionAnswered={questionAnswered} 
+              score={score}
+              manager={room ? (room.isManagedByIA ? " Genesys-in IA" : "Owner"): ''}
+              winnerPrice={room ? (room.competitionInfo ? room.competitionInfo.winnerPrice : 0):0}
+         />
+        <QuestionAnswer 
+                competitionInfo={
+                  {
+                    creatorAvatarUrl: room ? (room.creatorInfo ? room.creatorInfo.imgUrl: ''):'',
+                    creatorName: room ? (room.creatorInfo ? room.creatorInfo.username: ''):'',
+                    competitionName: room ? (room.roomName ? room.roomName : ''):'',
+                    createdAt: room && room.createdAt ? (new Date(room.createdAt)) : null,
+                    totalQuestions: room && room.competitionInfo ? room.competitionInfo.questionsNbr: 0,
+                  }
+                } 
+                question={room && room.questions ? 
+                                    room.isManagedByIA ?
+                                        (currentQuestion ? currentQuestion: null)
+                                        : (room.questions.length > 0 ? room.questions[0]: null)
+                                    : null 
+                                } 
+                loading={socketWaiting}   
+                userData={user}   
+          />
       </View>
     </View>
 

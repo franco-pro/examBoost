@@ -9,41 +9,9 @@ import SwitchQuestionAnswer from "./components-ui/online-competitions/questionAn
 import UsersAnswers from "./components-ui/online-competitions/userAnswer";
 
 export default function OwnerCompetitionsScreen() {
-    const user = [
-        {name: 'John Doe', avatarUrl: 'https://png.pngtree.com/png-clipart/20230927/original/pngtree-man-avatar-image-for-profile-png-image_13001882.png', score: 1500, isConnected: true, isWinner: true},
-        {name: 'Jane Smith', avatarUrl: 'https://png.pngtree.com/png-clipart/20230927/original/pngtree-man-avatar-image-for-profile-png-image_13001882.png', score: 1450, isConnected: true, isWinner: false},
-        {name: 'Alice Johnson', avatarUrl: 'https://gluestack.github.io/public-blog-video-assets/john.png', score: 1400, isConnected: false, isWinner: false},
-        {name: 'Connor Sarah', avatarUrl: 'https://gluestack.github.io/public-blog-video-assets/john.png', score: 1450, isConnected: true, isWinner: false},
-        {name: 'Steph Greps', avatarUrl: 'https://gluestack.github.io/public-blog-video-assets/john.png', score: 1400,  isConnected: false, isWinner: false},
-        {name: 'Hit Karl', avatarUrl: 'https://gluestack.github.io/public-blog-video-assets/john.png', score: 1450, isConnected: true, isWinner: false},
-        {name: 'Doobit', avatarUrl: 'https://gluestack.github.io/public-blog-video-assets/john.png', score: 1400, isConnected: false, isWinner: false},
-      ]
-
-      const competitionInfo = {
-        competitionName: 'General Knowledge Quiz',
-        createdAt: 'October 01, 2025',
-        creatorName: 'Admin',
-        creatorAvatarUrl: 'https://gluestack.github.io/public-blog-video-assets/john.png',
-        description: 'Test your general knowledge with this fun and engaging quiz!',
-        totalQuestions: 10,
-        isAI: true,
-      };
-
-      const question = [
-        {
-          id: 1,
-          text: 'What is the capital of France',
-          choices: ['Berlin', 'Madrid', 'Paris'],
-          correctAnswer: 'Paris',
-          timeToAnswer: 30,
-          points: 10,
-          explanation: 'Paris is the capital and most populous city of France.',
-          answers: [],
-        }
-      ]
 
       const [switchQA, setSwitchQA] =  useState(false);
-      const {room, loading, error} = useAppSelector(state => state.rooms);
+      const {room, socketWaiting, error} = useAppSelector(state => state.rooms);
       const dispatch = useAppDispatch();
 
 
@@ -62,26 +30,46 @@ export default function OwnerCompetitionsScreen() {
                                                    roomName: room ? (room.roomName ? room.roomName : ''):'',
                                                    viewers: room ? (room.viewers ? room.viewers : 0):0
                                                    }}
+                                competitionInfo={{
+                                                    questionNbr: room ? (room.competitionInfo ? room.competitionInfo.questionsNbr : 0):0,
+                                                    CreatorName: room ? (room.creatorInfo ? room.creatorInfo.username: ''):'',
+                                                    CreatorSurname: room ? (room.creatorInfo ? room.creatorInfo.surname: ''):'',
+                                                    instrunctions: room && room.instructions ? room.instructions.participant:null,
+                                                    isIA: room ? room.isManagedByIA: false,
+                                                    totalMinutes: room ? room.totalTimes: null,
+                                                    endTime: room ? room.finalHour : null
+
+                                         }}                    
               />
         
              
              <View className="mt-[65%] mb-[10px] justify-center items-center"> 
             
              <SwitchQuestionAnswer value={switchQA} onValueChange={setSwitchQA}/>
-             {
-                !switchQA ? (
-                 <FormQuestion competitionInfo={competitionInfo}/>
+              <View className="w-full justify-center items-center" style={{ display: !switchQA ? 'flex' : 'none' }}>
+                 <FormQuestion competitionInfo={
+                              {
+                                creatorAvatarUrl: room ? (room.creatorInfo ? room.creatorInfo.imgUrl: ''):'',
+                                creatorName: room ? (room.creatorInfo ? room.creatorInfo.username: ''):'',
+                                competitionName: room ? (room.roomName ? room.roomName : ''):'',
+                                createdAt: room && room.createdAt ? new Date(room.createdAt).toLocaleString("fr-FR", {
+                                  weekday: "long",  
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                }) : null,
+                                isAI: room ? room.isManagedByIA: false,
+                                totalQuestions: room && room.competitionInfo ? room.competitionInfo.questionsNbr: 0,
+                              }
+                           }
+                 />
+                </View>
 
-                ): (
-                  // <VStack className="justify-center items-center">
-
-                  // <Spinner size="large" color="blue" />
-                  // <Text>En attente de reponse.</Text>
-                  // </VStack>
-                  <UsersAnswers isIA={competitionInfo.isAI} questions={question} question={''} competitionName="General Knowledge Quiz"/>
-
-                )
-              } 
+                 <View className="w-full justify-center items-center" style={{ display: switchQA ? 'flex' : 'none' }}>
+                     <UsersAnswers  competitionName={room ? room.roomName: ''} />
+                  </View>
                 
               </View>
             </View>

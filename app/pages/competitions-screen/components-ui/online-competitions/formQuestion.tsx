@@ -1,6 +1,8 @@
+import CompetitionEndedAlert from '@/app/helper/Dialogs/endCompetition';
 import StopCompetition from '@/app/helper/Dialogs/stopCompetition';
-import { useAppDispatch } from '@/app/hooks/redux/redux.hooks';
-import { clearRoom } from '@/app/hooks/redux/rooms/rooms.slice';
+import { Question } from '@/app/hooks/entities/question';
+import { useAppDispatch, useAppSelector } from '@/app/hooks/redux/redux.hooks';
+import { setEndOfCompetition } from '@/app/hooks/redux/rooms/rooms.slice';
 import { EmitEvent } from '@/app/hooks/services/socket/rooms.gateway';
 import { Button, ButtonText } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -26,35 +28,35 @@ import { ScrollView } from 'react-native';
 // }
 interface ComepetitionInfo{
   competitionName: string;
-  createdAt: string;
+  createdAt: any;
   creatorName: string;
   creatorAvatarUrl: string;
-  description: string;
   isAI: boolean,
-  totalQuestions?: number; 
+  totalQuestions: number; 
 }
 export default function FormQuestion({competitionInfo}: { competitionInfo: ComepetitionInfo}) {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const {room, competitionFinished} = useAppSelector(state => state.rooms);
+  const Events = EmitEvent(dispatch, room)
+  const [isAlertCompetOpen, setIsAlertCompEndOpen] = useState(false);
 
+  const [isWaiting, setIsWaiting] = useState(false);
+
+  const questionsNbr = competitionInfo.totalQuestions ?? null;
+  
   const [isOpen, setIsOpen] =  useState(false);
-
-  const [isInvalid, setIsInvalid] = useState(false);
-  const [inputValue, setInputValue] = useState('12345');
-
-  const handleSubmit = () => {
-    if (inputValue.length < 6) {
-      setIsInvalid(true);
-    } else {
-      setIsInvalid(false);
-    }
-  };
+  const [sendingBtnText, setBtnText] = useState("Envoyer")
 
   const handleLeavingCompetition = () => {
     onLeavingCompetition();
     setIsOpen(false);
     
   }
+
+  let questionSended = room && room.questions? room.questions.length: 0;
+
+
 
   const [form, setForm] = useState({
     timeToAnswer: "0",
@@ -76,6 +78,13 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
     text: "",
   });
 
+ function onCompetitionEndAlertConfirm(){
+    setIsAlertCompEndOpen(false)
+    dispatch(setEndOfCompetition())
+    Events.end()
+    router.replace("/pages/competitions-screen/components-ui/online-competitions/competitionResult");
+  }
+
   const validate = () => {
     let valid = true;
     let newErrors: typeof errors = { timeToAnswer: "", points: "", corretAnswer: "", firsChoice: "", secondChoice: "", thirdChoice: "", text: "" };
@@ -90,11 +99,11 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
       valid = false;
     }
 
-    if (form.corretAnswer.length == 0 || (form.corretAnswer.toLowerCase() != form.firsChoice.toLowerCase() || form.corretAnswer.toLowerCase() != form.secondChoice.toLowerCase() || form.corretAnswer.toLowerCase() != form.thirdChoice.toLowerCase())) {
-      console.log('exected', form.corretAnswer.toLowerCase(), form.firsChoice.toLowerCase(), form.secondChoice.toLowerCase(), form.thirdChoice.toLowerCase());
-      newErrors.corretAnswer = "Réponse correcte invalide";
-      valid = false;
-    }
+    // if (form.corretAnswer.length == 0 || (form.corretAnswer.toLowerCase() != form.firsChoice.toLowerCase() || form.corretAnswer.toLowerCase() != form.secondChoice.toLowerCase() || form.corretAnswer.toLowerCase() != form.thirdChoice.toLowerCase())) {
+    //   console.log('exected', form.corretAnswer.toLowerCase(), form.firsChoice.toLowerCase(), form.secondChoice.toLowerCase(), form.thirdChoice.toLowerCase());
+    //   newErrors.corretAnswer = "Réponse correcte invalide";
+    //   valid = false;
+    // }
 
     if (form.firsChoice.length == 0) {
       newErrors.firsChoice = "Choix invalide";
@@ -122,11 +131,46 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
 
   const handleSubmitForm = () => {
     if (validate()) {
-      console.log("Formulaire valide :", form);
+      if(form.corretAnswer.toLowerCase() != form.firsChoice.toLowerCase() && form.corretAnswer.toLowerCase() != form.secondChoice.toLowerCase() && form.corretAnswer.toLowerCase() != form.thirdChoice.toLowerCase()){
+            console.log("Formulaire invalide Aucun choix ne correspond à la reponse correct :", form);
+            
+      }else{
+
+        if (isWaiting) return; // Empêche de recliquer pendant l'attente
+
+        let question = {
+          id: 0,
+          text: String(form.text),
+          choices: [String(form.firsChoice), String(form.secondChoice), String(form.secondChoice)],
+          correctAnswer: String(form.corretAnswer),
+          timeToAnswer: Number.parseInt(form.timeToAnswer),
+          points: Number.parseInt(form.points),
+          explanation: "",
+          answers: []
+        } as Question;
+        Events.sendQuestion(question);
+
+        setBtnText('En attente de réponses...');
+        setIsWaiting(true);
+    
+        setTimeout(() => {
+          setBtnText('Envoyer');
+          setIsWaiting(false);
+        }, (Number(form.timeToAnswer)+10)*1000)
+      }
+
     } else {
       console.log("Formulaire invalide", form);
     }
   };
+
+  if(room && !competitionFinished){
+    if(questionsNbr == questionSended){
+        setTimeout(() => {
+           setIsAlertCompEndOpen(true)
+        }, (Number.parseInt(form.timeToAnswer)+ 10)*1000);
+    }
+  } 
 
   const updateField = (key: keyof typeof form, value: string) => {
     setForm({ ...form, [key]: value });
@@ -135,17 +179,15 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
 
   function onLeavingCompetition() {
     // Logic to handle leaving the competition
-    const event = EmitEvent();
+    const event = EmitEvent(dispatch, room);
 
     event.closeCompetition();
-    dispatch(clearRoom())
-
-    console.log("User has chosen to leave the competition.");
 
     router.back()
   }
 
     return (
+      
       <Card size="lg" variant="elevated" className="p-5 shadow-xl rounded-lg w-[90%]">
         <Text className="text-sm font-normal mb-2 text-typography-700">
           Created At: {competitionInfo.createdAt}
@@ -305,14 +347,30 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
               </FormControlError>
             ) : (
                 <FormControlHelper>
-                  <FormControlHelperText>Soyez bref...</FormControlHelperText>
+                  <FormControlHelperText>
+                    Soyez bref...
+                    {'\n'}
+                    Nombre de question restantes: {(questionsNbr - questionSended)}
+
+                  </FormControlHelperText>
                 </FormControlHelper>
             )}
 
         </FormControl>
+          
+          {
+              !competitionFinished ? (
+                <CompetitionEndedAlert isOpen={isAlertCompetOpen} onClose={onCompetitionEndAlertConfirm} />
+              ): null
+          }
 
-      <Button disabled={competitionInfo.isAI} className="mt-4 bg-primary-defaultBlue" onPress={handleSubmitForm}>
-        <ButtonText>Envoyer</ButtonText>
+
+      <Button disabled={competitionInfo.isAI || ((questionsNbr-questionSended) == 0) || isWaiting} className={"mt-4" + isWaiting ? "bg-primary-defaultBlue":""} variant="outline" size="md" action="secondary" onPress={handleSubmitForm}>
+        <ButtonText className='text-typography-white' size="xl">
+            
+          {sendingBtnText}
+          
+        </ButtonText>
       </Button>
         </ScrollView>
 

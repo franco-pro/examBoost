@@ -1,49 +1,45 @@
-import {
-  AlertDialog,
-  AlertDialogBackdrop,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-} from '@/components/ui/alert-dialog';
+import { AlertDialog, AlertDialogBackdrop, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogHeader } from '@/components/ui/alert-dialog';
+import { Box } from '@/components/ui/box';
 import { Button, ButtonText } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
 import { Text } from '@/components/ui/text';
-  
-  interface DialogConfirmProps {
+
+interface DialogConfirmProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: () => void;
+    message: string | null;
   }
-  export default function DialogConfirm({isOpen, onClose, onConfirm}: DialogConfirmProps) {  
+
+export default function CompetitionStopedAlert({isOpen, onClose, message}: DialogConfirmProps) {
     return (
-      <>
+        <>
         <AlertDialog isOpen={isOpen} onClose={onClose}>
           <AlertDialogBackdrop />
           <AlertDialogContent className="w-[85%] max-w-[90%] gap-4 items-center">
+            <Box className="rounded-full h-[52px] w-[52px] bg-background-error items-center justify-center">
+                <Text size="xl"> ❌ </Text>
+            </Box>
             <AlertDialogHeader>
             <Heading className="text-typography-950 font-semibold" size="xl">
-                Êtes-vous sur de vouloir quitter cette compétition ?
+                Compétition Annulée !
             </Heading>
           </AlertDialogHeader>
           <AlertDialogBody className="mt-3 mb-4">
             <Text size="xl">
-             Quitter cette competition, vous fera perdre votre progression actuelle et vous ne pourrez plus y revenir en tant que participant, mais uniquement en mode spectacteur !
+            {message ?? "Competition Arreter par le propriétaire de la competition !"}
              {' \n'}
             
-             Êtes-vous sûr de vouloir continuer ? 
+             
             </Text>
           </AlertDialogBody>
           <AlertDialogFooter>
             <Button
-              className="bg-primary-defaultBlue"
+              className="bg-primary-defaultBlue w-full"
               onPress={onClose}
-              size="sm"
+              size="lg"
+            
             >
-              <ButtonText>Cancel</ButtonText>
-            </Button>
-            <Button size="sm" onPress={onConfirm} action="negative">
-              <ButtonText>Quitter la competition</ButtonText>
+              <ButtonText>Sortir</ButtonText>
             </Button>
           </AlertDialogFooter>
           </AlertDialogContent>
