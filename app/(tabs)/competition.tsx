@@ -1,13 +1,12 @@
-import { useRouter } from "expo-router";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import {
-  Ionicons,
-  FontAwesome5,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
-import { JSX } from "react";
-import { useTranslation } from "react-i18next";
 import CardStat from "@/components/layouts/statistique/cardStat";
+import {
+    FontAwesome5,
+    Ionicons,
+    MaterialCommunityIcons,
+} from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export default function Competition() {
   const router = useRouter();
@@ -61,7 +60,7 @@ export default function Competition() {
       icone: <FontAwesome5 name="users" size={35} color="#181c5c" />,
       text: t("accueil.actions.my_creations.title"),
       other: t("accueil.actions.my_creations.description"),
-      link: "../pages/competitions-screen/user" as const,
+      link: "../pages/competitions-screen/creation" as const,
     },
     {
       icone: <FontAwesome5 name="users" size={35} color="#181c5c" />,

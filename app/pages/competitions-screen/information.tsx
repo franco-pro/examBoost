@@ -5,6 +5,7 @@ import { LinearGradient } from "expo-linear-gradient";
 
 export default function Information() {
   const router = useRouter();
+  const userId = 6;
 
   const information = {
     id: 3,
@@ -12,15 +13,20 @@ export default function Information() {
     description:
       "Une compétition en intelligence artificielle sur la vision par ordinateur.",
     topic: "Intelligence Artificielle",
-    date: "2025-09-28T09:00:00Z",
+    date: "2025-11-04T09:00:00Z",
     registration_deadline: "2025-09-25T22:00:00Z",
     entryFee: 0,
     winnerPrice: 0,
-    isPublic: true,
+    isPublic: false,
     statut: "COMPLETED",
     maxUsers: 5,
     minUsers: 2,
+    creatorID: 3,
     creatorData: { id: 3, name: "David IA" },
+    users: [
+      { id: 6, name: "Clara Bot" },
+      { id: 7, name: "Noah ML" },
+    ],
   };
 
   const colors = {
@@ -29,8 +35,7 @@ export default function Information() {
   };
 
   return (
-    <View className="bg-gray-50 pt-[40px] pb-[100px] px-4"
->
+    <View className="bg-gray-50 pt-[40px] pb-[100px] px-4">
       {/* Bouton Retour */}
       <TouchableOpacity
         className="flex-row items-center mb-6"
@@ -39,6 +44,17 @@ export default function Information() {
         <Ionicons name="arrow-back" size={24} color={colors.defaultBlue} />
         <Text className="ml-2 text-lg font-semibold text-gray-800">Retour</Text>
       </TouchableOpacity>
+
+      {userId === information.creatorID &&
+        information.isPublic === false &&
+        new Date(information.registration_deadline) >= new Date() && (
+          <TouchableOpacity className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto">
+            <Text className="text-white text-xs font-semibold mr-2">
+              Envoyer une invitation
+            </Text>
+            <Ionicons name="chevron-forward" size={22} color="#ffffff" />
+          </TouchableOpacity>
+        )}
 
       {/* --- Première carte avec dégradé --- */}
       <LinearGradient
@@ -131,66 +147,102 @@ export default function Information() {
           </View>
         </View>
       </View>
-<ScrollView>
-      {/* --- Troisième carte : Informations supplémentaires --- */}
-      <View className="mt-5 bg-white rounded-2xl p-4 shadow-md border border-gray-100 mb-10">
-        <View className="flex-row items-center mb-3">
-          <Ionicons
-            name="information-circle-outline"
-            size={22}
-            color={colors.defaultBlue}
-          />
-          <Text
-            className="ml-2 text-lg font-semibold"
-            style={{ color: colors.defaultBlue }}
-          >
-            Informations supplémentaires
-          </Text>
-        </View>
-
-        <View className="border-t border-gray-200 " />
-
-        <View className="mt-2 space-y-3">
-          {/* Chaque ligne d'infos sous forme de row */}
-          <View className="flex-row justify-between items-center">
-            <View className="flex-row items-center">
-              <Ionicons name="cash-outline" size={20} color={colors.defaultOrange} />
-              <Text className="ml-2 text-gray-700">Frais de participation</Text>
-            </View>
-            <Text className="font-semibold text-gray-800">
-              {information.entryFee === 0 ? "Gratuit" : `${information.entryFee} XAF`}
+      <ScrollView>
+        {/* --- Troisième carte : Informations supplémentaires --- */}
+        <View className="mt-5 bg-white rounded-2xl p-4 shadow-md border border-gray-100 mb-10">
+          <View className="flex-row items-center mb-3">
+            <Ionicons
+              name="information-circle-outline"
+              size={22}
+              color={colors.defaultBlue}
+            />
+            <Text
+              className="ml-2 text-lg font-semibold"
+              style={{ color: colors.defaultBlue }}
+            >
+              Informations supplémentaires
             </Text>
           </View>
 
-          <View className="flex-row justify-between items-center">
-            <View className="flex-row items-center">
-              <Ionicons name="people-outline" size={20} color={colors.defaultBlue} />
-              <Text className="ml-2 text-gray-700">Participants minimum</Text>
-            </View>
-            <Text className="font-semibold text-gray-800">
-              {information.minUsers}
-            </Text>
-          </View>
+          <View className="border-t border-gray-200 " />
 
-          <View className="flex-row justify-between items-center">
-            <View className="flex-row items-center">
-              <Ionicons name="people-circle-outline" size={20} color={colors.defaultOrange} />
-              <Text className="ml-2 text-gray-700">Participants maximum</Text>
-            </View>
-            <Text className="font-semibold text-gray-800">
-              {information.maxUsers}
-            </Text>
-          </View>
-        </View>
-      </View>
-
-         <TouchableOpacity className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto">
-                <Text className="text-white text-xs font-semibold mr-2">
-                 Rejoindre la competition
+          <View className="mt-2 space-y-3">
+            {/* Chaque ligne d'infos sous forme de row */}
+            <View className="flex-row justify-between items-center">
+              <View className="flex-row items-center">
+                <Ionicons
+                  name="cash-outline"
+                  size={20}
+                  color={colors.defaultOrange}
+                />
+                <Text className="ml-2 text-gray-700">
+                  Frais de participation
                 </Text>
-                <Ionicons name="chevron-forward" size={22} color="#ffffff" />
-              </TouchableOpacity>
-              </ScrollView>
+              </View>
+              <Text className="font-semibold text-gray-800">
+                {information.entryFee === 0
+                  ? "Gratuit"
+                  : `${information.entryFee} XAF`}
+              </Text>
+            </View>
+
+            <View className="flex-row justify-between items-center">
+              <View className="flex-row items-center">
+                <Ionicons
+                  name="people-outline"
+                  size={20}
+                  color={colors.defaultBlue}
+                />
+                <Text className="ml-2 text-gray-700">Participants minimum</Text>
+              </View>
+              <Text className="font-semibold text-gray-800">
+                {information.minUsers}
+              </Text>
+            </View>
+
+            <View className="flex-row justify-between items-center">
+              <View className="flex-row items-center">
+                <Ionicons
+                  name="people-circle-outline"
+                  size={20}
+                  color={colors.defaultOrange}
+                />
+                <Text className="ml-2 text-gray-700">Participants maximum</Text>
+              </View>
+              <Text className="font-semibold text-gray-800">
+                {information.maxUsers}
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* boutton pour rejoindre la competition pour un user n'etant pas son createur et si la date limite n'est pas atteinte */}
+        {new Date(information.registration_deadline) >= new Date() &&
+          userId !== information.creatorID &&
+          information.users.filter((user, index) => {
+            return user.id === userId;
+          }).length === 0 && (
+            <TouchableOpacity className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto">
+              <Text className="text-white text-xs font-semibold mr-2">
+                Rejoindre la competition
+              </Text>
+              <Ionicons name="chevron-forward" size={22} color="#ffffff" />
+            </TouchableOpacity>
+          )}
+
+        {/* boutton pour rejoindre la competition pour un user n'etant pas son createur et si le room est creee NB:j'ai pas mis la condition sur le room */}
+        {userId !== information.creatorID &&
+          information.users.filter((user, index) => {
+            return user.id === userId;
+          }).length === 1 && (
+            <TouchableOpacity className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto">
+              <Text className="text-white text-xs font-semibold mr-2">
+                Debuter la competition
+              </Text>
+              <Ionicons name="chevron-forward" size={22} color="#ffffff" />
+            </TouchableOpacity>
+          )}
+      </ScrollView>
     </View>
   );
 }
