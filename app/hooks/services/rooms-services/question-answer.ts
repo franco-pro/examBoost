@@ -3,6 +3,7 @@ import { Question } from "../../entities/question";
 import { Room } from "../../entities/rooms.entity";
 import { UserOnline } from "../../entities/user.online.entity";
 import { addAnswer, addConnectedUsers, addConnetedUser, addQuestion, addViewerr, clearRoom, passToNextQuestion, rangking, removeViewer, setEndOfCompetition, setRomm, setRoomQuestion, setSocketWaiting, setUserDeconnected, userLeaveRoom } from "../../redux/rooms/rooms.slice";
+import { useSoundAud } from "../../useSound.hook";
 import Rangking from "./room.helper";
 
 // interface RoomData {
@@ -17,6 +18,7 @@ export default class QuestionAnswerManager{
     // private rooms = new Map<string, RoomData>();
     private static instance: QuestionAnswerManager;
     private current_roomID: string | null = null;
+    private current_userID: number | null = null;
     private dispatch : any;
     private room: Room | null = null;
 
@@ -34,8 +36,9 @@ export default class QuestionAnswerManager{
         return QuestionAnswerManager.instance;
     }
     
-    addRoom(room: Room){
+    addRoom(room: Room, userID: number){
         this.current_roomID = room.roomId;
+        this.current_userID = userID;
         
         // if(!this.rooms.has(room.roomId)){
         //     this.rooms.set(room.roomId, {
@@ -57,6 +60,7 @@ export default class QuestionAnswerManager{
 
     quitRoom(){
         this.current_roomID = null;
+        this.current_userID = null;
         this.dispatch(userLeaveRoom())
     }
 
@@ -82,6 +86,7 @@ export default class QuestionAnswerManager{
         //     room.statut = "INACTIF"
         // }
         this.room = null;
+        this.current_userID = null;
         this.dispatch(clearRoom(message))
     }
 
@@ -91,24 +96,27 @@ export default class QuestionAnswerManager{
         this.dispatch(setEndOfCompetition());
     }
 
-    addConnectedUser(roomId: string, user: UserOnline){
-        // let local_room = this.rooms.get(roomId);
-        // let isCurrentUser = false;
+   async addConnectedUser(roomId: string, user: UserOnline){
+        const {play} = useSoundAud();
+        await play('UserJoin');
 
-        // if(local_room){
-        //     //check if user already exists
-        //     for(let existingUser of local_room?.connectedUsers){
-        //         if(existingUser.userID === user.userID){
-        //             isCurrentUser = true;
-        //             break;
-        //         }
-        //     }
-        //     if(!isCurrentUser){
+        let isCurrentUser = false;
+        if(this.room){
+            if(this.room.creatorID == user.userID) return;
 
-        //         local_room.connectedUsers ? [...local_room.connectedUsers].push({...user}) : [...local_room.connectedUsers];
+            //check if user already exists
+            for(let existingUser of this.room.users){
+                if(existingUser.userID === user.userID){
+                    isCurrentUser = true;
+                    break;
+                }
+            }
+            if(!isCurrentUser){
+                this.room.users.push(user)
+                // this.room.users.push(user) = this.room.users ? [...this.room.users].push({...user}) : [...this.room.users];
+            }
+        }
 
-        //     }
-        // }
 
 
         if(this.room && this.room.roomId === roomId)
@@ -218,22 +226,25 @@ export default class QuestionAnswerManager{
 
     clear(){
         this.current_roomID = null;
+        this.current_userID = null;
         this.room = null;
     }
 
-    addQuestion(roomId: string, question: Question){
+   async addQuestion(roomId: string, question: Question){
         // const local_room = this.rooms.get(roomId);
 
         // if(this.room){
         //     this.room.questions.push(question);
         // }
+        const { play } = useSoundAud();
+        await play('QuestionIncoming');
         if(this.room){
             this.room = {
                 ...this.room,
                 questions: [...(this.room.questions || []), {...question}]
             };
         }        
-        
+        console.log('question QA', question);
         if(this.room && this.room.roomId == roomId){
             this.dispatch(addQuestion(question));
             this.dispatch(setSocketWaiting(false));
@@ -258,7 +269,6 @@ export default class QuestionAnswerManager{
             if(answer && answer.questionID){
                 const index = this.room.questions.findIndex(question => question.id === answer.questionID);
                 questionIndex = index;
-                console.log('current question', this.room);
 
                 if(index !== -1){
                     if(this.room && this.room.questions[index]) {
@@ -278,10 +288,15 @@ export default class QuestionAnswerManager{
                 
                 if(this.room && this.room.roomId == roomId){
                     this.dispatch(addAnswer(this.room.questions[questionIndex].answers[ this.room.questions[questionIndex].answers.length -1]));
-                    if(!this.room.isManagedByIA){
-                        this.dispatch(setSocketWaiting(true));
+                    if(!this.room.isManagedByIA ){
+                        if(this.current_userID && this.current_userID === answer.userID){
+                            this.dispatch(setSocketWaiting(true));
+                            
+                        }
                     }else{
-                        this.dispatch(passToNextQuestion())
+                        if(this.current_userID && this.current_userID === answer.userID){
+                             this.dispatch(passToNextQuestion())                  
+                        }
                     }
                     // this.dispatch(reduiceQuestionNbr())
                 }

@@ -1,11 +1,12 @@
 import { useAppDispatch, useAppSelector } from '@/app/hooks/redux/redux.hooks';
 import { setEndOfCompetition } from '@/app/hooks/redux/rooms/rooms.slice';
 import { EmitEvent } from '@/app/hooks/services/socket/rooms.gateway';
+import { useSoundAud } from '@/app/hooks/useSound.hook';
 import Question from '@/app/services/entities/question.entity';
 import { UsersTest } from '@/app/services/entities/users.test';
 import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { AppState, ScrollView, StatusBar, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CompetitionInfos from './components-ui/online-competitions/competitionInfos';
@@ -16,7 +17,7 @@ import QuestionAnswer from './components-ui/online-competitions/questionAnswer';
 export default function User() {
   const router = useRouter();
   const dispatch = useAppDispatch()
-
+  const {play} = useSoundAud();
   const [appState, setAppState] = useState(AppState.currentState);
   const {room, socketWaiting, error, nextQuestion} = useAppSelector(state => state.rooms);
   
@@ -28,24 +29,39 @@ export default function User() {
   //find the current user  score by id 
   const score = room && room.users ? (room.users.find(u => u.userID === currentUserId)?.score ?? 0) : 0;
 
-  let questionAnswered = 0;
+  let [questionAnswered, setQuestionAnswered] = useState(0);
 
-  if(room && room.questions){
-    if(room.questions.length > 0){
+useFocusEffect(
+  useCallback(() => {
+      play("waitingQuestion")
+      
+  },[])
+)
+
+  useEffect(() => {
+    if (room && Array.isArray(room.questions) && room.questions.length > 0) {
+      let questionAnsweredCount = 0;
+      
       room.questions.forEach(q => {
-        const answered = q.answers.find(a => a.userID === currentUserId);
-        if(answered){
-          questionAnswered += 1;
-          if(questionAnswered == room.competitionInfo.questionsNbr){
-              setTimeout(() => {
-                dispatch(setEndOfCompetition())
-              }, room.isManagedByIA ? 0 : 2500);
+        if (q.answers) {
+          const answered = q.answers.find(a => a.userID === currentUserId);
+          if (answered) {
+            questionAnsweredCount++;
+            setQuestionAnswered((questionAnsweredCount));
+
           }
         }
+      });
+      if (questionAnsweredCount === room.competitionInfo.questionsNbr) {
+        setTimeout(() => {
+          console.log('ercerture');
+          
+          dispatch(setEndOfCompetition());
+          Events.localRoomClear();
+        }, room.isManagedByIA ? 0 : 2500);
       }
-      )  
     }
-  }
+  }, [room?.questions]);
 
   useEffect(() => {
     // ⏱️ Définir un timer pour passer à la question suivante
@@ -145,7 +161,7 @@ export default function User() {
                                 CreatorName: room ? (room.creatorInfo ? room.creatorInfo.username: ''):'',
                                 CreatorSurname: room ? (room.creatorInfo ? room.creatorInfo.surname: ''):'',
                                 instrunctions: room && room.instructions ? room.instructions.participant:null,
-                                isIA: room ? room.isManagedByIA: false,
+                                isIA: room ? room.isManagedByIA ? true: false : false,
                                 totalMinutes: room ? room.totalTimes: null,
                                 endTime: room ? room.finalHour : null
                       }}          

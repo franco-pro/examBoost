@@ -8,20 +8,20 @@ type CountdownProps = {
 
 export default function Countdown({ targetDateUTC, onFinish }: CountdownProps) {
   const [timeLeft, setTimeLeft] = useState<number>(0); // temps restant en secondes
+  const [hasStart, setStarting] = useState(false);
 
   useEffect(() => {
-    // Calcul du temps restant en secondes
     const targetTime = new Date(targetDateUTC).getTime();
     const now = Date.now();
     const diffSeconds = Math.max(Math.floor((targetTime - now) / 1000), 0);
     setTimeLeft(diffSeconds);
+    setStarting(true);
 
     const interval = setInterval(() => {
-      setTimeLeft(prev => {
+      setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
-          onFinish(); // déclenche la fonction parent
-          return 0;
+          return 0; // ✅ juste maj du state ici
         }
         return prev - 1;
       });
@@ -29,6 +29,15 @@ export default function Countdown({ targetDateUTC, onFinish }: CountdownProps) {
 
     return () => clearInterval(interval);
   }, [targetDateUTC]);
+
+  // ⚡ déclenche le callback une fois timeLeft = 0 (après le rendu)
+  useEffect(() => {
+    if (timeLeft === 0 && hasStart) {
+      console.log('timer off')
+      setStarting(false)
+      onFinish();
+    }
+  }, [timeLeft]);
 
   // Calcul minutes et secondes pour affichage
   const minutes = Math.floor(timeLeft / 60);

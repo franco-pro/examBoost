@@ -1,13 +1,14 @@
 import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
 import { VStack } from '@/components/ui/vstack';
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
+import React, { useCallback, useState } from 'react';
 import { Text } from 'react-native';
 
 import { useAppDispatch, useAppSelector } from '../hooks/redux/redux.hooks';
+import { resetRoomState } from '../hooks/redux/rooms/rooms.slice';
 import { fetchRoomCreate } from '../hooks/redux/rooms/rooms.thunks';
 import { EmitEvent, initializeRoomsGateway } from '../hooks/services/socket/rooms.gateway';
+import { useSoundAud } from '../hooks/useSound.hook';
 import { UsersTest } from '../services/entities/users.test';
 
 export default function Competition(){
@@ -15,7 +16,7 @@ export default function Competition(){
 
   const dispatch = useAppDispatch();
   const { loading, error, room} = useAppSelector((state) => state.rooms);
-  
+  const {stop} = useSoundAud();
   const router = useRouter();
 
   const [launcDone, setLaunchAsDone] = useState(false);
@@ -27,31 +28,25 @@ export default function Competition(){
       imgUrl: "",
       score: 0,
     }
-  
-
-  if(loading) {
-      <Spinner size="large" color="blue" />
-      {
-        console.log('done')
-        console.log('room:', room)
-
-      }
- };
-  
-  if(launcDone) {
-    // ToastManager({message: error ?? 'Errro type', type: 'error'})
-  }
 
   
   function navigate(route: string){
     router.push(route as any);
   }
   
+  useFocusEffect(
+    useCallback(() => {
+        stop();
+      return async () => {
+      };
+    },[])
+  )
 
   function createRoomOrJoinRoom(){
 
     if(!launcDone || !room){
        let response : any;
+       dispatch(resetRoomState())
 
         dispatch(fetchRoomCreate({name: 'room test', topic: 'General Knowledge', userID: 1, competitionID: 1, isManagedByIA: true})).unwrap().then((res) => {
         response = res;
@@ -66,7 +61,7 @@ export default function Competition(){
     }else{
       // join the room
 
-      initializeRoomsGateway(dispatch, room);
+      initializeRoomsGateway(dispatch, room, user.id);
       const eventManager = EmitEvent(dispatch, room);
       if(room){
       eventManager.joinRoom({roomId: room.roomId, userID: user.id, username: 'Host User', imgUrl: 'https://i.ibb.co/7R4DyhQ/Avatar-1.jpg', surname: 'UserSurname'});

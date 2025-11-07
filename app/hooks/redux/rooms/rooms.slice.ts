@@ -21,8 +21,16 @@ import { fetchRoomCreate } from './rooms.thunks';
         name: 'room',
         initialState,
         reducers: {
-            setRoomId(state, action) {
-                state.room ? (state.room.roomId = action.payload) : null
+            setRoomNull(state) {
+                state.roomResult = null;
+                state.loading = false
+                state.error = null
+                state.socketWaiting = false;
+                state.competitionFinished = false;
+                state.competitionStop = false;
+                state.message = null
+                state.timerOff = false;  
+                state.nextQuestion = false;  
             },
             setRomm(state, action){
                 state.room = action.payload;
@@ -47,6 +55,7 @@ import { fetchRoomCreate } from './rooms.thunks';
             },
 
             passToNextQuestion(state){
+                state.socketWaiting = false;
                 state.nextQuestion = state.nextQuestion ? false:true;
             },
 
@@ -96,7 +105,10 @@ import { fetchRoomCreate } from './rooms.thunks';
 
             addQuestion(state, action){
                 if(state.room){
+                    console.log('state before added Q', state.room.questions)
                     state.room.questions.unshift(action.payload);   
+                    console.log('state after added Q', state.room.questions)
+
                 }
             },
 
@@ -123,7 +135,15 @@ import { fetchRoomCreate } from './rooms.thunks';
             },
 
             setEndOfCompetition(state){
-                state.roomResult = state.room;
+                state.roomResult = null;
+                console.log('.......data room befoore', state.room?.questions)
+                
+                if(state.room && !state.roomResult){
+                    state.roomResult = state.room
+                }
+                console.log('.....data roomresult befoore', state.roomResult)
+                
+
                 state.room = null
                 state.loading = false
                 state.error = null
@@ -135,7 +155,7 @@ import { fetchRoomCreate } from './rooms.thunks';
                 state.nextQuestion = false;  
             },
 
-            setTimeOff(state, action){
+            setTimeOff(state){
                 state.timerOff = true;
             },
 
@@ -147,6 +167,7 @@ import { fetchRoomCreate } from './rooms.thunks';
                 state.error = null
                 state.socketWaiting = false;
                 state.competitionFinished = false;
+                state.roomResult = null
                 state.competitionStop = false;
                 state.message = null
                 state.timerOff = false;  
@@ -163,10 +184,15 @@ import { fetchRoomCreate } from './rooms.thunks';
                 state.competitionStop = true;
                 state.timerOff = false;   
                 state.nextQuestion = false;  
-                state.message = action.payload;
+                state.roomResult = null;
+                if(action.payload){
+                    state.message = action.payload;
+                }
 
                 console.log('room clear')
             },
+
+            resetRoomState: () => initialState,
         },
         extraReducers: (builder) => {
             builder
@@ -192,7 +218,7 @@ import { fetchRoomCreate } from './rooms.thunks';
     export default roomSlice.reducer;
     export const { 
         clearRoom, 
-        setRoomId, 
+        setRoomNull, 
         setRomm, 
         setRoomQuestion,
         addConnectedUsers,
@@ -208,5 +234,6 @@ import { fetchRoomCreate } from './rooms.thunks';
         setEndOfCompetition,
         userLeaveRoom,
         reduiceQuestionNbr,
-        passToNextQuestion
+        passToNextQuestion,
+        resetRoomState,
     } = roomSlice.actions;

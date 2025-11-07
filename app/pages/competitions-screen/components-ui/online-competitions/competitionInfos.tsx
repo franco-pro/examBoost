@@ -22,7 +22,7 @@ export default function CompetitionInfos({data, competitionInfo}: CompetitionInf
     const dispatch = useAppDispatch();
 
     function onFinish(){
-        dispatch(setTimeOff(true))
+        dispatch(setTimeOff())
     }
     return (
         <VStack className="absolute top-0 left-0 w-[48%] max-w-[50%]"  space="xs">

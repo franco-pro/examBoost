@@ -1,4 +1,5 @@
-import { useAppSelector } from "@/app/hooks/redux/redux.hooks";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
+import { setRoomNull } from "@/app/hooks/redux/rooms/rooms.slice";
 import { Alert, AlertIcon, AlertText } from "@/components/ui/alert";
 import { Avatar, AvatarFallbackText, AvatarImage } from "@/components/ui/avatar";
 import { Box } from "@/components/ui/box";
@@ -7,8 +8,9 @@ import { InfoIcon } from "@/components/ui/icon";
 import { Switch } from "@/components/ui/switch";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
-import { useState } from "react";
-import { FlatList, View } from "react-native";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
+import { FlatList, ImageBackground, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import UsersResult from "./usersResult";
 
@@ -24,8 +26,24 @@ interface LeaderboardProps {
 
 const Leaderboard = () => {
   const {roomResult } = useAppSelector((state) => state.rooms);
-
+  const dispatch = useAppDispatch();
   const [showResult, setValue] = useState(false);
+
+ 
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        dispatch(setRoomNull());
+        // console.log("roomResult après reset :", store.getState().rooms.roomResult);
+        // console.log("second test",roomResult)
+      };
+    }, [dispatch])
+  );
+
+  // 🧠 Surveille la mise à jour de roomResult (affichera null après reset)
+  useEffect(() => {
+    // console.log("roomResult mis à jour :", roomResult);
+  }, [roomResult])
 
   function onValueChange(){
     if(showResult){
@@ -34,27 +52,24 @@ const Leaderboard = () => {
       setValue(true);
     }
   }
+    const competitionName = roomResult ? roomResult?.roomName : null;
+    const data = roomResult && roomResult.users ? roomResult.users : []
 
-    const competitionName = "General Knowledge Quiz";
-    const data = [
-      { id: 1, username: "John Doe", score: 1500, imgUrl: "https://png.pngtree.com/png-clipart/20230927/original/pngtree-man-avatar-image-for-profile-png-image_13001882.png" },
-      { id: 2, username: "Jane Smith", score: 1450, imgUrl: "https://png.pngtree.com/png-clipart/20230927/original/pngtree-man-avatar-image-for-profile-png-image_13001882.png" },
-      { id: 3, username: "Alice Johnson", score: 1400, imgUrl: "https://gluestack.github.io/public-blog-video-assets/john.png" },
-      { id: 4, username: "Connor Sarah", score: 1350, imgUrl: "https://gluestack.github.io/public-blog-video-assets/john.png" },
-      { id: 5, username: "Steph Greps", score: 1300, imgUrl: "https://gluestack.github.io/public-blog-video-assets/john.png" },
-      { id: 6, username: "Hit Karl", score: 1250, imgUrl: "https://gluestack.github.io/public-blog-video-assets/john.png" },
-      { id: 7, username: "Doobit", score: 1200, imgUrl: "https://gluestack.github.io/public-blog-video-assets/john.png" },
-    ];
     const top3 = data.length > 2 ? data.slice(0, 3): data.slice(0, 2);
-    const others = data.length > 2 ? data.slice(3): [];
-  
+    const others = data.length > 2 ? data.slice(3): [];  
+
+        
     return (
     <SafeAreaView style={{ flex: 1 }}>
-        
-        <Box className="flex-1 p-4 bg-sky-100">
+      <ImageBackground
+              source={require('../../../../../assets/others/congrat.jpeg')}
+              style={{ flex: 1 }}
+              resizeMode="cover"
+        >
+        <Box>
           <View className="">
             
-          <Text className="text-2xl font-bold text-center mb-6">
+          <Text className="text-2xl text-white text-center mb-3">
             {competitionName}
           </Text>
     
@@ -68,9 +83,9 @@ const Leaderboard = () => {
                     <AvatarFallbackText>{top3[1].username.split(" ").map((n) => n[0]).join("")}</AvatarFallbackText>
                   )}
                 </Avatar>
-                <Text className="mt-2 font-semibold">{top3[1].username}</Text>
-                <Text className="text-sm text-gray-500">{top3[1].score}</Text>
-                <Text className="text-lg">2-🥈</Text>
+                <Text className="mt-2 text-white">{top3[1].username}</Text>
+                <Text className="text-sm text-white">{top3[1].score}</Text>
+                <Text className="text-lg text-white">2-🥈</Text>
               </VStack>
             )}
     
@@ -84,9 +99,9 @@ const Leaderboard = () => {
                     <AvatarFallbackText>{top3[0].username.split(" ").map((n) => n[0]).join("")}</AvatarFallbackText>
                   )}
                 </Avatar>
-                <Text className="mt-2 font-bold">{top3[0].username}</Text>
-                <Text className="text-sm text-gray-500">{top3[0].score}</Text>
-                <Text size='xl' className='text-primary-defaultOrange'> + 45 000 💰 </Text>
+                <Text className="mt-2 text-white">{top3[0].username}</Text>
+                <Text className="text-sm text-white">{top3[0].score}</Text>
+                <Text size='xl' className='text-primary-defaultOrange'> + {roomResult?.competitionInfo.winnerPrice}💰 </Text>
 
               </VStack>
             )}
@@ -100,9 +115,9 @@ const Leaderboard = () => {
                     <AvatarFallbackText>{top3[2].username.split(" ").map((n) => n[0]).join("")}</AvatarFallbackText>
                   )}
                 </Avatar>
-                <Text className="mt-2 font-semibold">{top3[2].username}</Text>
-                <Text className="text-sm text-gray-500">{top3[2].score}</Text>
-                <Text className="text-lg">3-🥉</Text>
+                <Text className="mt-2 text-white">{top3[2].username}</Text>
+                <Text className="text-sm text-white">{top3[2].score}</Text>
+                <Text className="text-lg text-white">3-🥉</Text>
               </VStack>
             ): null
           
@@ -110,7 +125,7 @@ const Leaderboard = () => {
           </HStack>
           </View>
                 <HStack space="md" className='mb-4 mt-[5px]'>
-            <Text size="xl">Classement</Text>
+            <Text size="xl" className="text-white ml-[20px]">Classement</Text>
 
             <Switch
               defaultValue={showResult}
@@ -133,11 +148,12 @@ const Leaderboard = () => {
                 <HStack className="items-center m-[5px] space-x-2">
                   <Text className="text-white">{index + 4}</Text>
                   <Avatar size="md" className="ml-[5px]">
+                        <AvatarFallbackText>
+                            {item.username.split(" ").map((n) => n[0]).join("")}
+                         </AvatarFallbackText>
                     {item.imgUrl ? (
                       <AvatarImage source={{ uri: item.imgUrl }} />
-                    ) : (
-                      <AvatarFallbackText>{item.username[0]}</AvatarFallbackText>
-                    )}
+                    ) : null}
                   </Avatar>
                   <Text className="text-white ml-[4px]">{item.username}</Text>
                 </HStack>
@@ -164,6 +180,7 @@ const Leaderboard = () => {
         
 
         </Box>
+        </ImageBackground>
         
     </SafeAreaView>
 

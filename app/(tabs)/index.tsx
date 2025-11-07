@@ -9,13 +9,16 @@ import { connectRoomsSocket } from '../hooks/services/socket/socket.init';
 export default function Index() {
   const router = useRouter();
   const socketIo = connectRoomsSocket();  
+  function onPress(){
+    router.navigate("/pages/competitions-screen/components-ui/online-competitions/trophySection")
+  }
   return (
 
     <View className="flex-1 items-center justify-center">
       <Text className="text-error-500 text-lg font-bold">
         Hello world, this is the main screen!
       </Text>
-      <Button className="bg-primary-defaultOrange mt-4">
+      <Button className="bg-primary-defaultOrange mt-4" onPress={onPress}>
         <Text className="text-white">Bouton principal</Text>
       </Button>
    </View>

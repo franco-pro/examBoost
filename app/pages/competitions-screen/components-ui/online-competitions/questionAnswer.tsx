@@ -2,8 +2,9 @@ import CompetitionStopedAlert from '@/app/helper/Dialogs/competitionStoped';
 import DialogConfirm from '@/app/helper/Dialogs/confirm';
 import CompetitionEndedAlert from '@/app/helper/Dialogs/endCompetition';
 import { useAppDispatch, useAppSelector } from '@/app/hooks/redux/redux.hooks';
-import { passToNextQuestion, userLeaveRoom } from '@/app/hooks/redux/rooms/rooms.slice';
+import { userLeaveRoom } from '@/app/hooks/redux/rooms/rooms.slice';
 import { EmitEvent } from '@/app/hooks/services/socket/rooms.gateway';
+import { useSoundAud } from '@/app/hooks/useSound.hook';
 import { UsersTest } from '@/app/services/entities/users.test';
 import { Box } from '@/components/ui/box';
 import { Button, ButtonText } from '@/components/ui/button';
@@ -13,8 +14,9 @@ import { Progress, ProgressFilledTrack } from '@/components/ui/progress';
 import { Spinner } from '@/components/ui/spinner';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
+import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 interface Question {
     id: number;
@@ -36,12 +38,13 @@ interface ComepetitionInfo{
 export default function QuestionAnswer({question, competitionInfo, loading, userData}: {question: Question | null, competitionInfo: ComepetitionInfo, loading: boolean, userData: UsersTest}) {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { room , competitionFinished, competitionStop, message, timerOff} = useAppSelector(state => state.rooms);
+  const { room, roomResult, competitionFinished, competitionStop, message, timerOff} = useAppSelector(state => state.rooms);
   const [timeToAnswer, setTimeToAnswer] = useState(question ? question.timeToAnswer : 0);
   const [isOpen, setIsOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [isAlertCompetOpen, setIsAlertCompEndOpen] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const {play, stop} = useSoundAud();
 
   // ✅ correction principale : éviter les effets pendant le render
   const Envets = useMemo(() => EmitEvent(dispatch, room), [dispatch, room]);
@@ -63,7 +66,7 @@ export default function QuestionAnswer({question, competitionInfo, loading, user
 
   useEffect(() => {
     if(timerOff){
-      console.log('fin de la competition')
+      Envets.setLocalCompetitionEnded()
     }
   }, [timerOff]);
 
@@ -79,33 +82,65 @@ export default function QuestionAnswer({question, competitionInfo, loading, user
     }
   }, [competitionFinished])
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   if (!question?.id) return;
+
+  //   // reset le timer à chaque nouvelle question
+  //   setTimeToAnswer(max);
+
+  //   intervalRef.current = setInterval(() => {
+  //     setTimeToAnswer((prev) => {
+  //       if (prev <= 1) {
+  //         clearInterval(intervalRef.current!);
+  //         sendChoice("???????", question.id);
+  //         // if(room && room.isManagedByIA){
+  //         //     dispatch(passToNextQuestion())
+  //         // }
+  //         return 0;
+  //       }
+  //       return prev - 1;
+  //     });
+  //   }, 1000);
+
+  //   // nettoyage quand la question change ou le composant se démonte
+  //   return () => clearInterval(intervalRef.current!);
+  // }, [question?.id]);
+
+  useFocusEffect(
+    useCallback(() => {
+      // quand la page devient active
     if (!question?.id) return;
 
-    // reset le timer à chaque nouvelle question
-    setTimeToAnswer(max);
+      setTimeToAnswer(max);
 
-    intervalRef.current = setInterval(() => {
-      setTimeToAnswer((prev) => {
-        if (prev <= 1) {
-          clearInterval(intervalRef.current!);
-          sendChoice("???????", question.id);
-          if(room && room.isManagedByIA){
-              dispatch(passToNextQuestion())
+      intervalRef.current = setInterval(() => {
+        setTimeToAnswer((prev) => {
+          if (prev <= 1) {
+            clearInterval(intervalRef.current!);
+            intervalRef.current = null;
+             play("WrongAnswer").then(() => {
+              sendChoice("???????", question?.id);
+            });
+            return 0;
           }
-          return 0;
+          return prev - 1;
+        });
+      }, 1000);
+
+      // nettoyage quand on quitte la page
+      return () => {
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
         }
-        return prev - 1;
-      });
-    }, 1000);
+      };
+    }, [question?.id, question?.timeToAnswer])
+  );
 
-    // nettoyage quand la question change ou le composant se démonte
-    return () => clearInterval(intervalRef.current!);
-  }, [question?.id]);
-
-  function sendChoice(value: string, questionID: number) {
+  async function sendChoice(value: string, questionID: number) {
     // Stopper le timer dès qu’on envoie une réponse
     if (intervalRef.current) {
+      console.log('timer stop')
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
@@ -117,34 +152,39 @@ export default function QuestionAnswer({question, competitionInfo, loading, user
       username: userData.username,
       text: value,
       isCorrect:
-        value.toLowerCase() ===
-        String(question?.correctAnswer).toLowerCase(),
-      timeTaken: max - timeToAnswer,
+        value.toLowerCase() === String(question?.correctAnswer).toLowerCase(),
+      timeTaken: (max - timeToAnswer),
     };
+
+    if(answer.isCorrect){
+      await play('CorrectAnswer');
+    }else{
+      await play('WrongAnswer');
+    }
 
     Envets.sendAnswer(answer);
   }
 
-  function handleLeavingCompetition() {
+ async function handleLeavingCompetition() {
     Envets.leaveCompetition(userData.id);
     dispatch(userLeaveRoom());
     router.back();
   }
 
-  function onClosingConfirm() {
-    setIsAlertOpen(false)
+async function onClosingConfirm() {
+    setIsAlertOpen(false);
+
     router.back();
   }
 
   function onCompetitionEndAlertConfirm(){
-      let am_winner = room && room.users ? room.users.find((user)=>user.userID == user.id)?.isWinner: null;
+
+      let am_winner = roomResult && roomResult.users ? roomResult.users.find((user)=>user.userID == userData.id)?.isWinner: null;
       
       if(am_winner){
-        console.log('am winner naviate..')
-        router.replace("/pages/competitions-screen/components-ui/online-competitions/competitionResult");
+        router.replace("/pages/competitions-screen/components-ui/online-competitions/trophySection");
 
       }else{
-        console.log("not the winner")
         router.replace("/pages/competitions-screen/components-ui/online-competitions/competitionResult");
       }
     setIsAlertCompEndOpen(false);
@@ -180,18 +220,18 @@ export default function QuestionAnswer({question, competitionInfo, loading, user
                         {'\n'}
                         Time left to answer: {'-'}{timeToAnswer} seconds
                       </Text>
-                        <Progress value={timeToAnswer} max={max} className={"w-full h-2 bg-lime-100"+ (timeToAnswer <= max / 2 ? ' animate-pulse' : '')}>
+                        <Progress value={timeToAnswer} max={max} className={"w-full h-2 bg-lime-100"}>
                           <ProgressFilledTrack className="h-2 bg-lime-500" />
                         </Progress>
-                        <Text size="sm" className='italic'>*en cas de non reponse reponse null envoyé automatiquement et + {max} comme temps de reponses.</Text>
+                        <Text size="sm" className='italic'>*en cas de non reponse, une reponse null sera envoyée automatiquement et + {max}s comme temps de reponses.</Text>
                       </VStack>
               
               </VStack> 
 
-              <Box className="flex-row">
+              <Box className="flex-row flex-wrap justify-center">
                 {question.choices.map((choice, index) => (
-                  <Button key={index} variant="outline" onPress={() => sendChoice(choice, question.id)} size="sm" className="ml-2 mr-2 mb-2 py-2 px-4 flex-1">
-                    <ButtonText size="sm">{choice}</ButtonText>
+                  <Button key={index} variant="outline" action="positive" onPress={() => sendChoice(choice, question.id)} size="sm" className="min-w-[90px] m-2 px-4 py-1 flex-shrink w-auto">
+                    <ButtonText size="lg">{choice}</ButtonText>
                   </Button>
                 ))}
               </Box>

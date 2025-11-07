@@ -51,30 +51,11 @@ export default function PopoverInstructions({data}: PopoverInstructionsProps) {
             Instrunctions :
           </Heading>
           <Text className="pt-2 pb-6 pl-1" size="sm">
-             Cher(e) , participant(e), bienvenue dans cette compétition palpitante ({data.competitionName}) !
-             {'\n'}
-              Questions restantes : {data.totalQuestions}
-             {'\n'}
-              Voici quelques instructions pour vous guider tout au long de votre parcours :
-                {'\n'}
-                1. Restez concentrer et attentif aux questions posées.
-                {'\n'}
-                2. Gérez votre temps judicieusement pour maximiser votre score, et vos chances de gagner car le gagnant est déterminé en fonction du temps de réponses à chaque question.
-                {'\n'}
-                3. Ne quittez surtout pas l'application durant la competition avant de l'avoir terminée, sinon votre progression sera perdue et vous serez exlu.
-                {'\n'}
-                4. Évitez toute forme de tricherie pour garantir une compétition équitable pour tous les participants.
-                {'\n'}
-                5. Si vous etes exclu, vous pourrez toujours rejoindre en mode spectacteur pour suivre la fin de la compétition.
-                {'\n'}
-                6. Amusez-vous et donnez le meilleur de vous-même !
-                {'\n'}
-                Bonne chance, et que le meilleur gagne !
-                {'\n'}
-                Créateur de la compétition : {data.creator}
-                {'\n'}
+             {
+              data.instructions ? 
+              data.instructions : null
+             }
 
-                ExamBoost
           </Text>
         </PopoverBody>
         <PopoverFooter>

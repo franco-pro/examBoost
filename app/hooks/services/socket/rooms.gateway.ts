@@ -10,17 +10,25 @@ import { setSocketWaiting } from "../../redux/rooms/rooms.slice";
 import QuestionAnswerManager from "../rooms-services/question-answer";
 import { connectRoomsSocket, getSocket } from "./socket.init";
 
-export function initializeRoomsGateway(dispatch: any, room: Room) {
+export function initializeRoomsGateway(dispatch: any, room: Room, userID: number) {
   const socket = connectRoomsSocket();
 
   const RoomsQuestionManager = new QuestionAnswerManager(dispatch, room);
+  
+  socket.off("room-joined");
+  socket.off("user-joined");
+  socket.off("new-question");
+  socket.off("user-left");
+  socket.off("competition-ended");
+  socket.off("room-closed");
+  socket.off("n-question-answered");
 
   socket.on("connect", () => {
     console.log("Connected to rooms gateway with ID:", socket.id);
   });
 
   socket.on("room-joined", (RoomInfo: Room) => {
-    RoomsQuestionManager.addRoom(RoomInfo);
+    RoomsQuestionManager.addRoom(RoomInfo, userID);
     RoomsQuestionManager.addConnectedUsers(RoomInfo.roomId, RoomInfo.users);
 
   });
@@ -31,6 +39,7 @@ export function initializeRoomsGateway(dispatch: any, room: Room) {
   });
 
   socket.on("new-question", (data: NewQuestionDto) => {
+    console.log('question received', data);
     RoomsQuestionManager.addQuestion(data.roomId, data.question);
   });
 
@@ -99,9 +108,16 @@ export function EmitEvent(dispatch: any, room: any){
             socket.emit('end-competition')
         },
 
+        setLocalCompetitionEnded: ()=>{
+          RoomsQuestionManager.competitionEnded();
+        },
+
         ViewerLeave: ()=>{
           socket.emit('leave-room')
           RoomsQuestionManager.removeViewer(room.roomId);
+      },
+      localRoomClear: ()=>{
+          RoomsQuestionManager.clear()
       },
         closeCompetition: () => {
             socket.emit("close-Room");

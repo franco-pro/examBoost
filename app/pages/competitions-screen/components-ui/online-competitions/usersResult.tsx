@@ -23,8 +23,8 @@ export default function UsersResult({ room }: UsersAnswersProps) {
 
     return (
         <>
-        <Card size="lg" className="p-5  shadow-xl rounded-lg w-[100%] mt-1">
-            <Heading size="md" className="mb-5">
+        <Card size="lg" className="p-5  shadow-xl bg-gray-500 rounded-lg w-[90%] mt-1">
+            <Heading size="md" className="mb-5 text-white">
                 Questions et réponses :
             </Heading>
             
@@ -38,7 +38,7 @@ export default function UsersResult({ room }: UsersAnswersProps) {
 
                      room.questions.map((q, index) => (
 
-                        <AccordionItem key={q.id ?? index}
+                        <AccordionItem key={`${q.id ?? 'no-id'}-${index}`}
                         value={"item-" + index} className="m-[5px] w-full rounded-lg">
                           <AccordionHeader className="bg-primary-defaultBlue">
                             <AccordionTrigger className="focus:web:rounded-lg">
@@ -65,7 +65,8 @@ export default function UsersResult({ room }: UsersAnswersProps) {
                                     {  q.answers.length && q.answers.length > 0 ? 
                                     (
                                        q.answers.map((u, index) => (
-                                    <Box key={u.id} className="flex-row mb-4 items-center">
+                                      
+                                    <Box key={`${q.id ?? 'no-answer_id'}-${index}`} className="flex-row mb-4 items-center">
                                       <Avatar className="mr-3">
                                         <AvatarFallbackText>
                                           {u.username.split(" ").map((n) => n[0]).join("")}
@@ -89,10 +90,14 @@ export default function UsersResult({ room }: UsersAnswersProps) {
                                                 <Text className="text-xs font-medium">  🔴 </Text>
                                               )
                                           }
+                                          {
+                                            u.timeTaken 
+                                          }{"s"}
                                         </Text>
                                       </VStack>
                                     </Box>
-                                  )) ) : (
+                                    
+                                  )) )  : (
                                     <View className="justify-center items-center">
                                         <VStack className="justify-center items-center">
                                         <Image
@@ -100,13 +105,27 @@ export default function UsersResult({ room }: UsersAnswersProps) {
                                         source={require('../../../../../assets/others/nodata.png')}
                                         alt="image"
                                         />
-                                        <Text>Aucune Questions générées.</Text>
+                                        <Text>Aucune Réponse.</Text>
                 
                                         </VStack>
                                      </View>
                                   )
-                                
+                                  
                                 }
+                                {
+                                    q.answers.length > 0 && q.correctAnswer ? 
+                                    (
+                                        <VStack>
+                                          <Text>Correct Answer: {q.correctAnswer}</Text>
+                                          <Text>Points: {q.points}</Text>
+                                          {room.isManagedByIA && q.explanation ? (
+                                            <Text className="font-bold mt-[3px]">
+                                              Explanation: {q.explanation}
+                                            </Text>
+                                          ) : null}
+                                        </VStack>
+                                      ) : null
+                                  }
 
                             </ScrollView>
 
