@@ -107,6 +107,7 @@ export default function UsersAnswers({competitionName }: UsersAnswersProps) {
                                   )
                                 
                                 }
+                                
 
                             </ScrollView>
 
@@ -124,7 +125,7 @@ export default function UsersAnswers({competitionName }: UsersAnswersProps) {
                           source={require('../../../../../assets/others/nodata.png')}
                           alt="image"
                         />
-                        <Text>Aucune Questions générées.</Text>
+                        <Text>Aucune Questions générées, en attente...</Text>
 
                         </VStack>
                     </View>

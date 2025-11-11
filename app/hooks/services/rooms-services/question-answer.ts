@@ -91,8 +91,7 @@ export default class QuestionAnswerManager{
     }
 
     competitionEnded(){
-        this.current_roomID = null;
-        this.room = null;
+        this.clear()
         this.dispatch(setEndOfCompetition());
     }
 

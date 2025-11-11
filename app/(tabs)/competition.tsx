@@ -36,7 +36,8 @@ export default function Competition(){
   
   useFocusEffect(
     useCallback(() => {
-        stop();
+        stop().then();
+        console.log('sound stop')
       return async () => {
       };
     },[])
@@ -48,7 +49,7 @@ export default function Competition(){
        let response : any;
        dispatch(resetRoomState())
 
-        dispatch(fetchRoomCreate({name: 'room test', topic: 'General Knowledge', userID: 1, competitionID: 1, isManagedByIA: true})).unwrap().then((res) => {
+        dispatch(fetchRoomCreate({name: 'room test', topic: 'General Knowledge', userID: 1, competitionID: 1, isManagedByIA: false})).unwrap().then((res) => {
         response = res;
         setLaunchAsDone(true)
         // navigate('/pages/competitions-screen/owner.online')

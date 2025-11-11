@@ -1,4 +1,5 @@
 import { useAppSelector } from "@/app/hooks/redux/redux.hooks";
+import { useSoundAud } from "@/app/hooks/useSound.hook";
 import { useFocusEffect } from "@react-navigation/native";
 import React from "react";
 import { ScrollView, StatusBar, View } from "react-native";
@@ -9,16 +10,11 @@ import UsersAnswers from "./components-ui/online-competitions/userAnswer";
 
 export default function ViewerScreen() {
       const {room, socketWaiting, error} = useAppSelector(state => state.rooms);
-
+ const {play} = useSoundAud()
          useFocusEffect(
             React.useCallback(() => {
                   //ecran actif
-            
-                  return () => {
-                   //ecran quitté diminué le nbr vues sur le socket.
-                    
-        
-                  };
+              play("waitingQuestion")
               }, [])
           );
 
@@ -43,7 +39,7 @@ export default function ViewerScreen() {
                                         questionNbr: room ? (room.competitionInfo ? room.competitionInfo.questionsNbr : 0):0,
                                         CreatorName: room ? (room.creatorInfo ? room.creatorInfo.username: ''):'',
                                         CreatorSurname: room ? (room.creatorInfo ? room.creatorInfo.surname: ''):'',
-                                        instrunctions: room && room.instructions ? room.instructions.participant:null,
+                                        instrunctions: room && room.instructions ? room.instructions.viewer:null,
                                         isIA: room ? room.isManagedByIA: false,
                                         totalMinutes: room ? room.totalTimes: null,
                                         endTime: room ? room.finalHour : null

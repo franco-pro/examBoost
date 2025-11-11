@@ -34,7 +34,6 @@ export default function QuizResultScreen() {
         });
     
         return () => {
-          console.log("🚪 Page quittée (perte de focus)");
           unsubscribe();
         };
       }, [navigation])

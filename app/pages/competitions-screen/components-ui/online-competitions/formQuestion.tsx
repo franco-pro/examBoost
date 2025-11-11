@@ -81,7 +81,6 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
  function onCompetitionEndAlertConfirm(){
     setIsAlertCompEndOpen(false)
     dispatch(setEndOfCompetition())
-    Events.end()
     router.replace("/pages/competitions-screen/components-ui/online-competitions/competitionResult");
   }
 
@@ -167,6 +166,7 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
   if(room && !competitionFinished){
     if(questionsNbr == questionSended){
         setTimeout(() => {
+            Events.end();
            setIsAlertCompEndOpen(true)
         }, (Number.parseInt(form.timeToAnswer)+ 10)*1000);
     }

@@ -53,9 +53,9 @@ export function initializeRoomsGateway(dispatch: any, room: Room, userID: number
       RoomsQuestionManager.removeConnectedUser(data.roomId.toString(), data.userID);
   })
 
-  socket.on("competition-ended", (rangking: UserOnline[]) => {
+  socket.on("competition-ended", (rangking: any[]) => {
     console.log('competition finished:', rangking);
-    
+    RoomsQuestionManager.competitionEnded();
   })
 
   socket.on("room-closed", (data: RoomClosedDto) => {

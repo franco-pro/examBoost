@@ -1,5 +1,7 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
-import React, { useState } from "react";
+import { useSoundAud } from "@/app/hooks/useSound.hook";
+import { useFocusEffect } from "expo-router";
+import React, { useCallback, useState } from "react";
 import { ScrollView, StatusBar, View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CompetitionInfos from "./components-ui/online-competitions/competitionInfos";
@@ -13,8 +15,14 @@ export default function OwnerCompetitionsScreen() {
       const [switchQA, setSwitchQA] =  useState(false);
       const {room, socketWaiting, error} = useAppSelector(state => state.rooms);
       const dispatch = useAppDispatch();
+      const {play} = useSoundAud()
 
-
+  useFocusEffect(
+    useCallback(() => {
+        play("waitingQuestion")
+        
+    },[])
+  )
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <StatusBar hidden={true} />
@@ -34,7 +42,7 @@ export default function OwnerCompetitionsScreen() {
                                                     questionNbr: room ? (room.competitionInfo ? room.competitionInfo.questionsNbr : 0):0,
                                                     CreatorName: room ? (room.creatorInfo ? room.creatorInfo.username: ''):'',
                                                     CreatorSurname: room ? (room.creatorInfo ? room.creatorInfo.surname: ''):'',
-                                                    instrunctions: room && room.instructions ? room.instructions.participant:null,
+                                                    instrunctions: room && room.instructions ? room.instructions.owner:null,
                                                     isIA: room ? room.isManagedByIA: false,
                                                     totalMinutes: room ? room.totalTimes: null,
                                                     endTime: room ? room.finalHour : null

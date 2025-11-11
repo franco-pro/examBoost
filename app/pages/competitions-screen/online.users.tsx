@@ -52,7 +52,8 @@ useFocusEffect(
           }
         }
       });
-      if (questionAnsweredCount === room.competitionInfo.questionsNbr) {
+
+      if (room.isManagedByIA && (questionAnsweredCount === room.competitionInfo.questionsNbr)) {
         setTimeout(() => {
           console.log('ercerture');
           

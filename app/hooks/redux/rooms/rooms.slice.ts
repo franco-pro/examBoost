@@ -136,12 +136,10 @@ import { fetchRoomCreate } from './rooms.thunks';
 
             setEndOfCompetition(state){
                 state.roomResult = null;
-                console.log('.......data room befoore', state.room?.questions)
                 
                 if(state.room && !state.roomResult){
                     state.roomResult = state.room
                 }
-                console.log('.....data roomresult befoore', state.roomResult)
                 
 
                 state.room = null
