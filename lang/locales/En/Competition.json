@@ -1,0 +1,72 @@
+{"accueil" :{
+  "greeting": "Hello Jean 👋",
+  "subtitle": "Here’s a summary of your competition activities",
+  "statistics": {
+    "created_competitions": "Created competitions",
+    "total_participations": "Total participations",
+    "total_wins": "Total wins",
+    "total_deposits": "Total deposits"
+  },
+  "actions_title": "What would you like to do?",
+  "actions": {
+    "my_creations": {
+      "title": "My creations",
+      "description": "View your created competitions"
+    },
+    "my_participations": {
+      "title": "My participations",
+      "description": "View your participations and results"
+    }
+  }
+},
+"mycompetition" : {
+  "hello": "Hello {{name}} 👋",
+  "welcome": "Find here all the competitions you participate in and their current status",
+  "search": "Search a competition",
+  "ended": "Completed competitions",
+  "won": "Competitions won",
+  "discover": "+20 competitions await you,",
+  "explore": "Explore them now",
+  "join": "Join a competition",
+  "my_participations": "My participations",
+  "participants": "{{count}} participants",
+  "time_passed": "Time passed to register",
+  "days_left": "{{days}} days {{hours}} hr left",
+  "status": {
+    "UPCOMING": "Upcoming",
+    "ONGOING": "Ongoing",
+    "COMPLETED": "Completed",
+    "CANCELLED": "Cancelled"
+  },
+  "back": "Back"
+},
+"participation" : {
+  "back": "Back",
+  "greeting": "Hello Jean 👋",
+  "subtitle": "Find here all the competitions you are participating in and their current status",
+  "search_placeholder": "Search for a competition",
+  "statistics": {
+    "completed": "Completed competitions",
+    "wins": "Won competitions"
+  },
+  "discover": {
+    "title": "+20 competitions are waiting for you",
+    "subtitle": "Explore them now",
+    "button": "Join a competition"
+  },
+  "section_title": "My participations",
+  "labels": {
+    "joined": "joined",
+    "time_left": "{{days}} days {{hours}} hr left",
+    "time_passed": "Registration time passed",
+    "status": {
+      "UPCOMING": "Upcoming",
+      "ONGOING": "Ongoing",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled"
+    }
+  }
+
+}
+
+}
