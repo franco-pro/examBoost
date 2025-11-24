@@ -10,47 +10,53 @@ import { Box } from '@/components/ui/box';
 import { Button, ButtonText } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
 import { Icon, TrashIcon } from '@/components/ui/icon';
+import { Spinner } from '@/components/ui/spinner';
 import { Text } from '@/components/ui/text';
 
 interface DialogDeleteProps {
   isOpen: boolean;
-  onClose: () => void;
+  headText: string,
+  bodyText: string,
+  isLoading: boolean,
+  onClose: () => void,
+  onConfirm: ()=> void;
 }
-export default function DialogDelete({isOpen, onClose}: DialogDeleteProps) {  
+export default function DialogDelete({isOpen, isLoading, onClose, onConfirm, headText, bodyText}: DialogDeleteProps) {  
   return (
     <>
-      <Button>
-        <ButtonText>Delete Invoice</ButtonText>
-      </Button>
       <AlertDialog isOpen={isOpen} onClose={onClose}>
         <AlertDialogBackdrop />
-        <AlertDialogContent className="w-full max-w-[415px] gap-4 items-center">
+        <AlertDialogContent className="w-[90%] max-w-[415px] gap-4 items-center">
           <Box className="rounded-full h-[52px] w-[52px] bg-background-error items-center justify-center">
-            <Icon as={TrashIcon} size="lg" className="stroke-error-500" />
+            <Icon as={TrashIcon} size="80" className="stroke-error-500" />
           </Box>
           <AlertDialogHeader className="mb-2">
-            <Heading size="md">Delete account?</Heading>
+            <Heading size="md">{headText}</Heading>
           </AlertDialogHeader>
           <AlertDialogBody>
-            <Text size="sm" className="text-center">
-              The invoice will be deleted from the invoices section and in the
-              documents folder. This cannot be undone.
+            <Text size="xl" className="text-center">
+                {bodyText}
             </Text>
           </AlertDialogBody>
           <AlertDialogFooter className="mt-5">
             <Button
-              size="sm"
+              size="xl"
               action="negative"
-              onPress={onClose}
+              onPress={onConfirm}
               className="px-[30px]"
             >
-              <ButtonText>Delete</ButtonText>
+              <ButtonText>
+                Delete
+                  {
+                    isLoading && <Spinner  size="small" color="blue"/>
+                  }
+              </ButtonText>
             </Button>
             <Button
               variant="outline"
               action="secondary"
               onPress={onClose}
-              size="sm"
+              size="xl"
               className="px-[30px]"
             >
               <ButtonText>Cancel</ButtonText>

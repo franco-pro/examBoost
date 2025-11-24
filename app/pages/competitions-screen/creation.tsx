@@ -1,14 +1,25 @@
+import { clearData, setSelectedCompetition } from "@/app/hooks/redux/competitions/competitions.slice";
+import { getMyCompetitions } from "@/app/hooks/redux/competitions/competitions.thunks";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
+import { Image } from '@/components/ui/image';
+import { Spinner } from "@/components/ui/spinner";
+import { VStack } from "@/components/ui/vstack";
 import {
-    FontAwesome5,
-    Ionicons
+  FontAwesome5,
+  Ionicons
 } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { JSX } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { JSX, useEffect, useState } from "react";
+import { RefreshControl, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
 export default function Creation() {
   const router = useRouter();
+  const {myCompetitionList, loading} = useAppSelector((state)=> state.competitions);
+  const userId = 1;
+  const [refreshing, setRefreshing] = useState(false);
+  const dispatch = useAppDispatch();
+  
   type RoutePath =
     | "../pages/competitions-screen/creation"
     | "../pages/competitions-screen/participant";
@@ -35,220 +46,27 @@ export default function Creation() {
     },
   ];
 
-  const competitions: {
-    id: number;
-    name: string;
-    description: string;
-    topic: string;
-    date: string; // ISO string
-    registration_deadline: string; // ISO string
-    entryFee: number;
-    winnerPrice: number;
-    isPublic: boolean;
-    isManagedByIA: boolean;
-    statut: "UPCOMING" | "ONGOING" | "COMPLETED";
-    maxUsers: number;
-    minUsers: number;
-    roomID: string;
-    type:
-      | "FREE_REGISTRATION_WITH_WINNER_PRICE"
-      | "PAID_REGISTRATION_WITH_WINNER_PRICE"
-      | "TOTAL_FREE_NO_PRICE_TO_WIN";
-    creatorID: number;
-    creatorData: {
-      id: number;
-      name: string;
-    };
-    created_at: string; // ISO string
-    updated_at: string; // ISO string
-    users: {
-      id: number;
-      name: string;
-    }[];
-  }[] = [
-    {
-      id: 1,
-      name: "CodeMaster Challenge",
-      description:
-        "Affronte d'autres développeurs dans un concours de programmation rapide.",
-      topic: "Algorithmique",
-      date: "2025-10-15T14:00:00Z",
-      registration_deadline: "2025-10-10T23:59:00Z",
-      entryFee: 0,
-      winnerPrice: 50000,
-      isPublic: true,
-      isManagedByIA: false,
-      statut: "UPCOMING",
-      maxUsers: 10,
-      minUsers: 2,
-      roomID: "RM12345",
-      type: "FREE_REGISTRATION_WITH_WINNER_PRICE",
-      creatorID: 1,
-      creatorData: { id: 1, name: "Jean Dev" },
-      created_at: "2025-09-20T10:00:00Z",
-      updated_at: "2025-09-21T10:00:00Z",
-      users: [
-        { id: 2, name: "Ange Codeur" },
-        { id: 3, name: "Sarah Tech" },
-      ],
-    },
-    {
-      id: 2,
-      name: "Battle of Architects",
-      description:
-        "Un concours de conception 3D pour les ingénieurs et architectes.",
-      topic: "Architecture",
-      date: "2025-10-20T16:00:00Z",
-      registration_deadline: "2025-10-18T23:00:00Z",
-      entryFee: 2000,
-      winnerPrice: 20000,
-      isPublic: true,
-      isManagedByIA: false,
-      statut: "ONGOING",
-      maxUsers: 15,
-      minUsers: 3,
-      roomID: "RM56789",
-      type: "PAID_REGISTRATION_WITH_WINNER_PRICE",
-      creatorID: 2,
-      creatorData: { id: 2, name: "Marie Architecte" },
-      created_at: "2025-09-25T09:00:00Z",
-      updated_at: "2025-09-26T10:30:00Z",
-      users: [
-        { id: 4, name: "Lucas Design" },
-        { id: 5, name: "Emma Build" },
-      ],
-    },
-    {
-      id: 3,
-      name: "IA Coding Marathon",
-      description:
-        "Une compétition en intelligence artificielle sur la vision par ordinateur.",
-      topic: "Intelligence Artificielle",
-      date: "2025-09-28T09:00:00Z",
-      registration_deadline: "2025-09-25T22:00:00Z",
-      entryFee: 0,
-      winnerPrice: 0,
-      isPublic: true,
-      isManagedByIA: true,
-      statut: "COMPLETED",
-      maxUsers: 5,
-      minUsers: 2,
-      roomID: "RM88888",
-      type: "TOTAL_FREE_NO_PRICE_TO_WIN",
-      creatorID: 3,
-      creatorData: { id: 3, name: "David IA" },
-      created_at: "2025-09-10T10:00:00Z",
-      updated_at: "2025-09-29T08:00:00Z",
-      users: [
-        { id: 6, name: "Clara Bot" },
-        { id: 7, name: "Noah ML" },
-      ],
-    },
-    {
-      id: 3,
-      name: "IA Coding Marathon",
-      description:
-        "Une compétition en intelligence artificielle sur la vision par ordinateur.",
-      topic: "Intelligence Artificielle",
-      date: "2025-09-28T09:00:00Z",
-      registration_deadline: "2025-09-25T22:00:00Z",
-      entryFee: 0,
-      winnerPrice: 0,
-      isPublic: true,
-      isManagedByIA: true,
-      statut: "COMPLETED",
-      maxUsers: 5,
-      minUsers: 2,
-      roomID: "RM88888",
-      type: "TOTAL_FREE_NO_PRICE_TO_WIN",
-      creatorID: 3,
-      creatorData: { id: 3, name: "David IA" },
-      created_at: "2025-09-10T10:00:00Z",
-      updated_at: "2025-09-29T08:00:00Z",
-      users: [
-        { id: 6, name: "Clara Bot" },
-        { id: 7, name: "Noah ML" },
-      ],
-    },
-    {
-      id: 3,
-      name: "IA Coding Marathon",
-      description:
-        "Une compétition en intelligence artificielle sur la vision par ordinateur.",
-      topic: "Intelligence Artificielle",
-      date: "2025-09-28T09:00:00Z",
-      registration_deadline: "2025-09-25T22:00:00Z",
-      entryFee: 0,
-      winnerPrice: 0,
-      isPublic: true,
-      isManagedByIA: true,
-      statut: "COMPLETED",
-      maxUsers: 5,
-      minUsers: 2,
-      roomID: "RM88888",
-      type: "TOTAL_FREE_NO_PRICE_TO_WIN",
-      creatorID: 3,
-      creatorData: { id: 3, name: "David IA" },
-      created_at: "2025-09-10T10:00:00Z",
-      updated_at: "2025-09-29T08:00:00Z",
-      users: [
-        { id: 6, name: "Clara Bot" },
-        { id: 7, name: "Noah ML" },
-      ],
-    },
-    {
-      id: 3,
-      name: "IA Coding Marathon",
-      description:
-        "Une compétition en intelligence artificielle sur la vision par ordinateur.",
-      topic: "Intelligence Artificielle",
-      date: "2025-09-28T09:00:00Z",
-      registration_deadline: "2025-09-25T22:00:00Z",
-      entryFee: 0,
-      winnerPrice: 0,
-      isPublic: true,
-      isManagedByIA: true,
-      statut: "COMPLETED",
-      maxUsers: 5,
-      minUsers: 2,
-      roomID: "RM88888",
-      type: "TOTAL_FREE_NO_PRICE_TO_WIN",
-      creatorID: 3,
-      creatorData: { id: 3, name: "David IA" },
-      created_at: "2025-09-10T10:00:00Z",
-      updated_at: "2025-09-29T08:00:00Z",
-      users: [
-        { id: 6, name: "Clara Bot" },
-        { id: 7, name: "Noah ML" },
-      ],
-    },
-    {
-      id: 3,
-      name: "IA Coding Marathon",
-      description:
-        "Une compétition en intelligence artificielle sur la vision par ordinateur.",
-      topic: "Intelligence Artificielle",
-      date: "2025-09-28T09:00:00Z",
-      registration_deadline: "2025-09-25T22:00:00Z",
-      entryFee: 0,
-      winnerPrice: 0,
-      isPublic: true,
-      isManagedByIA: true,
-      statut: "COMPLETED",
-      maxUsers: 5,
-      minUsers: 2,
-      roomID: "RM88888",
-      type: "TOTAL_FREE_NO_PRICE_TO_WIN",
-      creatorID: 3,
-      creatorData: { id: 3, name: "David IA" },
-      created_at: "2025-09-10T10:00:00Z",
-      updated_at: "2025-09-29T08:00:00Z",
-      users: [
-        { id: 6, name: "Clara Bot" },
-        { id: 7, name: "Noah ML" },
-      ],
-    },
-  ];
+  useEffect(()=> {
+    if(myCompetitionList.length == 0 && !refreshing){
+        dispatch(getMyCompetitions(userId))
+    }
+  }, [])
+
+  function goToCompetitionInfoScreen(id: number){
+        const competitionSelected = myCompetitionList.find((comp) => comp.id == id);
+        if(competitionSelected){
+          dispatch(setSelectedCompetition(competitionSelected));
+  
+          router.push({
+            pathname: "./information",
+            params: {
+              id: id,
+            },
+          })
+  
+        }
+       
+    }
 
   function timePassed(deadline: string, date: string): string {
     const date1 = new Date(deadline);
@@ -267,6 +85,17 @@ export default function Creation() {
       return `${diffDays} days ${diffHrs} hr to register`;
     }
   }
+
+    const onRefresh = () => {
+      dispatch(clearData())
+      setRefreshing(true);
+  
+        dispatch(getMyCompetitions(userId))
+        console.log("Page actualisée !");
+  
+        setRefreshing(false);
+    };
+
   return (
     
     <View className="flex-1 bg-gray-50 pt-[40px] pb-[50px] px-4">
@@ -322,20 +151,26 @@ export default function Creation() {
         <Ionicons name="chevron-forward" size={22} color="#ffffff" />
       </TouchableOpacity>
 
-      <ScrollView className="mt-2">
-        {competitions.map((comp, index) => {
+      <ScrollView className="mt-2"
+        contentContainerStyle={{ flexGrow: 1 }}
+        refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                    colors={["#2196F3"]} // couleur Android
+                    tintColor="#2196F3" // couleur iOS
+                  />
+                }
+      
+      >
+        {myCompetitionList.length != 0 && myCompetitionList.map((comp, index) => {
           return (
             <TouchableOpacity
               key={index}
               className="bg-white rounded-2xl flex-row p-4 mb-3 shadow-sm items-center"
               // onPress={() => router.push(act.link)}
                onPress={() =>
-                router.push({
-                  pathname: "./information",
-                  params: {
-                    id: comp.id,
-                  },
-                })
+                goToCompetitionInfoScreen(comp.id)
               }
             >
               <View className="ml-3 pr-2 flex-1">
@@ -343,7 +178,12 @@ export default function Creation() {
                 <View className="flex-row items-center justify-between">
                   <Text className="text-lg font-semibold">{comp.name}</Text>
                   <Text className="text-xs text-gray-400">
-                    {timePassed(comp.registration_deadline, comp.date)}
+                    {/* {timePassed(comp.registration_deadline, comp.date)} */}
+                    deadline:  {new Date(comp.registration_deadline).toLocaleDateString("fr-FR", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
                   </Text>
                 </View>
 
@@ -366,7 +206,7 @@ export default function Creation() {
                       className="mr-1"
                     />
                     <Text className="text-sm text-gray-700">
-                      {comp.users.length} joined
+                      {comp.suscribers.length} joined
                     </Text>
                   </View>
                   <View
@@ -389,6 +229,30 @@ export default function Creation() {
             </TouchableOpacity>
           );
         })}
+
+        {
+          myCompetitionList.length == 0 && loading && !refreshing &&
+           <VStack className="justify-center items-center">
+            <Spinner  size="large" color="blue"/> 
+            <Text>Loading...</Text>
+
+          </VStack>
+        }
+
+        {
+          myCompetitionList.length == 0 && !loading && !refreshing &&
+          <View className="justify-center items-center">
+            <VStack className="justify-center items-center">
+              <Image
+                size="2xl"
+                source={require('../../../assets/images/no_404.jpg')}
+                alt="image"
+              />
+              <Text>Aucune creation ...</Text>
+
+              </VStack>
+        </View>
+        }
       </ScrollView>
     </View>
   );
