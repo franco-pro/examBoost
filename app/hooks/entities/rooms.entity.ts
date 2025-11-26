@@ -8,12 +8,13 @@ export interface Room {
     competitionID: number;
     creatorID: number;
     users: UserOnline[];
-    viewers: any;
+    spectators: number;
     questions: Question[];
     rangking: UserOnline[];
     isManagedByIA: boolean;
     createdAt: any;
     isActive: boolean;
+    role: string,
     totalTimes: number | null;
     finalHour: Date | null;
     instructions: {participant: string, owner: string, viewer: string} | null;

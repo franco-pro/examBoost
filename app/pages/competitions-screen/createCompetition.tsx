@@ -164,7 +164,6 @@ export default function CreateCompetitionForm() {
   }, [actionDone])
 
   function showToast(message: string){
-    console.log('execute')
     Toast.show({
       type: 'success',
       text1: 'Success!',

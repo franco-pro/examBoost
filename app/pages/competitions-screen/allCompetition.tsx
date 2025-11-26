@@ -1,14 +1,15 @@
 import { clearData, setSelectedCompetition } from "@/app/hooks/redux/competitions/competitions.slice";
 import { getCompetitionList } from "@/app/hooks/redux/competitions/competitions.thunks";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
+import { useSoundAud } from "@/app/hooks/useSound.hook";
 import { tempsRestant } from "@/app/services/compeititonService/dayleft";
 import Filter from "@/components/layouts/filter/searchBar";
 import { Image } from '@/components/ui/image';
 import { Spinner } from "@/components/ui/spinner";
 import { VStack } from "@/components/ui/vstack";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next"; // <- import i18n
 import { RefreshControl, Text, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -18,23 +19,19 @@ export default function AllCompetition() {
   const { t } = useTranslation("competition"); // <- hook i18n
   const {competitionList, loading} = useAppSelector((state) => state.competitions);
   const [refreshing, setRefreshing] = useState(false);
-  
+  const {stop} = useSoundAud();
+
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  // useFocusEffect(
-  //   useCallback(()=>{
-  //     if(competitionList.length == 0){
-  //       setTimeout(() => {
-  //         console.log('exectute')
-  //          dispatch(getCompetitionList())
-  //       }, 3000);
-  //     }
-  //     return ()=>{
-  //       console.log('competition list leave')
-  //     }
-  //   }, [])
-  // )
+  useFocusEffect(
+    useCallback(()=>{
+      stop();
+      // return ()=>{
+      //   console.log('competition list leave')
+      // }
+    }, [])
+  )
 
   useEffect(()=>{
     if(competitionList.length == 0 && !refreshing){
@@ -163,11 +160,20 @@ export default function AllCompetition() {
                   <View className="flex-row items-center justify-between">
                     <Text className="text-lg font-semibold">{comp.name}</Text>
                     <Text className="text-xs text-gray-400">
-                      {comp.statut === "UPCOMING" &&
+                      {comp.statut === "UPCOMING" && 
+                      tempsRestant(comp.registration_deadline).valid &&
                         t("participation.labels.time_left", {
                           days: tempsRestant(comp.registration_deadline).day,
                           hours: tempsRestant(comp.registration_deadline).hours,
-                        })}
+                          min: tempsRestant(comp.registration_deadline).minutes,
+                        })
+                        }
+
+                      {comp.statut === "UPCOMING" && 
+                      !tempsRestant(comp.registration_deadline).valid &&
+                        t("participation.labels.time_passed")
+                      }
+
                       {comp.statut !== "UPCOMING" &&
                         t("participation.labels.time_passed")}
                     </Text>

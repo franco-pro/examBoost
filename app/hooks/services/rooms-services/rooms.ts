@@ -13,6 +13,11 @@ export default function RoomsHttp() {
             return response.data;
         },
 
+        getResult: async (roomID: string) =>{
+            const response = await api.get(`backup/:${roomID}`);
+            return response.data;
+        },
+
         getAllRoom: async () => {
             const response = await api.get('/list/');
             return response.data;

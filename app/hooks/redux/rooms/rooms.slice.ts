@@ -10,6 +10,7 @@ import { fetchRoomCreate } from './rooms.thunks';
         loading: false,
         error: null,
         socketWaiting: true,
+        waitingLaunching: false,
         competitionFinished: false,
         competitionStop : false,
         timerOff: false,
@@ -25,7 +26,7 @@ import { fetchRoomCreate } from './rooms.thunks';
                 state.roomResult = null;
                 state.loading = false
                 state.error = null
-                state.socketWaiting = false;
+                state.socketWaiting = true;
                 state.competitionFinished = false;
                 state.competitionStop = false;
                 state.message = null
@@ -93,13 +94,13 @@ import { fetchRoomCreate } from './rooms.thunks';
 
             addViewerr(state){
                 if(state.room){
-                    state.room.viewers += 1;
+                    state.room.spectators += 1;
                 }
             },
 
             removeViewer(state){
                 if(state.room){
-                    state.room.viewers -= 1;
+                    state.room.spectators -= 1;
                 }
             },
 
@@ -140,8 +141,7 @@ import { fetchRoomCreate } from './rooms.thunks';
                 if(state.room && !state.roomResult){
                     state.roomResult = state.room
                 }
-                
-
+            
                 state.room = null
                 state.loading = false
                 state.error = null
@@ -164,6 +164,7 @@ import { fetchRoomCreate } from './rooms.thunks';
                 state.loading = false
                 state.error = null
                 state.socketWaiting = false;
+                state.waitingLaunching = false;
                 state.competitionFinished = false;
                 state.roomResult = null
                 state.competitionStop = false;
@@ -178,6 +179,7 @@ import { fetchRoomCreate } from './rooms.thunks';
                 state.loading = false
                 state.error = null
                 state.socketWaiting = false;
+                state.waitingLaunching = false;
                 state.competitionFinished = false;
                 state.competitionStop = true;
                 state.timerOff = false;   
@@ -195,12 +197,14 @@ import { fetchRoomCreate } from './rooms.thunks';
         extraReducers: (builder) => {
             builder
                 .addCase(fetchRoomCreate.pending, (state) => {
+                    state.waitingLaunching = true;
                     state.loading = true
                     state.error = null
                 })
                 .addCase(fetchRoomCreate.fulfilled, (state, action) => {
                     state.loading = false
-                    state.room = action.payload
+                    state.waitingLaunching = false;
+                    state.room = action.payload;
                     state.competitionFinished = false;
                     state.competitionStop = false;
                     state.message = null;
@@ -208,6 +212,8 @@ import { fetchRoomCreate } from './rooms.thunks';
                 })
                 .addCase(fetchRoomCreate.rejected, (state, action) => {
                     state.loading = false
+                    state.waitingLaunching = false;
+                    state.socketWaiting = false;
                     state.error = action.payload as string
                 })
         },

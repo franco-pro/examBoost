@@ -1,6 +1,7 @@
 import { clearData, setSelectedCompetition } from "@/app/hooks/redux/competitions/competitions.slice";
 import { getMyCompetitions } from "@/app/hooks/redux/competitions/competitions.thunks";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
+import { useSoundAud } from "@/app/hooks/useSound.hook";
 import { Image } from '@/components/ui/image';
 import { Spinner } from "@/components/ui/spinner";
 import { VStack } from "@/components/ui/vstack";
@@ -8,8 +9,8 @@ import {
   FontAwesome5,
   Ionicons
 } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import { JSX, useEffect, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { JSX, useCallback, useEffect, useState } from "react";
 import { RefreshControl, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
@@ -19,6 +20,7 @@ export default function Creation() {
   const userId = 1;
   const [refreshing, setRefreshing] = useState(false);
   const dispatch = useAppDispatch();
+  const {stop} = useSoundAud()
   
   type RoutePath =
     | "../pages/competitions-screen/creation"
@@ -45,7 +47,11 @@ export default function Creation() {
       textColor: "text-blue-600",
     },
   ];
-
+  useFocusEffect(
+    useCallback(()=>{
+        stop()
+    }, [])
+  )
   useEffect(()=> {
     if(myCompetitionList.length == 0 && !refreshing){
         dispatch(getMyCompetitions(userId))

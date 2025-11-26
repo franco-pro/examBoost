@@ -48,6 +48,14 @@ const competitionSlice = createSlice({
             state.selectedCompetition = null;
         },
 
+        updateSelectedCompetition(state, action){
+            if(action.payload === "ONGOING" || action.payload === "UPCOMING" || action.payload === "COMPLETED" || action.payload === "CANCELLED"){
+                if (state.selectedCompetition) {
+                    state.selectedCompetition.statut = action.payload;
+                }
+            }
+        },
+
         deleteOnList(state, action){
             const id = action.payload
             if(state.competitionList.length > 0 && id){
@@ -57,9 +65,34 @@ const competitionSlice = createSlice({
 
         updateStatut(state, action){
             if(action.payload){
-                const index = state.competitionList.findIndex((comp)=> comp.id)
+                const index = state.competitionList.findIndex((comp)=> comp.id == action.payload.competitionID)
                 if(index != -1){
-                    state.competitionList[index].statut = action.payload as "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED";;
+                    state.competitionList[index].statut = action.payload.statut as "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED";;
+                }
+
+                //my list
+                const myIndex = state.myCompetitionList.findIndex((comp)=> comp.id == action.payload.competitionID)
+                if(myIndex != -1){
+                    state.myCompetitionList[myIndex].statut = action.payload.statut as "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED";;
+                }
+
+                if(state.selectedCompetition && state.selectedCompetition.id == action.payload.competitionID && action.payload.statut == "ONGOING"){ 
+                    state.selectedCompetition.statut = action.payload.statut;
+                }
+            }
+        },
+
+        updateSuscribers(state, action){
+            if(action.payload){
+                const index = state.competitionList.findIndex((comp)=> comp.id === action.payload.competitionID)
+                if(index != -1){
+                    state.competitionList[index].suscribers.push(action.payload.newSuscriber);
+                }
+
+                //mylist
+                const myIndex = state.myCompetitionList.findIndex((comp)=> comp.id === action.payload.competitionID)
+                if(myIndex != -1){
+                    state.myCompetitionList[myIndex].suscribers.push(action.payload.newSuscriber);
                 }
             }
         },
@@ -204,5 +237,8 @@ export const {
     setSelectedCompetition,
     setSelectedCompetitionNull,
     addCompetition,
-    resetActionDone
+    resetActionDone,
+    updateSuscribers,
+    updateStatut,
+    updateSelectedCompetition
 }  = competitionSlice.actions;

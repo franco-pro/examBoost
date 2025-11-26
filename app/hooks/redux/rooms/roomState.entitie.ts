@@ -6,6 +6,7 @@ export  interface RoomState {
     roomResult: Room | null;
     loading: boolean;
     socketWaiting: boolean;
+    waitingLaunching: boolean;
     competitionFinished: boolean;
     competitionStop: boolean;
     timerOff: boolean;

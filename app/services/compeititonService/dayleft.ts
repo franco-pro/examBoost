@@ -25,12 +25,12 @@ export function tempsRestant(dateISO: any) {
 
     const diff = cible.getTime() - nowCM.getTime();
 
-    if (diff <= 0) return { jours: 0, heures: 0 };
-
+    if (diff <= 0) return { jours: 0, heures: 0, minute: 0, valid: false };
+    
     const jours = Math.floor(diff / (1000 * 60 * 60 * 24));
     const heures = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-
-    return {day: jours, hours: heures };
+    const minute = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    return {day: jours, hours: heures, minutes: minute, valid: (diff > 0)};
 }
 
 // Exemple d’utilisation

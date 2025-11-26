@@ -5,6 +5,7 @@ import SubscriptionState from "./subscriptionState";
 const initialState : SubscriptionState = {
     selectedSubscription: null,
     mySubscriptionList: [],
+    actionDone: false,
     loading : false,
     error: null
 }
@@ -17,6 +18,10 @@ const subscriptionSlice = createSlice({
             if(Array.isArray(action.payload)){
                 state.mySubscriptionList = action.payload;
             }
+        },
+
+        setActionDoneNULL(state){
+            state.actionDone = false;
         },
 
         setSelectedSubscription(state, action){
@@ -64,7 +69,7 @@ const subscriptionSlice = createSlice({
                     state.error = null;
                 })
                 .addCase(createSubscription.fulfilled, (state, action)=>{
-                    addSusbcriptions(action.payload)
+                    state.actionDone = true;
                     state.loading =false;
                     state.error = null;
                 })
@@ -82,5 +87,6 @@ export const {
     setSuscribtionList,
     addSusbcriptions,
     clearSuscriptionState,
-    setSelectedSubscriptionNULL
+    setSelectedSubscriptionNULL,
+    setActionDoneNULL
 } = subscriptionSlice.actions;

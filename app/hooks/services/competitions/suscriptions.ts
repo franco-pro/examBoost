@@ -8,7 +8,7 @@ export default function SubscriptionsHttp(){
 
     return {
         createSubscription: async (data: {userID: number, competitionID: number, score: 0}) =>{
-            const response = await api.get('suscribe')
+            const response = await api.post('suscribe', data)
             return response.data;
         },
 

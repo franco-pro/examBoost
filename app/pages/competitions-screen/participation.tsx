@@ -2,14 +2,16 @@ import { clearSuscriptionState } from "@/app/hooks/redux/competitions-suscriptio
 import { getMyParticipations } from "@/app/hooks/redux/competitions-suscriptions/subscription.thunks";
 import { setSelectedCompetition } from "@/app/hooks/redux/competitions/competitions.slice";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
+import { useSoundAud } from "@/app/hooks/useSound.hook";
+import { tempsRestant } from "@/app/services/compeititonService/dayleft";
 import Filter from "@/components/layouts/filter/searchBar";
 import CardStat from "@/components/layouts/statistique/cardStat";
 import { Image } from '@/components/ui/image';
 import { Spinner } from "@/components/ui/spinner";
 import { VStack } from "@/components/ui/vstack";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import { JSX, useEffect, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { JSX, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next"; // <- import i18n
 import { RefreshControl, Text, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -21,7 +23,16 @@ export default function Participation() {
   const userId = 1;
   const dispatch = useAppDispatch();
   const [refreshing, setRefreshing] = useState(false);
+  const {stop} = useSoundAud()
   
+    useFocusEffect(
+      useCallback(()=>{
+        stop();
+        // return ()=>{
+        //   console.log('competition list leave')
+        // }
+      }, [])
+    )
 
   const statistique: {
     nom: string;
@@ -196,11 +207,19 @@ export default function Participation() {
                 <View className="flex-row items-center justify-between">
                   <Text className="text-lg font-semibold mr-2">{comp.name}</Text>
                   <Text className="text-xs text-gray-400">
-                    {comp.statut === "UPCOMING" &&
-                      t("participation.labels.time_left", {
-                        days: 2,
-                        hours: 5,
-                      })}
+                  {comp.statut === "UPCOMING" && 
+                      tempsRestant(comp.registration_deadline).valid &&
+                        t("participation.labels.time_left", {
+                          days: tempsRestant(comp.registration_deadline).day,
+                          hours: tempsRestant(comp.registration_deadline).hours,
+                          min: tempsRestant(comp.registration_deadline).minutes,
+                        })
+                        }
+
+                      {comp.statut === "UPCOMING" && 
+                      !tempsRestant(comp.registration_deadline).valid &&
+                        t("participation.labels.time_passed")
+                      }
                     {comp.statut !== "UPCOMING" &&
                       t("participation.labels.time_passed")}
                   </Text>
@@ -225,7 +244,7 @@ export default function Participation() {
                       className="mr-1"
                     />
                     <Text className="text-sm text-gray-700">
-                      {comp.suscribers.length} {t("participation.labels.joined")}
+                      { comp.suscribers.length} {t("participation.labels.joined")}
                     </Text>
                   </View>
                   <View

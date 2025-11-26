@@ -6,12 +6,12 @@ const subscriptionsHttp = SubscriptionsHttp();
 
 export const createSubscription = createAsyncThunk(
     'subscription/create',
-    async (data: {userID: number, competitionID: number, score: 0}, {rejectWithValue})=>{
+    async (data: {userID: number, competitionID: number, score: 0, suscribeFromInvitation: boolean}, {rejectWithValue})=>{
         try {
             const response = await subscriptionsHttp.createSubscription(data);
             return response;
         } catch (error: any) {
-            console.log('error on creating subscription', error.message)
+            console.log('error on creating subscription', error)
 
             return rejectWithValue({
                 status: error.response?.status ?? 500,

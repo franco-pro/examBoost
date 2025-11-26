@@ -2,6 +2,7 @@ import { Answer } from "../../entities/answer";
 import { Question } from "../../entities/question";
 import { Room } from "../../entities/rooms.entity";
 import { UserOnline } from "../../entities/user.online.entity";
+import { updateStatut } from "../../redux/competitions/competitions.slice";
 import { addAnswer, addConnectedUsers, addConnetedUser, addQuestion, addViewerr, clearRoom, passToNextQuestion, rangking, removeViewer, setEndOfCompetition, setRomm, setRoomQuestion, setSocketWaiting, setUserDeconnected, userLeaveRoom } from "../../redux/rooms/rooms.slice";
 import { useSoundAud } from "../../useSound.hook";
 import Rangking from "./room.helper";
@@ -80,7 +81,7 @@ export default class QuestionAnswerManager{
         
     }
 
-    closeRoom(roomId: string, message: string){
+    closeRoom(competitionId: number, message: string){
         // let room = this.rooms.get(roomId)
         // if(room){
         //     room.statut = "INACTIF"
@@ -88,11 +89,21 @@ export default class QuestionAnswerManager{
         this.room = null;
         this.current_userID = null;
         this.dispatch(clearRoom(message))
+        this.dispatch(updateStatut({competitionID: competitionId, statut:"CANCELED"}))
+
     }
 
-    competitionEnded(){
+    competitionEnded(competitionID?: number, statut?: string){
         this.clear()
         this.dispatch(setEndOfCompetition());
+        if(competitionID && statut){
+            this.dispatch(updateStatut({competitionID, statut}));
+        }
+    }
+
+    competitionStart(competitionID: number, statut: string){
+        console.log('competition start  aaa', competitionID);
+        this.dispatch(updateStatut({competitionID, statut}));
     }
 
    async addConnectedUser(roomId: string, user: UserOnline){
@@ -168,8 +179,8 @@ export default class QuestionAnswerManager{
         // }
         
         if(this.room){
-            if(this.room.viewers > 0){
-                this.room.viewers -= 1;
+            if(this.room.spectators > 0){
+                this.room.spectators -= 1;
             }
         }
         if(this.room && this.room.roomId === roomId){
