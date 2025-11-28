@@ -19,23 +19,36 @@ export default function RootLayout() {
           contentContainerStyle={{ paddingHorizontal: 15 }}
           text1Style={{
             fontSize: 15,
-            fontWeight: '400'
+            fontWeight: '400',
+            flexWrap: "wrap",
           }}
           text2Style={{
-            fontSize: 18
+            fontSize: 18,
+            fontWeight: '400',
+            flexWrap: "wrap",
+
           }}
+
+          text1NumberOfLines={0}
+          text2NumberOfLines={0}
         />
       ),
       error: (props: any) => (
         <ErrorToast
-          {...props}
-          text1Style={{
-            fontSize: 17
-          }}
-          text2Style={{
-            fontSize: 25
-          }}
-        />
+        {...props}
+        style={{ maxWidth: "90%",  borderLeftColor: 'red'}}
+        text1Style={{
+          fontSize: 17,
+          flexWrap: "wrap",
+        }}
+        text2Style={{
+          fontSize: 18,
+          color: "red",
+          flexWrap: "wrap",
+        }}
+        text1NumberOfLines={1}
+        text2NumberOfLines={10}
+      />
       ),
       // Add more custom types as needed
     };

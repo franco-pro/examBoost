@@ -9,28 +9,53 @@ export default function RoomsHttp() {
 
     return {
         getRoomInfoById: async (id: string) => {
-            const response = await api.get(`info/${id}`);
-            return response.data;
+            try {
+                const response = await api.get(`info/${id}`);
+                
+                return {data: response.data, error: null};
+            } catch (error: any) {
+                return {data: null, error: error.response.data.message};                
+            }
+          
         },
 
         getResult: async (roomID: string) =>{
-            const response = await api.get(`backup/:${roomID}`);
-            return response.data;
+            try {
+                const response = await api.get(`backup/:${roomID}`);
+                
+                return {data: response.data, error: null};
+            } catch (error: any) {
+                return {data: null, error: error.response.data.message};
+            }
         },
 
         getAllRoom: async () => {
-            const response = await api.get('/list/');
-            return response.data;
+            try {
+                const response = await api.get('/list/');
+                return {data: response.data, error: null};
+            } catch (error: any) {
+                return {data: null, error: error.response.data.message};
+            }
+           
         },
 
         createRoom: async (roomData: CreateRoomDto) => {
-            const response = await api.post('/create', roomData);
-            return response.data;
+            try {
+                const response = await api.post('/create', roomData);
+                 return {data: response.data, error: null};
+            } catch (error: any) {
+                return {data: null, error: error.response.data.message};
+            }
+            
         },
 
         closeRoom: async (id: string) => {
-            const response = await api.post(`/close/${id}`);
-            return response.data;
+            try {
+                const response = await api.post(`/close/${id}`);
+                 return {data: response.data, error: null};
+            } catch (error: any) {
+                return {data: null, error: error.response.data.message};
+            }
         }
     };
 }

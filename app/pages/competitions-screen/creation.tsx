@@ -1,4 +1,4 @@
-import { clearData, setSelectedCompetition } from "@/app/hooks/redux/competitions/competitions.slice";
+import { clearData, setCompetitioErrorNull, setSelectedCompetition } from "@/app/hooks/redux/competitions/competitions.slice";
 import { getMyCompetitions } from "@/app/hooks/redux/competitions/competitions.thunks";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
 import { useSoundAud } from "@/app/hooks/useSound.hook";
@@ -13,10 +13,11 @@ import { useFocusEffect, useRouter } from "expo-router";
 import { JSX, useCallback, useEffect, useState } from "react";
 import { RefreshControl, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import Toast from "react-native-toast-message";
 
 export default function Creation() {
   const router = useRouter();
-  const {myCompetitionList, loading} = useAppSelector((state)=> state.competitions);
+  const {myCompetitionList, loading, error, homeBaseData} = useAppSelector((state)=> state.competitions);
   const userId = 1;
   const [refreshing, setRefreshing] = useState(false);
   const dispatch = useAppDispatch();
@@ -34,19 +35,32 @@ export default function Creation() {
   }[] = [
     {
       nom: "Nombre terminees",
-      chiffre: 12,
+      chiffre: homeBaseData?.competitionEnded ? homeBaseData?.competitionEnded : 0,
       icone: <Ionicons name="trophy-outline" size={28} color="#f97316" />,
       bgColor: "bg-orange-100",
       textColor: "text-orange-600",
     },
     {
       nom: "Total particpant",
-      chiffre: 8,
+      chiffre: homeBaseData?.totalParticipants ? homeBaseData.totalParticipants: 0,
       icone: <FontAwesome5 name="users" size={25} color="#3b82f6" />,
       bgColor: "bg-blue-100",
       textColor: "text-blue-600",
     },
   ];
+
+  useFocusEffect(
+    useCallback(()=>{
+        if(error){
+          showToast(error, "Error", "error")
+        }
+      return ()=>{
+          if(error){
+            dispatch(setCompetitioErrorNull())
+          }
+      }
+    }, [error])
+  )
   useFocusEffect(
     useCallback(()=>{
         stop()
@@ -74,6 +88,16 @@ export default function Creation() {
        
     }
 
+   function showToast(message: string, title: string, type: "success"|"error"){
+          Toast.show({
+            type: type,
+            text2: message,
+            text1: title,
+            position: 'top',
+            visibilityTime: 3500,
+          }) 
+      }
+
   function timePassed(deadline: string, date: string): string {
     const date1 = new Date(deadline);
     const date2 = new Date(date);
@@ -97,7 +121,6 @@ export default function Creation() {
       setRefreshing(true);
   
         dispatch(getMyCompetitions(userId))
-        console.log("Page actualisée !");
   
         setRefreshing(false);
     };

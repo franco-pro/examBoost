@@ -20,6 +20,7 @@ export default function Participation() {
   const { t } = useTranslation("competition"); // <- hook i18n
   const router = useRouter();
   const {mySubscriptionList, loading} = useAppSelector((state)=> state.subscriptions);
+  const {homeBaseData} = useAppSelector((state)=> state.competitions);
   const userId = 1;
   const dispatch = useAppDispatch();
   const [refreshing, setRefreshing] = useState(false);
@@ -43,14 +44,14 @@ export default function Participation() {
   }[] = [
     {
       nom: t("participation.statistics.completed"), // Nombre terminees
-      chiffre: 12,
+      chiffre: homeBaseData ? homeBaseData.competitionFinished : 0,
       icone: <Ionicons name="trophy-outline" size={28} color="#f97316" />,
       bgColor: "bg-orange-100",
       textColor: "text-orange-600",
     },
     {
       nom: t("participation.statistics.wins"), // Nombre gagnes
-      chiffre: 8,
+      chiffre: homeBaseData ? homeBaseData.competitionWin : 0,
       icone: <FontAwesome5 name="users" size={25} color="#3b82f6" />,
       bgColor: "bg-blue-100",
       textColor: "text-blue-600",

@@ -46,8 +46,8 @@ export default function QuestionAnswer({question, competitionInfo, loading, user
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const {play, stop} = useSoundAud();
 
-  // ✅ correction principale : éviter les effets pendant le render
-  const Envets = useMemo(() => EmitEvent(dispatch, room), [dispatch, room]);
+  // eviter les effets pendant le render
+  const Envets = useMemo(() => EmitEvent(dispatch, {isManagedByIA: room?.isManagedByIA as any, roomId: room?.roomId as any}), [dispatch, room]);
   const max = question ? question.timeToAnswer : 0;
 
   const datecreation = new Date(competitionInfo.createdAt);
@@ -166,7 +166,7 @@ export default function QuestionAnswer({question, competitionInfo, loading, user
   }
 
  async function handleLeavingCompetition() {
-    Envets.leaveCompetition(userData.id);
+    Envets.leaveCompetition(userData.id, room?.roomId as any);
     dispatch(userLeaveRoom());
     router.back();
   }

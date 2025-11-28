@@ -24,6 +24,10 @@ const subscriptionSlice = createSlice({
             state.actionDone = false;
         },
 
+        setSuscriptionErrorNULL(state){
+            state.error = null;
+        },
+
         setSelectedSubscription(state, action){
             if(action.payload){
                 state.selectedSubscription = action.payload;
@@ -55,7 +59,11 @@ const subscriptionSlice = createSlice({
                     state.error = null;
                 })
                 .addCase(getMyParticipations.fulfilled, (state, action)=>{
-                    state.mySubscriptionList = action.payload;
+                    if(!action.payload.error){
+                        state.mySubscriptionList = action.payload.data; 
+                    }else{
+                        state.error = action.payload.error;
+                    }
                     state.loading = false;
                     state.error = null;
                 })
@@ -69,7 +77,12 @@ const subscriptionSlice = createSlice({
                     state.error = null;
                 })
                 .addCase(createSubscription.fulfilled, (state, action)=>{
-                    state.actionDone = true;
+                    if(!action.payload.error){
+                        state.actionDone = true;
+ 
+                    }else{
+                        state.error = action.payload.error;
+                    }
                     state.loading =false;
                     state.error = null;
                 })
@@ -88,5 +101,6 @@ export const {
     addSusbcriptions,
     clearSuscriptionState,
     setSelectedSubscriptionNULL,
-    setActionDoneNULL
+    setActionDoneNULL,
+    setSuscriptionErrorNULL
 } = subscriptionSlice.actions;

@@ -8,13 +8,22 @@ export default function SubscriptionsHttp(){
 
     return {
         createSubscription: async (data: {userID: number, competitionID: number, score: 0}) =>{
-            const response = await api.post('suscribe', data)
-            return response.data;
+            try {
+                const response = await api.post('suscribe', data)
+                return {data: response.data, error: null};
+            } catch (error: any) {
+                return {data: null, error: error.response.data.message};                
+            }
+          
         },
 
         getSubscription: async (userId: number)=>{
-            const response = await api.get('user/'+userId)
-            return response.data;
+            try {
+                const response = await api.get('user/'+userId)
+                return {data: response.data, error: null};
+            } catch (error: any) {
+                return {data: null, error: error.response.data.message};                
+            }
         }
     }
 }

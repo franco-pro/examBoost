@@ -38,7 +38,7 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
   const router = useRouter();
   const dispatch = useAppDispatch();
   const {room, competitionFinished} = useAppSelector(state => state.rooms);
-  const Events = EmitEvent(dispatch, room)
+  const Events = EmitEvent(dispatch, {isManagedByIA: room?.isManagedByIA as any, roomId: room?.roomId as any})
   const [isAlertCompetOpen, setIsAlertCompEndOpen] = useState(false);
 
   const [isWaiting, setIsWaiting] = useState(false);
@@ -179,7 +179,7 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
 
   function onLeavingCompetition() {
     // Logic to handle leaving the competition
-    const event = EmitEvent(dispatch, room);
+    const event = EmitEvent(dispatch, {isManagedByIA: room?.isManagedByIA as any, roomId: room?.roomId as any});
 
     event.closeCompetition();
 

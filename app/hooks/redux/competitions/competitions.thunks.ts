@@ -21,6 +21,21 @@ export const  getCompetitionList = createAsyncThunk(
     }
 )
 
+export const getHomeBase =  createAsyncThunk(
+    'competition/getHome',
+    async (id: number, {rejectWithValue}) => {
+        try {
+            const data = await competitionHttp.getHomeBase(id);
+            return data;
+        } catch (error: any) {
+            return rejectWithValue({
+                status: error.response?.status ?? 500,
+                message: error.response.data?.message ?? "Erreur lors du chargement..."
+            })
+        }
+    }
+)
+
 export const createCompetition = createAsyncThunk(
     'competition/create',
     async (payload: Competition, {rejectWithValue})=>{

@@ -34,7 +34,7 @@ export default function Result() {
             setRoomResult(resp);
         });
       }else{
-          showToast("Impossible d'effectuer votre opération !")
+          showToast("Impossible d'effectuer cette opération !")
       }
       return () => {
         dispatch(setRoomNull());

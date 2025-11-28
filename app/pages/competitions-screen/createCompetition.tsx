@@ -1,4 +1,3 @@
-import { createCompetition, update } from "@/app/hooks/redux/competitions/competitions.thunks";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -7,7 +6,8 @@ import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Toast from 'react-native-toast-message';
 
-import { resetActionDone, updateOne } from "@/app/hooks/redux/competitions/competitions.slice";
+import { resetActionDone, setCompetitioErrorNull, updateOne } from "@/app/hooks/redux/competitions/competitions.slice";
+import { addTransaction } from "@/app/hooks/redux/transactions/transactions.slice";
 import Competition from "@/app/hooks/services/competitions/competition.entity";
 import { CompetitionTypeDescription } from "@/app/hooks/services/competitionText.enum";
 import { DialogText } from "@/app/hooks/services/text.enum";
@@ -27,6 +27,7 @@ import {
 const { width } = Dimensions.get("window");
 
 export default function CreateCompetitionForm() {
+  const {homeBaseData} = useAppSelector((state)=> state.competitions)
   const { data } = useLocalSearchParams() as any;
   const [actionType, setActionType] = useState<"UPDATE"|"CREATE">("CREATE")
   const TextEnum = DialogText;
@@ -34,10 +35,12 @@ export default function CreateCompetitionForm() {
 
   // const competitionToUpdate = JSON.parse(data);
   
-  const MAX_PARTICIPANTS = 15;
-  const MIN_PARTICIPANTS = 2;
-  const MAX_QUESTION_NUMBER = 20;
-  const MIN_QUESTION_NUMBER = 5;
+  const MAX_PARTICIPANTS = homeBaseData ? homeBaseData.MAX_PARTICIPANTS: 15;
+  const MIN_PARTICIPANTS = homeBaseData ? homeBaseData.MIN_PARTICIPANTS: 2;
+  const MAX_QUESTION_NUMBER = homeBaseData ? homeBaseData.MAX_QUESTION_NUMBER : 20;
+  const MIN_QUESTION_NUMBER = homeBaseData ? homeBaseData.MIN_QUESTION_NUMBER: 5;
+  const MIN_TO_USE_IA_PRIVATE = homeBaseData ? homeBaseData.MIN_WINNERPRICE_TO_USE_AI_IN_PRIVATE_COMP : 8000;
+  const MIN_TO_USE_IA_PUBLIC = homeBaseData ? homeBaseData.MIN_WINNERPRICE_TO_USE_AI_IN_PUBLIC_COMP : 15000;
   const userId = 1;
   const [formError, setFormError] = useState<string>("");
 
@@ -60,16 +63,16 @@ export default function CreateCompetitionForm() {
   // Déclarations
   const [winnerPrice, setWinnerPrice] = useState<number>(0);
   const [usePercentage, setUsePercentage] = useState(false);
-  const percentage = 80; 
+  const percentage = homeBaseData ? homeBaseData.PERCENTAGE : 80; 
 
   //calcul la somme du gagnant si l'option pourcentage est choisie
   const percentageAmount = Math.round(maxUsers * entryFee * (percentage / 100));
 
   // Détermine si on doit afficher la checkbox pourcentage
   const showUseIACheckbox = (type === "PAID_REGISTRATION_AS_WINNER_PRICE") || (type === "PAID_REGISTRATION_WITH_WINNER_PRICE") ? 
-                                      ((!isPublic && (entryFee * maxUsers) >= 8000) || (isPublic && (entryFee * maxUsers) >= 15000))
+                                      ((!isPublic && (entryFee * maxUsers) >= MIN_TO_USE_IA_PRIVATE) || (isPublic && (entryFee * maxUsers) >= MIN_TO_USE_IA_PUBLIC))
                                       :
-                                      ((!isPublic && winnerPrice >= 8000) || (isPublic && winnerPrice >= 15000)) ;
+                                      ((!isPublic && winnerPrice >= MIN_TO_USE_IA_PRIVATE) || (isPublic && winnerPrice >= MIN_TO_USE_IA_PUBLIC)) ;
 
   // Calcul du montant à afficher dans l'input du prix du gagnant
   const displayedWinnerPrice = usePercentage ? percentageAmount : winnerPrice;
@@ -98,6 +101,7 @@ export default function CreateCompetitionForm() {
 
         return () => {
           dispatch(resetActionDone()) 
+          dispatch(setCompetitioErrorNull())
         };
     }, [])
   )
@@ -150,30 +154,61 @@ export default function CreateCompetitionForm() {
 
   useEffect(()=> {
       if(error){
-        console.log('error http', error);
-        setFormError((error.message ? error.message: error.message[0]));
+        if(error.message){
+          setFormError((error.message ? error.message: error.message[0]));
+        }else{
+          setFormError(error)
+        }
       }
   }, [error])
 
   useEffect(()=> {
     if(actionDone){
       dispatch(updateOne(formData))
-      showToast("Your action was completed successfully.")
+      addLocalTransaction();
+      showToast("Your action was completed successfully.", "Opération Effectuée", "success")
       router.back();
     }
   }, [actionDone])
 
-  function showToast(message: string){
-    Toast.show({
-      type: 'success',
-      text1: 'Success!',
-      text2: message,
-      position: 'top', // Optional: 'top', 'center', 'bottom'
-      visibilityTime: 3500, // Optional: duration in milliseconds
-      autoHide: true, // Optional: automatically hide after visibilityTime
-    });
 
+  function showToast(message: string, title: string, type: "success"|"error"){
+        Toast.show({
+          type: type,
+          text2: message,
+          text1: title,
+          position: 'top',
+          visibilityTime: 3500,
+        }) 
+    }
+
+  function addLocalTransaction(){
+    if(type != "TOTAL_FREE_NO_PRICE_TO_WIN"){
+        const transaction = {
+          id: 0,
+          type: "CREATE_COMPETITION",
+          amount: (type == "PAID_REGISTRATION_AS_WINNER_PRICE" ? Number(entryFee):Number(winnerPrice)),
+          created_at: new Date().toLocaleString(),
+          PID: 0
+        }
+        dispatch(addTransaction(transaction))
+    }
   }
+
+  function concatInstructions(): string{
+    const instructions = homeBaseData ? 
+                         homeBaseData.CREATION_HELP.GoldenA+
+                         homeBaseData.CREATION_HELP.GoldenB+
+                         homeBaseData.CREATION_HELP.GoldenC+
+                         homeBaseData.CREATION_HELP.GoldenD+
+                         competitionText.NOTE:
+                         competitionText.GOLDEN_A+ 
+                         competitionText.GOLDEN_B+ 
+                         competitionText.GOLDEN_C+ 
+                         competitionText.GOLDEN_D+ 
+                         competitionText.NOTE
+    return instructions;                         
+  } 
 
   const handleNext = () => step < totalSteps && setStep(step + 1);
   const handleBack = () => step > 1 && setStep(step - 1);
@@ -206,6 +241,7 @@ export default function CreateCompetitionForm() {
       errors = "La date limite d'inscription ne peut pas être supérieure ou égale à la date et heure de la compétition."
     }
 
+
     // --- VALIDATION maxUsers ---
     if (Number(maxUsers) <= MAX_PARTICIPANTS && Number(maxUsers) >= MIN_PARTICIPANTS) {
       updatedData.maxUsers = Number(maxUsers);
@@ -224,9 +260,18 @@ export default function CreateCompetitionForm() {
     if (type === "PAID_REGISTRATION_AS_WINNER_PRICE" || type === "PAID_REGISTRATION_WITH_WINNER_PRICE") {
       if (!entryFee) {
         errors = errorMessage["entryFee"];
+
       } else {
         updatedData.entryFee = Number(entryFee);
       }
+
+        if(type == "PAID_REGISTRATION_WITH_WINNER_PRICE"){
+          if(!winnerPrice){
+            errors = errorMessage['winnerPrice'];
+          }else{
+            updatedData.winnerPrice = Number(winnerPrice);
+          }
+        }
       updatedData.type = type;
 
     }else if(!type){
@@ -253,8 +298,8 @@ export default function CreateCompetitionForm() {
     }
   
     // --- VALIDATION des champs obligatoires ---
-    const requiredFields = ["name", "description", "type", "topic", "registration_deadline", "date", "questionNbr"];
-  
+    const requiredFields = ["name", "description", "type", "topic", "registration_deadline", "date", "questionsNbr"];
+    
     for (const field of requiredFields) {
       if (!updatedData[field]) {
         errors = errorMessage[field];
@@ -268,18 +313,35 @@ export default function CreateCompetitionForm() {
       console.log("Formulaire invalide");
       return;
     }
+    console.log('final data', updatedData)
     
     // --- SINON : UPDATE FINAL ET ENVOI ---
     setFormData(updatedData);
     setFormError("");
     
-    if(actionType==="CREATE"){
-      dispatch(createCompetition(updatedData))
-    }else{
-      dispatch(update(updatedData))
-    }
+    // if(actionType==="CREATE"){
+    //   dispatch(createCompetition(updatedData))
+    // }else{
+    //   dispatch(update(updatedData))
+    // }
   };
 
+  function canUseIA(): boolean{
+    if(type == "PAID_REGISTRATION_WITH_WINNER_PRICE" || type == "FREE_REGISTRATION_WITH_WINNER_PRICE"){
+      if(isPublic){
+        return Number(winnerPrice) >= MIN_TO_USE_IA_PUBLIC;
+      }else{
+        return Number(winnerPrice) >= MIN_TO_USE_IA_PRIVATE;
+      }
+    }else if(type == "PAID_REGISTRATION_AS_WINNER_PRICE"){
+      if(isPublic){
+        return percentageAmount >= MIN_TO_USE_IA_PUBLIC; 
+      }else{
+        return percentageAmount >= MIN_TO_USE_IA_PRIVATE; 
+      }
+    }
+    return false
+  }
 
   const formatCameroonDate = (date: any) => {
     return date.toLocaleString("fr-FR", {
@@ -438,16 +500,20 @@ export default function CreateCompetitionForm() {
               </TouchableOpacity>
 
               {/* Nombre max d'utilisateurs */}
-              <Text className="mb-1 font-semibold">
-                Nombre maximum de participants (max: {MAX_PARTICIPANTS}, min: {MIN_PARTICIPANTS})
-              </Text>
-              <TextInput
-                keyboardType="numeric"
-                placeholder="Max participants"
-                value={maxUsers.toString()}
-                onChangeText={(text) => setMaxUsers(Number(text))}
-                className="border border-gray-300 p-2 rounded mb-4"
-              />
+            
+                          <Text className="mb-1 font-semibold">
+                            Nombre maximum de participants (max: {MAX_PARTICIPANTS}, min: {MIN_PARTICIPANTS})
+                          </Text>
+                          <TextInput
+                            keyboardType="numeric"
+                            placeholder="Max participants"
+                            value={maxUsers.toString()}
+                            onChangeText={(text) => setMaxUsers(Number(text))}
+                            editable = {actionType == "UPDATE" && useIA && type != "PAID_REGISTRATION_AS_WINNER_PRICE"}
+                            className="border border-gray-300 p-2 rounded mb-4"
+                          />
+
+                
             </View>
           )}
 
@@ -471,7 +537,7 @@ export default function CreateCompetitionForm() {
                   <Text className="mb-1 font-semibold">Type </Text>
                   <PopoverInstructionsCreation data={
                                                  {
-                                                  instructions: competitionText.GOLDEN_A + competitionText.GOLDEN_B + competitionText.GOLDEN_C + competitionText.GOLDEN_D + competitionText.NOTE
+                                                  instructions: concatInstructions()
                                                  }
                                               }
                     />
@@ -569,7 +635,7 @@ export default function CreateCompetitionForm() {
                 />
 
                 {/* Checkbox IA */}
-                {showUseIACheckbox && type != "TOTAL_FREE_NO_PRICE_TO_WIN" && (
+                {canUseIA() && (
                   <View className="flex-row items-center mb-4">
                     <Switch value={useIA} onValueChange={setUseIA} disabled={actionType == "UPDATE"} />
                     <Text className="ml-2">Questions générées par l'IA</Text>

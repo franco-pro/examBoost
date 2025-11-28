@@ -8,30 +8,31 @@ import { Image } from '@/components/ui/image';
 import { Spinner } from "@/components/ui/spinner";
 import { VStack } from "@/components/ui/vstack";
 import { Ionicons } from "@expo/vector-icons";
-import { useFocusEffect, useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next"; // <- import i18n
 import { RefreshControl, Text, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 export default function AllCompetition() {
   const { t } = useTranslation("competition"); // <- hook i18n
-  const {competitionList, loading} = useAppSelector((state) => state.competitions);
+  const {competitionList, loading, error} = useAppSelector((state) => state.competitions);
   const [refreshing, setRefreshing] = useState(false);
   const {stop} = useSoundAud();
 
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  useFocusEffect(
-    useCallback(()=>{
-      stop();
-      // return ()=>{
-      //   console.log('competition list leave')
-      // }
-    }, [])
-  )
+  // useFocusEffect(
+  //   useCallback(()=>{
+  //     stop();
+  //     // return ()=>{
+  //     //   console.log('competition list leave')
+  //     // }
+  //   }, [])
+  // )
 
   useEffect(()=>{
     if(competitionList.length == 0 && !refreshing){
@@ -39,6 +40,22 @@ export default function AllCompetition() {
     }
   }, [])
 
+  useEffect(()=>{
+    if(error){
+        showToast(error, "Error", "error");
+    }
+  }, [error])
+
+  function showToast(message: string, title: string, type: "success"|"error"){
+            Toast.show({
+              type: type,
+              text2: message,
+              text1: title,
+              position: 'top',
+              visibilityTime: 3500,
+            }) 
+    }
+  
   function goToCompetitionInfoScreen(id: number){
       const competitionSelected = competitionList.find((comp) => comp.id == id);
       if(competitionSelected){

@@ -7,6 +7,8 @@ export  interface RoomState {
     loading: boolean;
     socketWaiting: boolean;
     waitingLaunching: boolean;
+    errorType: "USER_HAS_LEAVED_ROOM" | null,
+    waitingJoining: boolean,
     competitionFinished: boolean;
     competitionStop: boolean;
     timerOff: boolean;

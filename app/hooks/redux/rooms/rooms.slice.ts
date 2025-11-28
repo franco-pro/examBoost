@@ -9,8 +9,10 @@ import { fetchRoomCreate } from './rooms.thunks';
         roomResult: null,
         loading: false,
         error: null,
-        socketWaiting: true,
+        errorType: null,
+        socketWaiting: true,// ui loader... = waiting question
         waitingLaunching: false,
+        waitingJoining: false,
         competitionFinished: false,
         competitionStop : false,
         timerOff: false,
@@ -85,6 +87,10 @@ import { fetchRoomCreate } from './rooms.thunks';
                 }
             },
 
+            setErrorType(state, action){
+                state.errorType = action.payload;
+            },
+
             rangking(state, action){
                 if(state.room){
                     state.room.users = action.payload
@@ -126,6 +132,20 @@ import { fetchRoomCreate } from './rooms.thunks';
                         state.room.competitionInfo.questionsNbr--;
                     }
                 }
+            },
+
+            setRoomsErrorNull(state){
+                state.error = null;
+            },
+
+            setRoomsError(state, action){
+                if(action.payload){
+                    state.error = action.payload;
+                }
+            },
+
+            setWaitingJoinin(state, action){
+                state.waitingJoining = action.payload;
             },
 
             setRoomQuestion(state, action){
@@ -204,10 +224,16 @@ import { fetchRoomCreate } from './rooms.thunks';
                 .addCase(fetchRoomCreate.fulfilled, (state, action) => {
                     state.loading = false
                     state.waitingLaunching = false;
-                    state.room = action.payload;
                     state.competitionFinished = false;
                     state.competitionStop = false;
                     state.message = null;
+
+                    if(!action.payload.error){
+                        state.room = action.payload.data;
+                       
+                    }else{
+                        state.error = action.payload.error
+                    }
 
                 })
                 .addCase(fetchRoomCreate.rejected, (state, action) => {
@@ -240,4 +266,8 @@ import { fetchRoomCreate } from './rooms.thunks';
         reduiceQuestionNbr,
         passToNextQuestion,
         resetRoomState,
+        setRoomsErrorNull,
+        setRoomsError,
+        setWaitingJoinin,
+        setErrorType,
     } = roomSlice.actions;

@@ -14,6 +14,10 @@ export default function OwnerCompetitionsScreen() {
 
       const [switchQA, setSwitchQA] =  useState(false);
       const {room, socketWaiting, error} = useAppSelector(state => state.rooms);
+      const competitionName = room?.roomName ?? "";
+      const text = room?.instructions?.participant
+            .replaceAll("{data.competitionName}", competitionName)
+
       const dispatch = useAppDispatch();
       const {play} = useSoundAud()
 
@@ -42,7 +46,7 @@ export default function OwnerCompetitionsScreen() {
                                                     questionNbr: room ? (room.competitionInfo ? room.competitionInfo.questionsNbr : 0):0,
                                                     CreatorName: room ? (room.creatorInfo ? room.creatorInfo.username: ''):'',
                                                     CreatorSurname: room ? (room.creatorInfo ? room.creatorInfo.surname: ''):'',
-                                                    instrunctions: room && room.instructions ? room.instructions.owner:null,
+                                                    instrunctions: text as any,
                                                     isIA: room ? room.isManagedByIA: false,
                                                     totalMinutes: room ? room.totalTimes: null,
                                                     endTime: room ? room.finalHour : null

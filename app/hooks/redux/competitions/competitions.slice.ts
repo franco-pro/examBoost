@@ -1,12 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 import CompetitionState from "./competitionState";
-import { createCompetition, deleteOne, getCompetitionList, getMyCompetitions, getOne, update } from "./competitions.thunks";
+import { createCompetition, deleteOne, getCompetitionList, getHomeBase, getMyCompetitions, getOne, update } from "./competitions.thunks";
 
 
 const initialState : CompetitionState = {
     selectedCompetition : null,
     competitionList: [],
     myCompetitionList: [],
+    homeBaseData: null,
     loading: false,
     actionDone: false,
     error: null
@@ -21,6 +22,12 @@ const competitionSlice = createSlice({
                 state.competitionList = action.payload
             }else{
                 console.log('Is not Array')
+            }
+        },
+
+        updateHomeBaseData(state, action){
+            if(action.payload){
+                state.homeBaseData = action.payload
             }
         },
 
@@ -63,6 +70,10 @@ const competitionSlice = createSlice({
             }
         },
 
+        setCompetitioErrorNull(state){
+            state.error = null;
+        },
+
         updateStatut(state, action){
             if(action.payload){
                 const index = state.competitionList.findIndex((comp)=> comp.id == action.payload.competitionID)
@@ -95,6 +106,9 @@ const competitionSlice = createSlice({
                     state.myCompetitionList[myIndex].suscribers.push(action.payload.newSuscriber);
                 }
             }
+        },
+        setErrorCompetitionNull(state){
+            state.error = null;
         },
 
         updateOne(state, action){
@@ -138,7 +152,12 @@ const competitionSlice = createSlice({
                 state.error = null;
             })
             .addCase(getCompetitionList.fulfilled, (state, action)=>{
-                state.competitionList = action.payload;
+                if(!action.payload.error){
+                    state.competitionList = action.payload.data;
+
+                }else{
+                    state.error = action.payload.error
+                }
                 state.loading = false;
                 state.error = null;
             })
@@ -153,8 +172,14 @@ const competitionSlice = createSlice({
                 state.error = null;
             })
             .addCase(createCompetition.fulfilled, (state, action)=>{
-                state.myCompetitionList.push(action.payload)
-                state.competitionList.push(action.payload)
+                
+                if(!action.payload.error){
+                    state.competitionList = action.payload.data;
+                    state.myCompetitionList.push(action.payload.data)
+
+                }else{
+                    state.error = action.payload.error
+                }
                 state.loading = false;
                 state.actionDone = true;
                 state.error = null;
@@ -169,7 +194,12 @@ const competitionSlice = createSlice({
                 state.error = null;
             })
             .addCase(getOne.fulfilled, (state, action)=>{
-                state.selectedCompetition = action.payload;
+                if(!action.payload.error){
+                    state.selectedCompetition = action.payload.data;
+
+                }else{
+                    state.error = action.payload.error
+                }
                 state.loading = false;
                 state.error = null;
             })
@@ -183,9 +213,12 @@ const competitionSlice = createSlice({
                 state.error = null;
             })
             .addCase(deleteOne.fulfilled, (state, action)=>{
-                state.competitionList = state.competitionList.filter((comp)=> comp.id !== action.payload);
-                state.myCompetitionList = state.myCompetitionList.filter((comp)=> comp.id !== action.payload);
-
+                if(!action.payload.error){
+                    state.competitionList = state.competitionList.filter((comp)=> comp.id !== action.payload.data);
+                    state.myCompetitionList = state.myCompetitionList.filter((comp)=> comp.id !== action.payload.data);
+                }else{
+                    state.error = action.payload.error
+                }
                 state.loading = false;
                 state.error = null;
             })
@@ -215,11 +248,35 @@ const competitionSlice = createSlice({
                 state.error = null;
             })
             .addCase(getMyCompetitions.fulfilled, (state, action)=>{
-                state.myCompetitionList = action.payload;
+                if(!action.payload.error){
+                    state.myCompetitionList = action.payload.data;
+                }else{
+                    state.error = action.payload.error
+                }
                 state.loading = false;
+                
                 state.error = null;
             })
             .addCase(getMyCompetitions.rejected, (state, action)=>{
+                state.loading = false;
+                state.error = action.payload as string;
+            })
+            //
+            .addCase(getHomeBase.pending, (state)=>{
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getHomeBase.fulfilled, (state, action)=>{
+                if(!action.payload.error){
+                    state.homeBaseData= action.payload.data;
+                }else{
+                    state.error = action.payload.error
+                }
+                state.loading = false;
+                
+                state.error = null;
+            })
+            .addCase(getHomeBase.rejected, (state, action)=>{
                 state.loading = false;
                 state.error = action.payload as string;
             })
@@ -240,5 +297,8 @@ export const {
     resetActionDone,
     updateSuscribers,
     updateStatut,
-    updateSelectedCompetition
+    updateSelectedCompetition,
+    setCompetitioErrorNull,
+    setErrorCompetitionNull,
+    updateHomeBaseData,
 }  = competitionSlice.actions;

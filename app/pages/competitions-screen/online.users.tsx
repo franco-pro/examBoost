@@ -20,7 +20,14 @@ export default function User() {
   const {play} = useSoundAud();
   const [appState, setAppState] = useState(AppState.currentState);
   const {room, socketWaiting, error, nextQuestion} = useAppSelector(state => state.rooms);
-  
+  const competitionName = room?.roomName ?? "";
+  const creator = room?.creatorInfo ? 
+                  `${room.creatorInfo.username ?? ""} ${room.creatorInfo.surname ?? ""}`.trim()
+                   : "";
+  const text = room?.instructions?.participant
+        .replaceAll("{data.competitionName}", competitionName)
+        .replaceAll("{data.totalQuestions}", (room ? String(room.competitionInfo.questionsNbr): "")) 
+        .replaceAll("{data.creator}", creator);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState<Question>();
@@ -103,7 +110,7 @@ useFocusEffect(
 
 
 
-  const Events = EmitEvent(dispatch, room);
+  const Events = EmitEvent(dispatch, {roomId: room?.roomId as any, isManagedByIA: room?.isManagedByIA as any });
   const user : UsersTest = {
     id: currentUserId,
     username: 'Current User',
@@ -118,7 +125,7 @@ useFocusEffect(
       console.log('Changement d’état de l’application :', nextAppState);
 
       if (nextAppState === 'background') {
-        Events.leaveCompetition(user.id);
+        Events.leaveCompetition(user.id, room?.roomId as any);
         router.back()
       }
 
@@ -137,7 +144,7 @@ useFocusEffect(
       
             return () => {
              //ecran quitté deconnecté de la competition.
-              Events.leaveCompetition(user.id);
+              Events.leaveCompetition(user.id, room?.roomId as any);
             };
           }, [])
         );
@@ -161,7 +168,7 @@ useFocusEffect(
                                 questionNbr: room ? (room.competitionInfo ? room.competitionInfo.questionsNbr : 0):0,
                                 CreatorName: room ? (room.creatorInfo ? room.creatorInfo.username: ''):'',
                                 CreatorSurname: room ? (room.creatorInfo ? room.creatorInfo.surname: ''):'',
-                                instrunctions: room && room.instructions ? room.instructions.participant:null,
+                                instrunctions: text as any,
                                 isIA: room ? room.isManagedByIA ? true: false : false,
                                 totalMinutes: room ? room.totalTimes: null,
                                 endTime: room ? room.finalHour : null

@@ -7,11 +7,11 @@ import { Question } from "../../entities/question";
 import RoomClosedDto from "../../entities/room-closed.dto";
 import { Room } from "../../entities/rooms.entity";
 import { UserOnline } from "../../entities/user.online.entity";
-import { setSocketWaiting } from "../../redux/rooms/rooms.slice";
+import { setErrorType, setRoomsError, setRoomsErrorNull, setSocketWaiting, setWaitingJoinin } from "../../redux/rooms/rooms.slice";
 import QuestionAnswerManager from "../rooms-services/question-answer";
 import { connectRoomsSocket, getSocket } from "./socket.init";
 
-export function initializeRoomsGateway(dispatch: any, room: Room, userID: number) {
+export function initializeRoomsGateway(dispatch: any, room: Room|null, userID: number) {
   const socket = connectRoomsSocket();
   
   const RoomsQuestionManager = new QuestionAnswerManager(dispatch, room);
@@ -35,6 +35,8 @@ export function initializeRoomsGateway(dispatch: any, room: Room, userID: number
   });
 
   socket.on("room-joined", (RoomInfo: Room) => {
+    dispatch(setWaitingJoinin(false))
+
     RoomsQuestionManager.addRoom(RoomInfo, userID);
     RoomsQuestionManager.addConnectedUsers(RoomInfo.roomId, RoomInfo.users);
 
@@ -52,7 +54,10 @@ export function initializeRoomsGateway(dispatch: any, room: Room, userID: number
   })
 
   socket.on("spectator-room-joined", (data: Room) => {
+    console.log('execture spec', data.spectators)
+    dispatch(setRoomsErrorNull())
     RoomsQuestionManager.addRoom(data, userID);
+    dispatch(setWaitingJoinin(false))
     RoomsQuestionManager.addConnectedUsers(data.roomId, data.users);
   })
 
@@ -92,26 +97,31 @@ export function initializeRoomsGateway(dispatch: any, room: Room, userID: number
 
   socket.on("error", (error: any) => {
     console.log("Socket error:", error.message);
-    
-  });
+    dispatch(setWaitingJoinin(false))
+    if(error.errorType){
+      console.log("Socket error:", error.errorType);
 
-  socket.onAny((event, ...args) => {
-    console.log(">>> ANY EVENT RECU:", event, args);
+      dispatch(setErrorType(error.errorType));  
+    }
+    dispatch(setRoomsError(error.message));
   });
 
 }
 
-export function EmitEvent(dispatch: any, room: any){
+export function EmitEvent(dispatch: any, room: {isManagedByIA: boolean, roomId: string}){
     const socket = getSocket();
-    const RoomsQuestionManager = new QuestionAnswerManager(dispatch, room);
+    const RoomsQuestionManager = new QuestionAnswerManager(dispatch, null);
     
     return {
         joinRoom: (data: JoinRoomDto) => {
             socket.emit("join", data);
+            dispatch(setWaitingJoinin(true))
         },
         
         joinAsSpectator(data: {userId: number, username: string}){
-            socket.emit('spectator-room-joined', {userId: data.userId, username: data.username, roomId: room.roomId})  
+            dispatch(setWaitingJoinin(true))
+
+            socket.emit('join-as-spectator', {userId: data.userId, username: data.username, roomId: room.roomId})  
         },
 
         sendQuestion: (question: Question) => {
@@ -132,9 +142,9 @@ export function EmitEvent(dispatch: any, room: any){
         createRoom: (roomName: string) => {
             socket.emit("createRoom", { roomName });
         },
-        leaveCompetition: (userId: number)=>{
+        leaveCompetition: (userId: number, roomId: string)=>{
             socket.emit('leave-room')
-            RoomsQuestionManager.removeConnectedUser(room.roomId, userId);
+            RoomsQuestionManager.removeConnectedUser(roomId, userId);
         },
         
         end: ()=>{
@@ -145,9 +155,9 @@ export function EmitEvent(dispatch: any, room: any){
           RoomsQuestionManager.competitionEnded();
         },
 
-        ViewerLeave: ()=>{
+        ViewerLeave: (roomId: string)=>{
           socket.emit('leave-as-spectator')
-          RoomsQuestionManager.removeViewer(room.roomId);
+          RoomsQuestionManager.removeViewer(roomId);
         },
 
         localRoomClear: ()=>{

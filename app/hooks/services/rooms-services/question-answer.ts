@@ -3,7 +3,7 @@ import { Question } from "../../entities/question";
 import { Room } from "../../entities/rooms.entity";
 import { UserOnline } from "../../entities/user.online.entity";
 import { updateStatut } from "../../redux/competitions/competitions.slice";
-import { addAnswer, addConnectedUsers, addConnetedUser, addQuestion, addViewerr, clearRoom, passToNextQuestion, rangking, removeViewer, setEndOfCompetition, setRomm, setRoomQuestion, setSocketWaiting, setUserDeconnected, userLeaveRoom } from "../../redux/rooms/rooms.slice";
+import { addAnswer, addConnectedUsers, addConnetedUser, addQuestion, addViewerr, clearRoom, passToNextQuestion, rangking, removeViewer, setEndOfCompetition, setRomm, setRoomNull, setRoomQuestion, setSocketWaiting, setUserDeconnected, userLeaveRoom } from "../../redux/rooms/rooms.slice";
 import { useSoundAud } from "../../useSound.hook";
 import Rangking from "./room.helper";
 
@@ -24,7 +24,7 @@ export default class QuestionAnswerManager{
     private room: Room | null = null;
 
     // Singleton rooms instance
-    constructor(dispatch: any, room: Room) {
+    constructor(dispatch: any, room: Room|null) {
         this.dispatch = dispatch;
         this.room = room;
         if (!QuestionAnswerManager.instance) {
@@ -185,6 +185,8 @@ export default class QuestionAnswerManager{
         }
         if(this.room && this.room.roomId === roomId){
             this.dispatch(removeViewer());
+            this.dispatch(setRoomNull());
+
         }
     }
 

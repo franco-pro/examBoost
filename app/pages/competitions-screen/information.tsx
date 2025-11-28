@@ -1,12 +1,12 @@
 import DialogDelete from "@/app/helper/Dialogs/delete";
 import InvitationPrompts from "@/app/helper/Dialogs/invitation";
 import FullscreenLoader from "@/app/helper/Dialogs/loaderFullScreen";
-import { setActionDoneNULL } from "@/app/hooks/redux/competitions-suscriptions/subscription.slice";
+import { setActionDoneNULL, setSuscriptionErrorNULL } from "@/app/hooks/redux/competitions-suscriptions/subscription.slice";
 import { createSubscription } from "@/app/hooks/redux/competitions-suscriptions/subscription.thunks";
-import { setSelectedCompetitionNull, updateSelectedCompetition, updateStatut, updateSuscribers } from "@/app/hooks/redux/competitions/competitions.slice";
+import { setCompetitioErrorNull, updateSelectedCompetition, updateStatut, updateSuscribers } from "@/app/hooks/redux/competitions/competitions.slice";
 import { deleteOne } from "@/app/hooks/redux/competitions/competitions.thunks";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
-import { resetRoomState } from "@/app/hooks/redux/rooms/rooms.slice";
+import { resetRoomState, setErrorType, setRoomsErrorNull, setWaitingJoinin } from "@/app/hooks/redux/rooms/rooms.slice";
 import { fetchRoomCreate } from "@/app/hooks/redux/rooms/rooms.thunks";
 import Competition from "@/app/hooks/services/competitions/competition.entity";
 import { EmitEvent, initializeRoomsGateway } from "@/app/hooks/services/socket/rooms.gateway";
@@ -28,9 +28,13 @@ export default function Information() {
   const phone ="";
   const username = "";
 
-  const {selectedCompetition, loading} = useAppSelector((state)=>state.competitions);
-  const {waitingLaunching, room} = useAppSelector((state)=> state.rooms);
+  const {selectedCompetition, loading, error: errorCompetition} = useAppSelector((state)=>state.competitions);
+  const {waitingLaunching, room, error, waitingJoining, errorType} = useAppSelector((state)=> state.rooms);
+  const {error: errorSuscription, loading: suscriptionLoading} = useAppSelector((state)=> state.subscriptions);
+
   const [competitionLaunch, setCompetitionLaunch] = useState(false);
+  const [joinAs, setJoininStatut] = useState<"spectator"|"participant"|"admin"|null>(null);
+
   
   const {actionDone} = useAppSelector((state)=> state.subscriptions);
   const [showModal, setShowModal] = useState(false);
@@ -41,20 +45,33 @@ export default function Information() {
   const {stop}= useSoundAud();
 
   const DialogDeleteText = DialogText;
-  const now = new Date().toLocaleString("fr-FR", {
-    timeZone: "Africa/Douala",
-  })
+
   const colors = {
     defaultBlue: "#181c5c",
     defaultOrange: "#ff894f",
   };
+
+  const onLeavingPageCallback = useCallback(() => {
+    if(error) dispatch(setRoomsErrorNull());
+    if(errorCompetition) dispatch(setCompetitioErrorNull());
+    if(errorSuscription) dispatch(setSuscriptionErrorNULL());
+    if(errorType) dispatch(setErrorType(null));
+  
+    dispatch(setActionDoneNULL());
+    dispatch(setWaitingJoinin(false));
+  }, [
+    error,
+    errorCompetition,
+    errorSuscription,
+    errorType
+  ]);
 
   useFocusEffect(
     useCallback(()=>{
       stop();
 
       if(actionDone){
-          showToast("Inscription réussie !", "Succès");
+          showToast("Inscription réussie !", "Succès", "success");
            dispatch(updateSuscribers(
             {
               competitionID: selectedCompetition ? selectedCompetition.id: 0,
@@ -69,21 +86,45 @@ export default function Information() {
           router.back();
       }
 
+
       return ()=>{
-                console.log("execute 222")
-                dispatch(setSelectedCompetitionNull());
-                dispatch(setActionDoneNULL())
+               onLeavingPageCallback()
             }
-    }, [actionDone])
+    }, [actionDone, onLeavingPageCallback])
   )
 
   useEffect(()=>{
-    if(!waitingLaunching && room && !competitionLaunch){
+    if(!waitingLaunching && room && competitionLaunch){
       dispatch(updateSelectedCompetition("ONGOING"));
       dispatch(updateStatut("ONGOING"))
-      showToast("Compétition demarrée !", "Succès");
+      showToast("Compétition demarrée !", "Succès", "success");
     }
-  }, [selectedCompetition, waitingLaunching])
+
+    if(error){
+      showToast(error, "Error", "error")
+    }
+    
+    if(errorCompetition) showToast(errorCompetition, "Error", "error");
+
+    if(errorSuscription) showToast(errorSuscription, "Error", "error");
+
+  }, [selectedCompetition, waitingLaunching, error, errorCompetition, errorSuscription])
+
+  useEffect(()=>{
+    if(!waitingJoining){
+      if(error && errorType){
+        showToast(error, "Error A", "error")
+      }else {
+        if(room && !error){
+          if(joinAs =="participant") router.replace("/pages/competitions-screen/online.users");
+          if(joinAs == "admin") router.replace("/pages/competitions-screen/owner.online");
+          if(joinAs == "spectator") router.replace("/pages/competitions-screen/viewer.online");
+        }
+      }
+    }
+     
+    
+  }, [waitingJoining])
 
   function deleteCompetition(competitionID: number){
       if(competitionID){
@@ -105,42 +146,59 @@ export default function Information() {
   }
 
   function observeCompetition(){
-    if(room){
-      initializeRoomsGateway(dispatch, room, userId)
-      const eventManager = EmitEvent(dispatch, room);
-      eventManager.joinRoom({
-        roomId: room.roomId,
-        userID: userId,
+    if(selectedCompetition && selectedCompetition.roomID){
+
+      setJoininStatut("spectator")
+      initializeRoomsGateway(dispatch, null, userId)
+      const eventManager = EmitEvent(dispatch, {isManagedByIA: selectedCompetition?.isManagedByIA as any, roomId: selectedCompetition?.roomID as any});
+      eventManager.joinAsSpectator({
+        userId: userId,
         username: username,
-        imgUrl: "https://i.ibb.co/7R4DyhQ/Avatar-1.jpg",
-        surname: "Dems",
-        
       });
-     router.replace("/pages/competitions-screen/viewer.online")
-  }
+    }
+     
   }
 
 
-  function joinCompetition(){
-    if(room){
-      initializeRoomsGateway(dispatch, room, userId)
-      const eventManager = EmitEvent(dispatch, room);
-      eventManager.joinRoom({
-        roomId: room.roomId,
-        userID: userId,
-        username: username,
-        imgUrl: "https://i.ibb.co/7R4DyhQ/Avatar-1.jpg",
-        surname: "Dems",
-        
-      })
-      if(room.creatorID == userId){
-        router.replace("/pages/competitions-screen/owner.online");
-      }else{
-        router.replace("/pages/competitions-screen/online.users");
-      }
-  }
+  function adminJoinCompetition(){
+
+   if(selectedCompetition && selectedCompetition.roomID){
+        setJoininStatut("admin")
+        initializeRoomsGateway(dispatch, room, userId)
+        const eventManager = EmitEvent(dispatch, {isManagedByIA: selectedCompetition?.isManagedByIA as any, roomId: selectedCompetition?.roomID as any});
+        eventManager.joinRoom({
+          roomId: selectedCompetition?.roomID as any,
+          userID: userId,
+          username: username ? username:"Dems",
+          imgUrl: "https://i.ibb.co/7R4DyhQ/Avatar-1.jpg",
+          surname: "Dems",
+          
+        })
+     }
+
 }
 
+function userJoinCompetition(){
+
+  if(selectedCompetition && selectedCompetition.roomID){
+    setJoininStatut("participant");
+
+    initializeRoomsGateway(dispatch, null, userId)
+  
+    const eventManager = EmitEvent(dispatch, {isManagedByIA: selectedCompetition?.isManagedByIA as any, roomId: selectedCompetition?.roomID as any});
+    eventManager.joinRoom({
+      roomId: selectedCompetition?.roomID as any,
+      userID: userId,
+      username: username ? username:"Dems",
+      imgUrl: "https://i.ibb.co/7R4DyhQ/Avatar-1.jpg",
+      surname: "Dems",
+      
+    })
+
+  }
+  
+    
+ }
 
 
  async function startCompetition(){
@@ -155,7 +213,8 @@ export default function Information() {
           userID: userId,
           isManagedByIA : selectedCompetition ? selectedCompetition.isManagedByIA : false
         }
-      ))
+      ));
+      setCompetitionLaunch(true);
     } catch (error: any) {
       console.log('error on starting competition', error.message);
     }
@@ -183,9 +242,9 @@ export default function Information() {
   }
   
 
-  function showToast(message: string, title: string){
+  function showToast(message: string, title: string, type: "success"|"error"){
       Toast.show({
-        type: 'success',
+        type: type,
         text2: message,
         text1: title,
         position: 'top',
@@ -557,7 +616,7 @@ export default function Information() {
            (
             <TouchableOpacity 
               className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto"
-              onPress={()=> joinCompetition()}
+              onPress={()=> adminJoinCompetition()}
             >
               <Text className="text-white text-xs font-semibold mr-2">
                 Rejoindre la competition
@@ -568,14 +627,14 @@ export default function Information() {
 
         {/* boutton pour rejoindre la competition pour un user n'etant pas son createur et si le room est creee NB:j'ai pas mis la condition sur le room */}
         {userId !== selectedCompetition?.creatorID &&
-        room &&
+        !errorType &&
         selectedCompetition?.statut === "ONGOING" &&
           selectedCompetition?.suscribers.filter((user, index) => {
             return user.id === userId;
           }).length === 1 && (
             <TouchableOpacity 
               className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto"
-              onPress={()=> joinCompetition()}
+              onPress={()=> userJoinCompetition()}
             >
               <Text className="text-white text-xs font-semibold mr-2">
                 Rejoindre la competition
@@ -613,6 +672,25 @@ export default function Information() {
               </Text>
               <Ionicons name="chevron-forward" size={22} color="#ffffff" />
             </TouchableOpacity>
+          )}
+
+          {/* Join the competition as spectator for user after leaved it */}
+           {userId !== selectedCompetition?.creatorID && 
+            errorType === "USER_HAS_LEAVED_ROOM" &&
+            selectedCompetition?.statut === "ONGOING" &&
+              selectedCompetition?.suscribers.filter((user, index) => {
+                return user.id === userId;
+              }).length === 1 && (
+                <TouchableOpacity
+                className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto"
+                onPress={()=> observeCompetition()}
+                
+                >
+                  <Text className="text-white text-xs font-semibold mr-2">
+                    Observer la competition
+                  </Text>
+                  <Ionicons name="chevron-forward" size={22} color="#ffffff" />
+                </TouchableOpacity>
           )}
 
         {/* btn for admin to observe the competition when it managed by IA*/}
@@ -660,7 +738,7 @@ export default function Information() {
             </TouchableOpacity>
           )}
 
-      <FullscreenLoader visible={waitingLaunching || loading} />
+      <FullscreenLoader visible={waitingLaunching || loading || waitingJoining || suscriptionLoading} />
       </ScrollView>
     </View>
   );
