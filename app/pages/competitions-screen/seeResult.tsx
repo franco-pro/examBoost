@@ -11,7 +11,7 @@ import { InfoIcon } from "@/components/ui/icon";
 import { Switch } from "@/components/ui/switch";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
-import { useFocusEffect, useLocalSearchParams } from "expo-router";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { FlatList, ImageBackground, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -20,6 +20,7 @@ import UsersResult from "./components-ui/online-competitions/usersResult";
 
 export default function Result() {
   const {roomID} = useLocalSearchParams() as any;
+  const router = useRouter();
   const roomsHttp = RoomsHttp();
   const [roomResult, setRoomResult] = useState<Room|null>(null);
   const dispatch = useAppDispatch();
@@ -30,9 +31,24 @@ export default function Result() {
     useCallback(() => {
       if(roomID){
         //check backup and get the result data
-        roomsHttp.getResult(roomID).then((resp: Room)=>{
-            setRoomResult(resp);
+        roomsHttp.getResult(roomID).then((resp: {data: any, error: null})=>{
+           if(resp.data && resp.data.backup){
+            const response = {
+              ...resp.data.backup,
+              roomName: resp.data.backup.competitionInfo.name,
+              users: resp.data.backup.participants
+            } as Room;
+            setRoomResult(response);
+
+           }else{
+            showToast("Sauvegarde introuvable pour cette competition");
+            router.back();
+           }
+        }).catch((error)=>{
+            showToast("Sauvegarde introuvable pour cette competition");
+            router.back();
         });
+        
       }else{
           showToast("Impossible d'effectuer cette opération !")
       }

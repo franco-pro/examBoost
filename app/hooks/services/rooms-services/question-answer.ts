@@ -2,6 +2,7 @@ import { Answer } from "../../entities/answer";
 import { Question } from "../../entities/question";
 import { Room } from "../../entities/rooms.entity";
 import { UserOnline } from "../../entities/user.online.entity";
+import { updateStatutSuscription } from "../../redux/competitions-suscriptions/subscription.slice";
 import { updateStatut } from "../../redux/competitions/competitions.slice";
 import { addAnswer, addConnectedUsers, addConnetedUser, addQuestion, addViewerr, clearRoom, passToNextQuestion, rangking, removeViewer, setEndOfCompetition, setRomm, setRoomNull, setRoomQuestion, setSocketWaiting, setUserDeconnected, userLeaveRoom } from "../../redux/rooms/rooms.slice";
 import { useSoundAud } from "../../useSound.hook";
@@ -98,6 +99,7 @@ export default class QuestionAnswerManager{
         this.dispatch(setEndOfCompetition());
         if(competitionID && statut){
             this.dispatch(updateStatut({competitionID, statut}));
+            this.dispatch(updateStatutSuscription({competitionID, statut}))
         }
     }
 
@@ -222,7 +224,6 @@ export default class QuestionAnswerManager{
             this.room.rangking = new_rangking;
         }
 
-        
 
         if(this.room && this.room.roomId === roomId){
             this.dispatch(rangking(new_rangkingCopy));
@@ -306,7 +307,10 @@ export default class QuestionAnswerManager{
                             
                         }
                     }else{
+                        console.log("execute newt questions", answer.userID, this.current_userID)
+
                         if(this.current_userID && this.current_userID === answer.userID){
+                            console.log("execute newt questions")
                              this.dispatch(passToNextQuestion())                  
                         }
                     }

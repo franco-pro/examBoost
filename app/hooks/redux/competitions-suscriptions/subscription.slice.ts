@@ -40,6 +40,20 @@ const subscriptionSlice = createSlice({
             }
         },
 
+        updateStatutSuscription(state, action){
+            if(action.payload){
+                //my  suscription list
+                const myIndex = state.mySubscriptionList.findIndex((comp)=> comp.id == action.payload.competitionID)
+                if(myIndex != -1){
+                    state.mySubscriptionList[myIndex].statut = action.payload.statut as "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED";;
+                }
+
+                if(state.selectedSubscription && state.selectedSubscription.id == action.payload.competitionID && action.payload.statut == "ONGOING"){ 
+                    state.selectedSubscription.statut = action.payload.statut;
+                }
+            }
+        },
+
         setSelectedSubscriptionNULL(state){
             state.selectedSubscription = null
         },  
@@ -102,5 +116,6 @@ export const {
     clearSuscriptionState,
     setSelectedSubscriptionNULL,
     setActionDoneNULL,
-    setSuscriptionErrorNULL
+    setSuscriptionErrorNULL,
+    updateStatutSuscription,
 } = subscriptionSlice.actions;

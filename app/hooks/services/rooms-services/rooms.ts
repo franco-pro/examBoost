@@ -21,7 +21,7 @@ export default function RoomsHttp() {
 
         getResult: async (roomID: string) =>{
             try {
-                const response = await api.get(`backup/:${roomID}`);
+                const response = await api.get(`backup/${roomID}`);
                 
                 return {data: response.data, error: null};
             } catch (error: any) {

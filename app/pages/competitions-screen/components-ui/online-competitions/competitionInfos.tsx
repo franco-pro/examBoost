@@ -1,5 +1,4 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
-import { setTimeOff } from "@/app/hooks/redux/rooms/rooms.slice";
 import Countdown from "@/app/services/compeititonService/count.timer";
 import PopoverInstructions from "@/app/services/compeititonService/popover";
 import Timer from "@/app/services/compeititonService/timer.function";
@@ -22,7 +21,7 @@ export default function CompetitionInfos({data, competitionInfo}: CompetitionInf
     const dispatch = useAppDispatch();
 
     function onFinish(){
-        dispatch(setTimeOff())
+        // dispatch(setTimeOff())
     }
     return (
         <VStack className="absolute top-0 left-0 w-[48%] max-w-[50%]"  space="xs">
@@ -59,7 +58,7 @@ export default function CompetitionInfos({data, competitionInfo}: CompetitionInf
                     </AvatarFallbackText>
                     <AvatarImage
                         source={{
-                        uri: 'https://gluestack.github.io/public-blog-video-assets/john.png',
+                        uri: data.imgUrl ? 'https://gluestack.github.io/public-blog-video-assets/john.png':data.imgUrl,
                         }}
                         alt="image"
                     />

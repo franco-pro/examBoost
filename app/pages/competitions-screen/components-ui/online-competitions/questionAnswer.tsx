@@ -1,6 +1,7 @@
 import CompetitionStopedAlert from '@/app/helper/Dialogs/competitionStoped';
 import DialogConfirm from '@/app/helper/Dialogs/confirm';
 import CompetitionEndedAlert from '@/app/helper/Dialogs/endCompetition';
+import { updateHomeBase } from '@/app/hooks/redux/competitions/competitions.slice';
 import { useAppDispatch, useAppSelector } from '@/app/hooks/redux/redux.hooks';
 import { userLeaveRoom } from '@/app/hooks/redux/rooms/rooms.slice';
 import { EmitEvent } from '@/app/hooks/services/socket/rooms.gateway';
@@ -35,10 +36,12 @@ interface ComepetitionInfo{
   creatorAvatarUrl: string;
   totalQuestions: number; 
 }
-export default function QuestionAnswer({question, competitionInfo, loading, userData}: {question: Question | null, competitionInfo: ComepetitionInfo, loading: boolean, userData: UsersTest}) {
+export default function QuestionAnswer({question, competitionInfo, loading, userData, onAnswer}: {question: Question | null, competitionInfo: ComepetitionInfo, loading: boolean, userData: UsersTest, onAnswer: any}) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { room, roomResult, competitionFinished, competitionStop, message, timerOff} = useAppSelector(state => state.rooms);
+  const {homeBaseData} = useAppSelector((state)=> state.competitions);
+
   const [timeToAnswer, setTimeToAnswer] = useState(question ? question.timeToAnswer : 0);
   const [isOpen, setIsOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -78,6 +81,7 @@ export default function QuestionAnswer({question, competitionInfo, loading, user
 
   useEffect(()=>{
     if(competitionFinished){
+        
        setIsAlertCompEndOpen(true);
     }
   }, [competitionFinished])
@@ -120,6 +124,7 @@ export default function QuestionAnswer({question, competitionInfo, loading, user
             intervalRef.current = null;
              play("WrongAnswer").then(() => {
               sendChoice("???????", question?.id);
+              // onAnswer()
             });
             return 0;
           }
@@ -161,13 +166,22 @@ export default function QuestionAnswer({question, competitionInfo, loading, user
     }else{
       await play('WrongAnswer');
     }
+    console.log('send as')
 
     Envets.sendAnswer(answer);
+    // onAnswer()
   }
 
  async function handleLeavingCompetition() {
     Envets.leaveCompetition(userData.id, room?.roomId as any);
     dispatch(userLeaveRoom());
+    dispatch(updateHomeBase(
+      {
+        ...homeBaseData,
+        competitionLeaved: homeBaseData ? (homeBaseData.competitionLeaved+1):0
+      }
+
+    ));
     router.back();
   }
 
@@ -182,9 +196,25 @@ async function onClosingConfirm() {
       let am_winner = roomResult && roomResult.users ? roomResult.users.find((user)=>user.userID == userData.id)?.isWinner: null;
       
       if(am_winner){
+        dispatch(updateHomeBase(
+            {
+              ...homeBaseData,
+              competitionFinished: (homeBaseData ? homeBaseData.competitionFinished+1: 0),
+              competitionWin: (homeBaseData ? homeBaseData.competitionWin+1: 0),
+              totalPriceWin: (homeBaseData && roomResult ? (homeBaseData.totalPriceWin+roomResult.competitionInfo.winnerPrice): 0)
+            }
+
+        ));
         router.replace("/pages/competitions-screen/components-ui/online-competitions/trophySection");
 
       }else{
+        dispatch(updateHomeBase(
+          {
+            ...homeBaseData,
+            competitionFinished: (homeBaseData ? homeBaseData.competitionFinished+1: 0),
+          }
+
+      ));
         router.replace("/pages/competitions-screen/components-ui/online-competitions/competitionResult");
       }
     setIsAlertCompEndOpen(false);
@@ -250,7 +280,7 @@ async function onClosingConfirm() {
                 ):  <VStack className="justify-center items-center">
 
                       <Spinner size="large" color="blue" />
-                      <Text size="xl">En attente de question...</Text>
+                      <Text size="xl">Fin de competition...</Text>
                     </VStack>
 
 

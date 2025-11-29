@@ -45,7 +45,7 @@ export default function Competition() {
       },
       {
         nom: t("accueil.statistics.total_participations"),
-        chiffre: (homeBaseData?.competitionFinished && homeBaseData?.competitionLeaved ? homeBaseData.competitionFinished+homeBaseData.competitionLeaved: 0),
+        chiffre: (homeBaseData ? (homeBaseData.competitionFinished+homeBaseData.competitionLeaved): 0),
         icone: <FontAwesome5 name="users" size={25} color="#3b82f6" />,
         bgColor: "bg-blue-100",
         textColor: "text-blue-600",

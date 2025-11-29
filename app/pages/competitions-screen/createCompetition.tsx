@@ -7,6 +7,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import Toast from 'react-native-toast-message';
 
 import { resetActionDone, setCompetitioErrorNull, updateOne } from "@/app/hooks/redux/competitions/competitions.slice";
+import { createCompetition, update } from "@/app/hooks/redux/competitions/competitions.thunks";
 import { addTransaction } from "@/app/hooks/redux/transactions/transactions.slice";
 import Competition from "@/app/hooks/services/competitions/competition.entity";
 import { CompetitionTypeDescription } from "@/app/hooks/services/competitionText.enum";
@@ -65,7 +66,6 @@ export default function CreateCompetitionForm() {
   const [usePercentage, setUsePercentage] = useState(false);
   const percentage = homeBaseData ? homeBaseData.PERCENTAGE : 80; 
 
-  //calcul la somme du gagnant si l'option pourcentage est choisie
   const percentageAmount = Math.round(maxUsers * entryFee * (percentage / 100));
 
   // Détermine si on doit afficher la checkbox pourcentage
@@ -164,8 +164,11 @@ export default function CreateCompetitionForm() {
 
   useEffect(()=> {
     if(actionDone){
-      dispatch(updateOne(formData))
-      addLocalTransaction();
+      if(actionType == "CREATE"){
+        addLocalTransaction();
+      }else{
+        dispatch(updateOne(formData))
+      }
       showToast("Your action was completed successfully.", "Opération Effectuée", "success")
       router.back();
     }
@@ -269,7 +272,7 @@ export default function CreateCompetitionForm() {
           if(!winnerPrice){
             errors = errorMessage['winnerPrice'];
           }else{
-            updatedData.winnerPrice = Number(winnerPrice);
+            updatedData.winnerPrice = (Number(winnerPrice)*percentage)/100;
           }
         }
       updatedData.type = type;
@@ -288,7 +291,7 @@ export default function CreateCompetitionForm() {
       if(usePercentage){
         updatedData.winnerPrice = Number(percentageAmount);
       }else{
-        updatedData.winnerPrice = Number(winnerPrice)
+        updatedData.winnerPrice = (Number(winnerPrice)*percentage)/100
       }
 
     if(lang){
@@ -313,17 +316,16 @@ export default function CreateCompetitionForm() {
       console.log("Formulaire invalide");
       return;
     }
-    console.log('final data', updatedData)
     
     // --- SINON : UPDATE FINAL ET ENVOI ---
     setFormData(updatedData);
     setFormError("");
     
-    // if(actionType==="CREATE"){
-    //   dispatch(createCompetition(updatedData))
-    // }else{
-    //   dispatch(update(updatedData))
-    // }
+    if(actionType==="CREATE"){
+      dispatch(createCompetition(updatedData))
+    }else{
+      dispatch(update(updatedData))
+    }
   };
 
   function canUseIA(): boolean{
@@ -618,7 +620,27 @@ export default function CreateCompetitionForm() {
                           editable={!usePercentage || actionType=="CREATE"} // readonly si on utilise le pourcentage
                         />
                     </View>
-                )
+                    
+                ) 
+              }
+
+              {
+                 type != "TOTAL_FREE_NO_PRICE_TO_WIN" && (
+                 <View>
+                    <Text className="mb-1 font-semibold">Montant Net (XAF) </Text>
+                    <TextInput
+                      keyboardType="numeric"
+                      placeholder={`Montant minimum ${minWinnerPrice}`}
+                      value={((displayedWinnerPrice*percentage)/100).toString()}
+                      onChangeText={(text) =>
+                        !usePercentage && setWinnerPrice(Number(text))
+                      }
+                      className="border border-gray-300 p-2 rounded mb-4"
+                      editable={false} // readonly si on utilise le pourcentage
+                  />
+                 </View>
+                  
+              )
               }
 
               

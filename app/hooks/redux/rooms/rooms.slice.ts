@@ -59,7 +59,11 @@ import { fetchRoomCreate } from './rooms.thunks';
 
             passToNextQuestion(state){
                 state.socketWaiting = false;
-                state.nextQuestion = state.nextQuestion ? false:true;
+                state.nextQuestion = true;
+            },
+            
+            resetNexQuestion(state){
+                state.nextQuestion = false;
             },
 
             setSocketWaiting(state, action){
@@ -270,4 +274,5 @@ import { fetchRoomCreate } from './rooms.thunks';
         setRoomsError,
         setWaitingJoinin,
         setErrorType,
+        resetNexQuestion
     } = roomSlice.actions;

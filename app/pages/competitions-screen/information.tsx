@@ -202,8 +202,14 @@ function userJoinCompetition(){
 
 
  async function startCompetition(){
-
-    try {
+    if( selectedCompetition?.suscribers && 
+        selectedCompetition?.suscribers.length < selectedCompetition?.maxUsers &&
+        selectedCompetition.isManagedByIA && 
+        selectedCompetition.type == "PAID_REGISTRATION_AS_WINNER_PRICE"){
+          showToast("Le nombre minimum de participants n'est pas atteint pour démarrer la compétition.", "Erreur", "error");
+          return;
+    }else{
+          try {
       dispatch(resetRoomState())
       dispatch(fetchRoomCreate(
         {
@@ -218,6 +224,7 @@ function userJoinCompetition(){
     } catch (error: any) {
       console.log('error on starting competition', error.message);
     }
+    }
     
   }
 
@@ -225,7 +232,7 @@ function userJoinCompetition(){
     router.replace({
       pathname: "./seeResult",
       params: {
-        id: selectedCompetition ? selectedCompetition.roomID : 0
+        roomID: selectedCompetition ? selectedCompetition.roomID : 0
       }
     })
   }
@@ -730,7 +737,9 @@ function userJoinCompetition(){
 
             {/* btn to look the result of competition */}
         {selectedCompetition?.statut == "COMPLETED" && (
-            <TouchableOpacity className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto">
+            <TouchableOpacity 
+            onPress={()=> seeResult()}
+            className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto">
               <Text className="text-white text-xs font-semibold mr-2">
                 Voir les resultats
               </Text>

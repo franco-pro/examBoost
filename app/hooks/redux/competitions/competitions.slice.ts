@@ -111,6 +111,12 @@ const competitionSlice = createSlice({
             state.error = null;
         },
 
+        updateHomeBase(state, action){
+            if(action.payload){
+                state.homeBaseData = action.payload;
+            }
+        },
+
         updateOne(state, action){
             console.log('action payloa', action.payload)
             if(action.payload){
@@ -301,4 +307,5 @@ export const {
     setCompetitioErrorNull,
     setErrorCompetitionNull,
     updateHomeBaseData,
+    updateHomeBase,
 }  = competitionSlice.actions;

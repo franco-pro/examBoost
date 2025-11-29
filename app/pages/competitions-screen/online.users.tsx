@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '@/app/hooks/redux/redux.hooks';
-import { setEndOfCompetition } from '@/app/hooks/redux/rooms/rooms.slice';
+import { resetNexQuestion } from '@/app/hooks/redux/rooms/rooms.slice';
 import { EmitEvent } from '@/app/hooks/services/socket/rooms.gateway';
 import { useSoundAud } from '@/app/hooks/useSound.hook';
 import Question from '@/app/services/entities/question.entity';
@@ -30,9 +30,9 @@ export default function User() {
         .replaceAll("{data.creator}", creator);
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [currentQuestion, setCurrentQuestion] = useState<Question>();
+  const [currentQuestion, setCurrentQuestion] = useState<Question|null>(null);
   // secondes avant de passer à la question suivante
-  let currentUserId = 10;
+  let currentUserId = 1;
   //find the current user  score by id 
   const score = room && room.users ? (room.users.find(u => u.userID === currentUserId)?.score ?? 0) : 0;
 
@@ -60,50 +60,44 @@ useFocusEffect(
         }
       });
 
-      if (room.isManagedByIA && (questionAnsweredCount === room.competitionInfo.questionsNbr)) {
-        setTimeout(() => {
-          console.log('ercerture');
+      // if (room.isManagedByIA && (questionAnsweredCount === room.competitionInfo.questionsNbr)) {
+      //   setTimeout(() => {
           
-          dispatch(setEndOfCompetition());
-          Events.localRoomClear();
-        }, room.isManagedByIA ? 0 : 2500);
-      }
+      //     dispatch(setEndOfCompetition());
+      //     Events.localRoomClear();
+      //   }, room.isManagedByIA ? 0 : 2500);
+      // }
     }
   }, [room?.questions]);
 
-  useEffect(() => {
-    // ⏱️ Définir un timer pour passer à la question suivante
-    if(room && room.questions){
-      if (currentIndex < room.questions.length - 1) {
-        let delay = room.questions[currentIndex+1].timeToAnswer; 
-
-        // const timer = setTimeout(() => {
-        //   console.log('execute')
-        //   setCurrentIndex(prev => prev + 1);
-        // }, delay * 1000);
-
-        // return () => clearTimeout(timer);
-     }
-    }
-
-  }, [currentIndex]);
+  const handleAnswered = () => {
+    // Quand une réponse est envoyée → prochaine question
+    // if(room && room.isManagedByIA){
+    //   setCurrentIndex((prev) => prev + 1);
+    // }
+  };
 
   useEffect(()=>{
-    if(room && room.questions){
+    if(room && room.questions && !room.isManagedByIA){
       setCurrentQuestion(room.questions[0])
-
     }
   }, [room?.questions])
 
   useEffect(()=>{
       if(nextQuestion){
           setCurrentIndex((currentIndex+1));
+          dispatch(resetNexQuestion())
       }
+
   }, [nextQuestion])
 
   // Met à jour la question affichée
   useEffect(() => {
-    if(room && room.questions){
+    if(room && room.questions && room.isManagedByIA){
+      if(!room.questions[currentIndex]){
+        setCurrentQuestion(null);     
+      }
+
       setCurrentQuestion(room.questions[currentIndex]);
     }
   }, [currentIndex]);
@@ -141,7 +135,6 @@ useFocusEffect(
         useFocusEffect(
           React.useCallback(() => {
             //ecran actif
-      
             return () => {
              //ecran quitté deconnecté de la competition.
               Events.leaveCompetition(user.id, room?.roomId as any);
@@ -169,7 +162,7 @@ useFocusEffect(
                                 CreatorName: room ? (room.creatorInfo ? room.creatorInfo.username: ''):'',
                                 CreatorSurname: room ? (room.creatorInfo ? room.creatorInfo.surname: ''):'',
                                 instrunctions: text as any,
-                                isIA: room ? room.isManagedByIA ? true: false : false,
+                                isIA: room ? (room.isManagedByIA ? true: false) : false,
                                 totalMinutes: room ? room.totalTimes: null,
                                 endTime: room ? room.finalHour : null
                       }}          
@@ -200,6 +193,7 @@ useFocusEffect(
                                 } 
                 loading={socketWaiting}   
                 userData={user}   
+                onAnswer={handleAnswered}
           />
       </View>
     </View>

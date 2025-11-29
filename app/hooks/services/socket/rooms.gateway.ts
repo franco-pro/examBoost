@@ -54,7 +54,6 @@ export function initializeRoomsGateway(dispatch: any, room: Room|null, userID: n
   })
 
   socket.on("spectator-room-joined", (data: Room) => {
-    console.log('execture spec', data.spectators)
     dispatch(setRoomsErrorNull())
     RoomsQuestionManager.addRoom(data, userID);
     dispatch(setWaitingJoinin(false))
@@ -62,7 +61,6 @@ export function initializeRoomsGateway(dispatch: any, room: Room|null, userID: n
   })
 
   socket.on("new-question", (data: NewQuestionDto) => {
-    console.log('question received', data);
     RoomsQuestionManager.addQuestion(data.roomId, data.question);
   });
 
@@ -81,7 +79,6 @@ export function initializeRoomsGateway(dispatch: any, room: Room|null, userID: n
 
 
   socket.on("competition-ended", (data: CompetitionStartEnd) => {
-    console.log('competition finished:', data);
     RoomsQuestionManager.competitionEnded(data.competitionID, data.statut);
   })
 
