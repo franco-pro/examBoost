@@ -56,9 +56,13 @@ const competitionSlice = createSlice({
         },
 
         updateSelectedCompetition(state, action){
-            if(action.payload === "ONGOING" || action.payload === "UPCOMING" || action.payload === "COMPLETED" || action.payload === "CANCELLED"){
+            if(action.payload.statut === "ONGOING" || action.payload.statut === "UPCOMING" || action.payload.statut === "COMPLETED" || action.payload.statut === "CANCELLED"){
                 if (state.selectedCompetition) {
-                    state.selectedCompetition.statut = action.payload;
+                    
+                    state.selectedCompetition.statut = action.payload.statut;
+                    if(action.payload.statut == "ONGOING" && action.payload.roomId){
+                        state.selectedCompetition.roomID = action.payload.roomId; 
+                    }
                 }
             }
         },

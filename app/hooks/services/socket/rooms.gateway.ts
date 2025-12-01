@@ -115,10 +115,10 @@ export function EmitEvent(dispatch: any, room: {isManagedByIA: boolean, roomId: 
             dispatch(setWaitingJoinin(true))
         },
         
-        joinAsSpectator(data: {userId: number, username: string}){
+        joinAsSpectator(data: {userID: number, username: string}){
             dispatch(setWaitingJoinin(true))
 
-            socket.emit('join-as-spectator', {userId: data.userId, username: data.username, roomId: room.roomId})  
+            socket.emit('join-as-spectator', {userId: data.userID, username: data.username, roomId: room.roomId})  
         },
 
         sendQuestion: (question: Question) => {

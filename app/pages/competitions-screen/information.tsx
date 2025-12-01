@@ -95,8 +95,11 @@ export default function Information() {
 
   useEffect(()=>{
     if(!waitingLaunching && room && competitionLaunch){
-      dispatch(updateSelectedCompetition("ONGOING"));
+      dispatch(updateSelectedCompetition({statut: "ONGOING", roomId: room.roomId}));
       dispatch(updateStatut("ONGOING"))
+      console.log('rooms id', room?.roomId);
+      console.log('console', selectedCompetition);
+      
       showToast("Compétition demarrée !", "Succès", "success");
     }
 
@@ -147,12 +150,12 @@ export default function Information() {
 
   function observeCompetition(){
     if(selectedCompetition && selectedCompetition.roomID){
-
+      console.log('competition', room, selectedCompetition)
       setJoininStatut("spectator")
       initializeRoomsGateway(dispatch, null, userId)
-      const eventManager = EmitEvent(dispatch, {isManagedByIA: selectedCompetition?.isManagedByIA as any, roomId: selectedCompetition?.roomID as any});
+      const eventManager = EmitEvent(dispatch, {isManagedByIA: selectedCompetition?.isManagedByIA as any, roomId: selectedCompetition?.roomID ?? room?.roomId as any});
       eventManager.joinAsSpectator({
-        userId: userId,
+        userID: userId,
         username: username,
       });
     }
@@ -165,7 +168,7 @@ export default function Information() {
    if(selectedCompetition && selectedCompetition.roomID){
         setJoininStatut("admin")
         initializeRoomsGateway(dispatch, room, userId)
-        const eventManager = EmitEvent(dispatch, {isManagedByIA: selectedCompetition?.isManagedByIA as any, roomId: selectedCompetition?.roomID as any});
+        const eventManager = EmitEvent(dispatch, {isManagedByIA: selectedCompetition?.isManagedByIA as any, roomId: selectedCompetition?.roomID ?? room?.roomId  as any});
         eventManager.joinRoom({
           roomId: selectedCompetition?.roomID as any,
           userID: userId,
