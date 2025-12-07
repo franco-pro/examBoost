@@ -1,7 +1,7 @@
-import axios from "axios"
+import axios from "axios";
 import { getItem, setItem } from "../utils/asyncStorage";
-import { RootState, store } from "../redux/store";
-import { setCredentials } from "../redux/users/users.slice";
+import { RootState, store } from "@/app/hooks/redux/store";
+import { setCredentials } from "../hooks/redux/users/users.slice";
 
 const apiClient = axios.create({
   baseURL: "http://192.168.1.189:3000",
@@ -14,14 +14,14 @@ const apiClient = axios.create({
 //ajouter automatiquement les accessToken a toutes les requetes
 apiClient.interceptors.request.use(async (config) => {
   const state: RootState = store.getState();
-  const token = state.user.token
-  console.log("Access Token dans apiclient:", token)
+  const token = state.user.token;
+  console.log("Access Token dans apiclient:", token);
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`
+    config.headers.Authorization = `Bearer ${token}`;
   }
   console.log("config:", config);
-  return config
-})
+  return config;
+});
 
 //refresh le token si expiré avec le refresh token
 apiClient.interceptors.response.use(
@@ -70,5 +70,5 @@ apiClient.interceptors.response.use(
       return Promise.reject(error);
     }
   }
-)
+);
 export default apiClient;

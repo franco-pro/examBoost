@@ -1,52 +1,52 @@
-import { Button, ButtonText } from '@/components/ui/button';
-import { Text } from '@/components/ui/text';
-import { Card } from '@/components/ui/card';
-import { Image } from '@/components/ui/image';
-import { View } from '@/components/ui/view';
-import { FlatList, ScrollView } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { Button, ButtonText } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
+import { Card } from "@/components/ui/card";
+import { Image } from "@/components/ui/image";
+import { View } from "@/components/ui/view";
+import { FlatList, ScrollView } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-import { useDispatch, useSelector, } from 'react-redux';
-import { RootState } from '@/app/redux/store';
-import { useEffect } from 'react';
-import { logout, userDatas } from '@/app/redux/users/users.slice';
-import { useRouter } from 'expo-router';
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/app/redux/store";
+import { useEffect } from "react";
+import { logout, userDatas } from "@/app/hooks/redux/users/users.slice";
+import { useRouter } from "expo-router";
 
-import { FontAwesome } from '@expo/vector-icons';
-import { ArrowRightIcon, Icon } from '@/components/ui/icon';
+import { FontAwesome } from "@expo/vector-icons";
+import { ArrowRightIcon, Icon } from "@/components/ui/icon";
 
 export default function Index() {
-  const dispatch = useDispatch<any>()
-  const { user, token,others } = useSelector((state: RootState) => state.user)
+  const dispatch = useDispatch<any>();
+  const { user, token, others } = useSelector((state: RootState) => state.user);
   useEffect(() => {
     if (token) {
-      dispatch(userDatas()) //to work
+      dispatch(userDatas()); //to work
     }
   }, [token]);
 
   console.log("infos: ", user, "token:", token, "others:", others);
-  
-  const navigator = useRouter()
+
+  const navigator = useRouter();
   const logoutHandle = () => {
-    dispatch(logout())
-    navigator.replace("/pages/auth/login")
-  }
+    dispatch(logout());
+    navigator.replace("/pages/auth/login");
+  };
 
   //flatlist
   const DatasSubjects = [
     {
       id: "1",
-      content:"bloc 1"
+      content: "bloc 1",
     },
     {
       id: "2",
-      content:"bloc 2"
+      content: "bloc 2",
     },
     {
       id: "3",
-      content:"bloc 3"
+      content: "bloc 3",
     },
-  ]
+  ];
   return (
     <ScrollView
       contentContainerStyle={{ paddingBottom: 50 }}
@@ -167,6 +167,3 @@ export default function Index() {
     </ScrollView>
   );
 }
-
-
-

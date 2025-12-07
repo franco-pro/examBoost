@@ -1,18 +1,32 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import subscriptionReducer from "./competitions-suscriptions/subscription.slice";
 import competitionReducer from "./competitions/competitions.slice";
 import roomReducer from "./rooms/rooms.slice";
 import transactionReducer from "./transactions/transactions.slice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import persistReducer from "redux-persist/es/persistReducer";
+import userReducer from "./users/users.slice";
+import { persistStore } from "redux-persist";
 
+const rootReducer = combineReducers({
+  user: userReducer,
+  rooms: roomReducer,
+  competitions: competitionReducer,
+  subscriptions: subscriptionReducer,
+  transactions: transactionReducer,
+});
+const persistConfig = {
+  key: "root",
+  storage: AsyncStorage,
+};
 
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const store = configureStore({
-  reducer: {
-    rooms: roomReducer,
-    competitions: competitionReducer,
-    subscriptions: subscriptionReducer,
-    transactions: transactionReducer
-  },
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({ serializableCheck: false }),
 });
 
+export const persistor = persistStore(store);
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

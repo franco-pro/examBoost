@@ -10,7 +10,7 @@ import {
 
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
-import { registerUser } from "@/app/redux/users/users.slice";
+import { registerUser } from "@/app/hooks/redux/users/users.slice";
 
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";

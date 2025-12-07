@@ -40,9 +40,9 @@ import {
   CheckboxLabel,
 } from "@/components/ui/checkbox";
 import { Spinner } from "@/components/ui/spinner";
-import { RootState } from "../../redux/store";
+import { RootState } from "@/app/hooks/redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "@/app/redux/users/users.slice";
+import { loginUser } from "@/app/hooks/redux/users/users.slice";
 import { getItem, setItem } from "@/app/utils/asyncStorage";
 import GoogleAuth from "./googleAuth";
 
@@ -53,28 +53,28 @@ export default function Login() {
   const [passType, setPassType] = useState<"password" | "text">("password");
 
   const { request, promptAsync } = GoogleAuth();
-  const requestGoogle = request
+  const requestGoogle = request;
   const socialsBtns = [
     {
       name: "Google",
       icon: require("../../assets/icons/google.png"),
-      action: ()=>promptAsync(),
+      action: () => promptAsync(),
       requestAction: requestGoogle,
     },
     {
       name: "Facebook",
       icon: require("../../assets/icons/facebook.png"),
-      action: ()=>{},
-      requestAction: '',
+      action: () => {},
+      requestAction: "",
     },
     {
       name: "Linkedin",
       icon: require("../../assets/icons/linkedin.png"),
-      action: ()=>{},
+      action: () => {},
       requestAction: "",
     },
   ];
-  
+
   const navigation = useRouter();
   const dispatch = useDispatch<any>();
   const { user, loading, error } = useSelector(
@@ -274,7 +274,7 @@ export default function Login() {
                       className=" my-2 bg-white rounded-full  shadow-md w-16 h-16"
                       size="xl"
                       onPress={btn.action}
-                      disabled = {!btn.requestAction}
+                      disabled={!btn.requestAction}
                     >
                       <Image
                         source={btn.icon}

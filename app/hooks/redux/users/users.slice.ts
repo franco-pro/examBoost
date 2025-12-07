@@ -118,7 +118,10 @@ export const userSlice = createSlice({
   reducers: {
     setCredentials: (
       state,
-      action: PayloadAction<{ token: string | null; refreshToken: string| null }>
+      action: PayloadAction<{
+        token: string | null;
+        refreshToken: string | null;
+      }>
     ) => {
       state.token = action.payload.token;
       state.refreshToken = action.payload.refreshToken;
@@ -152,7 +155,7 @@ export const userSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.accessToken;
-        console.log("payload:", action.payload)
+        console.log("payload:", action.payload);
         state.refreshToken = action.payload.refreshToken;
       })
 
@@ -164,5 +167,5 @@ export const userSlice = createSlice({
   },
 });
 
-export const { logout,setCredentials } = userSlice.actions;
+export const { logout, setCredentials } = userSlice.actions;
 export default userSlice.reducer;
