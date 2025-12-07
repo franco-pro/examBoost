@@ -4,7 +4,7 @@ import { RootState, store } from "../redux/store";
 import { setCredentials } from "../redux/users/users.slice";
 
 const apiClient = axios.create({
-  baseURL: "http://192.168.255.122:3000",
+  baseURL: "http://192.168.1.189:3000",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -15,7 +15,7 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(async (config) => {
   const state: RootState = store.getState();
   const token = state.user.token
-  console.log("refreshToken dans apiclient:", token)
+  console.log("Access Token dans apiclient:", token)
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
@@ -65,6 +65,7 @@ apiClient.interceptors.response.use(
       } catch (error) {
         console.log("refresh token invalide:", error);
         //se deconnecter
+        // store.dispatch(setCredentials({token:null, refreshToken:null}))
       }
       return Promise.reject(error);
     }

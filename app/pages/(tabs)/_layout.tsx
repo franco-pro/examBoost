@@ -1,6 +1,8 @@
 import { Ionicons } from '@expo/vector-icons'
 import { Tabs } from 'expo-router'
 import AppLayout from '../../styles/AppLayout'
+import LogoHeaderComponent from '@/components/personalizedComponents/logoApplication';
+import RightBtn from '@/components/personalizedComponents/rightBtn';
 
 
 export default function RootLayout(){
@@ -20,8 +22,8 @@ export default function RootLayout(){
             tabBarStyle: {
               backgroundColor: "#181c5c",
             },
-            headerTitle: ()=> <Lo/>,
-            headerRight:()=>{""}
+            headerTitle: ()=> <LogoHeaderComponent/>,
+            headerRight:()=><RightBtn/>
           }}
         >
           <Tabs.Screen

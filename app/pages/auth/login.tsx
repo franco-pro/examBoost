@@ -44,6 +44,7 @@ import { RootState } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "@/app/redux/users/users.slice";
 import { getItem, setItem } from "@/app/utils/asyncStorage";
+import GoogleAuth from "./googleAuth";
 
 export default function Login() {
   const { width, height } = Dimensions.get("window");
@@ -51,11 +52,29 @@ export default function Login() {
   const [passwordValue, setPasswordValue] = useState<string>("");
   const [passType, setPassType] = useState<"password" | "text">("password");
 
+  const { request, promptAsync } = GoogleAuth();
+  const requestGoogle = request
   const socialsBtns = [
-    { name: "Google", icon: require("../../assets/icons/google.png") },
-    { name: "Facebook", icon: require("../../assets/icons/facebook.png") },
-    { name: "Linkedin", icon: require("../../assets/icons/linkedin.png") },
+    {
+      name: "Google",
+      icon: require("../../assets/icons/google.png"),
+      action: ()=>promptAsync(),
+      requestAction: requestGoogle,
+    },
+    {
+      name: "Facebook",
+      icon: require("../../assets/icons/facebook.png"),
+      action: ()=>{},
+      requestAction: '',
+    },
+    {
+      name: "Linkedin",
+      icon: require("../../assets/icons/linkedin.png"),
+      action: ()=>{},
+      requestAction: "",
+    },
   ];
+  
   const navigation = useRouter();
   const dispatch = useDispatch<any>();
   const { user, loading, error } = useSelector(
@@ -254,6 +273,8 @@ export default function Login() {
                       key={index}
                       className=" my-2 bg-white rounded-full  shadow-md w-16 h-16"
                       size="xl"
+                      onPress={btn.action}
+                      disabled = {!btn.requestAction}
                     >
                       <Image
                         source={btn.icon}
