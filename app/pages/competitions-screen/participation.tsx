@@ -2,6 +2,7 @@ import { clearSuscriptionState } from "@/app/hooks/redux/competitions-suscriptio
 import { getMyParticipations } from "@/app/hooks/redux/competitions-suscriptions/subscription.thunks";
 import { setSelectedCompetition } from "@/app/hooks/redux/competitions/competitions.slice";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
+import Competition from "@/app/hooks/services/competitions/competition.entity";
 import { useSoundAud } from "@/app/hooks/useSound.hook";
 import { tempsRestant } from "@/app/services/compeititonService/dayleft";
 import Filter from "@/components/layouts/filter/searchBar";
@@ -19,9 +20,10 @@ import { ScrollView } from "react-native-gesture-handler";
 export default function Participation() {
   const { t } = useTranslation("competition"); // <- hook i18n
   const router = useRouter();
-  const {mySubscriptionList, loading} = useAppSelector((state)=> state.subscriptions);
+  const {mySubscriptionList, searchResults, loading} = useAppSelector((state)=> state.subscriptions);
   const {homeBaseData} = useAppSelector((state)=> state.competitions);
   const userId = 1;
+  const username = "Franz";
   const dispatch = useAppDispatch();
   const [refreshing, setRefreshing] = useState(false);
   const {stop} = useSoundAud()
@@ -64,6 +66,12 @@ export default function Participation() {
     }
   }, [])
 
+  useEffect(()=>{
+    if(searchResults.length > 0){
+      console.log("Search results updated:", searchResults);
+    }
+  }, [searchResults])
+
   function goToCompetitionInfoScreen(id: number){
         const competitionSelected = mySubscriptionList.find((comp) => comp.id == id);
         if(competitionSelected){
@@ -105,6 +113,11 @@ export default function Participation() {
       return `${diffDays} days ${diffHrs} hr left`;
     }
   }
+
+  function handleFilter(list: Competition[]){
+    console.log("Filter by:", list);
+  }
+  
   return (
     <View className="flex-1 w-full max-w-full  bg-gray-50 pt-[40px] pb-[50px] px-4">
       
@@ -121,7 +134,7 @@ export default function Participation() {
 
       <View className="bg-white p-4 rounded-2xl  ">
         <Text className="text-lg font-semibold">
-          {t("participation.greeting")}
+          {t("participation.greeting", {name: username})}
         </Text>
         <Text className="text-gray-500 mt-1">
           {t("participation.subtitle")}
@@ -129,7 +142,11 @@ export default function Participation() {
       </View>
 
       {/* Barre de recherche */}
-      <Filter />
+      <View 
+      //  onTouchStart={() => console.log('press')}
+      >
+        <Filter list={mySubscriptionList} foundIn={"subscriptions"} />
+      </View>
 
       {/* Statistiques */}
       <View className="flex-row flex-wrap justify-between">
@@ -182,7 +199,98 @@ export default function Participation() {
                   />
                 }
       >
-        {mySubscriptionList.length != 0 && mySubscriptionList.map((comp, index) => {
+        {
+           searchResults.length != 0 && !loading && searchResults.map((comp, index) => {
+            return (
+              <TouchableOpacity
+                key={index}
+                className="bg-white rounded-2xl flex-row p-4 mb-3  items-center"
+                style={{
+                  backgroundColor: "white",
+                  borderRadius: 16,
+                  flexDirection: "row",
+                  padding: 16,
+                  marginBottom: 12,
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 4,
+                  elevation: 2,
+                }}
+                onPress={() =>
+                  goToCompetitionInfoScreen(comp.id)
+                }
+              >
+                <View className="ml-3 pr-2 flex-1">
+                {/* Nom de la compétition et deadline */}
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-lg font-semibold mr-2">{comp.name}</Text>
+                  <Text className="text-xs text-gray-400">
+                  {comp.statut === "UPCOMING" && 
+                      tempsRestant(comp.registration_deadline).valid &&
+                        t("participation.labels.time_left", {
+                          days: tempsRestant(comp.registration_deadline).day,
+                          hours: tempsRestant(comp.registration_deadline).hours,
+                          min: tempsRestant(comp.registration_deadline).minutes,
+                        })
+                        }
+
+                      {comp.statut === "UPCOMING" && 
+                      !tempsRestant(comp.registration_deadline).valid &&
+                        t("participation.labels.time_passed")
+                      }
+                    {comp.statut !== "UPCOMING" &&
+                      t("participation.labels.time_passed")}
+                  </Text>
+                </View>
+
+                {/* Sujet / date */}
+                <Text className="text-gray-500 text-sm mt-1">
+                  {new Date(comp.date).toLocaleDateString("fr-FR", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </Text>
+
+                {/* Participants et statut */}
+                <View className="flex-row justify-between items-center mt-2">
+                  <View className="flex-row items-center">
+                    <Ionicons
+                      name="people"
+                      size={16}
+                      color="#4B5563"
+                      className="mr-1"
+                    />
+                    <Text className="text-sm text-gray-700">
+                      { comp.suscribers.length} {t("participation.labels.joined")}
+                    </Text>
+                  </View>
+                  <View
+                    className={`rounded-full px-3 py-1 ${
+                      comp.statut === "UPCOMING"
+                        ? "bg-green-200"
+                        : comp.statut === "ONGOING"
+                        ? "bg-yellow-200"
+                        : comp.statut === "CANCELLED"
+                        ? "bg-error-300"
+                        : "bg-gray-300"
+                    }`}
+                  >
+                    <Text className="text-xs font-semibold text-black">
+                      {t(`participation.labels.status.${comp.statut}`)}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+
+                <Ionicons name="chevron-forward" size={22} color="#9ca3af" />
+              </TouchableOpacity>
+            );
+          })
+        }
+
+        {mySubscriptionList.length != 0 && searchResults.length == 0 && mySubscriptionList.map((comp, index) => {
           return (
             <TouchableOpacity
               key={index}

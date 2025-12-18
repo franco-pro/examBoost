@@ -12,7 +12,15 @@ export interface HomeBaseCompetition{
         GoldenA: string,
         GoldenB: string,
         GoldenC: string,
-        GoldenD: string
+        GoldenD: string,
+
+        GoldenA_EN: string,
+        GoldenB_EN: string,
+        GoldenC_EN: string,
+        GoldenD_EN: string,
+
+        NOTE: string,
+        NOTE_EN: string
       },
 
       competitionCreated: number,

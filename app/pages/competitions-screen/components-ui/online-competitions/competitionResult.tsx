@@ -10,6 +10,7 @@ import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { FlatList, ImageBackground, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import UsersResult from "./usersResult";
@@ -28,7 +29,7 @@ const Leaderboard = () => {
   const {roomResult } = useAppSelector((state) => state.rooms);
   const dispatch = useAppDispatch();
   const [showResult, setValue] = useState(false);
-
+  const {t} = useTranslation("competition")
  
   useFocusEffect(
     useCallback(() => {
@@ -57,7 +58,6 @@ const Leaderboard = () => {
 
     const top3 = data.length > 2 ? data.slice(0, 3): data.slice(0, 2);
     const others = data.length > 2 ? data.slice(3): [];  
-
         
     return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -125,7 +125,7 @@ const Leaderboard = () => {
           </HStack>
           </View>
                 <HStack space="md" className='mb-4 mt-[5px]'>
-            <Text size="xl" className="text-white ml-[20px]">Classement</Text>
+            <Text size="xl" className="text-white ml-[20px]"> {t("mycompetition.competition.result_screen.rangking")} </Text>
 
             <Switch
               defaultValue={showResult}
@@ -164,7 +164,7 @@ const Leaderboard = () => {
             />
             : <Alert action="info" variant="solid">
                  <AlertIcon as={InfoIcon} />
-                 <AlertText>No more participants to show !</AlertText>
+                 <AlertText>{t("mycompetition.competition.result_screen.no_more_users")}</AlertText>
              </Alert>
             )
           } 

@@ -12,6 +12,7 @@ import { Heading } from '@/components/ui/heading';
 import { Icon, TrashIcon } from '@/components/ui/icon';
 import { Spinner } from '@/components/ui/spinner';
 import { Text } from '@/components/ui/text';
+import { useTranslation } from 'react-i18next';
 
 interface DialogDeleteProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ interface DialogDeleteProps {
   onConfirm: ()=> void;
 }
 export default function DialogDelete({isOpen, isLoading, onClose, onConfirm, headText, bodyText}: DialogDeleteProps) {  
+  const {t} = useTranslation("competition");
   return (
     <>
       <AlertDialog isOpen={isOpen} onClose={onClose}>
@@ -46,7 +48,7 @@ export default function DialogDelete({isOpen, isLoading, onClose, onConfirm, hea
               className="px-[30px]"
             >
               <ButtonText>
-                Delete
+              {t("mycompetition.deleteModal.textBtn")}
                   {
                     isLoading && <Spinner  size="small" color="blue"/>
                   }
@@ -59,7 +61,9 @@ export default function DialogDelete({isOpen, isLoading, onClose, onConfirm, hea
               size="xl"
               className="px-[30px]"
             >
-              <ButtonText>Cancel</ButtonText>
+              <ButtonText> 
+                  {t("mycompetition.confirmModal.cancel")}
+              </ButtonText>
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

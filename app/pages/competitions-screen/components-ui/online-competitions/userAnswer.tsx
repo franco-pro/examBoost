@@ -10,6 +10,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Text } from '@/components/ui/text';
 import { View } from "@/components/ui/view";
 import { VStack } from "@/components/ui/vstack";
+import { useTranslation } from "react-i18next";
 import { ScrollView } from "react-native";
 
 interface UsersAnswersProps{
@@ -22,7 +23,7 @@ interface UsersAnswersProps{
 
 export default function UsersAnswers({competitionName }: UsersAnswersProps) {
     const {room, socketWaiting, error} = useAppSelector(state => state.rooms);
-
+    const {t}= useTranslation("competition");
     return (
         <>
         <Card size="lg" variant="outline" className="p-5  shadow-xl rounded-lg w-[90%] mt-1">
@@ -63,11 +64,23 @@ export default function UsersAnswers({competitionName }: UsersAnswersProps) {
                           </AccordionHeader>
                           <AccordionContent className="text-center mt-4 max-h-[200px] h-[200px]">
                             <ScrollView>
+                                    {/* {
+                                      <View className="mb-[10px]">
+                                          <SegmentedFilter
+                                              options={q.choices}
+                                              defaultValue={q.correctAnswer}
+                                              onChange={(value) => {
+                                                console.log("Selected value:", value);
+                                              }}
+                                            />
+                                      </View>
+                                      
+                                    } */}
 
                                     {  q.answers.length && q.answers.length > 0 ? 
                                     (
                                        q.answers.map((u, index) => (
-                                    <Box key={u.id} className="flex-row mb-4 items-center">
+                                    <Box key={u.id+index} className="flex-row mb-4 items-center">
                                       <Avatar className="mr-3">
                                         <AvatarFallbackText>
                                           {u.username.split(" ").map((n) => n[0]).join("")}
@@ -82,7 +95,7 @@ export default function UsersAnswers({competitionName }: UsersAnswersProps) {
                                         <Heading size="sm" className="mb-1">
                                           {u.username}
                                         </Heading>
-                                        <Text size="sm">Answer: 
+                                        <Text size="sm">{t("mycompetition.competition.result_screen.answer")}: 
                                         <Text size="sm" className="text-primary-defaultBlue"> {u.text} </Text> 
                                           {
                                               u.isCorrect ? (
@@ -100,7 +113,7 @@ export default function UsersAnswers({competitionName }: UsersAnswersProps) {
                                     <VStack>
 
                                         <Spinner size="large" color="blue" />
-                                        <Text>En attente de reponse.</Text>
+                                        <Text>{t("mycompetition.competition.result_screen.waiting_answer")}.</Text>
                                     </VStack>
 
                                 </View>
@@ -125,7 +138,7 @@ export default function UsersAnswers({competitionName }: UsersAnswersProps) {
                           source={require('../../../../../assets/others/nodata.png')}
                           alt="image"
                         />
-                        <Text>Aucune Questions générées, en attente...</Text>
+                        <Text>{t("mycompetition.competition.result_screen.no_qts_generated_wait")}</Text>
 
                         </VStack>
                     </View>

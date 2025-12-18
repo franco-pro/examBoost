@@ -5,6 +5,7 @@ import { VStack } from "@/components/ui/vstack";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
 import React, { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Text, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
@@ -17,6 +18,7 @@ export default function Transactions() {
   const dispatch = useAppDispatch();
   const userId = 1;
   const {transactionList: list, loading, error} = useAppSelector((state)=> state.transactions)
+  const {t} = useTranslation("transaction");
 
   useFocusEffect(
     useCallback(()=>{
@@ -138,14 +140,14 @@ export default function Transactions() {
 
         {
           filteredTransactions.length == 0 && loadDone &&
-          <View className="justify-center items-center mt-[40%]">
+          <View className="justify-center items-center mt-[30%]">
           <VStack className="justify-center items-center">
             <Image
               size="2xl"
               source={require('../../assets/images/no_404.jpg')}
               alt="image"
             />
-            <Text>Aucune transaction</Text>
+            <Text>{t("no_transaction")} </Text>
 
             </VStack>
         </View>

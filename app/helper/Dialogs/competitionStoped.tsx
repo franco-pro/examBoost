@@ -3,6 +3,7 @@ import { Box } from '@/components/ui/box';
 import { Button, ButtonText } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
 import { Text } from '@/components/ui/text';
+import { useTranslation } from 'react-i18next';
 
 interface DialogConfirmProps {
     isOpen: boolean;
@@ -11,7 +12,8 @@ interface DialogConfirmProps {
   }
 
 export default function CompetitionStopedAlert({isOpen, onClose, message}: DialogConfirmProps) {
-    return (
+  const {t} = useTranslation("competition")  
+  return (
         <>
         <AlertDialog isOpen={isOpen} onClose={onClose}>
           <AlertDialogBackdrop />
@@ -21,12 +23,12 @@ export default function CompetitionStopedAlert({isOpen, onClose, message}: Dialo
             </Box>
             <AlertDialogHeader>
             <Heading className="text-typography-950 font-semibold" size="xl">
-                Compétition Annulée !
+                {t("mycompetition.competition.stoppped.label")}
             </Heading>
           </AlertDialogHeader>
           <AlertDialogBody className="mt-3 mb-4">
             <Text size="xl">
-            {message ?? "Competition Arreter par le propriétaire de la competition !"}
+            {message ?? t("mycompetition.competition.stopped.text")}
              {' \n'}
             
              
@@ -39,7 +41,7 @@ export default function CompetitionStopedAlert({isOpen, onClose, message}: Dialo
               size="lg"
             
             >
-              <ButtonText>Sortir</ButtonText>
+              <ButtonText> {t("mycompetition.competition.quit")}  </ButtonText>
             </Button>
           </AlertDialogFooter>
           </AlertDialogContent>

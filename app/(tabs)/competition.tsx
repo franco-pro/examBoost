@@ -17,6 +17,7 @@ import { useAppDispatch, useAppSelector } from "../hooks/redux/redux.hooks";
 export default function Competition() {
   const router = useRouter();
   const userId = 1;
+  const username= "Franz";
   const { t } = useTranslation("competition"); // hook pour traduire les textes
   const {homeBaseData, loading} = useAppSelector((state)=> state.competitions);
   
@@ -100,7 +101,7 @@ export default function Competition() {
     <View className="flex-1 bg-gray-50 p-4">
       {/* ===== Header ===== */}
       <View className="bg-white p-4 rounded-2xl mb-4">
-        <Text className="text-lg font-semibold">{t("accueil.greeting")}</Text>
+        <Text className="text-lg font-semibold">{t("accueil.greeting", {name: username})}</Text>
         <Text className="text-gray-500 mt-1">{t("accueil.subtitle")}</Text>
       </View>
 

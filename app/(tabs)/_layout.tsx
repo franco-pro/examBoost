@@ -1,12 +1,14 @@
+import LanguageSwitcher from "@/components/layouts/LanguageSwitch";
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
+import { useTranslation } from "react-i18next";
 import AppLayout from "../styles/AppLayout";
-import LanguageSwitcher from "@/components/layouts/LanguageSwitch";
 
 export default function RootLayout() {
+  const {t} = useTranslation("competition")
   return (
     <AppLayout>
-      {/* <LanguageSwitcher /> */}
+      <LanguageSwitcher />
       <Tabs
         screenOptions={{
           animation: "none",
@@ -25,7 +27,7 @@ export default function RootLayout() {
         <Tabs.Screen
           name="index"
           options={{
-            title: "Home",
+            title: t("accueil.navigationBottom.home"),
             tabBarIcon: ({ color, focused }) => (
               <Ionicons
                 name={focused ? "home-sharp" : "home-outline"}
@@ -38,7 +40,7 @@ export default function RootLayout() {
         <Tabs.Screen
           name="transaction"
           options={{
-            title: "Mes Transactions",
+            title: t("accueil.navigationBottom.transactions"),
             tabBarIcon: ({ focused, color }) => (
               <Ionicons
                 name={focused ? "swap-horizontal" : "swap-horizontal-outline"}
@@ -52,7 +54,7 @@ export default function RootLayout() {
         <Tabs.Screen
           name="pack"
           options={{
-            title: "Packs",
+            title: t("accueil.navigationBottom.packs"),
             tabBarIcon: ({ focused, color }) => (
               <Ionicons
                 name={focused ? "briefcase" : "briefcase-outline"}

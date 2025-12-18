@@ -9,6 +9,7 @@ import {
 import { Button, ButtonText } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
 import { Text } from '@/components/ui/text';
+import { useTranslation } from 'react-i18next';
   
   interface DialogConfirmProps {
     isOpen: boolean;
@@ -16,6 +17,7 @@ import { Text } from '@/components/ui/text';
     onConfirm: () => void;
   }
   export default function DialogConfirm({isOpen, onClose, onConfirm}: DialogConfirmProps) {  
+    const {t}= useTranslation("competition");
     return (
       <>
         <AlertDialog isOpen={isOpen} onClose={onClose}>
@@ -23,15 +25,15 @@ import { Text } from '@/components/ui/text';
           <AlertDialogContent className="w-[85%] max-w-[90%] gap-4 items-center">
             <AlertDialogHeader>
             <Heading className="text-typography-950 font-semibold" size="xl">
-                Êtes-vous sur de vouloir quitter cette compétition ?
+                {t("mycompetition.confirmModal.title")}
             </Heading>
           </AlertDialogHeader>
           <AlertDialogBody className="mt-3 mb-4">
             <Text size="xl">
-             Quitter cette competition, vous fera perdre votre progression actuelle et vous ne pourrez plus y revenir en tant que participant, mais uniquement en mode spectacteur !
+            {t("mycompetition.confirmModal.text")}
              {' \n'}
             
-             Êtes-vous sûr de vouloir continuer ? 
+            {t("mycompetition.confirmModal.text2")}
             </Text>
           </AlertDialogBody>
           <AlertDialogFooter>
@@ -40,10 +42,12 @@ import { Text } from '@/components/ui/text';
               onPress={onClose}
               size="sm"
             >
-              <ButtonText>Cancel</ButtonText>
+              <ButtonText>
+                 {t("mycompetition.confirmModal.cancel")}
+              </ButtonText>
             </Button>
             <Button size="sm" onPress={onConfirm} action="negative">
-              <ButtonText>Quitter la competition</ButtonText>
+              <ButtonText> {t("mycompetition.confirmModal.textBtn")} </ButtonText>
             </Button>
           </AlertDialogFooter>
           </AlertDialogContent>

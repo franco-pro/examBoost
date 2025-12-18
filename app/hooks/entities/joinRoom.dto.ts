@@ -3,5 +3,6 @@ export interface JoinRoomDto{
     username: string;
     surname: string;
     userID: number;
-    imgUrl: string
+    imgUrl: string;
+    appLang: "fr"|"en"
 }

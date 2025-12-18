@@ -14,6 +14,7 @@ import { Textarea, TextareaInput } from '@/components/ui/textarea';
 import { VStack } from '@/components/ui/vstack';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
 
 // interface Question {
@@ -37,6 +38,7 @@ interface ComepetitionInfo{
 export default function FormQuestion({competitionInfo}: { competitionInfo: ComepetitionInfo}) {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const {t} = useTranslation("competition");
   const {room, competitionFinished} = useAppSelector(state => state.rooms);
   const Events = EmitEvent(dispatch, {isManagedByIA: room?.isManagedByIA as any, roomId: room?.roomId as any})
   const [isAlertCompetOpen, setIsAlertCompEndOpen] = useState(false);
@@ -89,12 +91,12 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
     let newErrors: typeof errors = { timeToAnswer: "", points: "", corretAnswer: "", firsChoice: "", secondChoice: "", thirdChoice: "", text: "" };
 
     if (Number.parseInt(form.timeToAnswer) <= 5 || form.timeToAnswer.length == 0) {
-      newErrors.timeToAnswer = "Temps trop court";
+      newErrors.timeToAnswer = t("mycompetition.competition.form_question.model.timeToAnswer.error");
       valid = false;
     }
 
     if (!form.points || Number.parseInt(form.points) <= 0 || form.points.length == 0) {
-      newErrors.points = "Points invalides";
+      newErrors.points = t("mycompetition.competition.form_question.model.points.nb");
       valid = false;
     }
 
@@ -105,22 +107,22 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
     // }
 
     if (form.firsChoice.length == 0) {
-      newErrors.firsChoice = "Choix invalide";
+      newErrors.firsChoice = t("mycompetition.competition.form_question.model.first_choice.nb");
       valid = false;
     }
 
     if (form.secondChoice.length == 0) {
-      newErrors.secondChoice = "Choix invalide";
+      newErrors.secondChoice = t("mycompetition.competition.form_question.model.second_choice.nb");
       valid = false;
     }
 
     if (form.thirdChoice.length == 0) {
-      newErrors.thirdChoice = "Choix invalide";
+      newErrors.thirdChoice = t("mycompetition.competition.form_question.model.third_choice.nb");
       valid = false;
     }
 
     if (form.text.length == 0) {
-      newErrors.text = "Question invalide";
+      newErrors.text = t("mycompetition.competition.form_question.model.invalid.question");
       valid = false;
     }
 
@@ -131,7 +133,7 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
   const handleSubmitForm = () => {
     if (validate()) {
       if(form.corretAnswer.toLowerCase() != form.firsChoice.toLowerCase() && form.corretAnswer.toLowerCase() != form.secondChoice.toLowerCase() && form.corretAnswer.toLowerCase() != form.thirdChoice.toLowerCase()){
-            console.log("Formulaire invalide Aucun choix ne correspond à la reponse correct :", form);
+            console.log(t("mycompetition.competition.form_question.choice_mistake_error"), form);
             
       }else{
 
@@ -149,17 +151,17 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
         } as Question;
         Events.sendQuestion(question);
 
-        setBtnText('En attente de réponses...');
+        setBtnText(t("mycompetition.competition.online_game.waiting_ans"));
         setIsWaiting(true);
     
         setTimeout(() => {
-          setBtnText('Envoyer');
+          setBtnText(t("mycompetition.competition.form_question.send"));
           setIsWaiting(false);
         }, (Number(form.timeToAnswer)+10)*1000)
       }
 
     } else {
-      console.log("Formulaire invalide", form);
+      console.log(t("mycompetition.competition.form_question.invalid.form"), form);
     }
   };
 
@@ -190,7 +192,7 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
       
       <Card size="lg" variant="elevated" className="p-5 shadow-xl rounded-lg w-[90%]">
         <Text className="text-sm font-normal mb-2 text-typography-700">
-          Created At: {competitionInfo.createdAt}
+          {t("mycompetition.competition.online_game.created_at")}: {competitionInfo.createdAt}
         </Text>
 
         <VStack className='mb-6 max-h-[400px]'>
@@ -202,7 +204,7 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
 
           <FormControl isInvalid={!!errors.timeToAnswer} isRequired className='pt-2'>
             <FormControlLabel>
-              <FormControlLabelText> Temps de Réponse(en s): </FormControlLabelText>
+              <FormControlLabelText> {t("mycompetition.competition.form_question.model.timeToAnswer.label")}: </FormControlLabelText>
             </FormControlLabel>
             <Input> 
               <InputField
@@ -221,7 +223,7 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
               </FormControlError>
             ) : (
               <FormControlHelper>
-                <FormControlHelperText>Le temps doit etre suppérieur à 5 secondes.</FormControlHelperText>
+                <FormControlHelperText>{t("mycompetition.competition.form_question.model.timeToAnswer.nb")}</FormControlHelperText>
               </FormControlHelper>
             )}
           </FormControl>
@@ -251,7 +253,7 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
 
           <FormControl isInvalid={!!errors.firsChoice} isRequired className='mt-3'>
             <FormControlLabel>
-              <FormControlLabelText>Premier Choix</FormControlLabelText>
+              <FormControlLabelText>{t("mycompetition.competition.form_question.model.first_choice.label")}</FormControlLabelText>
             </FormControlLabel>
             <Input>
               <InputField
@@ -272,7 +274,7 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
 
           <FormControl isInvalid={!!errors.secondChoice} isRequired className='mt-3'>
             <FormControlLabel>
-              <FormControlLabelText>Second Choix</FormControlLabelText>
+              <FormControlLabelText>{t("mycompetition.competition.form_question.model.second_choice.label")}</FormControlLabelText>
             </FormControlLabel>
             <Input>
               <InputField
@@ -291,7 +293,7 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
 
           <FormControl isInvalid={!!errors.thirdChoice} isRequired className='mt-3'>
             <FormControlLabel>
-              <FormControlLabelText>Troisième Choix</FormControlLabelText>
+              <FormControlLabelText>{t("mycompetition.competition.form_question.model.third_choice.label")} </FormControlLabelText>
             </FormControlLabel>
             <Input>
               <InputField
@@ -348,9 +350,9 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
             ) : (
                 <FormControlHelper>
                   <FormControlHelperText>
-                    Soyez bref...
+                  {t("mycompetition.competition.form_question.model.inf")}
                     {'\n'}
-                    Nombre de question restantes: {(questionsNbr - questionSended)}
+                    {t("mycompetition.competition.form_question.model.questionLeft")}: {(questionsNbr - questionSended)}
 
                   </FormControlHelperText>
                 </FormControlHelper>
@@ -378,7 +380,7 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
 
 
         <Button onPress={() => setIsOpen(true)} action="negative" className="py-2 px-4 mt-4 border-0 w-[90%] max-w-[500px] self-center" >
-         <ButtonText size="sm" className='text-typography-white'>Arreter la competition</ButtonText>
+         <ButtonText size="sm" className='text-typography-white'>{t("mycompetition.competition.form_question.model.stop")}</ButtonText>
        </Button>
        <StopCompetition isOpen={isOpen} onClose={() => setIsOpen(false)} onConfirm={handleLeavingCompetition} isAI={competitionInfo.isAI} />
       </Card>

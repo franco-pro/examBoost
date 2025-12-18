@@ -18,10 +18,10 @@ import Toast from "react-native-toast-message";
 
 export default function AllCompetition() {
   const { t } = useTranslation("competition"); // <- hook i18n
-  const {competitionList, loading, error} = useAppSelector((state) => state.competitions);
+  const {competitionList, searchResults, loading, error} = useAppSelector((state) => state.competitions);
   const [refreshing, setRefreshing] = useState(false);
   const {stop} = useSoundAud();
-
+  const username = "Franz";
   const dispatch = useAppDispatch();
   const router = useRouter();
 
@@ -119,7 +119,7 @@ export default function AllCompetition() {
 
       <View className="bg-white p-4 rounded-2xl  ">
         <Text className="text-lg font-semibold">
-          {t("participation.greeting")}
+          {t("participation.greeting", {name: username})}
         </Text>
         <Text className="text-gray-500 mt-1">
           {t("participation.subtitle")}
@@ -127,7 +127,7 @@ export default function AllCompetition() {
       </View>
 
       {/* Barre de recherche */}
-      <Filter />
+      <Filter list={competitionList} foundIn={"competitions"} />
 
       {/* Mes participations */}
       <Text className="text-lg font-semibold my-4">
@@ -148,10 +148,99 @@ export default function AllCompetition() {
           />
         }
       >
+
+        {
+          searchResults.length != 0 && searchResults.map((comp, index) => {
+            return (
+              <TouchableOpacity
+                key={index}
+                className="bg-white rounded-2xl flex-row p-4 mb-3  items-center"
+                style={{
+                  backgroundColor: "white",
+                  borderRadius: 16,
+                  flexDirection: "row",
+                  padding: 16,
+                  marginBottom: 12,
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 4,
+                  elevation: 2,
+                }}
+                onPress={() => goToCompetitionInfoScreen(comp.id)}
+              >
+                <View className="ml-3 pr-2 flex-1">
+                  {/* Nom de la compétition et deadline */}
+                  <View className="flex-row items-center justify-between">
+                    <Text className="text-lg font-semibold">{comp.name}</Text>
+                    <Text className="text-xs text-gray-400">
+                      {comp.statut === "UPCOMING" && 
+                      tempsRestant(comp.registration_deadline).valid &&
+                        t("participation.labels.time_left", {
+                          days: tempsRestant(comp.registration_deadline).day,
+                          hours: tempsRestant(comp.registration_deadline).hours,
+                          min: tempsRestant(comp.registration_deadline).minutes,
+                        })
+                        }
+
+                      {comp.statut === "UPCOMING" && 
+                      !tempsRestant(comp.registration_deadline).valid &&
+                        t("participation.labels.time_passed")
+                      }
+
+                      {comp.statut !== "UPCOMING" &&
+                        t("participation.labels.time_passed")}
+                    </Text>
+                  </View>
+
+                  {/* Sujet / date */}
+                  <Text className="text-gray-500 text-sm mt-1">
+                    {new Date(comp.date).toLocaleDateString("fr-FR", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </Text>
+
+                  {/* Participants et statut */}
+                  <View className="flex-row justify-between items-center mt-2">
+                    <View className="flex-row items-center">
+                      <Ionicons
+                        name="people"
+                        size={16}
+                        color="#4B5563"
+                        className="mr-1"
+                      />
+                      <Text className="text-sm text-gray-700">
+                        {comp.suscribers.length} {t("participation.labels.joined")}
+                      </Text>
+                    </View>
+                    <View
+                      className={`rounded-full px-3 py-1 ${
+                        comp.statut === "UPCOMING"
+                          ? "bg-green-200"
+                          : comp.statut === "ONGOING"
+                          ? "bg-yellow-200"
+                          : comp.statut === "CANCELLED"
+                          ? "bg-error-300"
+                          : "bg-gray-300"
+                      }`}
+                    >
+                      <Text className="text-xs font-semibold text-black">
+                        {t(`participation.labels.status.${comp.statut}`)}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+                <Ionicons name="chevron-forward" size={22} color="#9ca3af" />
+              </TouchableOpacity>
+            );   
+        })
+       }
         {/* retourner que des competitions publiques */}
-        {competitionList.length !=0 && competitionList
+        {competitionList.length != 0 && searchResults.length == 0 && competitionList
           .filter((comp, index) => {
-            return comp.isPublic === false;
+            return true;
           })
           .map((comp, index) => {
             return (
@@ -259,7 +348,7 @@ export default function AllCompetition() {
                 source={require('../../../assets/images/no_404.jpg')}
                 alt="image"
               />
-              <Text>Aucune competition disponible...</Text>
+              <Text>{t("mycompetition.no_competition_available")} </Text>
 
               </VStack>
           </View>

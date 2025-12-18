@@ -1,3 +1,4 @@
+import { LanguageContext } from "@/app/context/LanguageProvider";
 import DialogDelete from "@/app/helper/Dialogs/delete";
 import InvitationPrompts from "@/app/helper/Dialogs/invitation";
 import FullscreenLoader from "@/app/helper/Dialogs/loaderFullScreen";
@@ -17,7 +18,8 @@ import { HStack } from "@/components/ui/hstack";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
 
@@ -27,16 +29,17 @@ export default function Information() {
   const email= "";
   const phone ="";
   const username = "";
+  const { t } = useTranslation("competition"); // <- hook i18n
+  const {language} = useContext(LanguageContext);
 
   const {selectedCompetition, loading, error: errorCompetition} = useAppSelector((state)=>state.competitions);
   const {waitingLaunching, room, error, waitingJoining, errorType} = useAppSelector((state)=> state.rooms);
-  const {error: errorSuscription, loading: suscriptionLoading} = useAppSelector((state)=> state.subscriptions);
+  const {error: errorSuscription, loading: suscriptionLoading, actionDone} = useAppSelector((state)=> state.subscriptions);
 
   const [competitionLaunch, setCompetitionLaunch] = useState(false);
   const [joinAs, setJoininStatut] = useState<"spectator"|"participant"|"admin"|null>(null);
 
   
-  const {actionDone} = useAppSelector((state)=> state.subscriptions);
   const [showModal, setShowModal] = useState(false);
 
   const dispatch = useAppDispatch();
@@ -70,8 +73,8 @@ export default function Information() {
     useCallback(()=>{
       stop();
 
-      if(actionDone){
-          showToast("Inscription réussie !", "Succès", "success");
+      if(actionDone && !errorSuscription){
+          showToast(t("mycompetition.information.success.subscriptionDone"), "Success", "success");
            dispatch(updateSuscribers(
             {
               competitionID: selectedCompetition ? selectedCompetition.id: 0,
@@ -83,7 +86,14 @@ export default function Information() {
               }
             }
            ));
+      router.back();
+
+      }else{
+        if(errorSuscription){
+          showToast(errorSuscription, "Error", "error");
           router.back();
+
+        }
       }
 
 
@@ -100,7 +110,7 @@ export default function Information() {
       console.log('rooms id', room?.roomId);
       console.log('console', selectedCompetition);
       
-      showToast("Compétition demarrée !", "Succès", "success");
+      showToast(t("mycompetition.information.success.competition_launched"), "Succès", "success");
     }
 
     if(error){
@@ -157,6 +167,7 @@ export default function Information() {
       eventManager.joinAsSpectator({
         userID: userId,
         username: username,
+        appLang: (language as any)
       });
     }
      
@@ -172,6 +183,7 @@ export default function Information() {
         eventManager.joinRoom({
           roomId: selectedCompetition?.roomID as any,
           userID: userId,
+          appLang: language as any,
           username: username ? username:"Dems",
           imgUrl: "https://i.ibb.co/7R4DyhQ/Avatar-1.jpg",
           surname: "Dems",
@@ -192,6 +204,7 @@ function userJoinCompetition(){
     eventManager.joinRoom({
       roomId: selectedCompetition?.roomID as any,
       userID: userId,
+      appLang: (language as any),
       username: username ? username:"Dems",
       imgUrl: "https://i.ibb.co/7R4DyhQ/Avatar-1.jpg",
       surname: "Dems",
@@ -209,7 +222,7 @@ function userJoinCompetition(){
         selectedCompetition?.suscribers.length < selectedCompetition?.maxUsers &&
         selectedCompetition.isManagedByIA && 
         selectedCompetition.type == "PAID_REGISTRATION_AS_WINNER_PRICE"){
-          showToast("Le nombre minimum de participants n'est pas atteint pour démarrer la compétition.", "Erreur", "error");
+          showToast(t("mycompetition.information.errors.participantNbr_not_reached"), "Error", "error");
           return;
     }else{
           try {
@@ -270,7 +283,7 @@ function userJoinCompetition(){
         onPress={() => router.back()}
       >
         <Ionicons name="arrow-back" size={24} color={colors.defaultBlue} />
-        <Text className="ml-2 text-lg font-semibold text-gray-800">Retour</Text>
+        <Text className="ml-2 text-lg font-semibold text-gray-800">{t("mycompetition.back")} </Text>
       </TouchableOpacity>
 
 
@@ -282,7 +295,7 @@ function userJoinCompetition(){
           onPress={()=> setShowModal(true)}
           >
             <Text className="text-white text-sm font-semibold mr-2">
-              Inviter des participants
+              {t("mycompetition.information.invite.label")}
             </Text>
             <Ionicons name="send" size={22} color="#ffffff" />
           </TouchableOpacity>
@@ -316,7 +329,7 @@ function userJoinCompetition(){
         </View>
 
         <Text className="text-center text-white">
-          <Text className="font-semibold">Thème :</Text> {selectedCompetition?.topic}
+          <Text className="font-semibold">{t("mycompetition.competition.creations_screen.model.theme")} :</Text> {selectedCompetition?.topic}
         </Text>
       
 
@@ -327,7 +340,7 @@ function userJoinCompetition(){
           <Text className="font-semibold">Lang :</Text> {selectedCompetition?.language}
         </Text>
         <Text className="text-center text-white">
-          <Text className="font-semibold">Questions Total :</Text> {selectedCompetition?.questionsNbr}
+          <Text className="font-semibold">Questions total:</Text> {selectedCompetition?.questionsNbr}
         </Text>
         <Text className="text-center text-white mt-2 mb-3">
           <Text className="font-semibold">Date :</Text>{" "}
@@ -349,7 +362,7 @@ function userJoinCompetition(){
           className="text-lg font-semibold mb-3"
           style={{ color: colors.defaultBlue }}
         >
-          Détails du concours
+            {t("mycompetition.information.competitionDetails")}
         </Text>
 
         <View className="flex-row justify-between mb-3">
@@ -435,8 +448,19 @@ function userJoinCompetition(){
               )
             }
 
+            {
+              selectedCompetition?.statut != "ONGOING" ? (
+                <View>
+                    <Text className="ml-2 text-gray-700">{t(`participation.labels.status.${selectedCompetition?.statut}`)}</Text>
+                </View>
+              ) :(
+                <View className="rounded-full px-3 py-1  bg-yellow-200">
+                    <Text className="ml-2 text-gray-700 ">{t(`participation.labels.status.${selectedCompetition?.statut}`)}</Text>
+
+                </View>
+              )
+            }
             
-            <Text className="ml-2 text-gray-700">{selectedCompetition?.statut}</Text>
           </View>
 
 
@@ -447,7 +471,7 @@ function userJoinCompetition(){
         <View className="flex-row items-center">
             <Ionicons name="book" size={20} color="#2e86de" />
             <Text className="ml-2 text-gray-700">
-                Questions Manager
+            {t("mycompetition.competition.online_game.question_manager")}
             </Text>
           </View>
 
@@ -472,7 +496,7 @@ function userJoinCompetition(){
               className="ml-2 text-lg font-semibold"
               style={{ color: colors.defaultBlue }}
             >
-              Informations supplémentaires
+                   {t("mycompetition.information.more_info")}
             </Text>
           </View>
           {
@@ -522,7 +546,8 @@ function userJoinCompetition(){
                   color={colors.defaultOrange}
                 />
                 <Text className="ml-2 text-gray-700">
-                  Frais de participation
+                {t("mycompetition.information.participationFee")}
+
                 </Text>
               </View>
               <Text className="font-semibold text-gray-800">
@@ -539,7 +564,9 @@ function userJoinCompetition(){
                   size={20}
                   color={colors.defaultBlue}
                 />
-                <Text className="ml-2 text-gray-700">Participants minimum</Text>
+                <Text className="ml-2 text-gray-700">
+                {t("mycompetition.information.min_participants")}
+                </Text>
               </View>
               <Text className="font-semibold text-gray-800">
                 {selectedCompetition?.minUsers}
@@ -553,7 +580,10 @@ function userJoinCompetition(){
                   size={20}
                   color={colors.defaultOrange}
                 />
-                <Text className="ml-2 text-gray-700">Participants maximum</Text>
+                <Text className="ml-2 text-gray-700">
+                  {t("mycompetition.information.max_participants")}
+
+                </Text>
               </View>
               <Text className="font-semibold text-gray-800">
                 {selectedCompetition?.maxUsers}
@@ -567,7 +597,13 @@ function userJoinCompetition(){
                   size={20}
                   color={colors.defaultOrange}
                 />
-                <Text className="ml-2 text-gray-700">Déjà inscrit</Text>
+                
+                <Text className="ml-2 text-gray-700">
+                  
+                  {
+                    selectedCompetition?.statut == "UPCOMING" ? 'Déjà inscrits':'Inscrits'
+                  }
+                </Text>
               </View>
               <Text className="font-semibold text-gray-800">
                 {selectedCompetition?.suscribers.length}
@@ -611,7 +647,7 @@ function userJoinCompetition(){
           }).length === 0 && (
             <TouchableOpacity className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto" onPress={()=>registerToCompetition()}>
               <Text className="text-white text-xs font-semibold mr-2">
-                S'inscrire à la competition
+              {t("mycompetition.information.register_comp")}
               </Text>
               <Ionicons name="chevron-forward" size={22} color="#ffffff" />
             </TouchableOpacity>
@@ -629,7 +665,7 @@ function userJoinCompetition(){
               onPress={()=> adminJoinCompetition()}
             >
               <Text className="text-white text-xs font-semibold mr-2">
-                Rejoindre la competition
+                {t("mycompetition.information.join_comp")}
               </Text>
               <Ionicons name="chevron-forward" size={22} color="#ffffff" />
             </TouchableOpacity>
@@ -647,7 +683,7 @@ function userJoinCompetition(){
               onPress={()=> userJoinCompetition()}
             >
               <Text className="text-white text-xs font-semibold mr-2">
-                Rejoindre la competition
+                {t("mycompetition.information.join_comp")}
               </Text>
               <Ionicons name="chevron-forward" size={22} color="#ffffff" />
             </TouchableOpacity>
@@ -666,8 +702,9 @@ function userJoinCompetition(){
           )} */}
 
         {/* btn for user to observe the competition when he is not register */}
-        {userId !== selectedCompetition?.creatorID && 
-        room &&
+        {userId !== selectedCompetition?.creatorID 
+         &&
+         (room || selectedCompetition?.roomID) &&
         selectedCompetition?.statut === "ONGOING" &&
           selectedCompetition?.suscribers.filter((user, index) => {
             return user.id === userId;
@@ -678,7 +715,7 @@ function userJoinCompetition(){
              
              >
               <Text className="text-white text-xs font-semibold mr-2">
-                Observer la competition
+              {t("mycompetition.information.look_comp")}
               </Text>
               <Ionicons name="chevron-forward" size={22} color="#ffffff" />
             </TouchableOpacity>
@@ -697,7 +734,7 @@ function userJoinCompetition(){
                 
                 >
                   <Text className="text-white text-xs font-semibold mr-2">
-                    Observer la competition
+                  {t("mycompetition.information.look_comp")}
                   </Text>
                   <Ionicons name="chevron-forward" size={22} color="#ffffff" />
                 </TouchableOpacity>
@@ -705,7 +742,7 @@ function userJoinCompetition(){
 
         {/* btn for admin to observe the competition when it managed by IA*/}
         {userId === selectedCompetition?.creatorID && 
-        room &&
+        (room || selectedCompetition?.roomID) &&
         !waitingLaunching &&
         selectedCompetition.isManagedByIA &&
         selectedCompetition?.statut === "ONGOING" &&
@@ -717,7 +754,7 @@ function userJoinCompetition(){
             onPress={()=> observeCompetition()}
             >
               <Text className="text-white text-xs font-semibold mr-2">
-                Observer la competition
+                {t("mycompetition.information.look_comp")}
               </Text>
               <Ionicons name="chevron-forward" size={22} color="#ffffff" />
             </TouchableOpacity>
@@ -732,7 +769,7 @@ function userJoinCompetition(){
               onPress={()=> startCompetition()}
             >
               <Text className="text-white text-xs font-semibold mr-2">
-                Demarrer la competition
+                {t("mycompetition.information.start_comp")}
               </Text>
               <Ionicons name="chevron-forward" size={22} color="#ffffff" />
             </TouchableOpacity>
@@ -744,7 +781,7 @@ function userJoinCompetition(){
             onPress={()=> seeResult()}
             className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto">
               <Text className="text-white text-xs font-semibold mr-2">
-                Voir les resultats
+                {t("mycompetition.information.see_result")}
               </Text>
               <Ionicons name="chevron-forward" size={22} color="#ffffff" />
             </TouchableOpacity>

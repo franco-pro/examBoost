@@ -3,6 +3,7 @@ import { Box } from '@/components/ui/box';
 import { Button, ButtonText } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
 import { Text } from '@/components/ui/text';
+import { useTranslation } from 'react-i18next';
 
 interface DialogConfirmProps {
     isOpen: boolean;
@@ -10,7 +11,8 @@ interface DialogConfirmProps {
   }
 
 export default function CompetitionEndedAlert({isOpen, onClose}: DialogConfirmProps) {
-    return (
+  const {t} = useTranslation("competition"); 
+  return (
         <>
         <AlertDialog isOpen={isOpen} onClose={onClose}>
           <AlertDialogBackdrop />
@@ -21,12 +23,12 @@ export default function CompetitionEndedAlert({isOpen, onClose}: DialogConfirmPr
             <AlertDialogHeader>
             
             <Heading className="text-typography-950 font-semibold" size="xl">
-                C'EST LA FIN !
+                {t("mycompetition.endModal.label")}
             </Heading>
           </AlertDialogHeader>
           <AlertDialogBody className="mt-3 mb-4">
             <Text size="xl">
-            La Compétition est terminée, vous pouvez consulter les resultats generaux de la competition, merci pour votre participation !
+            {t("mycompetition.endModal.text")}
             </Text>
           </AlertDialogBody>
           <AlertDialogFooter>
@@ -35,7 +37,7 @@ export default function CompetitionEndedAlert({isOpen, onClose}: DialogConfirmPr
               onPress={onClose}
               size="xl"
             >
-              <ButtonText>Voir les resultats 🔥</ButtonText>
+              <ButtonText>{t("mycompetition.information.see_result")} 🔥</ButtonText>
             </Button>
           </AlertDialogFooter>
           </AlertDialogContent>

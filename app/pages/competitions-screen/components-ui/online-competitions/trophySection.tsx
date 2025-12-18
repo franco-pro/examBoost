@@ -6,13 +6,14 @@ import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { useFocusEffect, useNavigation, useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ImageBackground } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function QuizResultScreen() {
     // simple unique user
     const {roomResult} = useAppSelector(state => state.rooms);
-
+    const {t} = useTranslation("competition")
     const user = roomResult && roomResult.users ? roomResult.users[0]: null;
     const [competition_totalPoint, setPoint] = useState(0); 
     const router = useRouter()
@@ -68,20 +69,20 @@ function goToResult(){
 
 
         <Text className="text-white text-xl font-bold mb-2 mt-4">
-          Congratulations {user?.username} {user?.surname} !
+           {t("mycompetition.competition.result_screen.congratulation")}  {user?.username} {user?.surname} !
         </Text>
         <Text className="text-gray-300 text-center mb-6 px-4">
-          You’ve completed the quiz successfully! Keep up the great work.
+          {t("mycompetition.competition.result_screen.congratulation")}
         </Text>
 
         <VStack className="items-center mb-6">
-          <Text className="text-gray-300 mb-1 text-sm">YOUR SCORE</Text>
+          <Text className="text-gray-300 mb-1 text-sm">{t("mycompetition.competition.result_screen.yr_score")}</Text>
           <Text className="text-green-400 text-3xl font-bold">{user?.score}/{competition_totalPoint} </Text>
 
-          <Text className="text-gray-300 mt-4 mb-1 text-sm">EARNED COINS</Text>
+          <Text className="text-gray-300 mt-4 mb-1 text-sm">{t("mycompetition.competition.result_screen.gain")} (XAF)</Text>
           <HStack className="items-center">
             <Text className="text-yellow-400 text-2xl mr-2">🪙</Text>
-            <Text className="text-white text-2xl font-semibold">{roomResult?.competitionInfo.winnerPrice} </Text>
+            <Text className="text-white text-2xl font-semibold">{roomResult ? roomResult.competitionInfo.winnerPrice : 0} </Text>
           </HStack>
         </VStack>
 
@@ -92,7 +93,7 @@ function goToResult(){
             className="flex-1 ml-2 bg-primary-defaultOrange w-[30%]"
             onPress={goToResult}
           >
-            <Text className="text-white font-semibold">Autres Resultats 🔥</Text>
+            <Text className="text-white font-semibold">{t("mycompetition.competition.result_screen.othersResult")} 🔥</Text>
           </Button>
         </HStack>
 

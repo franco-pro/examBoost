@@ -172,7 +172,7 @@ useFocusEffect(
          <MiniDashboard 
               questionAnswered={questionAnswered} 
               score={score}
-              manager={room ? (room.isManagedByIA ? " Genesys-in IA" : "Owner"): ''}
+              manager={room ? (room.isManagedByIA ? " Genesys-In IA" : "Owner"): ''}
               winnerPrice={room ? (room.competitionInfo ? room.competitionInfo.winnerPrice : 0):0}
          />
         <QuestionAnswer 
