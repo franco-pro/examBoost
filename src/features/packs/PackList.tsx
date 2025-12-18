@@ -8,11 +8,15 @@ export default memo(function PackList({
   onPressPack,
   onPressCTA,
   listHeader,
+  refreshing,
+  onRefresh,
 }: {
   packs: Pack[];
   onPressPack?: (p: Pack) => void;
   onPressCTA?: (p: Pack) => void;
   listHeader?: React.ReactElement | null;
+  refreshing?: boolean;
+  onRefresh?: () => void;
 }) {
   const { width } = useWindowDimensions();
   const numColumns = useMemo(() => {
@@ -40,6 +44,8 @@ export default memo(function PackList({
       keyExtractor={(p) => p.id}
       renderItem={renderItem}
       numColumns={numColumns}
+      refreshing={!!refreshing}
+      onRefresh={onRefresh}
       ListHeaderComponent={listHeader ? (() => <View className={numColumns > 1 ? 'px-2' : ''}>{listHeader}</View>) : undefined}
       contentContainerStyle={{ padding: 8, paddingBottom: 24 }}
     />

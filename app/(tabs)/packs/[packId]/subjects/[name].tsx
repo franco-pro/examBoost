@@ -1,9 +1,12 @@
-import { MOCK_DOCUMENTS, filterDocuments, getDistinct } from '@/src/features/documents/utils';
+import { filterDocuments, getDistinct } from '@/src/features/documents/utils';
+import { usePackDocumentsQuery } from '@/src/features/packs/hooks.rq';
 import PackHeader from '@/src/features/packs/PackHeader';
+import type { RootState } from '@/src/redux/store';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
+import { useSelector } from 'react-redux';
 
 export default function SubjectDocumentsInTabs() {
   const router = useRouter();
@@ -14,15 +17,21 @@ export default function SubjectDocumentsInTabs() {
     subject?: string;
   }>();
 
+  const currentUserId = useSelector((s: RootState) => s.session.currentUserId);
+  const packID = useMemo(() => Number(packId), [packId]);
+  const docsQuery = usePackDocumentsQuery(currentUserId ?? undefined, Number.isNaN(packID) ? undefined : packID);
+  const allDocsForPack = docsQuery.data ?? [];
+  const loading = docsQuery.isLoading;
+
   const [search, setSearch] = useState('');
   const nid = Number(niveauID);
 
-  const allForName = useMemo(() => MOCK_DOCUMENTS.filter((d) => d.name === name), [name]);
+  const allForName = useMemo(() => allDocsForPack.filter((d) => d.name === name), [allDocsForPack, name]);
   const subjects = useMemo(() => getDistinct(allForName, 'subject') as string[], [allForName]);
   const niveaux = useMemo(() => getDistinct(allForName, 'niveauID') as number[], [allForName]);
 
   const docs = useMemo(() => {
-    const base = filterDocuments(MOCK_DOCUMENTS, {
+    const base = filterDocuments(allDocsForPack, {
       name: String(name),
       subject: subject ? String(subject) : undefined,
       niveauID: !isNaN(nid) ? nid : undefined,
@@ -32,7 +41,7 @@ export default function SubjectDocumentsInTabs() {
     return base.filter((d) =>
       [d.subject, d.format ?? '', String(d.niveauID)].some((s) => s.toLowerCase().includes(q))
     );
-  }, [name, subject, nid, search]);
+  }, [allDocsForPack, name, subject, nid, search]);
 
  
 
@@ -57,8 +66,16 @@ export default function SubjectDocumentsInTabs() {
         title="Liste des sujets"
       />
 
-      <ScrollView className="flex-1">
+      <ScrollView
+        className="flex-1"
+        refreshControl={
+          <RefreshControl refreshing={docsQuery.isRefetching} onRefresh={() => void docsQuery.refetch()} />
+        }
+      >
         <View className="p-4 pt-2 gap-3">
+          {loading ? (
+            <Text className="text-typography-gray">Chargement…</Text>
+          ) : null}
           <Text className="text-lg font-extrabold text-typography-default dark:text-typography-white">{name}</Text>
 
           {/*  */}

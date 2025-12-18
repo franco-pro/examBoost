@@ -19,8 +19,13 @@ export default memo(function PackCard({
     price,
     durationDays,
     isActive,
+    isSubscribed,
     createdAt,
   } = pack;
+
+  const canContinue = !!isSubscribed;
+  const canBuy = !!isActive;
+  const ctaLabel = canContinue ? 'Continuer' : canBuy ? 'Acheter' : 'Indisponible';
 
   return (
     <Pressable
@@ -33,9 +38,9 @@ export default memo(function PackCard({
       <View className="relative w-full h-36 items-center justify-center border-b border-outline-100 dark:border-outline-800" style={{ backgroundColor: 'rgba(25, 28, 92, 0.09)' }}>
         {/* Pastille icône */}
         <View
-          className={`${isActive ? 'ring-2 ring-primary-defaultOrange/40' : 'ring-1 ring-primary-defaultOrange/30'} w-14 h-14 rounded-full bg-primary-defaultOrange items-center justify-center`}
+          className={`${canContinue ? 'ring-2 ring-primary-defaultOrange/40' : 'ring-1 ring-primary-defaultOrange/30'} w-14 h-14 rounded-full bg-primary-defaultOrange items-center justify-center`}
         >
-          <Ionicons name={isActive ? 'star' : 'layers'} size={24} color="#181c5c" />
+          <Ionicons name={canContinue ? 'star' : 'layers'} size={24} color="#181c5c" />
         </View>
         {/* Gradient subtil bleu en haut (toutes plateformes) */}
         <View className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-[rgba(24,28,92,0.30)] to-transparent pointer-events-none" />
@@ -44,12 +49,13 @@ export default memo(function PackCard({
       <View className="p-3 gap-2">
         <View className="flex-row items-center gap-2">
           {typeof isActive === 'boolean' ? (
-            <View className={`px-2 py-0.5 rounded-md ${isActive ? 'bg-success-500' : 'bg-error-500/80'}`}>
-              <Text className={`${isActive ? 'text-white' : 'text-white'} text-xxs font-bold`}>
-                {isActive ? 'Actif' : 'Inactif'}
-              </Text>
+            <View className={`px-2 py-0.5 rounded-md ${canBuy ? 'bg-info-500' : 'bg-error-500/80'}`}>
+              <Text className="text-white text-xxs font-bold">{canBuy ? 'Disponible' : 'Indisponible'}</Text>
             </View>
           ) : null}
+          <View className={`px-2 py-0.5 rounded-md ${canContinue ? 'bg-success-500' : 'bg-warning-500/90'}`}>
+            <Text className="text-white text-xxs font-bold">{canContinue ? 'Payé' : 'Non payé'}</Text>
+          </View>
           {isNewSince(createdAt) ? (
             <View className="px-2 py-0.5 rounded-md bg-info-500">
               <Text className="text-white text-xxs font-bold">Nouveau</Text>
@@ -81,13 +87,13 @@ export default memo(function PackCard({
           </View>
 
           <Pressable
-            onPress={onPressCTA}
+            onPress={ctaLabel === 'Indisponible' ? undefined : onPressCTA}
             className={`px-4 py-2 rounded-full bg-primary-defaultOrange active:opacity-90 web:hover:brightness-105 flex-row items-center gap-1`}
             accessibilityRole="button"
             accessibilityLabel={`Pack ${title} · ${price != null ? formatPriceXOF(price) : ''} · ${typeof durationDays === 'number' ? formatDays(durationDays) : ''}`}
             hitSlop={8}
           >
-            <Text className="text-primary-defaultBlue text-sm font-extrabold">{isActive ? 'Continuer' : 'Acheter'}</Text>
+            <Text className="text-primary-defaultBlue text-sm font-extrabold">{ctaLabel}</Text>
           </Pressable>
         </View>
 

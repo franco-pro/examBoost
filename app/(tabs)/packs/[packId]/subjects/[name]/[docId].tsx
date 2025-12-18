@@ -1,44 +1,122 @@
-import { MOCK_DOCUMENTS } from '@/src/features/documents/utils';
+import type { DocumentRow } from '@/src/features/documents/utils';
+import { usePackDocumentsQuery } from '@/src/features/packs/hooks.rq';
+import type { RootState } from '@/src/redux/store';
 import { Ionicons } from '@expo/vector-icons';
+import * as FileSystem from 'expo-file-system';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useEffect, useMemo, useState } from 'react';
 import { Platform, Pressable, Text, View } from 'react-native';
+import { useSelector } from 'react-redux';
+
+const EMPTY_DOCS: DocumentRow[] = [];
 
 // NOTE: Pour empêcher les captures d'écran sur mobile, nous faisons un import dynamique
 // afin d'éviter une erreur de typage si le module n'est pas encore installé.
 
 export default function DocumentViewerPage() {
-  const { docId } = useLocalSearchParams<{ docId: string }>();
+  const { docId, packId } = useLocalSearchParams<{ docId: string; packId: string }>();
   const router = useRouter();
   const id = Number(docId);
 
+  const currentUserId = useSelector<RootState, RootState['session']['currentUserId']>((s) => s.session.currentUserId);
+  const packID = useMemo(() => Number(packId), [packId]);
+  const docsQuery = usePackDocumentsQuery(currentUserId ?? undefined, Number.isNaN(packID) ? undefined : packID);
+  const docsForPack: DocumentRow[] = docsQuery.data ?? EMPTY_DOCS;
+  const loading = docsQuery.isLoading;
+
   const [activeTab, setActiveTab] = useState<'document' | 'corrections'>('document');
 
-  const doc = useMemo(() => MOCK_DOCUMENTS.find((d) => d.id === id), [id]);
+  const doc = useMemo(() => docsForPack.find((d: DocumentRow) => d.id === id), [docsForPack, id]);
 
   const correction = useMemo(() => {
     if (!doc) return undefined;
     const isCorrectionLike = (s?: string) =>
       typeof s === 'string' && /corr(igé|ection)/i.test(s);
-    const sameContext = (d: typeof doc) =>
+    const sameContext = (d: DocumentRow) =>
       d.name === doc.name && (doc.niveauID ? d.niveauID === doc.niveauID : true);
     
-    const candidates = MOCK_DOCUMENTS.filter(
-      (d) => sameContext(d) && isCorrectionLike(d.subject)
-    );
+    const candidates = docsForPack.filter((d: DocumentRow) => sameContext(d) && isCorrectionLike(d.subject));
     if (candidates.length > 0) return candidates[0];
 
-    const alt = MOCK_DOCUMENTS.find(
-      (d) =>
+    const alt = docsForPack.find(
+      (d: DocumentRow) =>
         sameContext(d) &&
         (d.subject === `${doc.subject} - Correction` || d.subject === `${doc.subject} Correction`)
     );
     return alt;
-  }, [doc]);
+  }, [doc, docsForPack]);
+
+  const baseApi = useMemo(
+    () => (process.env.EXPO_PUBLIC_API_URL ?? '').trim().replace(/\/$/, ''),
+    [],
+  );
+
+  const absoluteUrl = useMemo(() => {
+    if (!doc) return '';
+    const raw = (activeTab === 'corrections' ? (correction?.url ?? doc.url) : doc.url) as string;
+    if (/^https?:\/\//i.test(raw)) return raw;
+    if (!baseApi) return raw;
+    return raw.startsWith('/') ? `${baseApi}${raw}` : `${baseApi}/${raw}`;
+  }, [activeTab, baseApi, correction?.url, doc]);
+
+  const [localPdfUri, setLocalPdfUri] = useState<string | null>(null);
+  const [pdfError, setPdfError] = useState<string | null>(null);
+  const [pdfLoading, setPdfLoading] = useState(false);
 
   useEffect(() => {
-    let mounted = true;
+    if (Platform.OS === 'web') return;
+
+    let cancelled = false;
+    const run = async () => {
+      setPdfError(null);
+
+      const uri = absoluteUrl;
+      if (!uri || typeof uri !== 'string') {
+        setLocalPdfUri(null);
+        return;
+      }
+
+      if (uri.startsWith('file://')) {
+        setLocalPdfUri(uri);
+        return;
+      }
+
+      if (!/^https?:\/\//i.test(uri)) {
+        setLocalPdfUri(null);
+        return;
+      }
+
+      setPdfLoading(true);
+      try {
+        const safe = encodeURIComponent(uri);
+        const cacheDir = (FileSystem as any)['cacheDirectory'] ?? (FileSystem as any)['documentDirectory'] ?? '';
+        const dest = `${cacheDir}pdf_${safe}.pdf`;
+
+        const info = await FileSystem.getInfoAsync(dest);
+        if (!info.exists) {
+          const res = await FileSystem.downloadAsync(uri, dest);
+          if (!res?.uri) throw new Error('Téléchargement PDF échoué');
+        }
+
+        if (!cancelled) setLocalPdfUri(dest);
+      } catch (e: any) {
+        if (!cancelled) {
+          setLocalPdfUri(null);
+          setPdfError(typeof e?.message === 'string' ? e.message : 'Impossible de charger le PDF');
+        }
+      } finally {
+        if (!cancelled) setPdfLoading(false);
+      }
+    };
+
+    void run();
+    return () => {
+      cancelled = true;
+    };
+  }, [absoluteUrl]);
+
+  useEffect(() => {
     // Activer l'interdiction de capture uniquement pendant l'écran viewer (mobile)
     const lock = async () => {
       try {
@@ -62,7 +140,6 @@ export default function DocumentViewerPage() {
     };
     lock();
     return () => {
-      mounted = false;
       void unlock();
     };
   }, []);
@@ -77,9 +154,69 @@ export default function DocumentViewerPage() {
 
   const openInBrowser = async () => {
     if (Platform.OS === 'web') {
-      window.open(doc.url, '_blank');
+      window.open(absoluteUrl, '_blank');
     } else {
-      await WebBrowser.openBrowserAsync(doc.url);
+      await WebBrowser.openBrowserAsync(absoluteUrl);
+    }
+  };
+
+  const renderNativePdf = () => {
+    try {
+      // NOTE: On évite volontairement un import/require statique ici.
+      // Sinon Metro tente de résoudre les dépendances natives (react-native-blob-util)
+      // même sur Web/Expo Go et le bundling échoue.
+      // eslint-disable-next-line @typescript-eslint/no-implied-eval
+      const req = (0, eval)('require') as any;
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const mod = req('react-native-' + 'pdf');
+      const Pdf = mod?.default ?? mod;
+      if (!Pdf) return null;
+
+      if (pdfLoading) {
+        return (
+          <View className="flex-1 items-center justify-center px-4">
+            <Text className="text-sm text-typography-gray">Chargement du PDF…</Text>
+          </View>
+        );
+      }
+
+      if (pdfError) {
+        return (
+          <View className="flex-1 items-center justify-center px-4">
+            <Text className="text-sm text-typography-gray text-center">{pdfError}</Text>
+            <Pressable onPress={openInBrowser} className="mt-3 px-4 py-2 rounded-full bg-primary-defaultOrange active:opacity-90">
+              <View className="flex-row items-center gap-2">
+                <Ionicons name="open-outline" size={16} color="#181c5c" />
+                <Text className="text-sm font-extrabold text-primary-defaultBlue">Ouvrir le PDF</Text>
+              </View>
+            </Pressable>
+          </View>
+        );
+      }
+
+      if (!localPdfUri) {
+        return (
+          <View className="flex-1 items-center justify-center px-4">
+            <Text className="text-sm text-typography-gray text-center">PDF indisponible.</Text>
+            <Pressable onPress={openInBrowser} className="mt-3 px-4 py-2 rounded-full bg-primary-defaultOrange active:opacity-90">
+              <View className="flex-row items-center gap-2">
+                <Ionicons name="open-outline" size={16} color="#181c5c" />
+                <Text className="text-sm font-extrabold text-primary-defaultBlue">Ouvrir le PDF</Text>
+              </View>
+            </Pressable>
+          </View>
+        );
+      }
+
+      return (
+        <Pdf
+          source={{ uri: localPdfUri }}
+          style={{ flex: 1, width: '100%' }}
+          trustAllCerts={false}
+        />
+      );
+    } catch {
+      return null;
     }
   };
 
@@ -167,18 +304,20 @@ export default function DocumentViewerPage() {
               </View>
             ) : (
               <View className="flex-1 px-4 pb-4">
-                {/* WebView: rendu du PDF/URL côté natif */}
-                {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-                {/* @ts-ignore - import lazy  */}
                 <View className="rounded-xl overflow-hidden border border-outline-100 dark:border-outline-800 flex-1">
-                  {/* Avoid import cycles: use require to avoid SSR issues */}
-                  {require('react-native').Platform ? (
-                    // eslint-disable-next-line @typescript-eslint/no-var-requires
-                    (() => {
-                      const { WebView } = require('react-native-webview');
-                      return <WebView source={{ uri: doc.url }} />;
-                    })()
-                  ) : null}
+                  {renderNativePdf() ?? (
+                    <View className="flex-1 items-center justify-center px-4">
+                      <Text className="text-sm text-typography-gray text-center">
+                        Le viewer PDF natif n’est pas disponible dans Expo Go.
+                      </Text>
+                      <Pressable onPress={openInBrowser} className="mt-3 px-4 py-2 rounded-full bg-primary-defaultOrange active:opacity-90">
+                        <View className="flex-row items-center gap-2">
+                          <Ionicons name="open-outline" size={16} color="#181c5c" />
+                          <Text className="text-sm font-extrabold text-primary-defaultBlue">Ouvrir le PDF</Text>
+                        </View>
+                      </Pressable>
+                    </View>
+                  )}
                 </View>
               </View>
             )}
@@ -207,16 +346,20 @@ export default function DocumentViewerPage() {
                     </Text>
                   </View>
                 ) : null}
-                {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-                {/* @ts-ignore - import lazy  */}
                 <View className="rounded-xl overflow-hidden border border-outline-100 dark:border-outline-800 flex-1">
-                  {require('react-native').Platform ? (
-                    // eslint-disable-next-line @typescript-eslint/no-var-requires
-                    (() => {
-                      const { WebView } = require('react-native-webview');
-                      return <WebView source={{ uri: (correction?.url ?? doc.url) }} />;
-                    })()
-                  ) : null}
+                  {renderNativePdf() ?? (
+                    <View className="flex-1 items-center justify-center px-4">
+                      <Text className="text-sm text-typography-gray text-center">
+                        Le viewer PDF natif n’est pas disponible dans Expo Go.
+                      </Text>
+                      <Pressable onPress={openInBrowser} className="mt-3 px-4 py-2 rounded-full bg-primary-defaultOrange active:opacity-90">
+                        <View className="flex-row items-center gap-2">
+                          <Ionicons name="open-outline" size={16} color="#181c5c" />
+                          <Text className="text-sm font-extrabold text-primary-defaultBlue">Ouvrir le PDF</Text>
+                        </View>
+                      </Pressable>
+                    </View>
+                  )}
                 </View>
               </View>
             )}

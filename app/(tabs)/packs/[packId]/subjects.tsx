@@ -1,29 +1,39 @@
-import { MOCK_DOCUMENTS, groupByName } from '@/src/features/documents/utils';
+import { groupByName } from '@/src/features/documents/utils';
+import { usePackDocumentsQuery } from '@/src/features/packs/hooks.rq';
 import PackHeader from '@/src/features/packs/PackHeader';
+import type { RootState } from '@/src/redux/store';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
+import { useSelector } from 'react-redux';
 
 export default function SubjectsPage() {
   const router = useRouter();
   const { packId, niveauID } = useLocalSearchParams<{ packId: string; niveauID?: string }>();
   const [search, setSearch] = useState('');
 
-  const docs = useMemo(() => {
+  const currentUserId = useSelector((s: RootState) => s.session.currentUserId);
+  const packID = useMemo(() => Number(packId), [packId]);
+
+  const docsQuery = usePackDocumentsQuery(currentUserId ?? undefined, Number.isNaN(packID) ? undefined : packID);
+  const docs = docsQuery.data ?? [];
+  const loading = docsQuery.isLoading;
+
+  const filteredDocs = useMemo(() => {
     const nid = Number(niveauID);
     if (!isNaN(nid)) {
-      return MOCK_DOCUMENTS.filter((d) => d.niveauID === nid);
+      return docs.filter((d) => d.niveauID === nid);
     }
-    return MOCK_DOCUMENTS;
-  }, [niveauID]);
+    return docs;
+  }, [niveauID, docs]);
 
   const groups = useMemo(() => {
-    const base = groupByName(docs);
+    const base = groupByName(filteredDocs);
     const q = search.trim().toLowerCase();
     if (!q) return base;
     return base.filter((g) => g.name.toLowerCase().includes(q));
-  }, [docs, search]);
+  }, [filteredDocs, search]);
 
   return (
     <View className="flex-1 bg-background-light dark:bg-background-dark">
@@ -38,8 +48,16 @@ export default function SubjectsPage() {
         title="Liste des matières"
       />
 
-      <ScrollView className="flex-1">
+      <ScrollView
+        className="flex-1"
+        refreshControl={
+          <RefreshControl refreshing={docsQuery.isRefetching} onRefresh={() => void docsQuery.refetch()} />
+        }
+      >
         <View className="p-4 pt-2 gap-3">
+          {loading ? (
+            <Text className="text-typography-gray">Chargement…</Text>
+          ) : null}
           {groups.length === 0 ? (
             <Text className="text-typographie-gray">Aucune matière disponible.</Text>
           ) : null}
