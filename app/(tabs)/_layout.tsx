@@ -42,6 +42,8 @@ export default function RootLayout() {
       >
         <Tabs.Screen name="packs" options={{ href: null }} />
 
+        <Tabs.Screen name="profile" options={{ href: null }} />
+
         <Tabs.Screen
           name="index"
           options={{

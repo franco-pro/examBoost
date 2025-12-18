@@ -1,61 +1,18 @@
 import { Toast, ToastDescription, ToastTitle, useToast } from '@/components/ui/toast';
+import { usePacksQuery, usePurchasePackMutation } from '@/src/features/packs/hooks.rq';
 import PackDetailSheet from '@/src/features/packs/PackDetailSheet';
 import PackHeader from '@/src/features/packs/PackHeader';
 import PackList from '@/src/features/packs/PackList';
 import SubscribeModal from '@/src/features/packs/SubscribeModal';
 import type { Pack } from '@/src/features/packs/types';
+import { useUser } from '@/src/features/user/hooks';
+import type { RootState } from '@/src/redux/store';
 import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { useMemo, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
-
-const MOCK_PACKS: Pack[] = [
-  {
-    id: 'p1',
-    title: 'Pack Premium',
-    description: 'Accédez à toutes les matières avec des examens corrigés et des tests illimités.',
-    price: 5000,
-    durationDays: 30,
-    isActive: true,
-    niveauID: 3,
-    createdAt: '2025-09-25T10:00:00Z',
-  
-  },
-  {
-    id: 'p2',
-    title: 'Pack Standard',
-    description: 'L’essentiel pour réviser efficacement selon votre niveau.',
-    price: 3000,
-    durationDays: 30,
-    isActive: true,
-    niveauID: 3,
-    createdAt: '2025-09-19T13:28:11Z',
-  
-  },
-  {
-    id: 'p3',
-    title: 'Pack Compétitions',
-    description: 'Préparez les compétitions hebdomadaires avec des épreuves types.',
-    price: 2500,
-    durationDays: 30,
-    isActive: false,
-    niveauID: 3,
-    createdAt: '2025-09-10T08:00:00Z',
-
-  },
-  {
-    id: 'p4',
-    title: 'Pack Spécial',
-    description: 'Décrochez votre mention aux examens officiels avec ce pack spécial sur mesures.',
-    price: 10000,
-    durationDays: 60,
-    isActive: false,
-    niveauID: 3,
-    createdAt: '2025-09-10T08:00:00Z',
-
-  },
-];
+import { useSelector } from 'react-redux';
 
 export default function PackScreen() {
   const [search, setSearch] = useState('');
@@ -64,7 +21,13 @@ export default function PackScreen() {
   const [selected, setSelected] = useState<Pack | null>(null);
   const [subscribeOpen, setSubscribeOpen] = useState(false);
   const router = useRouter();
-  const [packs, setPacks] = useState<Pack[]>(MOCK_PACKS);
+  const currentUserId = useSelector((s: RootState) => s.session.currentUserId);
+  const packsQuery = usePacksQuery(currentUserId ?? undefined);
+  const purchasePackMutation = usePurchasePackMutation();
+  const userQuery = useUser(currentUserId ?? undefined);
+  const currentUserWallet = userQuery.data?.wallet;
+
+  const packs = packsQuery.data ?? [];
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -113,9 +76,13 @@ export default function PackScreen() {
         ) : (
           <PackList
             packs={filtered}
+            refreshing={packsQuery.isRefetching}
+            onRefresh={() => {
+              void packsQuery.refetch();
+            }}
             onPressPack={(p) => {
               void Haptics.selectionAsync();
-              if (p.isActive) {
+              if (p.isSubscribed) {
                 router.push({
                   pathname: '/(tabs)/packs/[packId]/subjects',
                   params: { packId: p.id, ...(p.niveauID != null ? { niveauID: String(p.niveauID) } : {}) },
@@ -127,7 +94,7 @@ export default function PackScreen() {
             }}
             onPressCTA={(p) => {
               void Haptics.selectionAsync();
-              if (p.isActive) {
+              if (p.isSubscribed) {
                 router.push({
                   pathname: '/(tabs)/packs/[packId]/subjects',
                   params: { packId: p.id, ...(p.niveauID != null ? { niveauID: String(p.niveauID) } : {}) },
@@ -161,34 +128,48 @@ export default function PackScreen() {
         <SubscribeModal
           visible={subscribeOpen}
           pack={selected}
+          userWallet={typeof currentUserWallet === 'number' ? currentUserWallet : undefined}
           onCancel={() => setSubscribeOpen(false)}
-          onConfirm={({ email }) => {
-            setSubscribeOpen(false);
-            modalRef.current?.dismiss();
-            // Activer le pack acheté côté UI
-            if (selected) {
-              const targetId = selected.id;
-              const targetNiveau = selected.niveauID;
-              setPacks((prev) => prev.map((pk) => (pk.id === targetId ? { ...pk, isActive: true } : pk)));
-              setSelected((prev) => (prev ? { ...prev, isActive: true } : prev));
-              // Redirection automatique vers la liste des matières du pack
+          onConfirm={async ({ accept }) => {
+            if (!accept) return;
+            if (!currentUserId) return;
+            if (!selected?.id) return;
+
+            const packID = Number(selected.id);
+            if (Number.isNaN(packID)) return;
+
+            try {
+              await purchasePackMutation.mutateAsync({ userID: currentUserId, packID });
+              setSubscribeOpen(false);
+              modalRef.current?.dismiss();
+
               router.push({
                 pathname: '/(tabs)/packs/[packId]/subjects',
-                params: { packId: targetId, ...(targetNiveau != null ? { niveauID: String(targetNiveau) } : {}) },
+                params: { packId: String(packID), ...(selected.niveauID != null ? { niveauID: String(selected.niveauID) } : {}) },
               } as any);
+
+              toast.show({
+                placement: 'top',
+                duration: 1600,
+                render: () => (
+                  <Toast action="success" variant="solid" className="mx-3">
+                    <ToastTitle bold>Achat confirmé</ToastTitle>
+                    <ToastDescription>{selected?.title}</ToastDescription>
+                  </Toast>
+                ),
+              });
+            } catch (e: any) {
+              toast.show({
+                placement: 'top',
+                duration: 2000,
+                render: () => (
+                  <Toast action="error" variant="solid" className="mx-3">
+                    <ToastTitle bold>Erreur achat</ToastTitle>
+                    <ToastDescription>{String(e?.message ?? 'Impossible d\'acheter le pack')}</ToastDescription>
+                  </Toast>
+                ),
+              });
             }
-            toast.show({
-              placement: 'top',
-              duration: 1600,
-              render: () => (
-                <Toast action="success" variant="solid" className="mx-3">
-                  <ToastTitle bold>Achat confirmé</ToastTitle>
-                  <ToastDescription>
-                    {selected?.title} • Confirmation envoyée à {email}
-                  </ToastDescription>
-                </Toast>
-              ),
-            });
           }}
         />
       </View>
