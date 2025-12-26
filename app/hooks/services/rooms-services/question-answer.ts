@@ -5,7 +5,7 @@ import { UserOnline } from "../../entities/user.online.entity";
 import { updateStatutSuscription } from "../../redux/competitions-suscriptions/subscription.slice";
 import { updateStatut } from "../../redux/competitions/competitions.slice";
 import { addAnswer, addConnectedUsers, addConnetedUser, addQuestion, addViewerr, clearRoom, passToNextQuestion, rangking, removeViewer, setEndOfCompetition, setRomm, setRoomNull, setRoomQuestion, setSocketWaiting, setUserDeconnected, userLeaveRoom } from "../../redux/rooms/rooms.slice";
-import { playSound } from "../../helper/audio/audio.manager";
+import { playSound } from "../../../helper/audio/audio.manager";
 import Rangking from "./room.helper";
 
 // interface RoomData {

@@ -1,13 +1,15 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Tabs, usePathname } from "expo-router";
+import { Tabs, usePathname, useRouter } from "expo-router";
 import { useMemo } from "react";
 import { useNotifications } from "@/app/features/notifications/hooks";
 import AppLayout from "../styles/AppLayout";
 import LanguageSwitcher from "@/components/layouts/LanguageSwitch";
+import { Pressable, View } from "react-native";
 
 export default function RootLayout() {
   // TODO: remplacer par l'ID utilisateur réel quand l'auth sera prête
   const userID = 42;
+  const router = useRouter();
   const pathname = usePathname();
   const isOnNotifications =
     pathname?.endsWith("/notifications") || pathname === "/notifications";
@@ -38,6 +40,42 @@ export default function RootLayout() {
           tabBarStyle: {
             backgroundColor: "#181c5c",
           },
+          headerRight: () => (
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingRight: 12 }}>
+              <Pressable
+                onPress={() => router.push('/(tabs)/notifications')}
+                style={{ padding: 6 }}
+                accessibilityRole="button"
+                accessibilityLabel="Notifications"
+              >
+                <View style={{ position: 'relative' }}>
+                  <Ionicons name="notifications-outline" size={22} color="#FFFFFF" />
+                  {unreadCount > 0 ? (
+                    <View
+                      style={{
+                        position: 'absolute',
+                        top: -2,
+                        right: -2,
+                        width: 8,
+                        height: 8,
+                        borderRadius: 999,
+                        backgroundColor: '#ff894f',
+                      }}
+                    />
+                  ) : null}
+                </View>
+              </Pressable>
+
+              <Pressable
+                onPress={() => router.push('/(tabs)/profile')}
+                style={{ padding: 6 }}
+                accessibilityRole="button"
+                accessibilityLabel="Profil"
+              >
+                <Ionicons name="person-circle-outline" size={24} color="#FFFFFF" />
+              </Pressable>
+            </View>
+          ),
         }}
       >
         <Tabs.Screen name="packs" options={{ href: null }} />
@@ -103,14 +141,7 @@ export default function RootLayout() {
           name="notifications"
           options={{
             title: "Notifications",
-            tabBarBadge: unreadCount > 0 ? unreadCount : undefined,
-            tabBarIcon: ({ focused, color }) => (
-              <Ionicons
-                name={focused ? "notifications" : "notifications-outline"}
-                color={color}
-                size={24}
-              />
-            ),
+            href: null,
           }}
         />
       </Tabs>
