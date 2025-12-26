@@ -1,9 +1,9 @@
 import { Toast, ToastDescription, ToastTitle, useToast } from '@/components/ui/toast';
-import { useDeleteUserImageMutation, useUpdateUserMutation, useUploadUserImageMutation, useUserQuery } from '@/src/features/user/hooks.rq';
-import { setCurrentUserId } from '@/src/redux/session/slice';
-import type { RootState } from '@/src/redux/store';
-import { rateApp } from '@/src/utils/rateApp';
-import { shareApp } from '@/src/utils/shareApp';
+import { useDeleteUserImageMutation, useUpdateUserMutation, useUploadUserImageMutation, useUserQuery } from '@/app/features/user/hooks.rq';
+import { setCurrentUserId } from '@/app/hooks/redux/session/session.slice';
+import type { RootState } from '@/app/hooks/redux/store';
+import { rateApp } from '@/app/utils/rateApp';
+import { shareApp } from '@/app/utils/shareApp';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';

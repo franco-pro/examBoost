@@ -1,6 +1,6 @@
-import type { DocumentRow } from '@/src/features/documents/utils';
-import { usePackDocumentsQuery } from '@/src/features/packs/hooks.rq';
-import type { RootState } from '@/src/redux/store';
+import type { DocumentRow } from '@/app/features/documents/utils';
+import { usePackDocumentsQuery } from '@/app/features/packs/hooks.rq';
+import type { RootState } from '@/app/hooks/redux/store';
 import { Ionicons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 import { useLocalSearchParams, useRouter } from 'expo-router';

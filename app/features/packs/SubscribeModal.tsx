@@ -1,4 +1,4 @@
-import { formatPriceXOF } from '@/src/utils/format';
+import { formatPriceXOF } from '@/app/utils/format';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useMemo, useState } from 'react';
 import { Modal, Platform, Pressable, Text, View } from 'react-native';

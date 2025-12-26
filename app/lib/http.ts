@@ -1,4 +1,4 @@
-import { API_URL } from '@/src/config/env';
+import { API_URL } from '@/app/config/env';
 import axios from 'axios';
 
 export const http = axios.create({

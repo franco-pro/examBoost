@@ -7,9 +7,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import persistReducer from "redux-persist/es/persistReducer";
 import userReducer from "./users/users.slice";
 import { persistStore } from "redux-persist";
+import sessionReducer from "./session/session.slice";
 
 const rootReducer = combineReducers({
   user: userReducer,
+  session: sessionReducer,
   rooms: roomReducer,
   competitions: competitionReducer,
   subscriptions: subscriptionReducer,

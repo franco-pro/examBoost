@@ -1,5 +1,5 @@
-import { toAbsoluteUrl } from '@/src/config/env';
-import { getHttpErrorMessage, http } from '@/src/lib/http';
+import { toAbsoluteUrl } from '@/app/config/env';
+import { getHttpErrorMessage, http } from '@/app/lib/http';
 
 export type PackAccessDTO = {
   isSubscribed: boolean;

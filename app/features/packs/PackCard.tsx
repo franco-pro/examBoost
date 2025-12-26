@@ -1,4 +1,4 @@
-import { formatDays, formatPriceXOF, isNewSince } from '@/src/utils/format';
+import { formatDays, formatPriceXOF, isNewSince } from '@/app/utils/format';
 import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
 import { Pressable, Text, View } from 'react-native';

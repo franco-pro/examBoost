@@ -1,4 +1,4 @@
-import { http } from '@/src/lib/http';
+import { http } from '@/app/lib/http';
 import type { User } from './types';
 
 export type WebFile = File;

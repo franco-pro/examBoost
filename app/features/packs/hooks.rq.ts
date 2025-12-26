@@ -1,4 +1,4 @@
-import { queryKeys } from '@/src/lib/queryKeys';
+import { queryKeys } from '@/app/lib/queryKeys';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { DocumentRow } from '../documents/utils';
 import type { User } from '../user/types';

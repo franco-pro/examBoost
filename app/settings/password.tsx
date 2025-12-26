@@ -1,6 +1,6 @@
 import { Toast, ToastDescription, ToastTitle, useToast } from '@/components/ui/toast';
-import { useChangePasswordMutation } from '@/src/features/user/hooks.rq';
-import type { RootState } from '@/src/redux/store';
+import { useChangePasswordMutation } from '@/app/features/user/hooks.rq';
+import type { RootState } from '@/app/hooks/redux/store';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';

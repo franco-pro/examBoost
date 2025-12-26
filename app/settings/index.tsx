@@ -1,7 +1,7 @@
 import { Toast, ToastDescription, ToastTitle, useToast } from '@/components/ui/toast';
-import { useDeleteUserMutation } from '@/src/features/user/hooks.rq';
-import { setCurrentUserId } from '@/src/redux/session/slice';
-import type { AppDispatch, RootState } from '@/src/redux/store';
+import { useDeleteUserMutation } from '@/app/features/user/hooks.rq';
+import { setCurrentUserId } from '@/app/hooks/redux/session/session.slice';
+import type { AppDispatch, RootState } from '@/app/hooks/redux/store';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Alert, Platform, Pressable, ScrollView, Text, View } from 'react-native';

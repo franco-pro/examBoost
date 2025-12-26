@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export type SessionState = {
   currentUserId?: number;
@@ -9,7 +9,7 @@ const initialState: SessionState = {
 };
 
 const sessionSlice = createSlice({
-  name: 'session',
+  name: "session",
   initialState,
   reducers: {
     setCurrentUserId(state, action: PayloadAction<number | undefined>) {

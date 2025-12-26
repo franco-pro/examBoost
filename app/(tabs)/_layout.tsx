@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs, usePathname } from "expo-router";
 import { useMemo } from "react";
-import { useNotifications } from "@/src/features/notifications/hooks";
+import { useNotifications } from "@/app/features/notifications/hooks";
 import AppLayout from "../styles/AppLayout";
 import LanguageSwitcher from "@/components/layouts/LanguageSwitch";
 

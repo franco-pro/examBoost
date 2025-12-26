@@ -1,4 +1,4 @@
-import { queryKeys } from '@/src/lib/queryKeys';
+import { queryKeys } from '@/app/lib/queryKeys';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { changePasswordHttp, deleteUserHttp, deleteUserImageHttp, getUserByIdHttp, updateUserHttp, uploadUserImageHttp } from './api.http';
 import type { User } from './types';

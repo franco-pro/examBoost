@@ -1,11 +1,11 @@
-import { useClearNotifications, useDeleteNotification, useMarkRead, useNotifications } from '@/src/features/notifications/hooks';
-import type { Notification } from '@/src/features/notifications/types';
+import { useClearNotifications, useDeleteNotification, useMarkRead, useNotifications } from '@/app/features/notifications/hooks';
+import type { Notification } from '@/app/features/notifications/types';
 import { Ionicons } from '@expo/vector-icons';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, Text, View } from 'react-native';
 
 import { Toast, ToastDescription, ToastTitle, useToast } from '@/components/ui/toast';
-import NotificationSwipeableItem from '@/src/features/notifications/NotificationSwipeableItem';
+import NotificationSwipeableItem from '@/app/features/notifications/NotificationSwipeableItem';
 import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import * as Haptics from 'expo-haptics';
 import { useNavigation, useRouter } from 'expo-router';

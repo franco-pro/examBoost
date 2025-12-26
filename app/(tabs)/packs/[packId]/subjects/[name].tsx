@@ -1,7 +1,7 @@
-import { filterDocuments, getDistinct } from '@/src/features/documents/utils';
-import { usePackDocumentsQuery } from '@/src/features/packs/hooks.rq';
-import PackHeader from '@/src/features/packs/PackHeader';
-import type { RootState } from '@/src/redux/store';
+import { filterDocuments, getDistinct } from '@/app/features/documents/utils';
+import { usePackDocumentsQuery } from '@/app/features/packs/hooks.rq';
+import PackHeader from '@/app/features/packs/PackHeader';
+import type { RootState } from '@/app/hooks/redux/store';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
