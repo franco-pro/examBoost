@@ -21,12 +21,12 @@ export default function CompetitionEndedAlert({isOpen, onClose}: DialogConfirmPr
             <AlertDialogHeader>
             
             <Heading className="text-typography-950 font-semibold" size="xl">
-                C'EST LA FIN !
+                {"C'EST LA FIN !"}
             </Heading>
           </AlertDialogHeader>
           <AlertDialogBody className="mt-3 mb-4">
             <Text size="xl">
-            La Compétition est terminée, vous pouvez consulter les resultats generaux de la competition, merci pour votre participation !
+            {"La Compétition est terminée, vous pouvez consulter les resultats generaux de la competition, merci pour votre participation !"}
             </Text>
           </AlertDialogBody>
           <AlertDialogFooter>

@@ -611,7 +611,7 @@ function userJoinCompetition(){
           }).length === 0 && (
             <TouchableOpacity className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto" onPress={()=>registerToCompetition()}>
               <Text className="text-white text-xs font-semibold mr-2">
-                S'inscrire à la competition
+                {"S'inscrire à la competition"}
               </Text>
               <Ionicons name="chevron-forward" size={22} color="#ffffff" />
             </TouchableOpacity>

@@ -489,7 +489,7 @@ export default function CreateCompetitionForm() {
               </TouchableOpacity>
 
               <Text className="mb-1 font-semibold">
-                Date et heure limite d'inscription (GMT +1)
+                {"Date et heure limite d'inscription (GMT +1)"}
               </Text>
               <TouchableOpacity
                 className="border border-gray-300 p-3 rounded mb-4 flex-row items-center"
@@ -593,7 +593,7 @@ export default function CreateCompetitionForm() {
               {
                 type != "TOTAL_FREE_NO_PRICE_TO_WIN" && type != "FREE_REGISTRATION_WITH_WINNER_PRICE" && (
                   <View>
-                    <Text className="mb-1 font-semibold">Montant d'inscription (XAF)</Text>
+                    <Text className="mb-1 font-semibold">{"Montant d'inscription (XAF)"}</Text>
                     <TextInput
                       keyboardType="numeric"
                       placeholder="Montant"
@@ -660,7 +660,7 @@ export default function CreateCompetitionForm() {
                 {canUseIA() && (
                   <View className="flex-row items-center mb-4">
                     <Switch value={useIA} onValueChange={setUseIA} disabled={actionType == "UPDATE"} />
-                    <Text className="ml-2">Questions générées par l'IA</Text>
+                    <Text className="ml-2">{"Questions générées par l'IA"}</Text>
                   </View>
                 )}
               </View>
