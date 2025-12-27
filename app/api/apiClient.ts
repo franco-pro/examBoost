@@ -1,10 +1,9 @@
 import axios from "axios";
+import { API_URL } from "../config/env";
 import { getItem, setItem } from "../utils/asyncStorage";
-import { RootState, store } from "@/app/hooks/redux/store";
-import { setCredentials } from "../hooks/redux/users/users.slice";
 
 const apiClient = axios.create({
-  baseURL: "http://192.168.1.189:3000",
+  baseURL: API_URL || "http://192.168.1.189:3000",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -13,8 +12,7 @@ const apiClient = axios.create({
 
 //ajouter automatiquement les accessToken a toutes les requetes
 apiClient.interceptors.request.use(async (config) => {
-  const state: RootState = store.getState();
-  const token = state.user.token;
+  const token = await getItem("token");
   console.log("Access Token dans apiclient:", token);
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -42,19 +40,14 @@ apiClient.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const state: RootState = store.getState();
-        const refresh_Token = state.user.refreshToken;
+        const refresh_Token = await getItem("refreshToken");
         console.log("refresh Token ApiClient:", refresh_Token);
         if (!refresh_Token) throw new Error("No refresh token found");
         const res = await apiClient.post("/auth/refresh", { refresh_Token });
 
-        //stocke les nouveaux token
-        store.dispatch(
-          setCredentials({
-            token: res.data.accessToken,
-            refreshToken: res.data.refreshToken,
-          })
-        );
+        // stocke les nouveaux tokens (sans dépendre du Redux store pour éviter les cycles)
+        await setItem("token", res.data.accessToken);
+        await setItem("refreshToken", res.data.refreshToken);
 
         //réessaye la requete avec le nouveau accessToken
         originalRequest.headers[

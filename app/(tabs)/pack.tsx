@@ -6,13 +6,17 @@ import PackList from '@/app/features/packs/PackList';
 import SubscribeModal from '@/app/features/packs/SubscribeModal';
 import type { Pack } from '@/app/features/packs/types';
 import { useUser } from '@/app/features/user/hooks';
+import { setCurrentUserId } from '@/app/hooks/redux/session/session.slice';
 import type { RootState } from '@/app/hooks/redux/store';
 import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
+
+const CURRENT_USER_ID = 42;
 
 export default function PackScreen() {
   const [search, setSearch] = useState('');
@@ -21,7 +25,13 @@ export default function PackScreen() {
   const [selected, setSelected] = useState<Pack | null>(null);
   const [subscribeOpen, setSubscribeOpen] = useState(false);
   const router = useRouter();
-  const currentUserId = useSelector((s: RootState) => s.session.currentUserId);
+  const dispatch = useDispatch();
+  const currentUserId = useSelector((s: RootState) => s.session.currentUserId ?? CURRENT_USER_ID);
+
+  useEffect(() => {
+    dispatch(setCurrentUserId(CURRENT_USER_ID));
+  }, [dispatch]);
+
   const packsQuery = usePacksQuery(currentUserId ?? undefined);
   const purchasePackMutation = usePurchasePackMutation();
   const userQuery = useUser(currentUserId ?? undefined);

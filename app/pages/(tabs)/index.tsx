@@ -7,7 +7,7 @@ import { FlatList, ScrollView } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/app/redux/store";
+import { RootState } from "@/app/hooks/redux/store";
 import { useEffect } from "react";
 import { logout, userDatas } from "@/app/hooks/redux/users/users.slice";
 import { useRouter } from "expo-router";

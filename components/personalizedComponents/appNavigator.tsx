@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { RootState } from '@/app/redux/store'
+import { RootState } from '@/app/hooks/redux/store'
 import { getItem } from '@/app/utils/asyncStorage'
 import { Stack } from 'expo-router'
 

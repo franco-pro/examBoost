@@ -56,7 +56,7 @@
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-keyboard-aware-scrollview": "^2.1.0",
     "react-native-onboarding-swiper": "^1.3.0",
-    "react-dom": "19.0.0",
+    "react-dom": "19.1.0",
     "react-hook-form": "^7.65.0",
     "react-i18next": "^16.3.4",
     "react-native": "0.81.5",

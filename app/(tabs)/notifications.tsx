@@ -1,4 +1,4 @@
-import { useClearNotifications, useDeleteNotification, useMarkRead, useNotifications } from '@/app/features/notifications/hooks';
+import { useDeleteNotification, useMarkRead, useNotifications, useNotificationsRealtime } from '@/app/features/notifications/hooks';
 import type { Notification } from '@/app/features/notifications/types';
 import { Ionicons } from '@expo/vector-icons';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -16,9 +16,9 @@ export default function NotificationsScreen() {
   const userID = 42;
   //rafraîchir hors de cette page
   const { data, isLoading, isRefetching, refetch, isError } = useNotifications(userID, { refetchInterval: false });
-  const clearAll = useClearNotifications(userID);
   const delOne = useDeleteNotification(userID);
   const markRead = useMarkRead(userID);
+  useNotificationsRealtime(userID);
 
   const navigation = useNavigation();
   const router = useRouter();
@@ -88,21 +88,11 @@ export default function NotificationsScreen() {
           onError: () => showToast('error', "Échec de la suppression"),
         })
       }
-      onToggleRead={() =>
-        markRead.mutate(
-          { id: item.id, read: !item.read },
-          {
-            onSuccess: () =>
-              showToast('success', item.read ? 'Marquée comme non lue' : 'Marquée comme lue'),
-            onError: () => showToast('error', 'Échec de la mise à jour'),
-          }
-        )
-      }
       onPress={() => {
         if (!item.read) {
-          markRead.mutate({ id: item.id, read: true });
+          markRead.mutate({ id: item.id });
         }
-        openDetails(item);
+        openDetails(item.read ? item : { ...item, read: true });
       }}
       onOpenLink={() => handleOpenCompetition()}
     />
@@ -113,20 +103,6 @@ export default function NotificationsScreen() {
   const Header = (
     <View className="px-4 pt-4 pb-2 bg-background-light dark:bg-background-dark flex-row items-center justify-between">
       <Text className="text-lg font-extrabold text-typography-default dark:text-typography-white">Notifications</Text>
-      <Pressable
-        onPress={() =>
-          clearAll.mutate(undefined, {
-            onSuccess: () => showToast('success', 'Toutes les notifications ont été supprimées'),
-            onError: () => showToast('error', 'Échec de la suppression'),
-          })
-        }
-        disabled={clearAll.isPending || (data?.length ?? 0) === 0}
-        accessibilityLabel="Supprimer toutes les notifications"
-        className="flex-row items-center gap-2 px-3 py-2 rounded-md bg-error-400 opacity-100 disabled:opacity-50"
-      >
-        <Ionicons name="trash" size={18} color="#FFFFFF" />
-        <Text className="text-white font-semibold">Tout supprimer</Text>
-      </Pressable>
     </View>
   );
 
@@ -224,20 +200,21 @@ export default function NotificationsScreen() {
                 <Pressable
                   onPress={() => {
                     void Haptics.selectionAsync();
+                    if (selected.read) return;
                     markRead.mutate(
-                      { id: selected.id, read: !selected.read },
+                      { id: selected.id },
                       {
-                        onSuccess: () =>
-                          showToast('success', selected.read ? 'Marquée comme non lue' : 'Marquée comme lue'),
+                        onSuccess: () => showToast('success', 'Marquée comme lue'),
                         onError: () => showToast('error', 'Échec de la mise à jour'),
                       }
                     );
-                    setSelected((s) => (s ? { ...s, read: !s.read } : s));
+                    setSelected((s) => (s ? { ...s, read: true } : s));
                   }}
+                  disabled={!!selected?.read}
                   className="px-3 py-2 rounded-md bg-outline-50 dark:bg-outline-800 active:opacity-90"
                 >
                   <Text className="text-typography-default dark:text-typography-white font-semibold">
-                    {selected?.read ? 'Marquer non lu' : 'Marquer lu'}
+                    Marquer lu
                   </Text>
                 </Pressable>
               )}

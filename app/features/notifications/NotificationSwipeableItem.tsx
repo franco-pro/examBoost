@@ -14,8 +14,8 @@ export default function NotificationSwipeableItem({
   onOpenLink,
 }: {
   notification: Notification;
-  onDelete: () => void;
-  onToggleRead: () => void;
+  onDelete?: () => void;
+  onToggleRead?: () => void;
   onPress?: () => void;
   onOpenLink?: () => void;
 }) {
@@ -42,31 +42,38 @@ export default function NotificationSwipeableItem({
   return (
     <Swipeable
       ref={ref}
-      renderLeftActions={() => (
-        <Pressable
-          onPress={() => {
-            void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            onToggleRead();
-            close();
-          }}
-          
-          className="h-full"
-        >
-          <LeftAction />
-        </Pressable>
-      )}
-      renderRightActions={() => (
-        <Pressable
-          onPress={() => {
-            void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-            onDelete();
-            close();
-          }}
-          className="h-full"
-        >
-          <RightAction />
-        </Pressable>
-      )}
+      renderLeftActions={
+        onToggleRead
+          ? () => (
+              <Pressable
+                onPress={() => {
+                  void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  onToggleRead();
+                  close();
+                }}
+                className="h-full"
+              >
+                <LeftAction />
+              </Pressable>
+            )
+          : undefined
+      }
+      renderRightActions={
+        onDelete
+          ? () => (
+              <Pressable
+                onPress={() => {
+                  void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                  onDelete();
+                  close();
+                }}
+                className="h-full"
+              >
+                <RightAction />
+              </Pressable>
+            )
+          : undefined
+      }
       overshootLeft={false}
       overshootRight={false}
       friction={2}
@@ -75,12 +82,12 @@ export default function NotificationSwipeableItem({
         notification={notification}
         onDelete={() => {
           void Haptics.selectionAsync();
-          onDelete();
+          onDelete?.();
           close();
         }}
         onToggleRead={() => {
           void Haptics.selectionAsync();
-          onToggleRead();
+          onToggleRead?.();
         }}
         onPress={onPress}
         onOpenLink={onOpenLink}

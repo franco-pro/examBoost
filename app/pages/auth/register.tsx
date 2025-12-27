@@ -9,7 +9,7 @@ import {
 } from "react-native";
 
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/app/redux/store";
+import { RootState } from "@/app/hooks/redux/store";
 import { registerUser } from "@/app/hooks/redux/users/users.slice";
 
 import React, { useState } from "react";

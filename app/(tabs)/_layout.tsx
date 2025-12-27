@@ -80,7 +80,22 @@ export default function RootLayout() {
       >
         <Tabs.Screen name="packs" options={{ href: null }} />
 
-        <Tabs.Screen name="profile" options={{ href: null }} />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            href: null,
+            headerLeft: () => (
+              <Pressable
+                onPress={() => router.replace('/(tabs)')}
+                style={{ paddingHorizontal: 12, paddingVertical: 6 }}
+                accessibilityRole="button"
+                accessibilityLabel="Retour"
+              >
+                <Ionicons name="chevron-back" size={24} color="#FFFFFF" />
+              </Pressable>
+            ),
+          }}
+        />
 
         <Tabs.Screen
           name="index"
