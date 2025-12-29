@@ -59,9 +59,12 @@ apiClient.interceptors.response.use(
         console.log("refresh token invalide:", error);
         //se deconnecter
         // store.dispatch(setCredentials({token:null, refreshToken:null}))
+        return Promise.reject(error);
       }
       return Promise.reject(error);
     }
+
+    return Promise.reject(error);
   }
 );
 export default apiClient;

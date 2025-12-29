@@ -1,4 +1,4 @@
-import { useDeleteNotification, useMarkRead, useNotifications, useNotificationsRealtime } from '@/app/features/notifications/hooks';
+import { useClearNotifications, useDeleteNotification, useMarkRead, useNotifications, useNotificationsRealtime } from '@/app/features/notifications/hooks';
 import type { Notification } from '@/app/features/notifications/types';
 import { Ionicons } from '@expo/vector-icons';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -17,6 +17,7 @@ export default function NotificationsScreen() {
   //rafraîchir hors de cette page
   const { data, isLoading, isRefetching, refetch, isError } = useNotifications(userID, { refetchInterval: false });
   const delOne = useDeleteNotification(userID);
+  const clearAll = useClearNotifications(userID);
   const markRead = useMarkRead(userID);
   useNotificationsRealtime(userID);
 
@@ -90,19 +91,45 @@ export default function NotificationsScreen() {
       }
       onPress={() => {
         if (!item.read) {
-          markRead.mutate({ id: item.id });
+          markRead.mutate(
+            { id: item.id, read: true },
+            {
+              onSuccess: () => {
+                void refetch();
+              },
+              onError: () => {
+                showToast('error', 'Impossible de marquer comme lue', "Vérifie l'auth (token) et le backend");
+              },
+            }
+          );
         }
         openDetails(item.read ? item : { ...item, read: true });
       }}
       onOpenLink={() => handleOpenCompetition()}
     />
-  ), [delOne, markRead, openDetails, showToast]);
+  ), [delOne, markRead, openDetails, refetch, showToast]);
 
   const keyExtractor = useCallback((n: Notification) => n.id, []);
+
+  const items = data ?? [];
 
   const Header = (
     <View className="px-4 pt-4 pb-2 bg-background-light dark:bg-background-dark flex-row items-center justify-between">
       <Text className="text-lg font-extrabold text-typography-default dark:text-typography-white">Notifications</Text>
+      <Pressable
+        onPress={() =>
+          clearAll.mutate(items.map((n) => n.id), {
+            onSuccess: () => showToast('success', 'Toutes les notifications ont été supprimées'),
+            onError: () => showToast('error', 'Échec de la suppression'),
+          })
+        }
+        disabled={clearAll.isPending || items.length === 0}
+        accessibilityLabel="Supprimer toutes les notifications"
+        className="flex-row items-center gap-2 px-3 py-2 rounded-md bg-error-400 opacity-100 disabled:opacity-50"
+      >
+        <Ionicons name="trash" size={18} color="#FFFFFF" />
+        <Text className="text-white font-semibold">Tout supprimer</Text>
+      </Pressable>
     </View>
   );
 
@@ -131,9 +158,6 @@ export default function NotificationsScreen() {
       </View>
     );
   }
-
-  const items = data ?? [];
-
   return (
     <BottomSheetModalProvider>
       <View className="flex-1 bg-background-light dark:bg-background-dark">
