@@ -52,7 +52,7 @@
       "created_competitions": "Created competitions",
       "total_participations": "Total participations",
       "total_wins": "Total wins",
-      "total_deposits": "Total deposits"
+      "total_deposits": "Total rewards"
     },
     "actions_title": "What would you like to do?",
     "actions": {
@@ -107,26 +107,43 @@
            "help": "HELP",
            "agree": "Okay understood !"
         },
+        "errors" : {
+          "name": "The name of the competition is not defined.",
+          "descriprtion": "The description is not defined.",
+          "type": "The type of competition is not chosen.",
+          "topic": "The competition theme is not defined.",
+          "registration__deadline": "The registration deadline is not defined.",
+          "date": "The date of the competition has not been set.",
+          "entryFee": "The registration fee is not defined.",
+          "winnerPrice": "The winner's prize money has not been determined.",
+          "questionsNbr": "The number of questions is not defined",
+          "lang": "The language is not chosen",
+          "subErrors":{
+            "date": "The registration deadline cannot be earlier than or equal to the date and time of the competition.",
+            "maxUsers": "The maximum number of participants must be ≤ {{MAX_PARTICIPANTS}} and ≥ {{MIN_PARTICIPANTS}}",
+            "questions": "The total number of questions must be ≤ {{MAX_QUESTION_NUMBER}} and ≥ {{MIN_QUESTION_NUMBER}}"
+          }
+        },
         "previous": "Previous",
         "next": "Next"
    },
-   "result_screen": {
-    "rangking": "Classement",
-    "no_more_users": "Pas plus de participants à afficher",
-    "no_qts_generated": "Aucune Questions générées.",
-    "no_qts_generated_wait": "Aucune Questions posée, Veuillez patienter...",
-    "question&answer": "Questions et réponses",
-    "waiting_answer": "En attente de reponse",
-    "answer": "Réponse",
-    "no_answer":"Aucune Réponse",
-    "correct_answer": "Réponse juste",
-    "explanation": "Explication",
-    "congratulation": "Félicitations",
-    "congrat_text": "Vous avez gagné la competition avec le meilleur score et temps de reponse ! Continuez comme ça !",
-    "yr_score": "Votre Score",
-    "gain": "Rewards", 
-    "othersResult" : "Autres Résultats"
- },
+  "result_screen": {
+      "rangking": "Ranking",
+      "no_more_users": "No more participants to display",
+      "no_qts_generated": "No questions generated.",
+      "no_qts_generated_wait": "No questions asked, please wait...",
+      "question&answer": "Questions and answers",
+      "waiting_answer": "Waiting for answer",
+      "answer": "Answer",
+      "no_answer":"No answer",
+      "correct_answer": "Correct answer",
+      "explanation": "Explanation",
+      "congratulation": "Congratulations",
+      "congrat_text": "You won the competition with the best score and response time! Keep it up!",
+      "yr_score": "Your Score",
+      "gain": "Rewards",
+      "othersResult": "Other Results"
+  },
  "online_game": {
     "created_at": "Created on",
     "waiting_qts": "Awaiting questions...",
@@ -195,6 +212,10 @@
 },
 "information": {
   "more_info": "Additional Information",
+  "delete_modal": {
+    "head": "Delete this competition ?",
+    "text": "The competition will be removed from the list of competitions and will no longer be accessible to the public; this action is irreversible."
+  },
   "invite": {
       "btnText": "Send Invitation",
       "label": "Invite Participants",

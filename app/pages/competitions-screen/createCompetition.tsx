@@ -26,6 +26,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import FullscreenLoader from "@/app/helper/Dialogs/loaderFullScreen";
 
 const { width } = Dimensions.get("window");
 
@@ -47,10 +48,12 @@ export default function CreateCompetitionForm() {
   const MIN_TO_USE_IA_PRIVATE = homeBaseData ? homeBaseData.MIN_WINNERPRICE_TO_USE_AI_IN_PRIVATE_COMP : 8000;
   const MIN_TO_USE_IA_PUBLIC = homeBaseData ? homeBaseData.MIN_WINNERPRICE_TO_USE_AI_IN_PUBLIC_COMP : 15000;
   const userId = 1;
+  const username = "Deussom";
+  const surname = "Franz"
   const [formError, setFormError] = useState<string>("");
 
   const dispatch = useAppDispatch()
-  const {error, actionDone} = useAppSelector((state)=> state.competitions)
+  const {error, actionDone,loading} = useAppSelector((state)=> state.competitions)
 
   const [maxUsers, setMaxUsers] = useState<number>(MAX_PARTICIPANTS);
   const [entryFee, setEntryFee] = useState<number>(0);
@@ -71,12 +74,6 @@ export default function CreateCompetitionForm() {
   const percentage = homeBaseData ? homeBaseData.PERCENTAGE : 80; 
 
   const percentageAmount = Math.round(maxUsers * entryFee * (percentage / 100));
-
-  // Détermine si on doit afficher la checkbox pourcentage
-  const showUseIACheckbox = (type === "PAID_REGISTRATION_AS_WINNER_PRICE") || (type === "PAID_REGISTRATION_WITH_WINNER_PRICE") ? 
-                                      ((!isPublic && (entryFee * maxUsers) >= MIN_TO_USE_IA_PRIVATE) || (isPublic && (entryFee * maxUsers) >= MIN_TO_USE_IA_PUBLIC))
-                                      :
-                                      ((!isPublic && winnerPrice >= MIN_TO_USE_IA_PRIVATE) || (isPublic && winnerPrice >= MIN_TO_USE_IA_PUBLIC)) ;
 
   // Calcul du montant à afficher dans l'input du prix du gagnant
   const displayedWinnerPrice = usePercentage ? percentageAmount : winnerPrice;
@@ -173,7 +170,7 @@ export default function CreateCompetitionForm() {
       }else{
         dispatch(updateOne(formData))
       }
-      showToast("Your action was completed successfully.", "Opération Effectuée", "success")
+      showToast("Your action was completed successfully.", "Done", "success")
       router.back();
     }
   }, [actionDone])
@@ -233,16 +230,16 @@ export default function CreateCompetitionForm() {
 
   const handleSubmit = () => {
     const errorMessage: Record<string, string> = {
-      name: "Le nom de la compatition n'est pas défini",
-      description: "La Description n'est pas défini",
-      type: "Le type de competition n'est pas choisi",
-      topic: "Le Thème de la competition n'est pas défini",
-      registration_deadline: "La date limite d'inscription n'est pas définie",
-      date: "La date de l'évènement n'est pas définie",
-      entryFee: "Le prix d'inscription n'est pas défini",
-      winnerPrice: "La cagnotte du vainqueur n'est pas defini",
-      questionsNbr: "Le nombre de questions n'est pas défini",
-      lang: "La langue n'est pas choisie"
+      name: t("mycompetition.competition.creations_screen.errors.name"),
+      description: t("mycompetition.competition.creations_screen.errors.description"),
+      type: t("mycompetition.competition.creations_screen.errors.type"),
+      topic: t("mycompetition.competition.creations_screen.errors.topic"),
+      registration_deadline: t("mycompetition.competition.creations_screen.errors.registration_deadline"),
+      date: t("mycompetition.competition.creations_screen.errors.date"),
+      entryFee: t("mycompetition.competition.creations_screen.errors.entryFee"),
+      winnerPrice: t("mycompetition.competition.creations_screen.errors.winnerPrice"),
+      questionsNbr: t("mycompetition.competition.creations_screen.errors.questionsNbr"),
+      lang: t("mycompetition.competition.creations_screen.errors.lang")
     };
   
     let errors: string | null = null;
@@ -256,7 +253,7 @@ export default function CreateCompetitionForm() {
     updatedData.date = actionType== "UPDATE" ? updatedData.date.toISOString(): updatedData.date;
 
     if (new Date(updatedData.registration_deadline) >= new Date(updatedData.date)) {
-      errors = "La date limite d'inscription ne peut pas être supérieure ou égale à la date et heure de la compétition."
+      errors = t("mycompetition.competition.creations_screen.errors.subErrors.date");
     }
 
 
@@ -264,14 +261,20 @@ export default function CreateCompetitionForm() {
     if (Number(maxUsers) <= MAX_PARTICIPANTS && Number(maxUsers) >= MIN_PARTICIPANTS) {
       updatedData.maxUsers = Number(maxUsers);
     } else {
-      errors = `Le nombre de participants maximum doit être ≤ ${MAX_PARTICIPANTS} et ≥ ${MIN_PARTICIPANTS}`;
+      errors = t("mycompetition.competition.creations_screen.errors.subErrors.maxUsers", {
+        MAX_PARTICIPANTS: MAX_PARTICIPANTS,
+        MIN_PARTICIPANTS: MIN_PARTICIPANTS
+      });
     }
   
     // --- VALIDATION questionNbr ---
     if (Number(questionNbr) <= MAX_QUESTION_NUMBER && Number(questionNbr) >= MIN_QUESTION_NUMBER) {
       updatedData.questionsNbr = Number(questionNbr);
     } else {
-      errors = `Le nombre total de questions doit être ≤ ${MAX_QUESTION_NUMBER} et ≥ ${MIN_QUESTION_NUMBER}`;
+      errors = t("mycompetition.competition.creations_screen.errors.subErrors.questions", {
+        MAX_QUESTION_NUMBER: MAX_QUESTION_NUMBER,
+        MIN_QUESTION_NUMBER: MIN_QUESTION_NUMBER
+      });
     }
   
     // --- VALIDATION entryFee si nécessaire ---
@@ -337,6 +340,7 @@ export default function CreateCompetitionForm() {
     setFormError("");
     
     if(actionType==="CREATE"){
+      updatedData.username = surname + " " + username;
       dispatch(createCompetition(updatedData))
     }else{
       dispatch(update(updatedData))
@@ -532,7 +536,7 @@ export default function CreateCompetitionForm() {
                             placeholder="Max participants"
                             value={maxUsers.toString()}
                             onChangeText={(text) => setMaxUsers(Number(text))}
-                            editable = {actionType == "UPDATE" && useIA && type != "PAID_REGISTRATION_AS_WINNER_PRICE"}
+                            editable = {actionType == "CREATE" ||( actionType == "UPDATE") && !useIA && type != "PAID_REGISTRATION_AS_WINNER_PRICE"}
                             className="border border-gray-300 p-2 rounded mb-4"
                           />
 
@@ -631,13 +635,13 @@ export default function CreateCompetitionForm() {
               }
 
               {
-                type != "TOTAL_FREE_NO_PRICE_TO_WIN" && (
+                type === "PAID_REGISTRATION_AS_WINNER_PRICE" && (
                     <View>
                         <Text className="mb-1 font-semibold">{t('mycompetition.competition.creations_screen.model.winnerPrice')} (XAF) ({percentage + '%'}) </Text>
                         <TextInput
                           keyboardType="numeric"
-                          placeholder={t(`mycompetition.competition.creations_screen.model.montant_min.${minWinnerPrice}`)}
-                          value={displayedWinnerPrice.toString()}
+                          placeholder={t(`mycompetition.competition.creations_screen.model.montant_min`, {amount: minWinnerPrice})}
+                          value={"(("+ entryFee.toString() + " x " + maxUsers.toString() + ") x " + percentage + ")/ 100"  + " = " + displayedWinnerPrice.toString()}
                           onChangeText={(text) =>
                             !usePercentage && setWinnerPrice(Number(text))
                           }
@@ -650,6 +654,25 @@ export default function CreateCompetitionForm() {
               }
 
               {
+                type != "TOTAL_FREE_NO_PRICE_TO_WIN" &&  type != "PAID_REGISTRATION_AS_WINNER_PRICE" && (
+                    <View>
+                        <Text className="mb-1 font-semibold">{t('mycompetition.competition.creations_screen.model.winnerPrice')} (XAF) ({percentage + '%'}) </Text>
+                        <TextInput
+                          keyboardType="numeric"
+                          placeholder={t(`mycompetition.competition.creations_screen.model.montant_min`, {amount: minWinnerPrice})}
+                          value={winnerPrice.toString()}
+                          onChangeText={(text) =>
+                            !usePercentage && setWinnerPrice(Number(text))
+                          }
+                          className="border border-gray-300 p-2 rounded mb-4"
+                          editable={!usePercentage || actionType=="CREATE"} // readonly si on utilise le pourcentage
+                        />
+                    </View>
+                    
+                ) 
+              }
+
+              {/* {
                  type != "TOTAL_FREE_NO_PRICE_TO_WIN" && (
                  <View>
                     <Text className="mb-1 font-semibold">{t('mycompetition.competition.creations_screen.model.finalPrice')} (XAF) </Text>
@@ -666,7 +689,7 @@ export default function CreateCompetitionForm() {
                  </View>
                   
               )
-              }
+              } */}
 
               
 
@@ -698,23 +721,23 @@ export default function CreateCompetitionForm() {
           <View className="flex-row justify-between mt-6">
             {step > 1 && (
               <TouchableOpacity
-                className="bg-gray-400 px-4 py-2 rounded"
+                className="bg-gray-400 px-4 py-2 rounded w-[40%]"
                 onPress={handleBack}
               >
-                <Text className="text-white">{t('mycompetition.competition.creations_screen.previous')}</Text>
+                <Text className="text-white text-center ">{t('mycompetition.competition.creations_screen.previous')}</Text>
               </TouchableOpacity>
             )}
 
             {step < totalSteps ? (
               <TouchableOpacity
-                className="bg-[#181c5c] px-4 py-2 rounded"
+                className="bg-[#181c5c] px-4 py-2 rounded w-[40%]"
                 onPress={handleNext}
               >
-                <Text className="text-white">{t('mycompetition.competition.creations_screen.next')}</Text>
+                <Text className="text-white text-center">{t('mycompetition.competition.creations_screen.next')}</Text>
               </TouchableOpacity>
             ) : (
               <TouchableOpacity
-                className="bg-[#ff894f] px-4 py-2 rounded max-w-[65%] w-[65%] justify-center items-center"
+                className="bg-[#ff894f] px-4 py-2 rounded max-w-[45%] w-[45%] justify-center items-center"
                 onPress={handleSubmit}
               >
                 <Text className="text-white font-semibold">
@@ -727,6 +750,9 @@ export default function CreateCompetitionForm() {
           </View>
          
         </View>
+
+          <FullscreenLoader visible={loading} />
+        
       </ScrollView>
     </View>
   );

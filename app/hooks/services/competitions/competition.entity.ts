@@ -23,6 +23,7 @@ export default interface Competition{
     language: 'ANGLAIS' | 'FRANCAIS';
     creatorData: {
       id: number;
+      surname: string;
       username: string;
       email: string;
       phone: string;

@@ -234,7 +234,7 @@ export default function Creation() {
       
       >
         {
-          searchList.length != 0 && searchValue.length != 0 && searchList.map((comp, index) => {
+           searchList && searchList.length != 0 && searchValue.length != 0 && searchList.map((comp, index) => {
             return (
               <TouchableOpacity
                 key={index}
@@ -302,7 +302,7 @@ export default function Creation() {
           })
         }
         
-        {myCompetitionList.length != 0 && searchValue.length == 0 && myCompetitionList.map((comp, index) => {
+        {(myCompetitionList && Array.isArray(myCompetitionList)) && myCompetitionList.length != 0 && searchValue.length == 0 && myCompetitionList.map((comp, index) => {
           return (
             <TouchableOpacity
               key={index}

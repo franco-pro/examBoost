@@ -194,15 +194,15 @@ const competitionSlice = createSlice({
             .addCase(createCompetition.fulfilled, (state, action)=>{
                 
                 if(!action.payload.error){
-                    state.competitionList = action.payload.data;
-                    state.myCompetitionList.push(action.payload.data)
+                    state.competitionList.push(action.payload.data);
+                    state.myCompetitionList.push(action.payload.data);
+                    state.actionDone = true;
 
                 }else{
                     state.error = action.payload.error
                 }
                 state.loading = false;
-                state.actionDone = true;
-                state.error = null;
+                
             })
             .addCase(createCompetition.rejected, (state, action)=>{
                 state.loading = false;

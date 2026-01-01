@@ -109,6 +109,23 @@
            "help": "AIDE",
            "agree": "Ok, compris !"
         },
+        "errors" : {
+          "name": "Le nom de la compétition n'est pas défini",
+          "descriprtion": "La description n'est pas défini",
+          "type": "Le type de competition n'est pas choisi",
+          "topic": "Le Thème de la competition n'est pas défini",
+          "registration__deadline": "La date limite d'inscription n'est pas définie",
+          "date": "La date de l'évènement n'est pas définie",
+          "entryFee": "Le prix d'inscription n'est pas défini",
+          "winnerPrice": "La cagnotte du vainqueur n'est pas defini",
+          "questionsNbr": "Le nombre de questions n'est pas défini",
+          "lang": "La langue n'est pas choisie",
+          "subErrors":{
+            "date": "La date limite d'inscription ne peut pas être supérieure ou égale à la date et heure de la compétition.",
+            "maxUsers": "Le nombre de participants maximum doit être ≤ {{MAX_PARTICIPANTS}} et ≥ {{MIN_PARTICIPANTS}}",
+            "questions": "Le nombre total de questions doit être ≤ {{MAX_QUESTION_NUMBER}} et ≥ {{MIN_QUESTION_NUMBER}}"
+          }
+        },
         "previous": "Précédent",
         "next": "Suivant"
    },
@@ -197,6 +214,10 @@
   },
   "information": {
     "more_info": "Informations supplémentaires",
+    "delete_modal": {
+      "head": "Supprimer cette Competition ?",
+      "text": "La competition sera supprimé de la liste des competitions et ne sera plus accéssible au public, cette action est irréversible."
+    },
     "invite": {
       "btnText": "Envoyer l'invitaion",
       "label": "Invité des pariticipants",

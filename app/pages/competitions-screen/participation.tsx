@@ -290,7 +290,7 @@ export default function Participation() {
           })
         }
 
-        {mySubscriptionList.length != 0 && searchResults.length == 0 && mySubscriptionList.map((comp, index) => {
+        {(mySubscriptionList && Array.isArray(mySubscriptionList)) && mySubscriptionList.length != 0 && searchResults.length == 0 && mySubscriptionList.map((comp, index) => {
           return (
             <TouchableOpacity
               key={index}

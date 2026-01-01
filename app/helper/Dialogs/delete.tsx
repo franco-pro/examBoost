@@ -41,6 +41,19 @@ export default function DialogDelete({isOpen, isLoading, onClose, onConfirm, hea
             </Text>
           </AlertDialogBody>
           <AlertDialogFooter className="mt-5">
+          
+            <Button
+              variant="outline"
+              action="secondary"
+              onPress={onClose}
+              size="xl"
+              className="px-[30px]"
+            >
+              <ButtonText> 
+                  {t("mycompetition.confirmModal.cancel")}
+              </ButtonText>
+            </Button>
+
             <Button
               size="xl"
               action="negative"
@@ -52,17 +65,6 @@ export default function DialogDelete({isOpen, isLoading, onClose, onConfirm, hea
                   {
                     isLoading && <Spinner  size="small" color="blue"/>
                   }
-              </ButtonText>
-            </Button>
-            <Button
-              variant="outline"
-              action="secondary"
-              onPress={onClose}
-              size="xl"
-              className="px-[30px]"
-            >
-              <ButtonText> 
-                  {t("mycompetition.confirmModal.cancel")}
               </ButtonText>
             </Button>
           </AlertDialogFooter>

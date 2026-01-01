@@ -59,14 +59,14 @@ export default function CompetitionInfos({data, competitionInfo}: CompetitionInf
                     </AvatarFallbackText>
                     <AvatarImage
                         source={{
-                        uri: data.imgUrl ? 'https://gluestack.github.io/public-blog-video-assets/john.png':data.imgUrl,
+                        uri: data.imgUrl,
                         }}
                         alt="image"
                     />
                     </Avatar>
                     <VStack>
                     <Heading size="sm" className="mb-1 text-typography-white">
-                        {data.creatorName} {data.creatorSurname}
+                    {data.creatorSurname} {data.creatorName} 
                     </Heading>
                     <Text size="xs" className="text-primary-defaultOrange">{t("mycompetition.competition.online_game.owner")} </Text>
                     </VStack>

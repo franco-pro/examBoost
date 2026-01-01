@@ -17,12 +17,12 @@ export default function Transactions() {
 
   const dispatch = useAppDispatch();
   const userId = 1;
-  const {transactionList: list, loading, error} = useAppSelector((state)=> state.transactions)
+  const {transactionList, loading, error} = useAppSelector((state)=> state.transactions)
   const {t} = useTranslation("transaction");
 
   useFocusEffect(
     useCallback(()=>{
-      if(list && list.length == 0){
+      if(transactionList && transactionList.length == 0){
         dispatch(getAllTransations(userId));
         setLoadDone(true);
       }
@@ -30,7 +30,7 @@ export default function Transactions() {
           showToast(error, 'Error', "error");
           setLoadDone(true);
       }
-    }, [list, error])
+    }, [transactionList, error])
   )
   const [filter, setFilter] = useState<
   | 'ALL'
@@ -41,7 +41,7 @@ export default function Transactions() {
   | 'COMPETITION_FEES'
   >("ALL");
 
-  const filteredTransactions = list ? list.filter((tx) =>
+  const filteredTransactions = transactionList ? transactionList.filter((tx) =>
     filter === "ALL" ? true : tx.type === filter
     ):[];
 

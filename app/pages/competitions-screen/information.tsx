@@ -373,7 +373,7 @@ function userJoinCompetition(){
               color={colors.defaultBlue}
             />
             <Text className="ml-2 text-gray-700 font-medium">
-              {selectedCompetition?.creatorData.username}
+              {selectedCompetition?.creatorData.surname + " " + selectedCompetition?.creatorData.username}
             </Text>
           </View>
 
@@ -525,8 +525,8 @@ function userJoinCompetition(){
                 <DialogDelete isOpen={isDeleteOpen} 
                               onClose={() => setDeleteIsOpen(false)} 
                               onConfirm={() =>deleteCompetition(selectedCompetition.id)}
-                              bodyText={DialogDeleteText.competition_delete_body}
-                              headText={DialogDeleteText.competition_delete_head}
+                              bodyText={t(DialogDeleteText.competition_delete_body)}
+                              headText={t(DialogDeleteText.competition_delete_head)}
                               isLoading={loading}
                               />
           </HStack>
