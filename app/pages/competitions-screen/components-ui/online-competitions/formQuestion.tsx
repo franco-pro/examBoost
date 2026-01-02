@@ -1,0 +1,388 @@
+import CompetitionEndedAlert from '@/app/helper/Dialogs/endCompetition';
+import StopCompetition from '@/app/helper/Dialogs/stopCompetition';
+import { Question } from '@/app/hooks/entities/question';
+import { useAppDispatch, useAppSelector } from '@/app/hooks/redux/redux.hooks';
+import { setEndOfCompetition } from '@/app/hooks/redux/rooms/rooms.slice';
+import { EmitEvent } from '@/app/hooks/services/socket/rooms.gateway';
+import { Button, ButtonText } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { FormControl, FormControlError, FormControlErrorText, FormControlHelper, FormControlHelperText, FormControlLabel, FormControlLabelText } from '@/components/ui/form-control';
+import { Heading } from '@/components/ui/heading';
+import { Input, InputField } from '@/components/ui/input';
+import { Text } from '@/components/ui/text';
+import { Textarea, TextareaInput } from '@/components/ui/textarea';
+import { VStack } from '@/components/ui/vstack';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { ScrollView } from 'react-native';
+
+// interface Question {
+//     id: number;
+//     text: string;
+//     choices: string[];
+//     correctAnswer: string;
+//     timeToAnswer: number;
+//     points: number;
+//     explanation?: string;
+//     answers: any[]; // Adjust type as needed
+// }
+interface ComepetitionInfo{
+  competitionName: string;
+  createdAt: any;
+  creatorName: string;
+  creatorAvatarUrl: string;
+  isAI: boolean,
+  totalQuestions: number; 
+}
+export default function FormQuestion({competitionInfo}: { competitionInfo: ComepetitionInfo}) {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const {t} = useTranslation("competition");
+  const {room, competitionFinished} = useAppSelector(state => state.rooms);
+  const Events = EmitEvent(dispatch, {isManagedByIA: room?.isManagedByIA as any, roomId: room?.roomId as any})
+  const [isAlertCompetOpen, setIsAlertCompEndOpen] = useState(false);
+
+  const [isWaiting, setIsWaiting] = useState(false);
+
+  const questionsNbr = competitionInfo.totalQuestions ?? null;
+  
+  const [isOpen, setIsOpen] =  useState(false);
+  const [sendingBtnText, setBtnText] = useState("Envoyer")
+
+  const handleLeavingCompetition = () => {
+    onLeavingCompetition();
+    setIsOpen(false);
+    
+  }
+
+  let questionSended = room && room.questions? room.questions.length: 0;
+
+
+
+  const [form, setForm] = useState({
+    timeToAnswer: "0",
+    points: "0",
+    corretAnswer: "",
+    firsChoice: "",
+    secondChoice: "",
+    thirdChoice: "",
+    text: "",
+  });
+
+  const [errors, setErrors] = useState({
+    timeToAnswer: "",
+    points: "",
+    corretAnswer: "",
+    firsChoice: "",
+    secondChoice: "",
+    thirdChoice: "",
+    text: "",
+  });
+
+ function onCompetitionEndAlertConfirm(){
+    setIsAlertCompEndOpen(false)
+    dispatch(setEndOfCompetition())
+    router.replace("/pages/competitions-screen/components-ui/online-competitions/competitionResult");
+  }
+
+  const validate = () => {
+    let valid = true;
+    let newErrors: typeof errors = { timeToAnswer: "", points: "", corretAnswer: "", firsChoice: "", secondChoice: "", thirdChoice: "", text: "" };
+
+    if (Number.parseInt(form.timeToAnswer) <= 5 || form.timeToAnswer.length == 0) {
+      newErrors.timeToAnswer = t("mycompetition.competition.form_question.model.timeToAnswer.error");
+      valid = false;
+    }
+
+    if (!form.points || Number.parseInt(form.points) <= 0 || form.points.length == 0) {
+      newErrors.points = t("mycompetition.competition.form_question.model.points.nb");
+      valid = false;
+    }
+
+    // if (form.corretAnswer.length == 0 || (form.corretAnswer.toLowerCase() != form.firsChoice.toLowerCase() || form.corretAnswer.toLowerCase() != form.secondChoice.toLowerCase() || form.corretAnswer.toLowerCase() != form.thirdChoice.toLowerCase())) {
+    //   console.log('exected', form.corretAnswer.toLowerCase(), form.firsChoice.toLowerCase(), form.secondChoice.toLowerCase(), form.thirdChoice.toLowerCase());
+    //   newErrors.corretAnswer = "Réponse correcte invalide";
+    //   valid = false;
+    // }
+
+    if (form.firsChoice.length == 0) {
+      newErrors.firsChoice = t("mycompetition.competition.form_question.model.first_choice.nb");
+      valid = false;
+    }
+
+    if (form.secondChoice.length == 0) {
+      newErrors.secondChoice = t("mycompetition.competition.form_question.model.second_choice.nb");
+      valid = false;
+    }
+
+    if (form.thirdChoice.length == 0) {
+      newErrors.thirdChoice = t("mycompetition.competition.form_question.model.third_choice.nb");
+      valid = false;
+    }
+
+    if (form.text.length == 0) {
+      newErrors.text = t("mycompetition.competition.form_question.model.invalid.question");
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
+  const handleSubmitForm = () => {
+    if (validate()) {
+      if(form.corretAnswer.toLowerCase() != form.firsChoice.toLowerCase() && form.corretAnswer.toLowerCase() != form.secondChoice.toLowerCase() && form.corretAnswer.toLowerCase() != form.thirdChoice.toLowerCase()){
+            console.log(t("mycompetition.competition.form_question.choice_mistake_error"), form);
+            
+      }else{
+
+        if (isWaiting) return; // Empêche de recliquer pendant l'attente
+
+        let question = {
+          id: 0,
+          text: String(form.text),
+          choices: [String(form.firsChoice), String(form.secondChoice), String(form.secondChoice)],
+          correctAnswer: String(form.corretAnswer),
+          timeToAnswer: Number.parseInt(form.timeToAnswer),
+          points: Number.parseInt(form.points),
+          explanation: "",
+          answers: []
+        } as Question;
+        Events.sendQuestion(question);
+
+        setBtnText(t("mycompetition.competition.online_game.waiting_ans"));
+        setIsWaiting(true);
+    
+        setTimeout(() => {
+          setBtnText(t("mycompetition.competition.form_question.send"));
+          setIsWaiting(false);
+        }, (Number(form.timeToAnswer)+10)*1000)
+      }
+
+    } else {
+      console.log(t("mycompetition.competition.form_question.invalid.form"), form);
+    }
+  };
+
+  if(room && !competitionFinished){
+    if(questionsNbr == questionSended){
+        setTimeout(() => {
+            Events.end();
+           setIsAlertCompEndOpen(true)
+        }, (Number.parseInt(form.timeToAnswer)+ 10)*1000);
+    }
+  } 
+
+  const updateField = (key: keyof typeof form, value: string) => {
+    setForm({ ...form, [key]: value });
+    validate();
+  };
+
+  function onLeavingCompetition() {
+    // Logic to handle leaving the competition
+    const event = EmitEvent(dispatch, {isManagedByIA: room?.isManagedByIA as any, roomId: room?.roomId as any});
+
+    event.closeCompetition();
+
+    router.back()
+  }
+
+    return (
+      
+      <Card size="lg" variant="elevated" className="p-5 shadow-xl rounded-lg w-[90%]">
+        <Text className="text-sm font-normal mb-2 text-typography-700">
+          {t("mycompetition.competition.online_game.created_at")}: {competitionInfo.createdAt}
+        </Text>
+
+        <VStack className='mb-6 max-h-[400px]'>
+        <ScrollView>
+
+          <Heading size="md" className="mb-4 flex items-center justify-center">
+            {competitionInfo.competitionName}
+          </Heading>
+
+          <FormControl isInvalid={!!errors.timeToAnswer} isRequired className='pt-2'>
+            <FormControlLabel>
+              <FormControlLabelText> {t("mycompetition.competition.form_question.model.timeToAnswer.label")}: </FormControlLabelText>
+            </FormControlLabel>
+            <Input> 
+              <InputField
+                value={form.timeToAnswer}
+                onChangeText=
+                {(text) => {
+                  const numericValue = text.replace(/[^0-9]/g, "");
+                  updateField("timeToAnswer", numericValue)
+                }}
+                keyboardType="numeric"
+              />
+            </Input>
+            {errors.timeToAnswer.length != 0 ? (
+              <FormControlError>
+                <FormControlErrorText>{errors.timeToAnswer}</FormControlErrorText>
+              </FormControlError>
+            ) : (
+              <FormControlHelper>
+                <FormControlHelperText>{t("mycompetition.competition.form_question.model.timeToAnswer.nb")}</FormControlHelperText>
+              </FormControlHelper>
+            )}
+          </FormControl>
+
+          <FormControl isInvalid={!!errors.points} isRequired className='mt-3'>
+            <FormControlLabel>
+              <FormControlLabelText>Points</FormControlLabelText>
+            </FormControlLabel>
+            <Input>
+              <InputField
+                placeholder=""
+                value={form.points}
+                onChangeText=
+                {(text) => {
+                  const numericValue = text.replace(/[^0-9]/g, "");
+                  updateField("points", numericValue)
+                }}
+                keyboardType="numeric"
+              />
+            </Input>
+            {errors.points.length != 0 ? (
+              <FormControlError>
+                <FormControlErrorText>{errors.points ?? String(errors.points)}</FormControlErrorText>
+              </FormControlError>
+            ): null }
+          </FormControl>
+
+          <FormControl isInvalid={!!errors.firsChoice} isRequired className='mt-3'>
+            <FormControlLabel>
+              <FormControlLabelText>{t("mycompetition.competition.form_question.model.first_choice.label")}</FormControlLabelText>
+            </FormControlLabel>
+            <Input>
+              <InputField
+                type="text"
+                placeholder="First Choice"
+                value={form.firsChoice}
+                onChangeText={(text) => updateField("firsChoice", text)}
+              />
+            </Input>
+            {errors.firsChoice.length == 0 ? (
+              <FormControlError>
+                <FormControlErrorText>
+                  {String(errors.firsChoice)} 
+                  </FormControlErrorText>
+              </FormControlError>
+            ): null }
+          </FormControl>
+
+          <FormControl isInvalid={!!errors.secondChoice} isRequired className='mt-3'>
+            <FormControlLabel>
+              <FormControlLabelText>{t("mycompetition.competition.form_question.model.second_choice.label")}</FormControlLabelText>
+            </FormControlLabel>
+            <Input>
+              <InputField
+                type="text"
+                placeholder="Second Choice"
+                value={form.secondChoice}
+                onChangeText={(text) => updateField("secondChoice", text)}
+              />
+            </Input>
+            {errors.secondChoice.length != 0 ? (
+              <FormControlError>
+                <FormControlErrorText>{errors.secondChoice ?? String(errors.secondChoice)}</FormControlErrorText>
+              </FormControlError>
+            ): null}
+          </FormControl>
+
+          <FormControl isInvalid={!!errors.thirdChoice} isRequired className='mt-3'>
+            <FormControlLabel>
+              <FormControlLabelText>{t("mycompetition.competition.form_question.model.third_choice.label")} </FormControlLabelText>
+            </FormControlLabel>
+            <Input>
+              <InputField
+                type='text'
+                placeholder="Third Choice"
+                value={form.thirdChoice}
+                onChangeText={(text) => updateField("thirdChoice", text)}
+              />
+            </Input>
+            {errors.thirdChoice.length != 0 ? (
+              <FormControlError>
+                <FormControlErrorText>{errors.thirdChoice ?? String(errors.thirdChoice)}</FormControlErrorText>
+              </FormControlError>
+            ): null}
+          </FormControl>
+
+        <FormControl isInvalid={!!errors.corretAnswer} isRequired className='mt-3'>
+          <FormControlLabel>
+            <FormControlLabelText>Reponse correct</FormControlLabelText>
+          </FormControlLabel>
+          <Input>
+            <InputField
+              type='text'
+              placeholder="The Correct Answer"
+              value={form.corretAnswer}
+              onChangeText={(text) => updateField("corretAnswer", text)}
+            />
+          </Input>
+          {errors.corretAnswer.length != 0 ? (
+            <FormControlError>
+              <FormControlErrorText>{errors.corretAnswer ?? String(errors.corretAnswer)}</FormControlErrorText>
+            </FormControlError>
+          ): null}
+        </FormControl>
+
+          <FormControl isInvalid={!!errors.text} isRequired size="sm" className=" mt-3 max-w-[100%] w-full">
+          <FormControlLabel>
+            <FormControlLabelText>
+              Question
+            </FormControlLabelText>
+          </FormControlLabel>
+          <Textarea>
+            <TextareaInput className='w-[100%]' placeholder="Enter the question..."
+            
+                value={form.text}
+                onChangeText={(text) => updateField("text", text)}/>
+          </Textarea>
+          {errors.text.length != 0 ? (
+              <FormControlError>
+                <FormControlErrorText>
+                  {String(errors.text)} 
+                </FormControlErrorText>
+              </FormControlError>
+            ) : (
+                <FormControlHelper>
+                  <FormControlHelperText>
+                  {t("mycompetition.competition.form_question.model.inf")}
+                    {'\n'}
+                    {t("mycompetition.competition.form_question.model.questionLeft")}: {(questionsNbr - questionSended)}
+
+                  </FormControlHelperText>
+                </FormControlHelper>
+            )}
+
+        </FormControl>
+          
+          {
+              !competitionFinished ? (
+                <CompetitionEndedAlert isOpen={isAlertCompetOpen} onClose={onCompetitionEndAlertConfirm} />
+              ): null
+          }
+
+
+      <Button disabled={competitionInfo.isAI || ((questionsNbr-questionSended) == 0) || isWaiting} className={"mt-4" + isWaiting ? "bg-primary-defaultBlue":""} variant="outline" size="md" action="secondary" onPress={handleSubmitForm}>
+        <ButtonText className='text-typography-white' size="xl">
+            
+          {sendingBtnText}
+          
+        </ButtonText>
+      </Button>
+        </ScrollView>
+
+    </VStack>
+
+
+        <Button onPress={() => setIsOpen(true)} action="negative" className="py-2 px-4 mt-4 border-0 w-[90%] max-w-[500px] self-center" >
+         <ButtonText size="sm" className='text-typography-white'>{t("mycompetition.competition.form_question.model.stop")}</ButtonText>
+       </Button>
+       <StopCompetition isOpen={isOpen} onClose={() => setIsOpen(false)} onConfirm={handleLeavingCompetition} isAI={competitionInfo.isAI} />
+      </Card>
+    );
+  }  
