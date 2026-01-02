@@ -6,7 +6,7 @@ export default function NotfoundScreen() {
     <>
       <Stack.Screen options={{ title: "Oops, Not found !" }} />
       <View style={styles.container}>
-        <Link style={styles.button} href={'/(tabs)'}>Home</Link>
+        {/* <Link style={styles.button} href={'/page/(tabs)'}>Homer</Link> */}
       </View>
     </>
   );

@@ -3,7 +3,7 @@ import { API_URL } from "../config/env";
 import { getItem, setItem } from "../utils/asyncStorage";
 
 const apiClient = axios.create({
-  baseURL: API_URL || "http://192.168.1.189:3000",
+  baseURL: API_URL || "http://192.168.100.114:3000",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",

@@ -27,7 +27,7 @@ export default function AppNavigator() {
                 console.log("datas in layout:", onboarded)
                 if (onboarded==="true" && !token){
                     setShowOnboarded(false)
-                    setInitialRouteName("pages/auth/login") 
+                    setInitialRouteName("pages/auth/login"); 
                 } else if (token) {
                   setShowOnboarded(false)
                   setInitialRouteName("pages/(tabs)")
@@ -50,7 +50,7 @@ export default function AppNavigator() {
       initialRouteName={initialRouteName}
     >
       <Stack.Screen name="./pages/onboarding/index" />
-      <Stack.Screen name="./(tabs)" options={{}} />
+      <Stack.Screen name="./pages/(tabs)" options={{}} />
       <Stack.Screen name="./pages/auth/register" />
       <Stack.Screen name="./pages/auth/login" />
     </Stack>
