@@ -20,7 +20,8 @@ export default function RootLayout() {
         <GluestackUIProvider>
           <GestureHandlerRootView style={{ flex: 1 }}>
             <QueryClientProvider client={queryClient}>
-              <AppNavigator />
+              {/* <AppNavigator /> */}
+              <Stack screenOptions={{ headerShown: false }} />
             </QueryClientProvider>
           </GestureHandlerRootView>
         </GluestackUIProvider>

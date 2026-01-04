@@ -50,9 +50,9 @@ export default function AppNavigator() {
       initialRouteName={initialRouteName}
     >
       <Stack.Screen name="./pages/onboarding/index" />
-      <Stack.Screen name="./pages/(tabs)" options={{}} />
       <Stack.Screen name="./pages/auth/register" />
       <Stack.Screen name="./pages/auth/login" />
+      <Stack.Screen name="./pages/(tabs)" options={{}} />
     </Stack>
   );
 }

@@ -39,7 +39,7 @@ export default function SendOtp() {
         setIsLoading(false)
           setTimeout(() => {
             navigation.navigate({
-              pathname: "/pages/auth/resetSubmit",
+              pathname: "/(auth)/resetSubmit",
               params: { code },
             });
           }, 2000);

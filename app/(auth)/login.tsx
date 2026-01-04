@@ -57,19 +57,19 @@ export default function Login() {
   const socialsBtns = [
     {
       name: "Google",
-      icon: require("../../assets/icons/google.png"),
+      icon: require("../assets/icons/google.png"),
       action: () => promptAsync(),
       requestAction: requestGoogle,
     },
     {
       name: "Facebook",
-      icon: require("../../assets/icons/facebook.png"),
+      icon: require("../assets/icons/facebook.png"),
       action: () => {},
       requestAction: "",
     },
     {
       name: "Linkedin",
-      icon: require("../../assets/icons/linkedin.png"),
+      icon: require("../assets/icons/linkedin.png"),
       action: () => {},
       requestAction: "",
     },
@@ -91,7 +91,7 @@ export default function Login() {
     if (loginUser.fulfilled.match(result)) {
       console.log("connexion reussie:", result.payload);
       setTimeout(() => {
-        navigation.replace("/pages/(tabs)");
+        navigation.replace("/(tabs)");
       }, 2000);
     } else {
       setIsLoading(false);
@@ -100,10 +100,10 @@ export default function Login() {
     }
   };
   const switchSignUp = () => {
-    navigation.navigate("/pages/auth/register");
+    navigation.navigate("/(auth)/register");
   };
   const handleForgotPassword = () => {
-    navigation.push("/pages/auth/sendEmail");
+    navigation.push("/(auth)/sendEmail");
   };
   const changeTypePassword = () => {
     if (passType === "password") {
@@ -120,7 +120,7 @@ export default function Login() {
           <View className="flex-1">
             <View className="images w-full  relative">
               <Image
-                source={require("../../assets/images/student.jpg")}
+                source={require("../assets/images/student.jpg")}
                 className="w-full absolute"
                 style={{
                   width: "100%",

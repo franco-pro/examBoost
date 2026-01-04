@@ -29,7 +29,7 @@ export default function Index() {
   const navigator = useRouter();
   const logoutHandle = () => {
     dispatch(logout());
-    navigator.replace("/pages/auth/login");
+    navigator.replace("/(auth)/login");
   };
 
   //flatlist

@@ -9,6 +9,10 @@ import LottieView from "lottie-react-native";
 import { ArrowRightIcon, Icon } from '@/components/ui/icon';
 
 export default function Index() {
+  const handleDone = async () => {
+    await setItem("onboarded", "true");
+    navigation.replace("/(auth)/login");
+  };
   const {width, height} = Dimensions.get("window");
   const navigation = useRouter();
   const SkipButtonComponent = ({...props})=>{
@@ -43,11 +47,7 @@ export default function Index() {
           <View className='mx-1 mb-40' style={{width:10, height:10, borderRadius:5, backgroundColor}}/>
         )
       }
-  const handleDone = async()=>{
-    await setItem("onboarded","true")
-    navigation.replace("/pages/auth/login")
-
-  }
+  
   return (
     <SafeAreaView className="flex-1 relative justify-between ">
       <Onboarding
@@ -89,7 +89,7 @@ export default function Index() {
                     borderTopLeftRadius: 100,
                     borderBottomRightRadius: 100,
                   }}
-                  source={require("../../assets/animation/Student.json")}
+                  source={require("../assets/animation/Student.json")}
                 />
               </View>
             ),
@@ -111,7 +111,7 @@ export default function Index() {
                     borderTopLeftRadius: 100,
                     borderBottomRightRadius: 100,
                   }}
-                  source={require("../../assets/animation/Student with books.json")}
+                  source={require("../assets/animation/Student with books.json")}
                 />
               </View>
             ),
@@ -133,7 +133,7 @@ export default function Index() {
                     borderTopLeftRadius: 100,
                     borderBottomRightRadius: 100,
                   }}
-                  source={require("../../assets/animation/Toper Student Animated.json")}
+                  source={require("../assets/animation/Toper Student Animated.json")}
                 />
               </View>
             ),
@@ -155,7 +155,7 @@ export default function Index() {
                     borderTopLeftRadius: 100,
                     borderBottomRightRadius: 100,
                   }}
-                  source={require("../../assets/animation/Teacher Discussion.json")}
+                  source={require("../assets/animation/Teacher Discussion.json")}
                 />
               </View>
             ),

@@ -286,7 +286,7 @@ export default function Participation() {
             <VStack className="justify-center items-center">
               <Image
                 size="2xl"
-                source={require('../../../assets/images/no_404.jpg')}
+                source={require('../../assets/images/no_404.jpg')}
                 alt="image"
               />
               <Text>Aucune participation...</Text>

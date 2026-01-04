@@ -205,7 +205,7 @@ async function onClosingConfirm() {
             }
 
         ));
-        router.replace("/pages/competitions-screen/components-ui/online-competitions/trophySection");
+        router.replace("/competitions-screen/components-ui/online-competitions/trophySection");
 
       }else{
         dispatch(updateHomeBase(
@@ -215,7 +215,7 @@ async function onClosingConfirm() {
           }
 
       ));
-        router.replace("/pages/competitions-screen/components-ui/online-competitions/competitionResult");
+        router.replace("/competitions-screen/components-ui/online-competitions/competitionResult");
       }
     setIsAlertCompEndOpen(false);
 

@@ -45,7 +45,7 @@ export default function SendEmail() {
         setTimeout(() => {
           setIsLoading(false)
           navigation.push({
-            pathname: "/pages/auth/sendOtp",
+            pathname: "/(auth)/sendOtp",
             params: { email },
           });
         }, 2000);
@@ -71,7 +71,7 @@ export default function SendEmail() {
       <SafeAreaView className="flex-1 bg-white items-center h-full">
         <View className="image">
           <Image
-            source={require("../../assets/images/otp-illustration.jpg")}
+            source={require("../assets/images/otp-illustration.jpg")}
             style={{ width: width, height: height * 0.4 }}
           />
         </View>

@@ -91,7 +91,7 @@ function showToast(message: string){
     return (
     <SafeAreaView style={{ flex: 1 }}>
       <ImageBackground
-              source={require('../../../assets/others/congrat.jpeg')}
+              source={require('../../assets/others/congrat.jpeg')}
               style={{ flex: 1 }}
               resizeMode="cover"
         >

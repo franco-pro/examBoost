@@ -40,13 +40,13 @@ export default function QuizResultScreen() {
     );
     
 function goToResult(){
-    router.replace('/pages/competitions-screen/components-ui/online-competitions/competitionResult')
+    router.replace('/competitions-screen/components-ui/online-competitions/competitionResult')
 }
   return (
   <SafeAreaView style={{ flex: 1 }}>
     
     <ImageBackground
-      source={require('../../../../../assets/others/congrat.jpeg')}
+      source={require('../../../../assets/others/congrat.jpeg')}
       style={{ flex: 1 }}
       resizeMode="cover"
     >
@@ -60,7 +60,7 @@ function goToResult(){
         <Image
             size="xl"
             source={
-                require('../../../../../assets/others/trophy2.png')
+                require('../../../../assets/others/trophy2.png')
             }
             alt="image"
             className="h-[40%] w-[400px]"

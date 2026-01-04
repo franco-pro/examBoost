@@ -39,7 +39,7 @@ export default function OnlineUsers({user, max}: OnlineUsersProps) {
                 <Image
                       size="xl"
                       alt="image"
-                      source={require('../../../../../assets/others/nodata.png')}
+                      source={require('../../../../assets/others/nodata.png')}
                   />
             <Text className="text-sm font-normal mb-2 text-typography-700">
               No user connected

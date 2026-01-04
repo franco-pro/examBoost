@@ -88,9 +88,9 @@ export default function Register() {
     { label: "Tle TI", value: "15" },
   ];
   const socialsBtns = [
-    { name: "Google", icon: require("../../assets/icons/google.png") },
-    { name: "Facebook", icon: require("../../assets/icons/facebook.png") },
-    { name: "Linkedin", icon: require("../../assets/icons/linkedin.png") },
+    { name: "Google", icon: require("../assets/icons/google.png") },
+    { name: "Facebook", icon: require("../assets/icons/facebook.png") },
+    { name: "Linkedin", icon: require("../assets/icons/linkedin.png") },
   ];
   const navigation = useRouter();
   const dispatch = useDispatch<any>();
@@ -117,7 +117,7 @@ export default function Register() {
       console.log("Connexion reussie", result.payload);
       await setItem("accessToken", result.payload.accessToken);
       setTimeout(() => {
-        navigation.replace("/pages/auth/login");
+        navigation.replace("/(auth)/login");
       }, 2000);
     } else {
       setIsLoading(false);
@@ -127,7 +127,7 @@ export default function Register() {
     }
   };
   const switchSignIn = () => {
-    navigation.navigate("/pages/auth/login");
+    navigation.navigate("/(auth)/login");
   };
   return (
     <GestureHandlerRootView>
@@ -136,7 +136,7 @@ export default function Register() {
           <View className="flex-1 bg-white">
             <View className="images w-full  relative">
               <Image
-                source={require("../../assets/images/student.jpg")}
+                source={require("../assets/images/student.jpg")}
                 className="w-full absolute"
                 style={{
                   width: "100%",

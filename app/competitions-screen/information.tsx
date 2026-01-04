@@ -119,9 +119,9 @@ export default function Information() {
         showToast(error, "Error A", "error")
       }else {
         if(room && !error){
-          if(joinAs =="participant") router.replace("/pages/competitions-screen/online.users");
-          if(joinAs == "admin") router.replace("/pages/competitions-screen/owner.online");
-          if(joinAs == "spectator") router.replace("/pages/competitions-screen/viewer.online");
+          if(joinAs =="participant") router.replace("/competitions-screen/online.users");
+          if(joinAs == "admin") router.replace("/competitions-screen/owner.online");
+          if(joinAs == "spectator") router.replace("/competitions-screen/viewer.online");
         }
       }
     }

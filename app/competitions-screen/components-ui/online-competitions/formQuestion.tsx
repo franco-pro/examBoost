@@ -81,7 +81,7 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
  function onCompetitionEndAlertConfirm(){
     setIsAlertCompEndOpen(false)
     dispatch(setEndOfCompetition())
-    router.replace("/pages/competitions-screen/components-ui/online-competitions/competitionResult");
+    router.replace("/competitions-screen/components-ui/online-competitions/competitionResult");
   }
 
   const validate = () => {

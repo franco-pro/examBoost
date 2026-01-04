@@ -49,7 +49,7 @@ export default function ViewerScreen() {
 
         function onCompetitionEndAlertConfirm(){
     
-          router.replace("/pages/competitions-screen/components-ui/online-competitions/competitionResult");
+          router.replace("/competitions-screen/components-ui/online-competitions/competitionResult");
           setIsAlertCompEndOpen(false);
       
         }

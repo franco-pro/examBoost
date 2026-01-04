@@ -1,4 +1,4 @@
-import { useAppSelector } from "@/app/hooks/redux/redux.hooks";
+import { Room } from "@/app/hooks/entities/rooms.entity";
 import { Accordion, AccordionContent, AccordionHeader, AccordionIcon, AccordionItem, AccordionTitleText, AccordionTrigger } from "@/components/ui/accordion";
 import { Avatar, AvatarFallbackText, AvatarImage } from "@/components/ui/avatar";
 import { Box } from "@/components/ui/box";
@@ -6,7 +6,6 @@ import { Card } from '@/components/ui/card';
 import { Heading } from '@/components/ui/heading';
 import { AddIcon, RemoveIcon } from "@/components/ui/icon";
 import { Image } from '@/components/ui/image';
-import { Spinner } from "@/components/ui/spinner";
 import { Text } from '@/components/ui/text';
 import { View } from "@/components/ui/view";
 import { VStack } from "@/components/ui/vstack";
@@ -16,18 +15,17 @@ interface UsersAnswersProps{
     // isIA: boolean;
     // questions: Question[];
     // question: any;
-    competitionName: string;
+    room: Room | null
 }
 
 
-export default function UsersAnswers({competitionName }: UsersAnswersProps) {
-    const {room, socketWaiting, error} = useAppSelector(state => state.rooms);
+export default function UsersResult({ room }: UsersAnswersProps) {
 
     return (
         <>
-        <Card size="lg" variant="outline" className="p-5  shadow-xl rounded-lg w-[90%] mt-1">
-            <Heading size="md" className="mb-1">
-                {competitionName}
+        <Card size="lg" className="p-5  shadow-xl bg-gray-500 rounded-lg w-[90%] mt-1">
+            <Heading size="md" className="mb-5 text-white">
+                Questions et réponses :
             </Heading>
             
             {
@@ -40,8 +38,8 @@ export default function UsersAnswers({competitionName }: UsersAnswersProps) {
 
                      room.questions.map((q, index) => (
 
-                        <AccordionItem key={q.id ?? index}
-                        value={"item-" + index} className="m-[7px] w-full rounded-lg">
+                        <AccordionItem key={`${q.id ?? 'no-id'}-${index}`}
+                        value={"item-" + index} className="m-[5px] w-full rounded-lg">
                           <AccordionHeader className="bg-primary-defaultBlue">
                             <AccordionTrigger className="focus:web:rounded-lg">
                             {({ isExpanded }: { isExpanded: boolean }) => {
@@ -67,7 +65,8 @@ export default function UsersAnswers({competitionName }: UsersAnswersProps) {
                                     {  q.answers.length && q.answers.length > 0 ? 
                                     (
                                        q.answers.map((u, index) => (
-                                    <Box key={u.id} className="flex-row mb-4 items-center">
+                                      
+                                    <Box key={`${q.id ?? 'no-answer_id'}-${index}`} className="flex-row mb-4 items-center">
                                       <Avatar className="mr-3">
                                         <AvatarFallbackText>
                                           {u.username.split(" ").map((n) => n[0]).join("")}
@@ -91,23 +90,42 @@ export default function UsersAnswers({competitionName }: UsersAnswersProps) {
                                                 <Text className="text-xs font-medium">  🔴 </Text>
                                               )
                                           }
+                                          {
+                                            u.timeTaken 
+                                          }{"s"}
                                         </Text>
                                       </VStack>
                                     </Box>
-                                  )) ) : (
-
+                                    
+                                  )) )  : (
                                     <View className="justify-center items-center">
-                                    <VStack>
-
-                                        <Spinner size="large" color="blue" />
-                                        <Text>En attente de reponse.</Text>
-                                    </VStack>
-
-                                </View>
+                                        <VStack className="justify-center items-center">
+                                        <Image
+                                        size="xl"
+                                        source={require('../../../../assets/others/nodata.png')}
+                                        alt="image"
+                                        />
+                                        <Text>Aucune Réponse.</Text>
+                
+                                        </VStack>
+                                     </View>
                                   )
-                                
+                                  
                                 }
-                                
+                                {
+                                    q.answers.length > 0 && q.correctAnswer ? 
+                                    (
+                                        <VStack>
+                                          <Text>Correct Answer: {q.correctAnswer}</Text>
+                                          <Text>Points: {q.points}</Text>
+                                          {room.isManagedByIA && q.explanation ? (
+                                            <Text className="font-bold mt-[3px]">
+                                              Explanation: {q.explanation}
+                                            </Text>
+                                          ) : null}
+                                        </VStack>
+                                      ) : null
+                                  }
 
                             </ScrollView>
 
@@ -119,19 +137,29 @@ export default function UsersAnswers({competitionName }: UsersAnswersProps) {
 
                     ): (
                      <View className="justify-center items-center">
-                        <VStack className="justify-center items-center">
+                        <VStack>
                         <Image
                           size="xl"
-                          source={require('../../../../../assets/others/nodata.png')}
+                          source={require('../../../../assets/others/nodata.png')}
                           alt="image"
                         />
-                        <Text>Aucune Questions générées, en attente...</Text>
+                        <Text>Aucune Questions générées.</Text>
 
                         </VStack>
                     </View>
                     ) 
                 ) : (
-                  null
+                    <View className="justify-center items-center">
+                        <VStack>
+                        <Image
+                          size="xl"
+                          source={require('../../../../assets/others/nodata.png')}
+                          alt="image"
+                        />
+                        <Text>Aucune Questions générées.</Text>
+
+                        </VStack>
+                    </View>
                
                 )
             }
