@@ -19,11 +19,19 @@ export default function Transactions() {
   const userId = 1;
   const {transactionList, loading, error} = useAppSelector((state)=> state.transactions)
   const {t} = useTranslation("transaction");
+  const transType = {
+    WITHDRAWAL: <Text>{t("withdrawal")}</Text>,
+    DEPOSIT: <Text>{t("deposit")}</Text>,
+    PURCHASE_PACK: <Text>{t("purchase_pack")}</Text>,
+    CREATE_COMPETITION:  <Text>{t("createCompetition")}</Text>,
+    COMPETITION_FEES: <Text>{t("competition_fess")}</Text>,
+  }
 
   useFocusEffect(
     useCallback(()=>{
       if(transactionList && transactionList.length == 0){
         dispatch(getAllTransations(userId));
+        console.log("transaction load", transactionList)
         setLoadDone(true);
       }
       if(error){
@@ -41,7 +49,7 @@ export default function Transactions() {
   | 'COMPETITION_FEES'
   >("ALL");
 
-  const filteredTransactions = transactionList ? transactionList.filter((tx) =>
+  const filteredTransactions = (transactionList && transactionList.length >= 0) ? transactionList.filter((tx) =>
     filter === "ALL" ? true : tx.type === filter
     ):[];
 
@@ -54,6 +62,7 @@ export default function Transactions() {
               visibilityTime: 3500,
             }) 
     }
+  
   return (
     <View style={{ flex: 1, padding: 16 }} className="bg-gray ">
       <SegmentedFilter
@@ -87,7 +96,7 @@ export default function Transactions() {
             >
               <MaterialCommunityIcons
                 name={
-                  game?.type === "WITHDRAWAL"
+                  game?.type === "DEPOSIT"
                     ? "arrow-up-circle"
                     : "arrow-down-circle"
                 }
@@ -105,7 +114,9 @@ export default function Transactions() {
                     minute: "2-digit",
                   })}
                 </Text>
-                <Text>{game?.PID}</Text>
+                {transType[game?.type as keyof typeof transType]}
+                  
+                <Text className="text-xs mt-[7px] text-gray-400">PID: {game?.PID}</Text>
               </View>
 
               <View
@@ -115,7 +126,7 @@ export default function Transactions() {
                
                 <Text
                   className={`${
-                    game?.type === "WITHDRAWAL"
+                    (game?.type !== "DEPOSIT")
                       ? "text-error-500 "
                       : "text-success-500"
                   }`}
