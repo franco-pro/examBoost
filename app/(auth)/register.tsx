@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/app/hooks/redux/store";
 import { registerUser } from "@/app/hooks/redux/users/users.slice";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -52,6 +52,7 @@ import { Center } from "@/components/ui/center";
 import { useRouter } from "expo-router";
 import { setItem } from "@/app/utils/asyncStorage";
 import { Spinner } from "@/components/ui/spinner";
+import apiClient from "../api/apiClient";
 
 export default function Register() {
   const { width, height } = useWindowDimensions();
@@ -62,6 +63,7 @@ export default function Register() {
   const [emailValue, setEmailValue] = useState<string>("");
   const [username, setUsernameValue] = useState<string>(surname);
   const [passwordValue, setPasswordValue] = useState<string>("");
+  const [allLevels, setAllLevels] = useState<any[]>([])
 
   const changeTypePassword = () => {
     if (passType === "password") {
@@ -70,23 +72,21 @@ export default function Register() {
       setPassType("password");
     }
   };
-  const levels = [
-    { label: "6eme", value: "1" },
-    { label: "5eme", value: "2" },
-    { label: "4eme", value: "3" },
-    { label: "3eme", value: "4" },
-    { label: "2nd A", value: "5" },
-    { label: "2nd C", value: "6" },
-    { label: "2nd TI", value: "7" },
-    { label: "1ere A", value: "8" },
-    { label: "1ere C", value: "9" },
-    { label: "1ere D", value: "10" },
-    { label: "1ere TI", value: "11" },
-    { label: "Tle A", value: "12" },
-    { label: "Tle C", value: "13" },
-    { label: "Tle D", value: "14" },
-    { label: "Tle TI", value: "15" },
-  ];
+
+  const getLevels = async ()=>{
+    try {
+      const response = await apiClient.get("/niveaux");
+      setAllLevels(response.data)
+    } catch (error) {
+      console.log("Quelque chose n'a pas marcher:", error)
+    }
+  }
+  
+  useEffect(() => {
+    getLevels()
+  }, []);
+
+  
   const socialsBtns = [
     { name: "Google", icon: require("../assets/icons/google.png") },
     { name: "Facebook", icon: require("../assets/icons/facebook.png") },
@@ -114,8 +114,7 @@ export default function Register() {
     );
 
     if (registerUser.fulfilled.match(result)) {
-      console.log("Connexion reussie", result.payload);
-      await setItem("accessToken", result.payload.accessToken);
+      console.log("enregistrement reussie", result.payload);
       setTimeout(() => {
         navigation.replace("/(auth)/login");
       }, 2000);
@@ -224,7 +223,8 @@ export default function Register() {
                       <InputField
                         className="placeholder:text-gray-300"
                         type="text"
-                        value={emailValue}
+                        keyboardType="email-address"
+                        value={emailValue.toLowerCase()}
                         placeholder="Entrer votre email"
                         onChangeText={(text) => {
                           setEmailValue(text);
@@ -252,10 +252,11 @@ export default function Register() {
                       <InputField
                         className="placeholder:text-gray-300"
                         type="text"
+                        keyboardType="phone-pad"
                         value={phone}
                         placeholder="Entrer votre email"
                         onChangeText={(text) => {
-                          setPhone(text);
+                          setPhone(text.replace(/[^0-9]/g, ""));
                         }}
                       ></InputField>
                     </Input>
@@ -290,11 +291,11 @@ export default function Register() {
                           <SelectDragIndicatorWrapper>
                             <SelectDragIndicator />
                           </SelectDragIndicatorWrapper>
-                          {levels.map((level, index) => (
+                          {allLevels.map((level, index) => (
                             <SelectItem
                               key={index}
-                              value={level.value}
-                              label={level.label}
+                              value={level.id}
+                              label={level.name}
                             />
                           ))}
                         </SelectContent>

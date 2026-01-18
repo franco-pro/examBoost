@@ -1,6 +1,8 @@
 import axios from "axios";
 import { API_URL } from "../config/env";
 import { getItem, setItem } from "../utils/asyncStorage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { store } from "../redux/store";
 
 const apiClient = axios.create({
   baseURL: API_URL || "http://172.20.10.2:3000",
@@ -12,8 +14,10 @@ const apiClient = axios.create({
 
 //ajouter automatiquement les accessToken a toutes les requetes
 apiClient.interceptors.request.use(async (config) => {
-  const token = await getItem("token");
+  const token = await getItem("accessToken")
   console.log("Access Token dans apiclient:", token);
+  const keys = await AsyncStorage.getAllKeys()
+  console.log("all keys :", keys)
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -46,7 +50,7 @@ apiClient.interceptors.response.use(
         const res = await apiClient.post("/auth/refresh", { refresh_Token });
 
         // stocke les nouveaux tokens (sans dépendre du Redux store pour éviter les cycles)
-        await setItem("token", res.data.accessToken);
+        await setItem("accessToken", res.data.accessToken);
         await setItem("refreshToken", res.data.refreshToken);
 
         //réessaye la requete avec le nouveau accessToken

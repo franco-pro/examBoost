@@ -43,6 +43,7 @@ export const authService = {
   },
 
   login: async (payload: loginProps) => {
+    console.log("lien:", apiClient)
     const response = await apiClient.post("/auth/login", payload);
     return response.data;
   },

@@ -42,8 +42,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { RootState } from "@/app/hooks/redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "@/app/hooks/redux/users/users.slice";
-import { getItem, setItem } from "@/app/utils/asyncStorage";
+import { loginSuccess, loginUser } from "@/app/hooks/redux/users/users.slice";
 import GoogleAuth from "./googleAuth";
 
 export default function Login() {
@@ -89,6 +88,11 @@ export default function Login() {
     );
 
     if (loginUser.fulfilled.match(result)) {
+      dispatch(loginSuccess({
+        user: result.payload.user,
+        accessToken: result.payload.accessToken,
+        refreshToken: result.payload.refreshToken
+      }))
       console.log("connexion reussie:", result.payload);
       setTimeout(() => {
         navigation.replace("/(tabs)");
@@ -160,7 +164,8 @@ export default function Login() {
                       <InputField
                         className="placeholder:text-gray-300"
                         type="text"
-                        value={inputValue}
+                        keyboardType="email-address"
+                        value={inputValue.toLowerCase()}
                         placeholder="Entrer votre email ou numero de telephone"
                         onChangeText={(text) => {
                           setInputValue(text);

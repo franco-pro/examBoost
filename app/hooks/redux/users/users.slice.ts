@@ -9,6 +9,7 @@ import {
 import { RootState } from "../store";
 
 interface User {
+  id: any;
   username: string;
   surname: string;
   phone: string;
@@ -22,7 +23,7 @@ interface User {
 
 interface UserState {
   user: User | null;
-  token: string | null;
+  accessToken: string | null;
   refreshToken: string | null;
   loading: boolean;
   error: any;
@@ -33,7 +34,7 @@ const initialState: UserState = {
   user: null,
   loading: false,
   error: null,
-  token: null,
+  accessToken: null,
   refreshToken: null,
   others: null,
 };
@@ -90,14 +91,13 @@ export const forgetPassword = createAsyncThunk(
   }
 );
 
-//thunk pour charger le home home
+//thunk pour charger le home
 export const userDatas = createAsyncThunk(
   "user/datas",
   async (_, { rejectWithValue, getState }) => {
     try {
-      console.log("enter userData");
       const state: RootState = getState() as RootState;
-      const token = state.user.token;
+      const token = state.user.accessToken;
       if (!token) throw new Error("No token Found !");
       const datas = await authService.userDatas(token);
       console.log("enter userData with token:", token);
@@ -123,14 +123,20 @@ export const userSlice = createSlice({
         refreshToken: string | null;
       }>
     ) => {
-      state.token = action.payload.token;
+      state.accessToken = action.payload.token;
       state.refreshToken = action.payload.refreshToken;
     },
     logout: (state) => {
-      state.user = null;
-      state.token = null;
-      state.refreshToken = null;
+      // state.user = null;
+      // state.token = null;
+      // state.refreshToken = null;
+      return initialState;
     },
+    loginSuccess: (state, action) => {
+      state.user = action.payload.user;
+      state.accessToken = action.payload.accessToken;
+      state.refreshToken = action.payload.refreshToken
+    }
   },
 
   extraReducers: (builder) => {
@@ -146,7 +152,7 @@ export const userSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user;
-        state.token = action.payload.accessToken;
+        state.accessToken = action.payload.accessToken;
         state.refreshToken = action.payload.refreshToken;
       })
 
@@ -154,7 +160,7 @@ export const userSlice = createSlice({
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user;
-        state.token = action.payload.accessToken;
+        state.accessToken = action.payload.accessToken;
         console.log("payload:", action.payload);
         state.refreshToken = action.payload.refreshToken;
       })
@@ -167,5 +173,5 @@ export const userSlice = createSlice({
   },
 });
 
-export const { logout, setCredentials } = userSlice.actions;
+export const { logout,loginSuccess, setCredentials } = userSlice.actions;
 export default userSlice.reducer;

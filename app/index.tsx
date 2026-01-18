@@ -5,7 +5,7 @@ import { getItem } from "./utils/asyncStorage";
 import { Redirect } from "expo-router";
 
 export default function Index() {
-    const { token } = useSelector((state: RootState) => state.user)
+    const { accessToken } = useSelector((state: RootState) => state.user)
     const [loading, setLoading] = useState(true)
     const [onboarded, setOnboarding] = useState(false)
 
@@ -23,7 +23,7 @@ export default function Index() {
         return <Redirect href={"./(onboarding)"}/>
     }
 
-    if (!token) {
+    if (!accessToken) {
         return <Redirect href="./(auth)/login"/>
     }
 

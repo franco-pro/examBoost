@@ -7,7 +7,7 @@ import { FlatList, ScrollView } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/app/hooks/redux/store";
+import { persistor, RootState } from "@/app/hooks/redux/store";
 import { useEffect } from "react";
 import { logout, userDatas } from "@/app/hooks/redux/users/users.slice";
 import { useRouter } from "expo-router";
@@ -17,18 +17,21 @@ import { ArrowRightIcon, Icon } from "@/components/ui/icon";
 
 export default function Index() {
   const dispatch = useDispatch<any>();
-  const { user, token, others } = useSelector((state: RootState) => state.user);
+  const { user, accessToken, others } = useSelector(
+    (state: RootState) => state.user
+  );
   useEffect(() => {
-    if (token) {
+    if (accessToken) {
       dispatch(userDatas()); //to work
     }
-  }, [token]);
+  }, [accessToken]);
 
-  console.log("infos: ", user, "token:", token, "others:", others);
+  console.log("infos: ", user, "token:", accessToken, "others:", others);
 
   const navigator = useRouter();
-  const logoutHandle = () => {
+  const logoutHandle = async() => {
     dispatch(logout());
+    await persistor.purge()
     navigator.replace("/(auth)/login");
   };
 
@@ -53,19 +56,19 @@ export default function Index() {
       showsVerticalScrollIndicator={false}
       className="flex-1 bg-[#E8F5FA]/50"
     >
-      <View className="p-5 bg-[#E8F5FA]/50 flex-1">
+      <View className="p-5 bg-[#E8F5A80] flex-1">
         <Text className="text-2xl font-bold">
-          Bienvenue, {user?.username || "Unknown"} 👋
+          Bienvenue, {user?.username || user?.surname || "Unknown"} 👋
         </Text>
         <Card
           size={"lg"}
           variant={"filled"}
-          className="my-3 bg-primary-custom-400 rounded-l-full rounded-r-2xl   flex-row justify-start gap-10 items-center "
+          className="my-3 bg-primary-custom-400 rounded-l-full rounded-[30px] flex-row justify-center  gap-10 items-center "
         >
-          <View className="image rounded-2xl gap-3">
+          <View className="image rounded-2xl gap-3 border">
             <Image
               size={"xl"}
-              source={require("../assets/images/axel.jpg")}
+              source={require("../assets/images/profile_bl.png")}
               alt="axel profil"
               className="rounded-full"
             />
