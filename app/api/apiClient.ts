@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { store } from "../redux/store";
 
 const apiClient = axios.create({
-  baseURL: API_URL || "http://172.20.10.2:3000",
+  baseURL: API_URL || "http://192.168.100.105:3000",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",

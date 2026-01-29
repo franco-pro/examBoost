@@ -8,18 +8,20 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import { useDispatch, useSelector } from "react-redux";
 import { persistor, RootState } from "@/app/hooks/redux/store";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { logout, userDatas } from "@/app/hooks/redux/users/users.slice";
 import { useRouter } from "expo-router";
 
 import { FontAwesome } from "@expo/vector-icons";
 import { ArrowRightIcon, Icon } from "@/components/ui/icon";
+import pdfImage from "../assets/images/pdf.png";
 
 export default function Index() {
   const dispatch = useDispatch<any>();
   const { user, accessToken, others } = useSelector(
-    (state: RootState) => state.user
+    (state: RootState) => state.user,
   );
+
   useEffect(() => {
     if (accessToken) {
       dispatch(userDatas()); //to work
@@ -27,11 +29,24 @@ export default function Index() {
   }, [accessToken]);
 
   console.log("infos: ", user, "token:", accessToken, "others:", others);
-
+  console.log("subjects:", others.subject);
   const navigator = useRouter();
-  const logoutHandle = async() => {
+
+  const DataSubjectsTab = useMemo(() => {
+    if (!others.subject) return [];
+
+    return others.subject.map((item: any, index: number) => ({
+      id: `${index + 1}`,
+      content: item.subject,
+      image: pdfImage,
+    }));
+  }, [others])
+
+  console.log("datas:", DataSubjectsTab)
+
+  const logoutHandle = async () => {
     dispatch(logout());
-    await persistor.purge()
+    await persistor.purge();
     navigator.replace("/(auth)/login");
   };
 
@@ -40,16 +55,21 @@ export default function Index() {
     {
       id: "1",
       content: "bloc 1",
+      image: pdfImage,
     },
     {
       id: "2",
       content: "bloc 2",
+      image: pdfImage,
     },
     {
       id: "3",
       content: "bloc 3",
+      image: pdfImage,
     },
   ];
+
+  
   return (
     <ScrollView
       contentContainerStyle={{ paddingBottom: 50 }}
@@ -124,12 +144,20 @@ export default function Index() {
         <SafeAreaProvider>
           <SafeAreaView className="flex-1">
             <FlatList
-              data={DatasSubjects}
+              data={DataSubjectsTab}
               showsHorizontalScrollIndicator={false}
               horizontal={true}
               renderItem={({ item }) => (
                 <View className=" h-64 w-64 bg-gray-200 rounded-lg justify-center items-center border m-2">
-                  <Text>{item.content}</Text>
+                  <View className="flex-1 justify-center items-center gap-3">
+                    <Image
+                      size={"2xl"}
+                      source={item.image}
+                      alt="image pdf"
+                      className=" "
+                    />
+                    <Text className="text-center font-semibold text-xl px-2">{item.content}</Text>
+                  </View>
                 </View>
               )}
               keyExtractor={(item) => item.id}
