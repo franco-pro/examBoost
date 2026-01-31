@@ -13,6 +13,8 @@ import CompetitionInfos from './components-ui/online-competitions/competitionInf
 import MiniDashboard from './components-ui/online-competitions/miniDashboard';
 import OnlineUsers from './components-ui/online-competitions/onlineusers';
 import QuestionAnswer from './components-ui/online-competitions/questionAnswer';
+import { RootState } from '../hooks/redux/store';
+import { useSelector } from 'react-redux';
 
 export default function User() {
   const router = useRouter();
@@ -21,6 +23,8 @@ export default function User() {
   const [appState, setAppState] = useState(AppState.currentState);
   const {room, socketWaiting, error, nextQuestion} = useAppSelector(state => state.rooms);
   const competitionName = room?.roomName ?? "";
+  const { user} = useSelector((state: RootState) => state.user);
+
   const creator = room?.creatorInfo ? 
                   `${room.creatorInfo.username ?? ""} ${room.creatorInfo.surname ?? ""}`.trim()
                    : "";
@@ -105,21 +109,13 @@ useFocusEffect(
 
 
   const Events = EmitEvent(dispatch, {roomId: room?.roomId as any, isManagedByIA: room?.isManagedByIA as any });
-  const user : UsersTest = {
-    id: currentUserId,
-    username: 'Current User',
-    surname: 'Test',
-    email: "test@gmail.com",
-    imgUrl: "",
-    score: score,
-  }
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', nextAppState => {
       console.log('Changement d’état de l’application :', nextAppState);
 
       if (nextAppState === 'background') {
-        Events.leaveCompetition(user.id, room?.roomId as any);
+        Events.leaveCompetition(user?.id, room?.roomId as any);
         router.back()
       }
 
@@ -137,7 +133,7 @@ useFocusEffect(
             //ecran actif
             return () => {
              //ecran quitté deconnecté de la competition.
-              Events.leaveCompetition(user.id, room?.roomId as any);
+              Events.leaveCompetition(user?.id, room?.roomId as any);
             };
           }, [])
         );
@@ -192,7 +188,14 @@ useFocusEffect(
                                     : null 
                                 } 
                 loading={socketWaiting}   
-                userData={user}   
+                userData={{
+                    id: user ? user.id: null, 
+                    username: user ? user.username : "",
+                    surname: user ? user.surname : "",
+                    imgUrl : user ? user.imgUrl : "",
+                    email : user ? user.email : "",
+                    score: 0
+                }}   
                 onAnswer={handleAnswered}
           />
       </View>

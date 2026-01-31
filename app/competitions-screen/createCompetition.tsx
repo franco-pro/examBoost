@@ -24,11 +24,15 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { RootState } from "../hooks/redux/store";
+import { useSelector } from "react-redux";
 
 const { width } = Dimensions.get("window");
 
 export default function CreateCompetitionForm() {
   const {homeBaseData} = useAppSelector((state)=> state.competitions)
+  const { user } = useSelector((state: RootState) => state.user);
+
   const { data } = useLocalSearchParams() as any;
   const [actionType, setActionType] = useState<"UPDATE"|"CREATE">("CREATE")
   const TextEnum = DialogText;
@@ -42,7 +46,7 @@ export default function CreateCompetitionForm() {
   const MIN_QUESTION_NUMBER = homeBaseData ? homeBaseData.MIN_QUESTION_NUMBER: 5;
   const MIN_TO_USE_IA_PRIVATE = homeBaseData ? homeBaseData.MIN_WINNERPRICE_TO_USE_AI_IN_PRIVATE_COMP : 8000;
   const MIN_TO_USE_IA_PUBLIC = homeBaseData ? homeBaseData.MIN_WINNERPRICE_TO_USE_AI_IN_PUBLIC_COMP : 15000;
-  const userId = 1;
+  const userId = user?.id;
   const [formError, setFormError] = useState<string>("");
 
   const dispatch = useAppDispatch()
@@ -699,10 +703,7 @@ export default function CreateCompetitionForm() {
                 </Text>
               </TouchableOpacity>
             )}
-          </View>
-
-
-         
+          </View>      
         </View>
       </ScrollView>
     </View>

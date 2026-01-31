@@ -14,11 +14,15 @@ import { JSX, useCallback, useEffect, useState } from "react";
 import { RefreshControl, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
+import { RootState } from "../hooks/redux/store";
+import { useSelector } from "react-redux";
 
 export default function Creation() {
   const router = useRouter();
   const {myCompetitionList, loading, error, homeBaseData} = useAppSelector((state)=> state.competitions);
-  const userId = 1;
+  const { user } = useSelector((state: RootState) => state.user);
+
+  const userId = user?.id;
   const [refreshing, setRefreshing] = useState(false);
   const dispatch = useAppDispatch();
   const {stop} = useSoundAud()

@@ -20,13 +20,17 @@ import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
+import { RootState } from "../hooks/redux/store";
+import { useSelector } from "react-redux";
 
 export default function Information() {
   const router = useRouter();
-  const userId = 1;
-  const email= "";
-  const phone ="";
-  const username = "";
+
+  const { user } = useSelector((state: RootState) => state.user);
+  const userId = user ? user.id : "";
+  const email= user? user.email: "";
+  const phone = user? user.phone : "";
+  const username = user? user.username: "";
 
   const {selectedCompetition, loading, error: errorCompetition} = useAppSelector((state)=>state.competitions);
   const {waitingLaunching, room, error, waitingJoining, errorType} = useAppSelector((state)=> state.rooms);
@@ -476,7 +480,7 @@ function userJoinCompetition(){
             </Text>
           </View>
           {
-            selectedCompetition?.creatorData.id === userId &&
+             selectedCompetition && selectedCompetition?.creatorData.id === userId &&
              <HStack className="">
                 <Button className={"mb-2 rounded-2xl " + (selectedCompetition.statut !== "UPCOMING" ? "": "bg-primary-defaultBlue") } disabled={selectedCompetition.statut !== "UPCOMING"} onPress={()=> goToUpdatePage(selectedCompetition)} >
                   <ButtonText size="sm" className='text-typography-white'>
@@ -618,7 +622,7 @@ function userJoinCompetition(){
           )}
 
 
-      {userId === selectedCompetition?.creatorID &&
+      { selectedCompetition && userId === selectedCompetition?.creatorID &&
         room &&
         !waitingLaunching &&
         !selectedCompetition.isManagedByIA &&
@@ -704,7 +708,7 @@ function userJoinCompetition(){
           )}
 
         {/* btn for admin to observe the competition when it managed by IA*/}
-        {userId === selectedCompetition?.creatorID && 
+        {selectedCompetition && userId === selectedCompetition?.creatorID && 
         room &&
         !waitingLaunching &&
         selectedCompetition.isManagedByIA &&
