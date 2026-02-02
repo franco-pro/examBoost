@@ -13,29 +13,43 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Stats } from "../hooks/entities/competitionStats";
 import { getHomeBase } from "../hooks/redux/competitions/competitions.thunks";
 import { useAppDispatch, useAppSelector } from "../hooks/redux/redux.hooks";
+import { RootState } from "../hooks/redux/store";
+import { useSelector } from "react-redux";
 
 export default function Competition() {
   const router = useRouter();
-  const userId = 1;
-  const username= "Franz";
-  const { t } = useTranslation("competition"); // hook pour traduire les textes
-  const {homeBaseData, loading} = useAppSelector((state)=> state.competitions);
-  
+  const { user, accessToken, others } = useSelector(
+    (state: RootState) => state.user
+  );
+  const userId = user?.id;
+  const username= user?.username;
+  const { t, ready} = useTranslation("competition"); // hook pour traduire les textes
+  const { homeBaseData, loading } = useAppSelector(
+    (state) => state.competitions
+  );
+  if(ready){
+  console.log("ready", t)
+
+  }else{
+  console.log("not ready", t)
+
+  }
+
   const dispatch = useAppDispatch();
 
   const [stats, setStat] = useState<Stats[]>([]);
-  
-  useFocusEffect(
-    useCallback(()=>{
-      if(!homeBaseData){
-          dispatch(getHomeBase(userId))
-      }else{  
-          buildStat();
-      }
-    }, [homeBaseData])
-  )
 
-  function buildStat(){
+  useFocusEffect(
+    useCallback(() => {
+      if (!homeBaseData && userId) {
+        dispatch(getHomeBase(userId));
+      } else {
+        buildStat();
+      }
+    }, [homeBaseData, userId])
+  );
+
+  function buildStat() {
     const statistics = [
       {
         nom: t("accueil.statistics.created_competitions"),
@@ -46,7 +60,9 @@ export default function Competition() {
       },
       {
         nom: t("accueil.statistics.total_participations"),
-        chiffre: (homeBaseData ? (homeBaseData.competitionFinished+homeBaseData.competitionLeaved): 0),
+        chiffre: homeBaseData
+          ? homeBaseData.competitionFinished + homeBaseData.competitionLeaved
+          : 0,
         icone: <FontAwesome5 name="users" size={25} color="#3b82f6" />,
         bgColor: "bg-blue-100",
         textColor: "text-blue-600",
@@ -80,20 +96,19 @@ export default function Competition() {
     ] as Stats[];
     setStat(statistics);
   }
-  
 
   const actions = [
     {
       icone: <FontAwesome5 name="users" size={35} color="#181c5c" />,
       text: t("accueil.actions.my_creations.title"),
       other: t("accueil.actions.my_creations.description"),
-      link: "../pages/competitions-screen/creation" as const,
+      link: "../competitions-screen/creation" as const,
     },
     {
       icone: <FontAwesome5 name="users" size={35} color="#181c5c" />,
       text: t("accueil.actions.my_participations.title"),
       other: t("accueil.actions.my_participations.description"),
-     link: "../pages/competitions-screen/participation" as const,
+      link: "../competitions-screen/participation" as const,
     },
   ];
 
@@ -107,54 +122,52 @@ export default function Competition() {
 
       {/* ===== Stats ===== */}
       <View className="flex-row flex-wrap justify-between">
-        {stats.length != 0 && stats.map((stat, index) => (
-          <CardStat
-            bgColor={stat.bgColor}
-            textColor={stat.textColor}
-            nom={stat.nom}
-            chiffre={stat.chiffre}
-            key={index}
-            icone={stat.icone}
-          />
-        ))}
+        {stats.length != 0 &&
+          stats.map((stat, index) => (
+            <CardStat
+              bgColor={stat.bgColor}
+              textColor={stat.textColor}
+              nom={stat.nom}
+              chiffre={stat.chiffre}
+              key={index}
+              icone={stat.icone}
+            />
+          ))}
       </View>
 
       {/* ===== Actions ===== */}
       <Text className="text-lg font-semibold my-4">
         {t("accueil.actions_title")}
       </Text>
-<ScrollView>
-      <View>
-        {!loading && stats.length!= 0 && actions.map((act, index) => (
-          <TouchableOpacity
-            key={index}
-            className="bg-white rounded-2xl flex-row p-4 mb-3 shadow-sm items-center"
-           onPress={() => router.push(act.link)}
-          >
-            <View className="bg-blue-50 p-3 rounded-full">{act.icone}</View>
-            <View className="ml-3 flex-1">
-              <Text className="text-lg font-semibold">{act.text}</Text>
-              <Text className="text-gray-500">{act.other}</Text>
+      <ScrollView>
+        <View>
+          {!loading &&
+            stats.length != 0 &&
+            actions.map((act, index) => (
+              <TouchableOpacity
+                key={index}
+                className="bg-white rounded-2xl flex-row p-4 mb-3 shadow-sm items-center"
+                onPress={() => router.push(act.link)}
+              >
+                <View className="bg-blue-50 p-3 rounded-full">{act.icone}</View>
+                <View className="ml-3 flex-1">
+                  <Text className="text-lg font-semibold">{act.text}</Text>
+                  <Text className="text-gray-500">{act.other}</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={22} color="#9ca3af" />
+              </TouchableOpacity>
+            ))}
+
+          {loading && stats.length == 0 && (
+            <View className="justify-center items-center">
+              <VStack>
+                <Spinner size="large" color="blue" />
+                <Text>Please wait...</Text>
+              </VStack>
             </View>
-            <Ionicons name="chevron-forward" size={22} color="#9ca3af" />
-          </TouchableOpacity>
-        ))}
-
-        {
-          loading && stats.length == 0 && 
-          <View className="justify-center items-center">
-          <VStack>
-
-              <Spinner size="large" color="blue" />
-              <Text>Please wait...</Text>
-          </VStack>
-
-      </View>
-        }
-      </View>
+          )}
+        </View>
       </ScrollView>
     </View>
-   
   );
-   
 }

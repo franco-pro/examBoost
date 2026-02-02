@@ -1,15 +1,15 @@
+import { FocusScope } from '@gluestack-ui/utils/aria';
+import { tva } from '@gluestack-ui/utils/nativewind-utils';
 import GorhomBottomSheet, {
-  BottomSheetBackdrop as GorhomBottomSheetBackdrop,
-  BottomSheetView as GorhomBottomSheetView,
   BottomSheetHandle,
+  BottomSheetBackdrop as GorhomBottomSheetBackdrop,
+  BottomSheetFlatList as GorhomBottomSheetFlatList,
   BottomSheetTextInput as GorhomBottomSheetInput,
   BottomSheetScrollView as GorhomBottomSheetScrollView,
-  BottomSheetFlatList as GorhomBottomSheetFlatList,
   BottomSheetSectionList as GorhomBottomSheetSectionList,
+  BottomSheetView as GorhomBottomSheetView,
 } from '@gorhom/bottom-sheet';
-import { Platform } from 'react-native';
-import type { PressableProps, TextProps } from 'react-native';
-import { FocusScope } from '@gluestack-ui/utils/aria';
+import { cssInterop } from 'nativewind';
 import React, {
   createContext,
   useCallback,
@@ -18,9 +18,8 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Pressable, Text } from 'react-native';
-import { cssInterop } from 'nativewind';
-import { tva } from '@gluestack-ui/utils/nativewind-utils';
+import type { PressableProps, TextProps } from 'react-native';
+import { Platform, Pressable, Text } from 'react-native';
 
 const bottomSheetBackdropStyle = tva({
   base: 'absolute inset-0 flex-1 touch-none select-none bg-black opacity-0',
@@ -43,7 +42,7 @@ const bottomSheetItemStyle = tva({
 
 const BottomSheetContext = createContext<{
   visible: boolean;
-  bottomSheetRef: React.RefObject<GorhomBottomSheet>;
+  bottomSheetRef: React.RefObject<GorhomBottomSheet | null>;
   handleClose: () => void;
   handleOpen: () => void;
 }>({
@@ -65,7 +64,7 @@ export const BottomSheet = ({
   onOpen?: () => void;
   onClose?: () => void;
 }) => {
-  const bottomSheetRef = useRef<GorhomBottomSheet>(null);
+  const bottomSheetRef = useRef<GorhomBottomSheet | null>(null);
 
   const [visible, setVisible] = useState(false);
 

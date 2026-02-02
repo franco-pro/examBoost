@@ -1,14 +1,10 @@
 'use client';
+import { PrimitiveIcon, UIIcon } from '@gluestack-ui/core/icon/creator';
+import type { VariantProps } from '@gluestack-ui/utils/nativewind-utils';
+import { tva, useStyleContext, withStyleContext } from '@gluestack-ui/utils/nativewind-utils';
+import { cssInterop } from 'nativewind';
 import React from 'react';
 import { Text, View } from 'react-native';
-import { PrimitiveIcon, UIIcon } from '@gluestack-ui/core/icon/creator';
-import { tva } from '@gluestack-ui/utils/nativewind-utils';
-import {
-  withStyleContext,
-  useStyleContext,
-} from '@gluestack-ui/utils/nativewind-utils';
-import { cssInterop } from 'nativewind';
-import type { VariantProps } from '@gluestack-ui/utils/nativewind-utils';
 
 import { Svg } from 'react-native-svg';
 const SCOPE = 'BADGE';
@@ -148,10 +144,10 @@ const BadgeText = React.forwardRef<
       ref={ref}
       className={badgeTextStyle({
         parentVariants: {
-          size: parentSize,
-          action: parentAction,
+          size: parentSize as 'sm' | 'md' | 'lg' | undefined,
+          action: parentAction as 'error' | 'warning' | 'success' | 'info' | 'muted' | undefined,
         },
-        size,
+        size: size as 'sm' | 'md' | 'lg' | undefined,
         class: className,
       })}
       {...props}
@@ -195,10 +191,10 @@ const BadgeIcon = React.forwardRef<
     <UIIcon
       className={badgeIconStyle({
         parentVariants: {
-          size: parentSize,
-          action: parentAction,
+          size: parentSize as 'sm' | 'md' | 'lg' | undefined,
+          action: parentAction as 'error' | 'warning' | 'success' | 'info' | 'muted' | undefined,
         },
-        size,
+        size: size as 'sm' | 'md' | 'lg' | undefined,
         class: className,
       })}
       {...props}
@@ -212,3 +208,4 @@ BadgeText.displayName = 'BadgeText';
 BadgeIcon.displayName = 'BadgeIcon';
 
 export { Badge, BadgeIcon, BadgeText };
+

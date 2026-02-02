@@ -1,84 +1,36 @@
 import { Stack } from 'expo-router';
-import { store } from './hooks/redux/store';
+import 'react-native-gesture-handler';
+import 'react-native-reanimated';
+import { Provider } from 'react-redux';
 
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import '@/global.css';
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
-import { Provider } from 'react-redux';
-import "../lang/i18n";
+import { PersistGate } from 'redux-persist/integration/react';
+import AppNavigator from '@/components/personalizedComponents/appNavigator';
+import { persistor, store } from '@/app/hooks/redux/store';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LanguageProvider } from './context/LanguageProvider';
 
+const queryClient = new QueryClient();
 
+// AsyncStorage.clear();
 export default function RootLayout() {
-  const toastConfig = {
-      success: (props: any) => (
-        <BaseToast
-          {...props}
-          style={{ borderLeftColor: 'green' }}
-          contentContainerStyle={{ paddingHorizontal: 15 }}
-          text1Style={{
-            fontSize: 15,
-            fontWeight: '400',
-            flexWrap: "wrap",
-          }}
-          text2Style={{
-            fontSize: 18,
-            fontWeight: '400',
-            flexWrap: "wrap",
-
-          }}
-
-          text1NumberOfLines={0}
-          text2NumberOfLines={0}
-        />
-      ),
-      error: (props: any) => (
-        <ErrorToast
-        {...props}
-        style={{ maxWidth: "90%",  borderLeftColor: 'red'}}
-        text1Style={{
-          fontSize: 17,
-          flexWrap: "wrap",
-        }}
-        text2Style={{
-          fontSize: 18,
-          color: "red",
-          flexWrap: "wrap",
-        }}
-        text1NumberOfLines={1}
-        text2NumberOfLines={10}
-      />
-      ),
-      // Add more custom types as needed
-    };
   return (
     <Provider store={store}>
-        <LanguageProvider>
-        <GestureHandlerRootView>
-
-      <GluestackUIProvider>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" />
-        </Stack>
-      </GluestackUIProvider>
-        </GestureHandlerRootView>
-
-      </LanguageProvider>
-
-      <Toast config={toastConfig}/>
-      
+      <LanguageProvider>
+       <PersistGate persistor={persistor}>
+        <GluestackUIProvider>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <QueryClientProvider client={queryClient}>
+              {/* <AppNavigator /> */}
+              <Stack screenOptions={{ headerShown: false }} />
+            </QueryClientProvider>
+          </GestureHandlerRootView>
+        </GluestackUIProvider>
+      </PersistGate>
+     </LanguageProvider>
     </Provider>
-  )
-
-// export default function RootLayout(){
-//     return(
-//             <SafeAreaView className="flex-1 bg-gray-50">
-//         <GluestackUIProvider>
-//                 <Stack screenOptions={{ headerShown: false }}>
-//                     <Stack.Screen name="(tabs)" />
-//                 </Stack>
-//         </GluestackUIProvider>
-//         </SafeAreaView>
-//     )
+  );
 }

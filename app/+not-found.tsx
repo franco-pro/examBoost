@@ -6,23 +6,25 @@ export default function NotfoundScreen() {
     <>
       <Stack.Screen options={{ title: "Oops, Not found !" }} />
       <View style={styles.container}>
-        <Link style={styles.button} href={'/(tabs)'}>Home</Link>
+        <Link style={styles.button} href={"/pages/auth/login"}>
+          Go to login
+        </Link>
       </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-     container: {
+  container: {
     flex: 1,
-    backgroundColor: '#25292e',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#25292e",
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   button: {
     fontSize: 20,
-    textDecorationLine: 'underline',
-    color: '#fff',
+    textDecorationLine: "underline",
+    color: "#fff",
   },
-})
+});

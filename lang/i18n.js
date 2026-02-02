@@ -1,7 +1,6 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import transactionEN from "./locales/En/Transaction.json";
 import transactionFR from "./locales/Fr/Transaction.json";
 import competitionEn from "./locales/En/Competition.json";
@@ -17,7 +16,6 @@ const resources = {
     competition: competitionFr,
   },
 };
-
 // Fonction async pour initialiser i18n avec la langue sauvegardée
 export const initI18n = async () => {
   let savedLang = "fr"; // valeur par défaut
@@ -40,8 +38,7 @@ export const initI18n = async () => {
       escapeValue: false,
     },
   });
-
   return i18n;
 };
-
+initI18n();
 export default i18n;

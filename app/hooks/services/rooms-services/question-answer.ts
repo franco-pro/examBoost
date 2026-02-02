@@ -5,7 +5,7 @@ import { UserOnline } from "../../entities/user.online.entity";
 import { updateStatutSuscription } from "../../redux/competitions-suscriptions/subscription.slice";
 import { updateStatut } from "../../redux/competitions/competitions.slice";
 import { addAnswer, addConnectedUsers, addConnetedUser, addQuestion, addViewerr, clearRoom, passToNextQuestion, rangking, removeViewer, setEndOfCompetition, setRomm, setRoomNull, setRoomQuestion, setSocketWaiting, setUserDeconnected, userLeaveRoom } from "../../redux/rooms/rooms.slice";
-import { useSoundAud } from "../../useSound.hook";
+import { playSound } from "../../../helper/audio/audio.manager";
 import Rangking from "./room.helper";
 
 // interface RoomData {
@@ -109,8 +109,7 @@ export default class QuestionAnswerManager{
     }
 
    async addConnectedUser(roomId: string, user: UserOnline){
-        const {play} = useSoundAud();
-        await play('UserJoin');
+        await playSound('UserJoin');
 
         let isCurrentUser = false;
         if(this.room){
@@ -249,8 +248,7 @@ export default class QuestionAnswerManager{
         // if(this.room){
         //     this.room.questions.push(question);
         // }
-        const { play } = useSoundAud();
-        await play('QuestionIncoming');
+        await playSound('QuestionIncoming');
         if(this.room){
             this.room = {
                 ...this.room,

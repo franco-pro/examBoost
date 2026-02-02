@@ -1,5 +1,5 @@
 import SegmentedFilter from "@/components/layouts/filter/SegmentedFilter";
-import { Image } from '@/components/ui/image';
+import { Image } from "@/components/ui/image";
 import { Spinner } from "@/components/ui/spinner";
 import { VStack } from "@/components/ui/vstack";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -11,12 +11,16 @@ import { ScrollView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 import { useAppDispatch, useAppSelector } from "../hooks/redux/redux.hooks";
 import { getAllTransations } from "../hooks/redux/transactions/transaction.thunks";
+import { RootState } from "../hooks/redux/store";
+import { useSelector } from "react-redux";
 
 export default function Transactions() {
   const [loadDone, setLoadDone] = useState(false);
-
+  const { user, accessToken, others } = useSelector(
+    (state: RootState) => state.user
+  );
   const dispatch = useAppDispatch();
-  const userId = 1;
+  const userId = user?.id;
   const {transactionList, loading, error} = useAppSelector((state)=> state.transactions)
   const {t} = useTranslation("transaction");
   const transType = {
@@ -29,24 +33,24 @@ export default function Transactions() {
 
   useFocusEffect(
     useCallback(()=>{
-      if(transactionList && transactionList.length == 0){
+      if(transactionList && transactionList.length == 0 && !loadDone){
         dispatch(getAllTransations(userId));
         console.log("transaction load", transactionList)
         setLoadDone(true);
       }
-      if(error){
-          showToast(error, 'Error', "error");
-          setLoadDone(true);
+      if (error) {
+        showToast(error, "Error", "error");
+        setLoadDone(true);
       }
     }, [transactionList, error])
   )
   const [filter, setFilter] = useState<
-  | 'ALL'
-  | 'DEPOSIT'
-  | 'WITHDRAWAL'
-  | 'PURCHASE_PACK'
-  | 'CREATE_COMPETITION'
-  | 'COMPETITION_FEES'
+    | "ALL"
+    | "DEPOSIT"
+    | "WITHDRAWAL"
+    | "PURCHASE_PACK"
+    | "CREATE_COMPETITION"
+    | "COMPETITION_FEES"
   >("ALL");
 
   const filteredTransactions = (transactionList && transactionList.length >= 0) ? transactionList.filter((tx) =>
@@ -78,11 +82,11 @@ export default function Transactions() {
         onChange={(value) =>
           setFilter(
             value as
-            | 'DEPOSIT'
-            | 'WITHDRAWAL'
-            | 'PURCHASE_PACK'
-            | 'CREATE_COMPETITION'
-            | 'COMPETITION_FEES'
+              | "DEPOSIT"
+              | "WITHDRAWAL"
+              | "PURCHASE_PACK"
+              | "CREATE_COMPETITION"
+              | "COMPETITION_FEES"
           )
         }
       />
@@ -159,10 +163,10 @@ export default function Transactions() {
               alt="image"
             />
             <Text>{t("no_transaction")} </Text>
-
             </VStack>
-        </View>
+          </View>
         }
+
       </ScrollView>
     </View>
   );

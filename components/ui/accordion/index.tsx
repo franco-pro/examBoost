@@ -1,16 +1,12 @@
 'use client';
-import React from 'react';
-import { createAccordion } from '@gluestack-ui/core/accordion/creator';
-import { View, Pressable, Text, Platform, TextProps } from 'react-native';
-import { tva } from '@gluestack-ui/utils/nativewind-utils';
-import type { VariantProps } from '@gluestack-ui/utils/nativewind-utils';
-import {
-  withStyleContext,
-  useStyleContext,
-} from '@gluestack-ui/utils/nativewind-utils';
 import { H3 } from '@expo/html-elements';
-import { cssInterop } from 'nativewind';
+import { createAccordion } from '@gluestack-ui/core/accordion/creator';
 import { PrimitiveIcon, UIIcon } from '@gluestack-ui/core/icon/creator';
+import type { VariantProps } from '@gluestack-ui/utils/nativewind-utils';
+import { tva, useStyleContext, withStyleContext } from '@gluestack-ui/utils/nativewind-utils';
+import { cssInterop } from 'nativewind';
+import React from 'react';
+import { Platform, Pressable, Text, TextProps, View } from 'react-native';
 
 const SCOPE = 'ACCORDION';
 /** Styles */
@@ -256,9 +252,9 @@ const AccordionIcon = React.forwardRef<
       ref={ref}
       {...props}
       className={accordionIconStyle({
-        size,
+        size: size as '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | undefined,
         class: className,
-        parentVariants: { size: parentSize },
+        parentVariants: { size: parentSize as '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | undefined },
       })}
     />
   );
@@ -320,12 +316,6 @@ AccordionIcon.displayName = 'AccordionIcon';
 AccordionContent.displayName = 'AccordionContent';
 
 export {
-  Accordion,
-  AccordionItem,
-  AccordionHeader,
-  AccordionTrigger,
-  AccordionTitleText,
-  AccordionContentText,
-  AccordionIcon,
-  AccordionContent,
+  Accordion, AccordionContent, AccordionContentText, AccordionHeader, AccordionIcon, AccordionItem, AccordionTitleText, AccordionTrigger
 };
+

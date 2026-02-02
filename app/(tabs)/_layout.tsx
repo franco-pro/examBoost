@@ -3,6 +3,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { useTranslation } from "react-i18next";
 import AppLayout from "../styles/AppLayout";
+import LogoHeaderComponent from "@/components/personalizedComponents/logoApplication";
+import RightBtn from "@/components/personalizedComponents/rightBtn";
 
 export default function RootLayout() {
   const {t} = useTranslation("competition")
@@ -11,17 +13,21 @@ export default function RootLayout() {
       <LanguageSwitcher />
       <Tabs
         screenOptions={{
-          animation: "none",
+          animation: "fade",
           tabBarActiveTintColor: "#ff894f",
           headerStyle: {
-            backgroundColor: "#181c5c",
+            backgroundColor: "#E8F5FA",
           },
-          headerShadowVisible: false,
+          headerShadowVisible: true,
           tabBarInactiveTintColor: "#FFFFFF",
-          headerTintColor: "#FFFFFF",
+          headerTintColor: "#000",
+          headerTransparent: false,
           tabBarStyle: {
             backgroundColor: "#181c5c",
           },
+          headerTitleAlign: "left",
+          headerTitle: () => <LogoHeaderComponent />,
+          headerRight: () => <RightBtn />,
         }}
       >
         <Tabs.Screen
