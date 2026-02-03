@@ -36,7 +36,7 @@ export default function User() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState<Question|null>(null);
   // secondes avant de passer à la question suivante
-  let currentUserId = 1;
+  let currentUserId = user?.id;
   //find the current user  score by id 
   const score = room && room.users ? (room.users.find(u => u.userID === currentUserId)?.score ?? 0) : 0;
 

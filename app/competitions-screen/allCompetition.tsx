@@ -15,13 +15,17 @@ import { RefreshControl, Text, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
+import { RootState } from "../hooks/redux/store";
+import { useSelector } from "react-redux";
 
 export default function AllCompetition() {
   const { t } = useTranslation("competition"); // <- hook i18n
   const {competitionList, searchResults, loading, error} = useAppSelector((state) => state.competitions);
+  const { user} = useSelector((state: RootState) => state.user);
+
   const [refreshing, setRefreshing] = useState(false);
   const {stop} = useSoundAud();
-  const username = "Franz";
+  const username = user?.username;
   const dispatch = useAppDispatch();
   const router = useRouter();
 

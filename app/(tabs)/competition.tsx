@@ -18,22 +18,15 @@ import { useSelector } from "react-redux";
 
 export default function Competition() {
   const router = useRouter();
-  const { user, accessToken, others } = useSelector(
+  const { user } = useSelector(
     (state: RootState) => state.user
   );
   const userId = user?.id;
   const username= user?.username;
-  const { t, ready} = useTranslation("competition"); // hook pour traduire les textes
+  const { t } = useTranslation("competition"); // hook pour traduire les textes
   const { homeBaseData, loading } = useAppSelector(
     (state) => state.competitions
   );
-  if(ready){
-  console.log("ready", t)
-
-  }else{
-  console.log("not ready", t)
-
-  }
 
   const dispatch = useAppDispatch();
 
