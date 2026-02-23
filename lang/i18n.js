@@ -6,15 +6,19 @@ import transactionEN from "./locales/En/Transaction.json";
 import transactionFR from "./locales/Fr/Transaction.json";
 import competitionEn from "./locales/En/Competition.json";
 import competitionFr from "./locales/Fr/Competition.json";
+import homeEN from "./locales/En/home.json";
+import homeFr from "./locales/Fr/home.json";
 
 const resources = {
   en: {
     transaction: transactionEN,
     competition: competitionEn,
+    home: homeEN
   },
   fr: {
     transaction: transactionFR,
     competition: competitionFr,
+    home:homeFr
   },
 };
 
@@ -34,7 +38,7 @@ export const initI18n = async () => {
     lng: savedLang,
     fallbackLng: "en",
     resources,
-    ns: ["transaction", "competition"],
+    ns: ["transaction", "competition", "home"],
     defaultNS: "transaction",
     interpolation: {
       escapeValue: false,

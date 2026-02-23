@@ -15,10 +15,12 @@ import { useRouter } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { ArrowRightIcon, Icon } from "@/components/ui/icon";
 import pdfImage from "../assets/images/pdf.png";
+import { useTranslation } from "react-i18next";
 
 export default function Index() {
+  const {t} = useTranslation("home")
   const dispatch = useDispatch<any>();
-  const { user, accessToken, others } = useSelector(
+  const { user, accessToken, refreshToken, others } = useSelector(
     (state: RootState) => state.user,
   );
 
@@ -28,8 +30,18 @@ export default function Index() {
     }
   }, [accessToken]);
 
-  console.log("infos: ", user, "token:", accessToken, "others:", others);
-  console.log("subjects:", others.subject);
+  console.log(
+    "infos: ",
+    user,
+    "token:",
+    "AccessToken",
+    accessToken,
+    "refreshToken",
+    refreshToken,
+    "others:",
+    others,
+  );
+  // console.log("subjects:", others.subject || "subject is null");
   const navigator = useRouter();
 
   const DataSubjectsTab = useMemo(() => {
@@ -37,7 +49,7 @@ export default function Index() {
 
     return others.subject.map((item: any, index: number) => ({
       id: `${index + 1}`,
-      content: item.subject,
+      content: item.subject || "unknown",
       image: pdfImage,
     }));
   }, [others])
@@ -69,23 +81,23 @@ export default function Index() {
     },
   ];
 
-  
   return (
     <ScrollView
       contentContainerStyle={{ paddingBottom: 50 }}
       showsVerticalScrollIndicator={false}
-      className="flex-1 bg-[#E8F5FA]/50"
+      className="flex-1 bg-gray-50"
     >
       <View className="p-5 bg-[#E8F5A80] flex-1">
         <Text className="text-2xl font-bold">
-          Bienvenue, {user?.username || user?.surname || "Unknown"} 👋
+          {t("accueil.welcome")}, {user?.username || user?.surname || "Unknown"}{" "}
+          👋
         </Text>
         <Card
           size={"lg"}
           variant={"filled"}
           className="my-3 bg-primary-custom-400 rounded-l-full rounded-[30px] flex-row justify-center  gap-10 items-center "
         >
-          <View className="image rounded-2xl gap-3 border">
+          <View className="image rounded-2xl gap-3">
             <Image
               size={"xl"}
               source={require("../assets/images/profile_bl.png")}
@@ -116,13 +128,13 @@ export default function Index() {
           </View>
         </Card>
         <View>
-          <Button
+          {/* <Button
             variant={"solid"}
             action={"negative"}
             onPress={() => logoutHandle()}
           >
             <ButtonText>Logout</ButtonText>
-          </Button>
+          </Button> */}
         </View>
 
         {/* Ton contenu */}
@@ -131,7 +143,7 @@ export default function Index() {
           <Button className="bg-transparent">
             <ButtonText className="flex-row items-center text-primary-custom-300">
               Tout voir{" "}
-            </ButtonText>{" "}
+            </ButtonText>
             <Text className="text-primary-custom-300">
               <Icon
                 as={ArrowRightIcon}
@@ -148,15 +160,21 @@ export default function Index() {
               showsHorizontalScrollIndicator={false}
               horizontal={true}
               renderItem={({ item }) => (
-                <View className=" h-64 w-64 bg-gray-200 rounded-lg justify-center items-center border m-2">
+                <View className=" h-44 w-44 bg-gray-200 rounded-lg justify-center items-center border m-2">
                   <View className="flex-1 justify-center items-center gap-3">
                     <Image
-                      size={"2xl"}
+                      size={"md"}
                       source={item.image}
                       alt="image pdf"
                       className=" "
                     />
-                    <Text className="text-center font-semibold text-xl px-2">{item.content}</Text>
+                    <Text
+                      className="text-center font-semibold text-normal px-2"
+                      numberOfLines={2}
+                      ellipsizeMode="tail"
+                    >
+                      {item.content}
+                    </Text>
                   </View>
                 </View>
               )}
@@ -168,13 +186,13 @@ export default function Index() {
           <Text className="font-bold text-xl">Autres sujets</Text>
           <Button className="bg-transparent">
             <ButtonText className="flex-row items-center text-primary-custom-300">
-              Tout voir{" "}
-            </ButtonText>{" "}
+              Tout voir
+            </ButtonText>
             <Text className="text-primary-custom-300">
               <Icon
                 as={ArrowRightIcon}
                 color="blue"
-                className="text-primary-custom-400"
+                className="text-primary-custom-h-440"
               />
             </Text>
           </Button>
@@ -186,7 +204,7 @@ export default function Index() {
               showsHorizontalScrollIndicator={false}
               horizontal={true}
               renderItem={({ item }) => (
-                <View className=" h-64 w-64 bg-gray-200 rounded-lg justify-center items-center border m-2">
+                <View className=" h-44 w-44 bg-gray-200 rounded-lg justify-center items-center border m-2">
                   <Text>{item.content}</Text>
                 </View>
               )}

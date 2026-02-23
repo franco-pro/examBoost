@@ -98,6 +98,7 @@ export const userDatas = createAsyncThunk(
     try {
       const state: RootState = getState() as RootState;
       const token = state.user.accessToken;
+      
       if (!token) throw new Error("No token Found !");
       const datas = await authService.userDatas(token);
       console.log("enter userData with token:", token);

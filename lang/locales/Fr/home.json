@@ -1,0 +1,10 @@
+{
+  "accueil": {
+    "welcome": "Welcome",
+    "principal_amount": "Solde principal",
+    "transactions": "Mes transactions",
+    "explore_subjets": "Explorer les Sujets",
+    "view_all": "Tout voir",
+    "other_subjets": "Autres Sujets"
+  }
+}
