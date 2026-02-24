@@ -13,17 +13,17 @@ const resources = {
   en: {
     transaction: transactionEN,
     competition: competitionEn,
-    home: homeEN
+    home:homeEN ,
   },
   fr: {
     transaction: transactionFR,
     competition: competitionFr,
-    home:homeFr
+    home:homeFr,
   },
 };
 
 // Fonction async pour initialiser i18n avec la langue sauvegardée
-export const initI18n = async () => {
+export const initI18n = async () => {  
   let savedLang = "fr"; // valeur par défaut
 
   try {
@@ -36,10 +36,10 @@ export const initI18n = async () => {
   await i18n.use(initReactI18next).init({
     compatibilityJSON: "v3",
     lng: savedLang,
-    fallbackLng: "en",
+    fallbackLng: "en", 
     resources,
     ns: ["transaction", "competition", "home"],
-    defaultNS: "transaction",
+    defaultNS: "home",
     interpolation: {
       escapeValue: false,
     },

@@ -16,31 +16,34 @@ import { FontAwesome } from "@expo/vector-icons";
 import { ArrowRightIcon, Icon } from "@/components/ui/icon";
 import pdfImage from "../assets/images/pdf.png";
 import { useTranslation } from "react-i18next";
+import i18n from "@/lang/i18n";
 
 export default function Index() {
-  const {t} = useTranslation("home")
+  const { t } = useTranslation("home");
+  console.log("LANG:", i18n.language);
+  console.log("WELCOME:", t("accueil.welcome"));
   const dispatch = useDispatch<any>();
   const { user, accessToken, refreshToken, others } = useSelector(
     (state: RootState) => state.user,
   );
 
-  useEffect(() => {
-    if (accessToken) {
-      dispatch(userDatas()); //to work
-    }
-  }, [accessToken]);
+  // useEffect(() => {
+  //   if (accessToken) {
+  //     dispatch(userDatas()); //to work
+  //   }
+  // }, [accessToken]);
 
-  console.log(
-    "infos: ",
-    user,
-    "token:",
-    "AccessToken",
-    accessToken,
-    "refreshToken",
-    refreshToken,
-    "others:",
-    others,
-  );
+  // console.log(
+  //   "infos: ",
+  //   user,
+  //   "token:",
+  //   "AccessToken",
+  //   accessToken,
+  //   "refreshToken",
+  //   refreshToken,
+  //   "others:",
+  //   others,
+  // );
   // console.log("subjects:", others.subject || "subject is null");
   const navigator = useRouter();
 
@@ -52,9 +55,9 @@ export default function Index() {
       content: item.subject || "unknown",
       image: pdfImage,
     }));
-  }, [others])
+  }, [others]);
 
-  console.log("datas:", DataSubjectsTab)
+  console.log("datas:", DataSubjectsTab);
 
   const logoutHandle = async () => {
     dispatch(logout());
