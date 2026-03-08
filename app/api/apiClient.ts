@@ -7,7 +7,7 @@ import { logout } from "../hooks/redux/users/users.slice";
 import { useRouter } from "expo-router";
 
 const apiClient = axios.create({
-  baseURL: API_URL || "http:///192.168.1.101:3000",
+  baseURL: API_URL || "http:///10.5.50.14:3000",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",

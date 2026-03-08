@@ -113,7 +113,7 @@ export default function Index() {
               <View className=" gap-3 flex-row items-center">
                 <FontAwesome name="exchange" size={15} color="orange" />
                 <Text className="text-white font-montserrat font-bold">
-                  Solde Principal
+                  {t("accueil.principal_amount")}
                 </Text>
               </View>
               <View>
@@ -124,7 +124,7 @@ export default function Index() {
             </View>
             <View className="transaction gap-3 flex-row items-center ">
               <Text className="text-lg text-secondary-custom-300 ">
-                Mes transactions
+                {t("accueil.transactions")}
               </Text>
               <FontAwesome name="chevron-right" size={15} color="orange" />
             </View>
@@ -142,10 +142,13 @@ export default function Index() {
 
         {/* Ton contenu */}
         <View className="flex-row justify-between items-center mt-10">
-          <Text className="font-bold text-xl">Explorer les sujets</Text>
+          <Text className="font-bold text-xl">
+            {" "}
+            {t("accueil.explore_subjets")}
+          </Text>
           <Button className="bg-transparent">
             <ButtonText className="flex-row items-center text-primary-custom-300">
-              Tout voir{" "}
+               {t("accueil.view_all")}{" "}
             </ButtonText>
             <Text className="text-primary-custom-300">
               <Icon
@@ -186,10 +189,10 @@ export default function Index() {
           </SafeAreaView>
         </SafeAreaProvider>
         <View className="title2 flex-row justify-between items-center mt-10 ">
-          <Text className="font-bold text-xl">Autres sujets</Text>
+          <Text className="font-bold text-xl"> {t("accueil.other_subjets")}</Text>
           <Button className="bg-transparent">
             <ButtonText className="flex-row items-center text-primary-custom-300">
-              Tout voir
+               {t("accueil.view_all")}
             </ButtonText>
             <Text className="text-primary-custom-300">
               <Icon
