@@ -15,6 +15,7 @@ import {
 import { Pressable } from '@/components/ui/pressable';
 import { Text } from '@/components/ui/text';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface PopoverInstructionsProps {
     data: {competitionName: string, totalQuestions: number, creator: string, instructions: string|null};
@@ -22,6 +23,8 @@ interface PopoverInstructionsProps {
 
 export default function PopoverInstructions({data}: PopoverInstructionsProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const {t} = useTranslation("competition");
+
   const handleOpen = () => {
     setIsOpen(true);
   };
@@ -64,7 +67,7 @@ export default function PopoverInstructions({data}: PopoverInstructionsProps) {
             onPress={handleClose}
           >
             <Button onPress={handleClose} size="sm" className="gap-2">
-              <ButtonText>Ok, compris !</ButtonText>
+              <ButtonText> {t("mycompetition.competition.creations_screen.model.agree")} </ButtonText>
               <ButtonIcon as={ArrowRightIcon} />
             </Button>
           </Pressable>

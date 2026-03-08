@@ -1,11 +1,12 @@
-{"accueil" :{
-  "greeting": "Hello Jean 👋",
+{
+"accueil" :{
+  "greeting": "Hello {{name}} 👋",
   "subtitle": "Here’s a summary of your competition activities",
   "statistics": {
     "created_competitions": "Created competitions",
     "total_participations": "Total participations",
     "total_wins": "Total wins",
-    "total_deposits": "Total deposits"
+    "total_deposits": "Total rewards"
   },
   "actions_title": "What would you like to do?",
   "actions": {
@@ -17,6 +18,11 @@
       "title": "My participations",
       "description": "View your participations and results"
     }
+  },
+  "navigationBottom": {
+    "home": "Home",
+    "transactions": "My transactions",
+    "packs": "Packages"
   }
 },
 "mycompetition" : {
@@ -38,11 +44,235 @@
     "COMPLETED": "Completed",
     "CANCELLED": "Cancelled"
   },
-  "back": "Back"
+  "back": "Back",
+  "competition": {
+    "greeting": "Hello {{name}}",
+    "subtitle": "Here’s a summary of your competition activities",
+    "statistics": {
+      "created_competitions": "Created competitions",
+      "total_participations": "Total participations",
+      "total_wins": "Total wins",
+      "total_deposits": "Total rewards"
+    },
+    "actions_title": "What would you like to do?",
+    "actions": {
+      "my_creations": {
+        "title": "My creations",
+        "description": "View your created competitions"
+      },
+      "my_participations": {
+        "title": "My participations",
+        "description": "View your participations and results"
+      },
+      "stopped":{
+        "label": "Competition Cancelled !",
+        "text": "Competition stopped by the competition owner!"
+      },
+      "quit": "Exit"
+    },
+   "creations_screen": {
+        "new_competition": "New competition", 
+        "competititon_create_body": "Create your event and define the rules, dates and prices.",
+        "competition_create_btn_text": "Submit",
+        "competition_update_head": "Update compétition",
+        "competition_update_body": "Adjust the details of your competition.",
+        "competition_update_btn_text": "Update",
+        "mycompetition": "My competitions",
+        "create_competitions": "Create competition",
+        "creation_null": "No creation...",
+        "total_ended": "Number completed",
+        "total_participant": "Total participants",
+        "step": "Step",
+        "model": {
+          "nom": "Name of the competition",
+          "description": {
+            "label": "Description",
+            "placeholder": "Describe the competition in 500 characters max..."
+          },
+           "theme": "Theme",
+           "date": "Date and time of the competition",
+           "deadlineDate": "Registration deadline date and time",
+           "maxUsers": "Number participants",
+           "porte": {
+             "label": "Scope",
+             "public": "Public",
+             "private": "Private"
+           },
+           "entryFee": "Registration fee",
+           "winnerPrice": "Winner Price",
+           "finalPrice": "Net Amount",
+           "montant_min": "Minimum amount {{amount}}",
+           "nombreMaxQts": "Total Number of Questions",
+           "isManagedByIA": "AI-generated questions",
+           "help": "HELP",
+           "agree": "Okay understood !"
+        },
+        "errors" : {
+          "name": "The name of the competition is not defined.",
+          "descriprtion": "The description is not defined.",
+          "type": "The type of competition is not chosen.",
+          "topic": "The competition theme is not defined.",
+          "registration__deadline": "The registration deadline is not defined.",
+          "date": "The date of the competition has not been set.",
+          "entryFee": "The registration fee is not defined.",
+          "winnerPrice": "The winner's prize money has not been determined.",
+          "questionsNbr": "The number of questions is not defined",
+          "lang": "The language is not chosen",
+          "subErrors":{
+            "date": "The registration deadline cannot be earlier than or equal to the date and time of the competition.",
+            "maxUsers": "The maximum number of participants must be ≤ {{MAX_PARTICIPANTS}} and ≥ {{MIN_PARTICIPANTS}}",
+            "questions": "The total number of questions must be ≤ {{MAX_QUESTION_NUMBER}} and ≥ {{MIN_QUESTION_NUMBER}}"
+          }
+        },
+        "previous": "Previous",
+        "next": "Next"
+   },
+  "result_screen": {
+      "rangking": "Ranking",
+      "no_more_users": "No more participants to display",
+      "no_qts_generated": "No questions generated.",
+      "no_qts_generated_wait": "No questions asked, please wait...",
+      "question&answer": "Questions and answers",
+      "waiting_answer": "Waiting for answer",
+      "answer": "Answer",
+      "no_answer":"No answer",
+      "correct_answer": "Correct answer",
+      "explanation": "Explanation",
+      "congratulation": "Congratulations",
+      "congrat_text": "You won the competition with the best score and response time! Keep it up!",
+      "yr_score": "Your Score",
+      "gain": "Rewards",
+      "othersResult": "Other Results"
+  },
+ "online_game": {
+    "created_at": "Created on",
+    "waiting_qts": "Awaiting questions...",
+    "waiting_ans": "Awaiting response...",
+    "time_left_to_ans": "Response time remaining",
+    "nb": "*In case of no response, a null response will be sent automatically and + {{max}}s as the response time.",
+    "competition_end": "End of competition...",
+    "left_comp": "To abandon the competition",
+    "connected_user": "Online Participants",
+    "no_connected_user": "No participant",
+    "question_answered": "Questions answered",
+    "question_manager": "Question sender",
+    "owner": "Owner"
+ },
+ "form_question": {
+    "choice_mistake_error": "Invalid form. No choice matches the correct answer.",
+    "send": "Send",
+    "invalid": {
+      "question": "Invalid Question",
+      "form": "Invalid form "
+    },
+    "model": {
+      "timeToAnswer": {
+          "label": "Response time (in s)",
+          "error": "Time too short",
+          "nb": "The time must be greater than 5 seconds."
+      },
+      "points": {
+        "nb": "Invalid points"
+      },
+      "first_choice": {
+        "label": "First choice",
+        "nb": "Invalid choice" 
+      },
+      "second_choice": {
+        "label": "Second choice",
+        "nb": "Invalid choice" 
+      },
+      "third_choice": {
+        "label": "Third  choice",
+        "nb": "Invalid choice" 
+      },
+      "correctAnswwer": {
+        "label": "Correct answer",
+        "nb": "Invalid answer"
+      },
+      "questionLeft": "Number of questions remaining",
+      "inf": "Be brief...",
+      "stop": "Stop the competition"
+    }
+ }
 },
+"searchBar": {
+   "searchLabel": "Search for a competition...",
+   "filters": "Filters",
+   "status": {
+      "ongoing": "Status: Ongoing",
+      "completed": "Status: Ended",
+      "cancelled": "Status: Cancelled",
+      "upcoming": "Status: Upcoming" 
+   },
+   "type": {
+      "goldenA": ""
+   },
+   "all": "All"
+},
+"information": {
+  "more_info": "Additional Information",
+  "delete_modal": {
+    "head": "Delete this competition ?",
+    "text": "The competition will be removed from the list of competitions and will no longer be accessible to the public; this action is irreversible."
+  },
+  "invite": {
+      "btnText": "Send Invitation",
+      "label": "Invite Participants",
+      "modal": {
+        "title": "Send an invitation",
+        "text": "Send an invitation to a loved one to join your competition !",
+        "waiting": "Please wait...",
+        "errors": {
+          "search": "An error occurred during the search. Please try again later.",
+          "mail": "Invalid email address or phone number.",
+          "404": "No users found to invite",
+          "sending": "An error occurred while sending the invitation. Please try again later."
+        },
+        "success": {
+           "send": "Invitation successfully sent to {{name}}"
+        }
+      }
+    },
+  "competitionDetails": "Competition Details",
+  "totalQuestion": "Total Questions",
+  "see_result": "View Results",
+  "start_comp": "Start Competition",
+  "look_comp": "Watch Competition",
+  "join_comp": "Join Competition",
+  "register_comp": "Register for Competition",
+  "max_participants": "Maximum Participants",
+  "min_participants": "Minimum Participants",
+  "participationFee": "Participation Fee",
+  "errors": {
+     "participantNbr_not_reached": "The minimum number of participants to start the competition has not been reached."
+  },
+  "success": {
+    "subscriptionDone": "Registration successful !",
+    "competition_launched": "Competition started !"
+  }
+},
+"confirmModal": {
+  "title": "Are you sure you want to leave this competition?",
+  "text": "Leaving this competition will cause you to lose your current progress and you will no longer be able to return as a participant, but only as a spectator !",
+  "text2": "Are you sure you want to continue?",
+  "textBtn": "Leave the competition",
+  "cancel": "Cancel"
+},
+"deleteModal": {
+  "textBtn": "Delete",
+  "text": ""
+},
+"endModal": {
+  "label": "IT'S THE END!",
+  "text": "The competition is over, you can view the overall results of the competition, thank you for your participation!"
+},
+  "no_competition_available": "No competition available..."
+},
+
 "participation" : {
   "back": "Back",
-  "greeting": "Hello Jean 👋",
+  "greeting": "Hello {{name}} 👋",
   "subtitle": "Find here all the competitions you are participating in and their current status",
   "search_placeholder": "Search for a competition",
   "statistics": {
@@ -57,7 +287,7 @@
   "section_title": "My participations",
   "labels": {
     "joined": "joined",
-    "time_left": "{{days}} days {{hours}} hr left",
+    "time_left": "{{days}} days {{hours}} hr {{min}} min left",
     "time_passed": "Registration time passed",
     "status": {
       "UPCOMING": "Upcoming",
@@ -66,7 +296,5 @@
       "CANCELLED": "Cancelled"
     }
   }
-
 }
-
 }

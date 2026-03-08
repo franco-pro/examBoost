@@ -1,5 +1,8 @@
 {
-  "title": "Competition",
-  "description": "This is the competition page",
-  "start": "Start Competition"
+  "no_transaction": "No transaction found",
+  "withdrawal": "Withdrawal to mobile account",
+  "deposit": "Top-up account",
+  "purchase_pack": "Purchase of exam pack",
+  "createCompetition": "Create a prize competition",
+  "competition_fess": "Entry fee for a competition" 
 }

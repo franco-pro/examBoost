@@ -8,6 +8,7 @@ import { ScrollView } from "@/components/ui/scroll-view";
 import { Text } from "@/components/ui/text";
 import { View } from "@/components/ui/view";
 import { VStack } from "@/components/ui/vstack";
+import { useTranslation } from "react-i18next";
 
 interface OnlineUsersProps {
     user: UserOnline[];
@@ -20,6 +21,7 @@ export default function OnlineUsers({user, max}: OnlineUsersProps) {
                     month: 'long',
                     day: 'numeric'
                 });
+  const {t} = useTranslation("competition")
   return (
     //check if the list contain user
     <Card size="lg" variant="elevated" className="p-5 shadow-xl w-[48%] max-w-[50%] absolute top-0 right-0 rounded-lg  h-64 m-3">
@@ -28,7 +30,7 @@ export default function OnlineUsers({user, max}: OnlineUsersProps) {
     </Text>
     <VStack className="mb-1">
       <Heading size="md" className="mb-1">
-        Connected User ({user.filter(user => user.isConnected).length})/{max}
+        {t("mycompetition.competition.online_game.connected_user")} ({user.filter(user => user.isConnected).length})/{max}
       </Heading>
     </VStack>
     <ScrollView className="mt-3">
@@ -42,7 +44,7 @@ export default function OnlineUsers({user, max}: OnlineUsersProps) {
                       source={require('../../../../assets/others/nodata.png')}
                   />
             <Text className="text-sm font-normal mb-2 text-typography-700">
-              No user connected
+              {t("mycompetition.competition.online_game.no_connected_user")}
             </Text>
 
             </VStack>

@@ -13,10 +13,16 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Stats } from "../hooks/entities/competitionStats";
 import { getHomeBase } from "../hooks/redux/competitions/competitions.thunks";
 import { useAppDispatch, useAppSelector } from "../hooks/redux/redux.hooks";
+import { RootState } from "../hooks/redux/store";
+import { useSelector } from "react-redux";
 
 export default function Competition() {
   const router = useRouter();
-  const userId = 1;
+  const { user } = useSelector(
+    (state: RootState) => state.user
+  );
+  const userId = user?.id;
+  const username= user?.username;
   const { t } = useTranslation("competition"); // hook pour traduire les textes
   const { homeBaseData, loading } = useAppSelector(
     (state) => state.competitions
@@ -28,12 +34,12 @@ export default function Competition() {
 
   useFocusEffect(
     useCallback(() => {
-      if (!homeBaseData) {
+      if (!homeBaseData && userId) {
         dispatch(getHomeBase(userId));
       } else {
         buildStat();
       }
-    }, [homeBaseData])
+    }, [homeBaseData, userId])
   );
 
   function buildStat() {
@@ -89,13 +95,13 @@ export default function Competition() {
       icone: <FontAwesome5 name="users" size={35} color="#181c5c" />,
       text: t("accueil.actions.my_creations.title"),
       other: t("accueil.actions.my_creations.description"),
-      link: "../pages/competitions-screen/creation" as const,
+      link: "../competitions-screen/creation" as const,
     },
     {
       icone: <FontAwesome5 name="users" size={35} color="#181c5c" />,
       text: t("accueil.actions.my_participations.title"),
       other: t("accueil.actions.my_participations.description"),
-      link: "../pages/competitions-screen/participation" as const,
+      link: "../competitions-screen/participation" as const,
     },
   ];
 
@@ -103,7 +109,7 @@ export default function Competition() {
     <View className="flex-1 bg-gray-50 p-4">
       {/* ===== Header ===== */}
       <View className="bg-white p-4 rounded-2xl mb-4">
-        <Text className="text-lg font-semibold">{t("accueil.greeting")}</Text>
+        <Text className="text-lg font-semibold">{t("accueil.greeting", {name: username})}</Text>
         <Text className="text-gray-500 mt-1">{t("accueil.subtitle")}</Text>
       </View>
 

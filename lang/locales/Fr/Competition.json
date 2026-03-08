@@ -1,11 +1,12 @@
 {
-"accueil":  {"greeting": "Bonjour Jean 👋",
+"accueil":  {
+  "greeting": "Bonjour {{name}} 👋",
   "subtitle": "Voici un résumé de vos activités compétitives",
   "statistics": {
     "created_competitions": "Compétitions créées",
     "total_participations": "Participations totales",
     "total_wins": "Total gagnés",
-    "total_deposits": "Total dépôts"
+    "total_deposits": "Récomponses totales"
   },
   "actions_title": "Que souhaitez-vous faire ?",
   "actions": {
@@ -17,38 +18,263 @@
       "title": "Mes participations",
       "description": "Voir vos participations et résultats"
     }
-  }},
-  "mycompetition" : {
+  },
+  "navigationBottom": {
+    "home": "Accueil",
+    "transactions": "Mes transactions",
+    "packs": "Packs"
+  }
+},
+"mycompetition" : {
+  "back": "Retour",
+  "search": "Rechercher une compétition",
+  "ended": "Competitions terminées",
+  "won": "Competitions gagnées",
+  "discover": "+20 compétition vous attendent,",
+  "explore": "Explorez les maintenant",
+  "join": "Rejoindre une compétition",
+  "my_participations": "Mes participations",
+  "participants": "{{count}} participants",
+  "time_passed": "Le temps d'inscription s'est écoulé.",
+  "days_left": "{{days}} jours {{hours}} hr restants",
+  "status": {
+    "UPCOMING": "A venir",
+    "ONGOING": "En cours",
+    "COMPLETED": "Terminée",
+    "CANCELLED": "Annulée"
+  },
   "transaction": {
-    "payment_success": "Payment successful!",
-    "payment_failed": "Payment failed!"
+    "payment_success": "Paiement reussi !",
+    "payment_failed": "Paiement echoué !"
   },
   "competition": {
-    "greeting": "Hello Jean 👋",
-    "subtitle": "Here’s a summary of your competition activities",
+    "greeting": "Bonjour {{name}} 👋",
+    "subtitle": "Voici un résumé de vos activités compétitives",
     "statistics": {
-      "created_competitions": "Created competitions",
+      "created_competitions": "Compétitions créées",
       "total_participations": "Total participations",
-      "total_wins": "Total wins",
-      "total_deposits": "Total deposits"
+      "total_wins": "Totals gagnés",
+      "total_deposits": "Recompenses total"
     },
-    "actions_title": "What would you like to do?",
+    "actions_title": "Que souhaitez-vous faire ?",
     "actions": {
       "my_creations": {
-        "title": "My creations",
-        "description": "View your created competitions"
+        "title": "Mes créations",
+        "description": "Voir vos compétitions créées"
       },
       "my_participations": {
-        "title": "My participations",
-        "description": "View your participations and results"
+        "title": "Mes participations",
+        "description": "Voir vos participations et résultats"
+      },
+      "stopped":{
+        "label": "Compétition Annulée !",
+        "text": "Competition Arrêter par le propriétaire de la compétition !"
+      },
+      "quit": "Sortir"
+    },
+   "creations_screen": {
+        "new_competition": "Nouvelle competition", 
+        "competititon_create_body": "Créez votre événement et définissez les règles, les dates et les prix.",
+        "competition_create_btn_text": "Soumettre",
+        "competition_update_head": "Modification compétition",
+        "competition_update_body": "Ajuster les details de votre competition",
+        "competition_update_btn_text": "Modifier",
+        "mycompetition": "Mes competitions",
+        "create_competitions": "Créer une compétition",
+        "creation_null": "Aucune creation...",
+        "total_ended": "Nombre terminées",
+        "total_participant": "Total participants",
+        "step": "Etape",
+        "model": {
+          "nom": "Nom de la compétition",
+          "description": {
+            "label": "Description",
+            "placeholder": "Décrivez la compétition en 500 caractères max..."
+          },
+           "theme": "Thème",
+           "date": "Date et heure de la compétition",
+           "deadlineDate": "Date et heure limite d'inscription",
+           "maxUsers": "Nombre de participants",
+           "porte": {
+             "label": "Portée",
+             "public": "Publique",
+             "private": "Privée"
+           },
+           "entryFee": "Montant d'inscription",
+           "winnerPrice": "Prix du gagnant",
+           "finalPrice": "Montant Net",
+           "montant_min": "Montant minimum {{amount}}",
+           "nombreMaxQts": "Nombre Total de Questions",
+           "isManagedByIA": "Questions générées par l'IA",
+           "help": "AIDE",
+           "agree": "Ok, compris !"
+        },
+        "errors" : {
+          "name": "Le nom de la compétition n'est pas défini",
+          "descriprtion": "La description n'est pas défini",
+          "type": "Le type de competition n'est pas choisi",
+          "topic": "Le Thème de la competition n'est pas défini",
+          "registration__deadline": "La date limite d'inscription n'est pas définie",
+          "date": "La date de l'évènement n'est pas définie",
+          "entryFee": "Le prix d'inscription n'est pas défini",
+          "winnerPrice": "La cagnotte du vainqueur n'est pas defini",
+          "questionsNbr": "Le nombre de questions n'est pas défini",
+          "lang": "La langue n'est pas choisie",
+          "subErrors":{
+            "date": "La date limite d'inscription ne peut pas être supérieure ou égale à la date et heure de la compétition.",
+            "maxUsers": "Le nombre de participants maximum doit être ≤ {{MAX_PARTICIPANTS}} et ≥ {{MIN_PARTICIPANTS}}",
+            "questions": "Le nombre total de questions doit être ≤ {{MAX_QUESTION_NUMBER}} et ≥ {{MIN_QUESTION_NUMBER}}"
+          }
+        },
+        "previous": "Précédent",
+        "next": "Suivant"
+   },
+   "result_screen": {
+      "rangking": "Classement",
+      "no_more_users": "Pas plus de participants à afficher",
+      "no_qts_generated": "Aucune Questions générées.",
+      "no_qts_generated_wait": "Aucune Questions posée, Veuillez patienter...",
+      "question&answer": "Questions et réponses",
+      "waiting_answer": "En attente de reponse",
+      "answer": "Réponse",
+      "no_answer":"Aucune Réponse",
+      "correct_answer": "Réponse juste",
+      "explanation": "Explication",
+      "congratulation": "Félicitations",
+      "congrat_text": "Vous avez gagné la competition avec le meilleur score et temps de reponse ! Continuez comme ça !",
+      "yr_score": "Votre Score",
+      "gain": "Récompense", 
+      "othersResult" : "Autres Résultats"
+   },
+   "online_game": {
+      "created_at": "Créee le",
+      "waiting_qts": "En attente de question...",
+      "waiting_ans": "En attente de réponse...",
+      "time_left_to_ans": "Temps de réponse restant",
+      "nb": "*en cas de non reponse, une reponse null sera envoyée automatiquement et + {{max}}s comme temps de reponses.",
+      "competition_end": "Fin de compétition...",
+      "left_comp": "Abandonner la compétition",
+      "connected_user": "Participants en ligne",
+      "no_connected_user": "Aucun participant",
+      "question_answered": "Questions répondues",
+      "question_manager": "Emétteur de questions",
+      "owner": "Organisateur"
+   },
+   "form_question": {
+      "choice_mistake_error": "Formulaire invalide Aucun choix ne correspond à la reponse correct.",
+      "send": "Envoyer",
+      "invalid": {
+        "question": "Question invalide",
+        "form": "Formulaire invalide"
+      },
+      "model": {
+        "timeToAnswer": {
+            "label": "Temps de réponse (en s)",
+            "error": "Temps trop court",
+            "nb": "Le temps doit etre supérieur à 5 secondes."
+        },
+        "points": {
+          "nb": "Points invalides"
+        },
+        "first_choice": {
+          "label": "Premier choix",
+          "nb": "Choix invalide" 
+        },
+        "second_choice": {
+          "label": "Second choix",
+          "nb": "Choix invalide" 
+        },
+        "third_choice": {
+          "label": "Troisième  choix",
+          "nb": "Choix invalide" 
+        },
+        "correctAnswwer": {
+          "label": "Réponse correct",
+          "nb": "reponse invalide"
+        },
+        "questionLeft": "Nombre de question restantes",
+        "inf": "Soyez bref...",
+        "stop": "Arrêter la competition"
       }
+   }
+  },
+  "searchBar": {
+     "searchLabel": "Rechercher une compétition...",
+     "filters": "Filtres",
+     "status": {
+        "ongoing": "Statut: En cours",
+        "completed": "Statut: Terminée",
+        "cancelled": "Statut: Annulée",
+        "upcoming": "Statut: A venir" 
+     },
+     "type": {
+        "goldenA": ""
+     },
+     "all": "Tout"
+  },
+  "information": {
+    "more_info": "Informations supplémentaires",
+    "delete_modal": {
+      "head": "Supprimer cette Competition ?",
+      "text": "La competition sera supprimé de la liste des competitions et ne sera plus accéssible au public, cette action est irréversible."
+    },
+    "invite": {
+      "btnText": "Envoyer l'invitaion",
+      "label": "Invité des pariticipants",
+      "modal": {
+        "title": "Envoyer une invitation",
+        "text": "Envoyer une invitation à un proche, à rejoindre votre competition !",
+        "waiting": "Veuillez patienter...",
+        "errors": {
+          "search": "Une erreur est survenue lors de la recherche. Veuillez réessayer plus tard",
+          "mail": "Adresse mail ou numéro invalide.",
+          "404": "Aucun utilisateur trouvé à inviter",
+          "sending": "Une erreur est survenue lors de l'envoi de l'invitation. Veuillez réessayer plus tard."
+        },
+        "success": {
+           "send": "Invitation envoyée avec succès à {{name}}"
+        }
+      }
+    },
+    "competitionDetails": "Détails du concours",
+    "totalQuestion": "Questions totales",
+    "see_result": "Voir les résultats",
+    "start_comp": "Demarrer la compétition",
+    "look_comp": "Observer la compétition",
+    "join_comp": "Rejoindre la compétition",
+    "register_comp": "S'inscrire à la compétition",
+    "max_participants": "Participants maximum",
+    "min_participants": "Participants minimum",
+    "participationFee": "Frais de participation",
+    "errors": {
+      "participantNbr_not_reached": "Le nombre minimum de participants n'est pas atteint pour démarrer la compétition."
+    },
+    "success": {
+      "subscriptionDone": "Inscription réussie !",
+      "competition_launched": "Compétition démarrée !"
     }
-  }
-}
-,
+   },
+   "confirmModal": {
+      "title": "Êtes-vous sur de vouloir quitter cette compétition ?",
+      "text": "Quitter cette competition, vous fera perdre votre progression actuelle et vous ne pourrez plus y revenir en tant que participant, mais uniquement en mode spectacteur !",
+      "text2": "Êtes-vous sûr de vouloir continuer ?",
+      "textBtn": "Quitter la compétition",
+      "cancel": "Annuler"
+   },
+   "deleteModal": {
+      "textBtn": "Supprimer",
+      "text": ""
+   },
+   "endModal": {
+      "label": "C'EST LA FIN !",
+      "text": "La Compétition est terminée, vous pouvez consulter les resultats generaux de la competition, merci pour votre participation !"
+   },
+  "no_competition_available": "Aucune competition disponible..."
+},
+
 "participation": {
   "back": "Retour",
-  "greeting": "Bonjour Jean 👋",
+  "greeting": "Bonjour {{name}} 👋",
   "subtitle": "Retrouvez ici toutes les compétitions auxquelles vous participez et leur statut actuel",
   "search_placeholder": "Rechercher une compétition",
   "statistics": {
@@ -63,7 +289,7 @@
   "section_title": "Mes participations",
   "labels": {
     "joined": "participants",
-    "time_left": "{{days}} jours {{hours}} h restantes",
+    "time_left": "{{days}} jours {{hours}} h {{min}} min restantes",
     "time_passed": "Le temps d'inscription est dépassé",
     "status": {
       "UPCOMING": "À venir",
@@ -73,5 +299,4 @@
     }
   }
 }
-
 }

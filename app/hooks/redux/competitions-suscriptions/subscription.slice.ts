@@ -5,6 +5,7 @@ import SubscriptionState from "./subscriptionState";
 const initialState : SubscriptionState = {
     selectedSubscription: null,
     mySubscriptionList: [],
+    searchResults: [],
     actionDone: false,
     loading : false,
     error: null
@@ -53,6 +54,13 @@ const subscriptionSlice = createSlice({
                 }
             }
         },
+        setSearchResults(state, action){
+            if(Array.isArray(action.payload)){
+                state.searchResults = action.payload
+            }else{
+                state.searchResults = [];
+            }
+        },
 
         setSelectedSubscriptionNULL(state){
             state.selectedSubscription = null
@@ -93,12 +101,12 @@ const subscriptionSlice = createSlice({
                 .addCase(createSubscription.fulfilled, (state, action)=>{
                     if(!action.payload.error){
                         state.actionDone = true;
- 
+                        state.error = null;
+                        
                     }else{
                         state.error = action.payload.error;
                     }
                     state.loading =false;
-                    state.error = null;
                 })
                 .addCase(createSubscription.rejected, (state, action)=>{
                     state.loading = false;
@@ -118,4 +126,5 @@ export const {
     setActionDoneNULL,
     setSuscriptionErrorNULL,
     updateStatutSuscription,
+    setSearchResults,
 } = subscriptionSlice.actions;

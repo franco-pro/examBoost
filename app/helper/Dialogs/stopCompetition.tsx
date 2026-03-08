@@ -2,6 +2,7 @@ import { AlertDialog, AlertDialogBackdrop, AlertDialogBody, AlertDialogContent, 
 import { Button, ButtonText } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Text } from '@/components/ui/text';
+import { useTranslation } from "react-i18next";
 
 
 interface DialogStopCompetitionProps {
@@ -11,6 +12,7 @@ interface DialogStopCompetitionProps {
     onConfirm: () => void;
   }
 export default function StopCompetition({isOpen, onClose, onConfirm, isAI}: DialogStopCompetitionProps) {
+  const {t} = useTranslation('competition')
   return (
     <>
      <AlertDialog isOpen={isOpen} onClose={onClose}>
@@ -18,25 +20,38 @@ export default function StopCompetition({isOpen, onClose, onConfirm, isAI}: Dial
           <AlertDialogContent className="w-[85%] max-w-[90%] gap-4 items-center">
             <AlertDialogHeader>
             <Heading className="text-typography-950 font-semibold" size="xl">
-                Êtes-vous sur de vouloir quitter cette compétition ?
+                
+                {t("mycompetition.confirmModal.title")}
+
             </Heading>
           </AlertDialogHeader>
           <AlertDialogBody className="mt-3 mb-4">
             {
-                isAI ? (
-                    <Text size="xl">
-                    Quitter cette competition, vous fera perdre votre progression actuelle! En mode IA, vous pourrez y revenir uniquement en mode spectacteur.
-                    {' \n'}
-                    Êtes-vous sûr de vouloir continuer ? 
-                   </Text>
-                ): (
-                    <Text size="xl">
-                    Quitter cette competition, vous fera perdre votre progression actuelle et vous ne pourrez plus y revenir. Et la competition sera annulée et terminée.
-                    {' \n'}
+              <Text size="xl">
                     
-                    Êtes-vous sûr de vouloir continuer ? 
-                   </Text>
-                )
+                    {t("mycompetition.confirmModal.text")}
+                    {' \n'}
+            
+                {t("mycompetition.confirmModal.text2")}
+             </Text>
+                // isAI ? (
+                //     <Text size="xl">
+                //     Quitter cette competition, vous fera perdre votre progression actuelle! En mode IA, vous pourrez y revenir uniquement en mode spectacteur.
+                //     {' \n'}
+                //     Êtes-vous sûr de vouloir continuer ? 
+                //    </Text>
+                // ): (
+                //     <Text size="xl">
+                //     Quitter cette competition, vous fera perdre votre progression actuelle et vous ne pourrez plus y revenir. Et la competition sera annulée et terminée.
+                //     {' \n'}
+                    
+                //     Êtes-vous sûr de vouloir continuer ? 
+                //     {t("mycompetition.confirmModal.text")}
+                //     {' \n'}
+            
+                // {t("mycompetition.confirmModal.text2")}
+                //    </Text>
+                // )
             }
           
           </AlertDialogBody>
@@ -46,12 +61,14 @@ export default function StopCompetition({isOpen, onClose, onConfirm, isAI}: Dial
               onPress={onClose}
               size="sm"
             >
-              <ButtonText>Cancel</ButtonText>
+              <ButtonText>
+                  {t("mycompetition.confirmModal.cancel")}
+              </ButtonText>
             </Button>
             <Button size="sm" onPress={onConfirm} action="negative">
               <ButtonText>
                     {
-                        isAI ? 'Sortir' : 'Arrêter la competition'
+                        isAI ? t("mycompetition.competition.actions.quit") : t("mycompetition.competition.model.stop")
                     }
               </ButtonText>
             </Button>

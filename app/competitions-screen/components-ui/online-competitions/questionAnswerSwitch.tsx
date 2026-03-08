@@ -1,6 +1,7 @@
 import { HStack } from '@/components/ui/hstack';
 import { Switch } from '@/components/ui/switch';
 import { Text } from '@/components/ui/text';
+import { useTranslation } from 'react-i18next';
 
 interface SwitchQuestionAnswerProps {
     onValueChange: (value: boolean) => void;
@@ -8,9 +9,10 @@ interface SwitchQuestionAnswerProps {
     //disable: boolean;
 }
 export default function SwitchQuestionAnswer({onValueChange, value}: SwitchQuestionAnswerProps) {
+  const {t} = useTranslation("competition");
   return (
     <HStack space="md" className='mb-4'>
-      <Text size="xl">Form. Questions</Text>
+      <Text size="xl">Questions</Text>
 
       <Switch
         defaultValue={value}
@@ -19,7 +21,7 @@ export default function SwitchQuestionAnswer({onValueChange, value}: SwitchQuest
         thumbColor="#181c5c"
         ios_backgroundColor="#ff894f"
       />
-      <Text size="xl">User. Answers</Text>
+      <Text size="xl">{t("mycompetition.competition.result_screen.answer")}s </Text>
 
     </HStack>
   );

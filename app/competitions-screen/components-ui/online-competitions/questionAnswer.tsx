@@ -18,6 +18,7 @@ import { VStack } from '@/components/ui/vstack';
 import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Question {
     id: number;
@@ -41,6 +42,7 @@ export default function QuestionAnswer({question, competitionInfo, loading, user
   const dispatch = useAppDispatch();
   const { room, roomResult, competitionFinished, competitionStop, message, timerOff} = useAppSelector(state => state.rooms);
   const {homeBaseData} = useAppSelector((state)=> state.competitions);
+  const  {t} = useTranslation("competition");
 
   const [timeToAnswer, setTimeToAnswer] = useState(question ? question.timeToAnswer : 0);
   const [isOpen, setIsOpen] = useState(false);
@@ -223,14 +225,14 @@ async function onClosingConfirm() {
     return (
       <Card size="lg" variant="elevated" className="p-5  shadow-xl rounded-lg w-[90%] mt-1">
         <Text className="text-sm font-normal mb-2 text-typography-700">
-          Created At: {formatted}
+          {t("mycompetition.competition.online_game.created_at")}: {formatted}
         </Text>
         {
            question === null && loading ? (
            <VStack className="justify-center items-center">
 
                     <Spinner size="large" color="blue" />
-                    <Text size="xl">En attente de question...</Text>
+                    <Text size="xl">{t("mycompetition.competition.online_game.waiting_qts")}</Text>
             </VStack>
           ) : (question !== null && !loading) ? (
 
@@ -248,12 +250,12 @@ async function onClosingConfirm() {
                     <VStack space="lg" className="max-w-[410px] w-full">
                       <Text size="sm" className="mt-4 text-error-500">
                         {'\n'}
-                        Time left to answer: {'-'}{timeToAnswer} seconds
+                        {t("mycompetition.competition.online_game.time_left_to_ans")}: {'-'}{timeToAnswer} seconds
                       </Text>
                         <Progress value={timeToAnswer} max={max} className={"w-full h-2 bg-lime-100"}>
                           <ProgressFilledTrack className="h-2 bg-lime-500" />
                         </Progress>
-                        <Text size="sm" className='italic'>*en cas de non reponse, une reponse null sera envoyée automatiquement et + {max}s comme temps de reponses.</Text>
+                        <Text size="sm" className='italic'>{t("mycompetition.competition.online_game.nb", {max: max})}</Text>
                       </VStack>
               
               </VStack> 
@@ -280,7 +282,7 @@ async function onClosingConfirm() {
                 ):  <VStack className="justify-center items-center">
 
                       <Spinner size="large" color="blue" />
-                      <Text size="xl">Fin de competition...</Text>
+                      <Text size="xl">{t("mycompetition.competition.online_game.competition_end")}</Text>
                     </VStack>
 
 
@@ -288,7 +290,7 @@ async function onClosingConfirm() {
             }
 
         <Button onPress={() => setIsOpen(true)} action="negative" className="py-2 px-4 mt-4 border-0 w-[90%] max-w-[500px] self-center" >
-         <ButtonText size="xl" className='text-typography-white'>Abandonner la Competition</ButtonText>
+         <ButtonText size="xl" className='text-typography-white'>{t("mycompetition.competition.online_game.left_comp")}</ButtonText>
        </Button>
        <DialogConfirm isOpen={isOpen} onClose={() => setIsOpen(false)} onConfirm={handleLeavingCompetition} />
       </Card>

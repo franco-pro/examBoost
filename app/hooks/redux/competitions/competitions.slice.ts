@@ -7,6 +7,7 @@ const initialState : CompetitionState = {
     selectedCompetition : null,
     competitionList: [],
     myCompetitionList: [],
+    searchResults: [],
     homeBaseData: null,
     loading: false,
     actionDone: false,
@@ -35,6 +36,14 @@ const competitionSlice = createSlice({
             if(action.payload){
                 state.competitionList.unshift(action.payload);
             }  
+        },
+
+        setSearchResultsComp(state, action){
+            if(Array.isArray(action.payload)){
+                state.searchResults = action.payload
+            }else{
+                state.searchResults = [];
+            }
         },
 
         setMyCompetitionList(state, action){
@@ -148,6 +157,7 @@ const competitionSlice = createSlice({
 
         clearData(state){
             state.competitionList = [];
+            state.searchResults = [];
             state.selectedCompetition = null;
             state.error = null;
             state.loading = false;
@@ -184,15 +194,15 @@ const competitionSlice = createSlice({
             .addCase(createCompetition.fulfilled, (state, action)=>{
                 
                 if(!action.payload.error){
-                    state.competitionList = action.payload.data;
-                    state.myCompetitionList.push(action.payload.data)
+                    state.competitionList.push(action.payload.data);
+                    state.myCompetitionList.push(action.payload.data);
+                    state.actionDone = true;
 
                 }else{
                     state.error = action.payload.error
                 }
                 state.loading = false;
-                state.actionDone = true;
-                state.error = null;
+                
             })
             .addCase(createCompetition.rejected, (state, action)=>{
                 state.loading = false;
@@ -312,4 +322,5 @@ export const {
     setErrorCompetitionNull,
     updateHomeBaseData,
     updateHomeBase,
+    setSearchResultsComp,
 }  = competitionSlice.actions;

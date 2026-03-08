@@ -10,6 +10,7 @@ import { HStack } from "@/components/ui/hstack";
 import { EyeIcon, Icon } from '@/components/ui/icon';
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
+import { useTranslation } from "react-i18next";
 
 interface CompetitionInfosProps{
     data : {viewers: number, roomName: string, creatorName: string, creatorSurname: string, imgUrl: string}
@@ -19,7 +20,7 @@ interface CompetitionInfosProps{
 export default function CompetitionInfos({data, competitionInfo}: CompetitionInfosProps) {
     const {room} = useAppSelector(state => state.rooms);
     const dispatch = useAppDispatch();
-
+    const {t} = useTranslation("competition")
     function onFinish(){
         // dispatch(setTimeOff())
     }
@@ -58,16 +59,16 @@ export default function CompetitionInfos({data, competitionInfo}: CompetitionInf
                     </AvatarFallbackText>
                     <AvatarImage
                         source={{
-                        uri: data.imgUrl ? 'https://gluestack.github.io/public-blog-video-assets/john.png':data.imgUrl,
+                        uri: data.imgUrl,
                         }}
                         alt="image"
                     />
                     </Avatar>
                     <VStack>
                     <Heading size="sm" className="mb-1 text-typography-white">
-                        {data.creatorName} {data.creatorSurname}
+                    {data.creatorSurname} {data.creatorName} 
                     </Heading>
-                    <Text size="xs" className="text-primary-defaultOrange">Owner</Text>
+                    <Text size="xs" className="text-primary-defaultOrange">{t("mycompetition.competition.online_game.owner")} </Text>
                     </VStack>
                 </Box>
                 <Box className="flex-row">

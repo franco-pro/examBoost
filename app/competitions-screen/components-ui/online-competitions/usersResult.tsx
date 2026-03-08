@@ -9,6 +9,7 @@ import { Image } from '@/components/ui/image';
 import { Text } from '@/components/ui/text';
 import { View } from "@/components/ui/view";
 import { VStack } from "@/components/ui/vstack";
+import { useTranslation } from "react-i18next";
 import { ScrollView } from "react-native";
 
 interface UsersAnswersProps{
@@ -20,12 +21,13 @@ interface UsersAnswersProps{
 
 
 export default function UsersResult({ room }: UsersAnswersProps) {
+  const {t}= useTranslation('competition');
 
     return (
         <>
         <Card size="lg" className="p-5  shadow-xl bg-gray-500 rounded-lg w-[90%] mt-1">
             <Heading size="md" className="mb-5 text-white">
-                Questions et réponses :
+                {t("mycompetition.competition.result_screen.question&answer")} :
             </Heading>
             
             {
@@ -81,7 +83,7 @@ export default function UsersResult({ room }: UsersAnswersProps) {
                                         <Heading size="sm" className="mb-1">
                                           {u.username}
                                         </Heading>
-                                        <Text size="sm">Answer: 
+                                        <Text size="sm">{t("mycompetition.competition.result_screen.answer")}: 
                                         <Text size="sm" className="text-primary-defaultBlue"> {u.text} </Text> 
                                           {
                                               u.isCorrect ? (
@@ -105,7 +107,7 @@ export default function UsersResult({ room }: UsersAnswersProps) {
                                         source={require('../../../../assets/others/nodata.png')}
                                         alt="image"
                                         />
-                                        <Text>Aucune Réponse.</Text>
+                                        <Text>{t("mycompetition.competition.result_screen.no_answer")}</Text>
                 
                                         </VStack>
                                      </View>
@@ -116,11 +118,11 @@ export default function UsersResult({ room }: UsersAnswersProps) {
                                     q.answers.length > 0 && q.correctAnswer ? 
                                     (
                                         <VStack>
-                                          <Text>Correct Answer: {q.correctAnswer}</Text>
+                                          <Text>{t("mycompetition.competition.result_screen.correct_answer")}: {q.correctAnswer}</Text>
                                           <Text>Points: {q.points}</Text>
                                           {room.isManagedByIA && q.explanation ? (
                                             <Text className="font-bold mt-[3px]">
-                                              Explanation: {q.explanation}
+                                              {t("mycompetition.competition.result_screen.explanation")}: {q.explanation}
                                             </Text>
                                           ) : null}
                                         </VStack>
@@ -143,7 +145,7 @@ export default function UsersResult({ room }: UsersAnswersProps) {
                           source={require('../../../../assets/others/nodata.png')}
                           alt="image"
                         />
-                        <Text>Aucune Questions générées.</Text>
+                        <Text>{t("mycompetition.competition.result_screen.no_qts_generated")}</Text>
 
                         </VStack>
                     </View>
@@ -156,7 +158,7 @@ export default function UsersResult({ room }: UsersAnswersProps) {
                           source={require('../../../../assets/others/nodata.png')}
                           alt="image"
                         />
-                        <Text>Aucune Questions générées.</Text>
+                        <Text>{t("mycompetition.competition.result_screen.no_qts_generated")}</Text>
 
                         </VStack>
                     </View>

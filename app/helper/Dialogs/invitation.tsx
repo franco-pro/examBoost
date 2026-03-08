@@ -18,6 +18,7 @@ import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import Toast from 'react-native-toast-message';
 
@@ -39,6 +40,7 @@ interface InvitationPromptsProps {
                                             }|null>(null);
     const [waitingResponse, setWaitingResponse] = useState<boolean>(false);
     const searchHttp = SearchHttp();
+    const {t} = useTranslation("competition");
 
     useFocusEffect(
         useCallback(()=>{
@@ -58,17 +60,17 @@ interface InvitationPromptsProps {
                     // Simuler l'envoi de l'invitation
                     await new Promise((resolve) => setTimeout(resolve, 2000));
                     setWaitingResponse(false);
-                    showToast("Invitation envoyée avec succès à " + response.username, "Succès");
+                    showToast(t("mycompetition.information.invite.modal.success.send", {name: response.username }), "Succès");
                     // Fermer la modal après l'envoi
                     onClose();
                 }catch(e: any){
                     console.log('error on sending invitation:', e.message);
                     setWaitingResponse(false);
-                    showToast("Une erreur est survenue lors de l'envoi de l'invitation. Veuillez réessayer.", "Erreur");
+                    showToast(t('mycompetition.information.invite.modal.errors.sending'), "Error");
                     return;
                 }
             }else{
-                showToast("Aucun utilisateur trouvé à inviter.", "Erreur");
+                showToast(t("mycompetition.information.invite.modal.errors.404"), "Error");
                 return;
             }
             setActionType("Rechercher");
@@ -77,7 +79,7 @@ interface InvitationPromptsProps {
             try{
 
               if(searchValue.trim().length === 0){
-                showToast("Adresse mail ou numéro invalide.", "Erreur");
+                showToast(t("mycompetition.information.invite.modal.errors.mail"), "Erreur");
                 return;
               }
 
@@ -90,7 +92,7 @@ interface InvitationPromptsProps {
             }catch(e: any){
                 console.log('error on searching user:', e.message);
                 setWaitingResponse(false);
-                showToast("Une erreur est survenue lors de la recherche. Veuillez réessayer.", "Erreur");
+                showToast(t("mycompetition.information.invite.modal.errors.search"), "Error");
                 return;
             }
             setActionType("Send Invitation");
@@ -121,8 +123,8 @@ interface InvitationPromptsProps {
           <ModalBackdrop />
           <ModalContent>
             <ModalHeader className="flex-col items-start gap-0.5">
-              <Heading>Envoyer une invitation</Heading>
-              <Text size="sm">Envoyer une invitation à un proche, à rejoindre votre competition !</Text>
+              <Heading>{t("mycompetition.information.invite.modal.title")}</Heading>
+              <Text size="sm">{t("mycompetition.information.invite.modal.text")}</Text>
             </ModalHeader>
             <ModalBody className="mb-4">
               <VStack className="gap-1">
@@ -140,7 +142,7 @@ interface InvitationPromptsProps {
                       <VStack>
 
                           <Spinner size="large" color="blue" />
-                          <Text>Veuillez patienter...</Text>
+                          <Text>{t("mycompetition.information.invite.modal.waiting")} </Text>
                       </VStack>
 
                     </View>
@@ -188,7 +190,9 @@ interface InvitationPromptsProps {
                 className="gap-1"
               >
                 <ButtonIcon as={ArrowLeftIcon} />
-                <ButtonText>Annuler</ButtonText>
+                <ButtonText>
+                    {t("mycompetition.confirmModal.cancel")}
+                </ButtonText>
               </Button>
             </ModalFooter>
           </ModalContent>

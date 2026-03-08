@@ -13,6 +13,7 @@ import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { FlatList, ImageBackground, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
@@ -25,7 +26,7 @@ export default function Result() {
   const [roomResult, setRoomResult] = useState<Room|null>(null);
   const dispatch = useAppDispatch();
   const [showResult, setValue] = useState(false);
-
+  const {t} = useTranslation("competition");
  
   useFocusEffect(
     useCallback(() => {
@@ -38,7 +39,15 @@ export default function Result() {
               roomName: resp.data.backup.competitionInfo.name,
               users: resp.data.backup.participants
             } as Room;
-            setRoomResult(response);
+            setRoomResult({
+              ...response,
+              users: response.users.sort((a, b) => {
+                if (b.score === a.score) {
+                  return a.totalTimeTaken - b.totalTimeTaken;
+                }
+                return b.score - a.score;
+              }),
+            });
 
            }else{
             showToast("Sauvegarde introuvable pour cette competition");
@@ -154,7 +163,9 @@ function showToast(message: string){
           </HStack>
           </View>
                 <HStack space="md" className='mb-4 mt-[5px]'>
-            <Text size="xl" className="text-white ml-[20px]">Classement</Text>
+            <Text size="xl" className="text-white ml-[20px]">
+                {t("mycompetition.competition.result_screen.rangking")}
+            </Text>
 
             <Switch
               defaultValue={showResult}
@@ -193,7 +204,7 @@ function showToast(message: string){
             />
             : <Alert action="info" variant="solid">
                  <AlertIcon as={InfoIcon} />
-                 <AlertText>No more participants to show !</AlertText>
+                 <AlertText>{t("mycompetition.competition.result_screen.no_more_users")}</AlertText>
              </Alert>
             )
           } 
