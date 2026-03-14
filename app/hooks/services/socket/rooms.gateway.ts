@@ -9,7 +9,7 @@ import { Room } from "../../entities/rooms.entity";
 import { UserOnline } from "../../entities/user.online.entity";
 import { setErrorType, setRoomsError, setRoomsErrorNull, setSocketWaiting, setWaitingJoinin } from "../../redux/rooms/rooms.slice";
 import QuestionAnswerManager from "../rooms-services/question-answer";
-import { connectRoomsSocket, getSocket } from "./socket.init";
+import { connectRoomsSocket, getRoomsSocket } from "./socket.init";
 
 export function initializeRoomsGateway(dispatch: any, room: Room|null, userID: number) {
   const socket = connectRoomsSocket();
@@ -106,7 +106,7 @@ export function initializeRoomsGateway(dispatch: any, room: Room|null, userID: n
 }
 
 export function EmitEvent(dispatch: any, room: {isManagedByIA: boolean, roomId: string}){
-    const socket = getSocket();
+    const socket = getRoomsSocket();
     const RoomsQuestionManager = new QuestionAnswerManager(dispatch, null);
     
     return {

@@ -8,6 +8,7 @@ import persistReducer from "redux-persist/es/persistReducer";
 import userReducer from "./users/users.slice";
 import { persistStore } from "redux-persist";
 import sessionReducer from "./session/session.slice";
+import notificationsReducer from "./notifications/notifications.slice";
 
 const rootReducer = combineReducers({
   user: userReducer,
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   competitions: competitionReducer,
   subscriptions: subscriptionReducer,
   transactions: transactionReducer,
+  notifications: notificationsReducer,
 });
 const persistConfig = {
   key: "root",

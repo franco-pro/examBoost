@@ -1,4 +1,4 @@
-export const API_URL = (process.env.EXPO_PUBLIC_API_URL ?? '').trim().replace(/\/$/, '');
+export const API_URL = 'http://localhost:3000';
 
 export const toAbsoluteUrl = (u: string): string => {
   const base = API_URL;
