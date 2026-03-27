@@ -7,7 +7,7 @@ import { logout } from "../hooks/redux/users/users.slice";
 import { useRouter } from "expo-router";
 
 const apiClient = axios.create({
-  baseURL: API_URL || "http:///10.5.50.14:3000",
+  baseURL: API_URL || "http://192.168.1.101:3000",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -26,6 +26,7 @@ apiClient.interceptors.request.use(async (config) => {
   );
   const keys = await AsyncStorage.getAllKeys();
   console.log("all keys :", keys);
+  
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -47,11 +48,11 @@ apiClient.interceptors.response.use(
     }
 
     //si token a une status 401 donc si le accessToken a expire , utiliser le refresh token pour refresh le accessToken
-    const navigation = useRouter();
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       console.log("STATUS ERROR 👉", error.response?.status);
       try {
+        console.log("enter refresh fonction")
         const refresh_Token = await getItem("refreshToken");
         console.log("refresh Token ApiClient:", refresh_Token);
         if (!refresh_Token) throw new Error("No refresh token found");
@@ -60,6 +61,11 @@ apiClient.interceptors.response.use(
         // stocke les nouveaux tokens (sans dépendre du Redux store pour éviter les cycles)
         await setItem("accessToken", res.data.accessToken);
         await setItem("refreshToken", res.data.refreshToken);
+        console.log(
+          "les keys dans refresh function :",
+          res.data.accessToken,
+          res.data.refreshToken,
+        );
 
         //réessaye la requete avec le nouveau accessToken
         originalRequest.headers["Authorization"] =
@@ -68,10 +74,9 @@ apiClient.interceptors.response.use(
         return apiClient.request(originalRequest);
       } catch (error) {
         console.log("refresh token invalide:", error);
-        await AsyncStorage.multiRemove(["accessToken", "refreshToken"]);
+        // await AsyncStorage.multiRemove(["accessToken", "refreshToken"]);
         //se deconnecter
-        store.dispatch(logout());
-        navigation.replace("/(auth)/login");
+        // store.dispatch(logout());
       }
       return Promise.reject(error);
     }

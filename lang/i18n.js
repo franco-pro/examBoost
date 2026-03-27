@@ -19,6 +19,7 @@ const resources = {
     home: homeFr,
   },
 };
+
 // Fonction async pour initialiser i18n avec la langue sauvegardée
 i18n.use(initReactI18next).init({
   compatibilityJSON: "v3",
