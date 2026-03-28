@@ -49,7 +49,6 @@ export default function Information() {
 
   const dispatch = useAppDispatch();
   const [isDeleteOpen, setDeleteIsOpen] = useState(false)
-  const { id } = useLocalSearchParams();
   const {stop}= useSoundAud();
 
   const DialogDeleteText = DialogText;
@@ -190,8 +189,8 @@ export default function Information() {
           userID: userId,
           appLang: language as any,
           username: username ? username:"Dems",
-          imgUrl: "https://i.ibb.co/7R4DyhQ/Avatar-1.jpg",
-          surname: "Dems",
+          imgUrl: user ? user.imgUrl: "https://i.ibb.co/7R4DyhQ/Avatar-1.jpg",
+          surname: user ? user.surname : "",
           
         })
      }
@@ -211,8 +210,8 @@ function userJoinCompetition(){
       userID: userId,
       appLang: (language as any),
       username: username ? username:"Dems",
-      imgUrl: "https://i.ibb.co/7R4DyhQ/Avatar-1.jpg",
-      surname: "Dems",
+      imgUrl: user ? user.imgUrl: "https://i.ibb.co/7R4DyhQ/Avatar-1.jpg",
+      surname: user ? user.surname : "",
       
     })
 
@@ -649,7 +648,7 @@ function userJoinCompetition(){
           userId !== selectedCompetition?.creatorID &&
           selectedCompetition?.suscribers.filter((user, index) => {
             return user.id === userId;
-          }).length === 0 && (
+          }).length === 0 && selectedCompetition?.statut !== "ONGOING" && (
             <TouchableOpacity className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto" onPress={()=>registerToCompetition()}>
               <Text className="text-white text-xs font-semibold mr-2">
               {t("mycompetition.information.register_comp")}
