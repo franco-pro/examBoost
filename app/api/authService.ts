@@ -45,6 +45,7 @@ export const authService = {
   login: async (payload: loginProps) => {
     console.log("lien:", apiClient)
     const response = await apiClient.post("/auth/login", payload);
+    console.log("login datas dans authservice:", response.data);
     return response.data;
   },
   forgetPassword: async (payload: forgetPasswordProps) => {
@@ -56,9 +57,11 @@ export const authService = {
     return response.data;
   },
   userDatas: async (token: string) => {
+    if(!token){}
     const response = await apiClient.get("/home", {
       headers: { Authorization: `Bearer ${token}` },
     });
+    console.log("datas dans authservice:", response.data)
     return response.data;
   },
 };

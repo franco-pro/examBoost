@@ -96,14 +96,16 @@ export const userDatas = createAsyncThunk(
   "user/datas",
   async (_, { rejectWithValue, getState }) => {
     try {
+      console.log("enter")
       const state: RootState = getState() as RootState;
-      const token = state.user.accessToken;
+      const token = state?.user?.accessToken;
       if (!token) throw new Error("No token Found !");
       const datas = await authService.userDatas(token);
       console.log("enter userData with token:", token);
       console.log("UserDatas:", datas);
       return datas;
     } catch (err: any) {
+      const state: RootState = getState() as RootState;
       console.log("❌ userDatas thunk error:", err);
       return rejectWithValue(
         err.response?.data?.message || err?.message || "Une erreur est survenue"
@@ -128,7 +130,7 @@ export const userSlice = createSlice({
     },
     logout: (state) => {
       // state.user = null;
-      // state.token = null;
+      // state.accessToken = null;
       // state.refreshToken = null;
       return initialState;
     },
@@ -168,7 +170,7 @@ export const userSlice = createSlice({
       //user Datas
       .addCase(userDatas.fulfilled, (state, action) => {
         state.user = action.payload.user;
-        state.others = action.payload.infos;
+        state.others = action.payload.infos
       });
   },
 });

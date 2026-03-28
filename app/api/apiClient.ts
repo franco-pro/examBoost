@@ -3,6 +3,8 @@ import { API_URL } from "../config/env";
 import { getItem, setItem } from "../utils/asyncStorage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { store } from "../redux/store";
+import { logout } from "../hooks/redux/users/users.slice";
+import { useRouter } from "expo-router";
 
 const apiClient = axios.create({
   baseURL: API_URL || "http://172.20.10.4:3000",
@@ -14,18 +16,24 @@ const apiClient = axios.create({
 
 //ajouter automatiquement les accessToken a toutes les requetes
 apiClient.interceptors.request.use(async (config) => {
-  const token = await getItem("accessToken")
-  console.log("Access Token dans apiclient:", token);
-  const keys = await AsyncStorage.getAllKeys()
-  console.log("all keys :", keys)
+  const token = await getItem("accessToken");
+  const refreshToken = await getItem("refreshToken");
+  console.log(
+    "Access Token dans apiclient:",
+    token,
+    "refresh token:",
+    refreshToken,
+  );
+  const keys = await AsyncStorage.getAllKeys();
+  console.log("all keys :", keys);
+  
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   console.log("config:", config);
   return config;
 });
-
-//refresh le token si expiré avec le refresh token
+//refresh le acceess token si expiré avec le refresh token
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -42,8 +50,9 @@ apiClient.interceptors.response.use(
     //si token a une status 401 donc si le accessToken a expire , utiliser le refresh token pour refresh le accessToken
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-
+      console.log("STATUS ERROR 👉", error.response?.status);
       try {
+        console.log("enter refresh fonction")
         const refresh_Token = await getItem("refreshToken");
         console.log("refresh Token ApiClient:", refresh_Token);
         if (!refresh_Token) throw new Error("No refresh token found");
@@ -52,20 +61,26 @@ apiClient.interceptors.response.use(
         // stocke les nouveaux tokens (sans dépendre du Redux store pour éviter les cycles)
         await setItem("accessToken", res.data.accessToken);
         await setItem("refreshToken", res.data.refreshToken);
+        console.log(
+          "les keys dans refresh function :",
+          res.data.accessToken,
+          res.data.refreshToken,
+        );
 
         //réessaye la requete avec le nouveau accessToken
-        originalRequest.headers[
-          "Authorization"
-        ] = `Bearer ${res.data.accessToken}`;
+        originalRequest.headers["Authorization"] =
+          `Bearer ${res.data.accessToken}`;
 
         return apiClient.request(originalRequest);
       } catch (error) {
         console.log("refresh token invalide:", error);
+        // await AsyncStorage.multiRemove(["accessToken", "refreshToken"]);
         //se deconnecter
-        // store.dispatch(setCredentials({token:null, refreshToken:null}))
+        // store.dispatch(logout());
       }
       return Promise.reject(error);
     }
-  }
+  },
 );
+
 export default apiClient;

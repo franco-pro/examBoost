@@ -10,7 +10,7 @@ export default function RootLayout() {
   const {t} = useTranslation("competition")
   return (
     <AppLayout>
-      <LanguageSwitcher />
+      {/* <LanguageSwitcher /> */}
       <Tabs
         screenOptions={{
           animation: "fade",

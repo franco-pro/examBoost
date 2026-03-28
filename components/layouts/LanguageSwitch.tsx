@@ -10,8 +10,8 @@ export default function LanguageToggle() {
   const toggleLanguage = async() => {
   
   try {
-    console.log('changing language', language)
     changeLanguage(language === "fr" ? "en" : "fr");  // change la langue dans i18next
+    console.log('changing language', language)
    await AsyncStorage.setItem('lang', language === "fr" ? "en" : "fr"); // stocke la langue choisie
   } catch (e) {
     console.log('Error changing language:', e);
@@ -19,7 +19,7 @@ export default function LanguageToggle() {
 }
 
   return (
-    <View style={{ padding: 10 }}>
+    <View style={{ padding: 100 }}>
       <Button
         title={language === "fr" ? "EN" : "FR"}
         onPress={toggleLanguage}

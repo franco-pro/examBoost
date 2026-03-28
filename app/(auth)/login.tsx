@@ -4,7 +4,6 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
   Keyboard,
-  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -44,9 +43,10 @@ import { RootState } from "@/app/hooks/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess, loginUser } from "@/app/hooks/redux/users/users.slice";
 import GoogleAuth from "./googleAuth";
+import { setItem } from "../utils/asyncStorage";
 
 export default function Login() {
-  const { width, height } = Dimensions.get("window");
+  const {height } = Dimensions.get("window");
   const [inputValue, setInputValue] = useState<string>("");
   const [passwordValue, setPasswordValue] = useState<string>("");
   const [passType, setPassType] = useState<"password" | "text">("password");
@@ -76,7 +76,7 @@ export default function Login() {
 
   const navigation = useRouter();
   const dispatch = useDispatch<any>();
-  const { user, loading, error } = useSelector(
+  const { loading, error } = useSelector(
     (state: RootState) => state.user
   );
   const [isLoading, setIsLoading] = useState(loading);
@@ -86,8 +86,10 @@ export default function Login() {
     const result = await dispatch(
       loginUser({ email: inputValue, password: passwordValue })
     );
-
+    
     if (loginUser.fulfilled.match(result)) {
+      await setItem('accessToken', result.payload.accessToken)
+      await setItem('refreshToken', result.payload.refreshToken)
       dispatch(loginSuccess({
         user: result.payload.user,
         accessToken: result.payload.accessToken,
@@ -101,6 +103,7 @@ export default function Login() {
       setIsLoading(false);
       setErr(result);
       console.log("erreur:", result);
+      console.log("erreur payload:", result.payload);
     }
   };
   const switchSignUp = () => {
@@ -259,12 +262,18 @@ export default function Login() {
                       )}
                     </ButtonText>
                   </Button>
-                  {err?.error?.message && (
+                  {err?.error?.message ? (
                     <Text style={{ color: "red" }}>
                       {Array.isArray(err.payload)
-                        ? err.payload[0]
+                        ? err[0].payload[0]
                         : err.payload}
                     </Text>
+                  ) : (
+                    err && (
+                      <Text style={{ color: "red" }}>
+                        {Array.isArray(err) ? err[0].message : err.message}
+                      </Text>
+                    )
                   )}
                 </FormControl>
                 <Center className="mt-10 flex-row items-center justify-center gap-2 w-2/3 mx-auto">
