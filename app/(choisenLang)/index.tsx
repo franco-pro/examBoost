@@ -28,10 +28,24 @@ export default function Index() {
 
   const handleNext = () => {
     if (i18n.language) {
-      console.log("la valeur de la langue:", i18n.language)
+      console.log("la valeur de la langue:", i18n.language);
       navigation.navigate("/(onboarding)");
     } else {
-      console.log("something wrong")
+      console.log("something wrong");
+    }
+  };
+  const testBackend = async () => {
+    try {
+      const url = "http://172.20.10.2:3000";
+      console.log("TEST URL:", url);
+
+      const res = await fetch(url);
+      const text = await res.text();
+
+      console.log("STATUS:", res.status);
+      console.log("BODY:", text);
+    } catch (error) {
+      console.log("FETCH TEST ERROR:", error);
     }
   };
   return (
@@ -48,7 +62,11 @@ export default function Index() {
         </View>
         <View className="btns gap-2">
           <RadioGroup>
-            <Radio value="en" onChange={(isSelected)=> isSelected && changeLanguage("en")} size="md">
+            <Radio
+              value="en"
+              onChange={(isSelected) => isSelected && changeLanguage("en")}
+              size="md"
+            >
               <RadioLabel>Anglais</RadioLabel>
               <RadioIndicator>
                 <RadioIcon as={CircleIcon} />
@@ -65,8 +83,8 @@ export default function Index() {
               </RadioIndicator>
             </Radio>
           </RadioGroup>
-          
         </View>
+        <Button onPress={()=>testBackend()}>test</Button>
 
         <View className="footer gap-10">
           <Text className=" text-center font-light text-base  mx-5  ">

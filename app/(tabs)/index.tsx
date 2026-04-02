@@ -20,6 +20,8 @@ import i18n from "@/lang/i18n";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { handleOpenDocument, subjectDocumentype } from "../downloadFiles";
 
+import Pdf from "react-native-pdf";
+
 export default function Index() {
   const navigation = useRouter();
   if (!AsyncStorage.getItem("accessToken")) {
@@ -51,17 +53,18 @@ export default function Index() {
   //   others,
   // );
   // console.log("subjects:", others.subject || "subject is null");
-console.log("others datas:", others, "user datas", user)
+// console.log("others datas:", others, "user datas", user)
   const DataSubjectsTab = useMemo(() => {
     if (!others?.subject) return [];
     return others.subject.map((item: any, index: number) => ({
       id: `${index + 1}`,
       content: item.subject || "unknown",
       image: pdfImage,
+      url: item.url
     }));
   }, [others]);
 
-  // console.log("datas:", DataSubjectsTab);
+  // console.log("datas subjects:", DataSubjectsTab);
 
   const logoutHandle = async () => {
     dispatch(logout());
@@ -107,7 +110,7 @@ console.log("others datas:", others, "user datas", user)
       setSelectedTitle(result.title);
       setViewerVisible(true);
     } catch (err) {
-      console.log("erreur lors de l'ouverture du fichier:", err);
+      console.log("erreur lors de l'ouverture du fichier dans tabs:", err);
     } finally {
       setLoading(false);
     }
@@ -181,7 +184,7 @@ console.log("others datas:", others, "user datas", user)
               {" "}
               {t("accueil.explore_subjets")}
             </Text>
-            <Button className="bg-transparent">
+            <Button className="bg-transparent" onPress={()=> navigation.navigate("/(tabs)/pack")}>
               <ButtonText className="flex-row items-center text-primary-custom-300">
                 {t("accueil.view_all")}{" "}
               </ButtonText>
@@ -230,7 +233,7 @@ console.log("others datas:", others, "user datas", user)
               {" "}
               {t("accueil.other_subjets")}
             </Text>
-            <Button className="bg-transparent">
+            <Button className="bg-transparent" onPress={() => navigation.navigate("/(tabs)/pack")}>
               <ButtonText className="flex-row items-center text-primary-custom-300">
                 {t("accueil.view_all")}
               </ButtonText>
@@ -290,6 +293,16 @@ console.log("others datas:", others, "user datas", user)
           <View style={{ flex: 1 }}>
             {selectedUri ? (
               <Text style={{ padding: 20 }}>{selectedUri}</Text>
+              // <Pdf
+              //   source={{ uri: selectedUri }}
+              //   style={{ flex: 1, width: "100%" }}
+              //   onLoadComplete={(numberOfPages) => {
+              //     console.log("Nombre de pages:", numberOfPages);
+              //   }}
+              //   onError={(error) => {
+              //     console.log("Erreur affichage PDF:", error);
+              //   }}
+              // />
             ) : (
               <Text style={{ padding: 20 }}>Aucun document chargé</Text>
             )}

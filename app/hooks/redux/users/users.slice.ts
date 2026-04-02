@@ -19,6 +19,7 @@ interface User {
   role: string;
   imgUrl: string;
   isActivated: string;
+  balance: string
 }
 
 interface UserState {
@@ -28,6 +29,7 @@ interface UserState {
   loading: boolean;
   error: any;
   others: any;
+  balance:any
 }
 
 const initialState: UserState = {
@@ -37,6 +39,7 @@ const initialState: UserState = {
   accessToken: null,
   refreshToken: null,
   others: null,
+  balance:null
 };
 
 //un thunk est une action asynchrone qui appelle dans ce cas mon api
