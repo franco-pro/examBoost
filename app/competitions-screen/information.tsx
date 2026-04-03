@@ -164,7 +164,6 @@ export default function Information() {
 
   function observeCompetition(){
     if(selectedCompetition && selectedCompetition.roomID){
-      console.log('competition', room, selectedCompetition)
       setJoininStatut("spectator")
       initializeRoomsGateway(dispatch, null, userId)
       const eventManager = EmitEvent(dispatch, {isManagedByIA: selectedCompetition?.isManagedByIA as any, roomId: selectedCompetition?.roomID ?? room?.roomId as any});
@@ -305,7 +304,12 @@ function userJoinCompetition(){
           </TouchableOpacity>
         )}
 
-        <InvitationPrompts isOpen={showModal} onClose={()=> setShowModal(false)} />
+        <InvitationPrompts 
+            isOpen={showModal} 
+            onClose={()=> setShowModal(false)} 
+            competitionDetails={{id: selectedCompetition ? selectedCompetition.id: 0, name: selectedCompetition ? selectedCompetition.name : ""}}
+            userDetails={{id: userId, username: (user?.surname ?? "")+ " " + username}}
+        />
 
       {/* --- Première carte avec dégradé --- */}
       <LinearGradient
@@ -359,7 +363,7 @@ function userJoinCompetition(){
       </LinearGradient>
 
       {/* --- Deuxième carte : Détails rapides --- */}
-      <ScrollView className="max-h-[100%] h-[300px]">
+      <ScrollView className="max-h-[100%] h-[70%]">
 
       <View className="bg-white rounded-2xl py-4 px-5 mt-2 shadow-md border border-gray-100">
         <Text

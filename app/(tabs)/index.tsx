@@ -19,6 +19,7 @@ import { useTranslation } from "react-i18next";
 import i18n from "@/lang/i18n";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { handleOpenDocument, subjectDocumentype } from "../downloadFiles";
+import { initializeNotificationsGateway } from "../hooks/services/socket/notifications.gateway";
 
 export default function Index() {
   const navigation = useRouter();
@@ -32,7 +33,7 @@ export default function Index() {
   const { user, others , accessToken} = useSelector(
     (state: RootState) => state.user,
   );
-
+  initializeNotificationsGateway(dispatch, user?.id || 0);
   useEffect(() => {
     if (accessToken) {
       dispatch(userDatas()); //to work

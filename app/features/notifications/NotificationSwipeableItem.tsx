@@ -9,15 +9,19 @@ import type { Notification } from './types';
 export default function NotificationSwipeableItem({
   notification,
   onDelete,
+  onOpenDetails,
   onToggleRead,
   onPress,
   onOpenLink,
+  onAcceptInvitation,
 }: {
   notification: Notification;
   onDelete?: () => void;
+  onOpenDetails?: (id: number, actionType: string) => void;
   onToggleRead?: () => void;
   onPress?: () => void;
-  onOpenLink?: () => void;
+  onOpenLink?: (id: number, actionType: string) => void;
+  onAcceptInvitation?: (id: number, actionType: string) => void;
 }) {
   const ref = useRef<Swipeable>(null);
 
@@ -25,9 +29,9 @@ export default function NotificationSwipeableItem({
 
   const LeftAction = () => (
     <View className="flex-1 flex-row items-center bg-outline-50 dark:bg-outline-800 px-4">
-      <Ionicons name={notification.read ? 'mail-unread' : 'mail-open'} size={22} color="#181c5c" />
+      <Ionicons name={notification.isRead ? 'mail-unread' : 'mail-open'} size={22} color="#181c5c" />
       <Text className="ml-2 text-typography-default dark:text-typography-white font-semibold">
-        {notification.read ? 'Marquer non lu' : 'Marquer lu'}
+        {notification.isRead ? 'Marquer non lu' : 'Marquer lu'}
       </Text>
     </View>
   );
@@ -90,7 +94,9 @@ export default function NotificationSwipeableItem({
           onToggleRead?.();
         }}
         onPress={onPress}
-        onOpenLink={onOpenLink}
+        onOpenLink={onOpenLink ? () => onOpenLink(notification.competionID, "joinRoom") : undefined}
+        onOpenDetails={onOpenDetails ? () => onOpenDetails(notification.competionID, "openDetails") : undefined}
+        onAcceptInvitation={onAcceptInvitation ? () => onAcceptInvitation(notification.competionID, "acceptInvit") : undefined}
       />
     </Swipeable>
   );

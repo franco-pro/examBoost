@@ -60,5 +60,32 @@ export async function listNotifications(userID?: number): Promise<Notification[]
 }
 
 export async function markRead(id: string): Promise<void> {
-  await apiClient.patch(`/notifications/${encodeURIComponent(id)}`);
+  const n = Number(id);
+  const safeId = Number.isFinite(n) ? String(n) : id;
+  await apiClient.patch(`/notifications/${encodeURIComponent(safeId)}`);
+}
+
+function shouldIgnoreDeleteError(err: any): boolean {
+  const status = err?.response?.status;
+  return status === 404 || status === 405 || status === 501;
+}
+
+export async function deleteNotification(idNotif: string): Promise<void> {
+  try {
+    await apiClient.delete(`/notifications/${encodeURIComponent(idNotif)}`);
+  } catch (err) {
+    if (shouldIgnoreDeleteError(err)) return;
+    throw err;
+  }
+}
+
+export async function deleteNotifications(ids: string[]): Promise<void> {
+  try {
+    await apiClient.post('/notifications/delete-many', {
+      ids: ids.map((id) => Number(id)),
+    });
+  } catch (err) {
+    if (shouldIgnoreDeleteError(err)) return;
+    throw err;
+  }
 }
