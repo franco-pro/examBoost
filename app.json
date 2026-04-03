@@ -2,7 +2,7 @@
   "expo": {
     "name": "examBoost",
     "slug": "examBoost",
-    "owner":"franck_lf",
+    "owner": "franck_lf",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -11,11 +11,14 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier":"com.genesys.examBoost",
+      "bundleIdentifier": "com.genesys.examBoost",
       "icon": {
         "light": "./app/assets/icons/ios-light.png",
         "dark": "./app/assets/icons/ios-dark.png",
         "tinted": "./app/assets/icons/ios-tinted.png"
+      },
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -33,6 +36,14 @@
     },
     "plugins": [
       "expo-router",
+       [
+         "expo-build-properties",
+         {
+           "android": {
+             "usesCleartextTraffic": true
+           }
+         }
+       ],
       [
         "expo-splash-screen",
         {
@@ -47,7 +58,8 @@
         }
       ],
       "expo-font",
-      "expo-web-browser"
+      "expo-web-browser",
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": true

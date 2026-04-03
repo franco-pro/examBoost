@@ -36,7 +36,7 @@ const initialState: UserState = {
   error: null,
   accessToken: null,
   refreshToken: null,
-  others: null,
+  others: null
 };
 
 //un thunk est une action asynchrone qui appelle dans ce cas mon api
@@ -96,12 +96,12 @@ export const userDatas = createAsyncThunk(
   "user/datas",
   async (_, { rejectWithValue, getState }) => {
     try {
-      console.log("enter")
+      // console.log("enter")
       const state: RootState = getState() as RootState;
       const token = state?.user?.accessToken;
       if (!token) throw new Error("No token Found !");
       const datas = await authService.userDatas(token);
-      console.log("enter userData with token:", token);
+      // console.log("enter userData with token:", token);
       console.log("UserDatas:", datas);
       return datas;
     } catch (err: any) {
@@ -138,6 +138,12 @@ export const userSlice = createSlice({
       state.user = action.payload.user;
       state.accessToken = action.payload.accessToken;
       state.refreshToken = action.payload.refreshToken
+    },
+
+    updateBalanceUser: (state, action) => {
+      if (state.user) {
+        state.user.wallet = action.payload
+      }
     }
   },
 
@@ -175,5 +181,5 @@ export const userSlice = createSlice({
   },
 });
 
-export const { logout,loginSuccess, setCredentials } = userSlice.actions;
+export const { logout,loginSuccess, setCredentials, updateBalanceUser } = userSlice.actions;
 export default userSlice.reducer;
