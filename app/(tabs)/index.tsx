@@ -186,11 +186,14 @@ export default function Index() {
 
           {/* Ton contenu */}
           <View className="flex-row justify-between items-center mt-10">
-            <Text className="font-bold text-xl">
+            <Text className="font-bold text-typography-default text-xl">
               {" "}
               {t("accueil.explore_subjets")}
             </Text>
-            <Button className="bg-transparent" onPress={()=> navigation.navigate("/(tabs)/pack")}>
+            <Button
+              className="bg-transparent"
+              onPress={() => navigation.navigate("/(tabs)/pack")}
+            >
               <ButtonText className="flex-row items-center text-primary-custom-300">
                 {t("accueil.view_all")}{" "}
               </ButtonText>
@@ -220,7 +223,7 @@ export default function Index() {
                           className=" "
                         />
                         <Text
-                          className="text-center font-semibold text-normal px-2"
+                          className="text-center font-semibold text-typography-default  px-2"
                           numberOfLines={2}
                           ellipsizeMode="tail"
                         >
@@ -235,11 +238,14 @@ export default function Index() {
             </SafeAreaView>
           </SafeAreaProvider>
           <View className="title2 flex-row justify-between items-center mt-10 ">
-            <Text className="font-bold text-xl">
+            <Text className="font-bold text-typography-default text-xl">
               {" "}
               {t("accueil.other_subjets")}
             </Text>
-            <Button className="bg-transparent" onPress={() => navigation.navigate("/(tabs)/pack")}>
+            <Button
+              className="bg-transparent"
+              onPress={() => navigation.navigate("/(tabs)/pack")}
+            >
               <ButtonText className="flex-row items-center text-primary-custom-300">
                 {t("accueil.view_all")}
               </ButtonText>
@@ -299,6 +305,7 @@ export default function Index() {
           <View style={{ flex: 1 }}>
             {selectedUri ? (
               <Text style={{ padding: 20 }}>{selectedUri}</Text>
+            ) : (
               // <Pdf
               //   source={{ uri: selectedUri }}
               //   style={{ flex: 1, width: "100%" }}
@@ -309,7 +316,6 @@ export default function Index() {
               //     console.log("Erreur affichage PDF:", error);
               //   }}
               // />
-            ) : (
               <Text style={{ padding: 20 }}>Aucun document chargé</Text>
             )}
           </View>

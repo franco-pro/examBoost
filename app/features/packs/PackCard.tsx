@@ -3,27 +3,20 @@ import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import type { Pack } from './types';
+import { packProps } from '@/app/api/packService';
 
 export default memo(function PackCard({
   pack,
   onPress,
   onPressCTA,
 }: {
-  pack: Pack;
+  pack: packProps;
   onPress?: () => void;
   onPressCTA?: () => void;
 }) {
-  const {
-    title,
-    description,
-    price,
-    durationDays,
-    isActive,
-    isSubscribed,
-    createdAt,
-  } = pack;
+  const { name, description, price, durationDays, isActive, createdAt } = pack;
 
-  const canContinue = !!isSubscribed;
+  const canContinue = !!isActive;
   const canBuy = !!isActive;
   const ctaLabel = canContinue ? 'Continuer' : canBuy ? 'Acheter' : 'Indisponible';
 
@@ -32,7 +25,7 @@ export default memo(function PackCard({
       onPress={onPress}
       className="rounded-2xl overflow-hidden bg-background-light dark:bg-background-dark border border-outline-100 dark:border-outline-800 transition-all duration-150 web:hover:-translate-y-0.5 active:opacity-95"
       accessibilityRole="button"
-      accessibilityLabel={`Pack ${title}`}
+      accessibilityLabel={`Pack ${name}`}
     >
       {/* Header icône avec gradient web-only et glow conditionnel */}
       <View className="relative w-full h-36 items-center justify-center border-b border-outline-100 dark:border-outline-800" style={{ backgroundColor: 'rgba(25, 28, 92, 0.09)' }}>
@@ -64,7 +57,7 @@ export default memo(function PackCard({
         </View>
 
         <Text className="text-base font-extrabold text-typography-default dark:text-typography-white" numberOfLines={1}>
-          {title}
+          {name}
         </Text>
         <Text className="text-sm text-typography-default/90 dark:text-typography-white/90" numberOfLines={2}>
           {description}
@@ -90,7 +83,7 @@ export default memo(function PackCard({
             onPress={ctaLabel === 'Indisponible' ? undefined : onPressCTA}
             className={`px-4 py-2 rounded-full bg-primary-defaultOrange active:opacity-90 web:hover:brightness-105 flex-row items-center gap-1`}
             accessibilityRole="button"
-            accessibilityLabel={`Pack ${title} · ${price != null ? formatPriceXOF(price) : ''} · ${typeof durationDays === 'number' ? formatDays(durationDays) : ''}`}
+            accessibilityLabel={`Pack ${name} · ${price != null ? formatPriceXOF(price) : ''} · ${typeof durationDays === 'number' ? formatDays(durationDays) : ''}`}
             hitSlop={8}
           >
             <Text className="text-primary-defaultBlue text-sm font-extrabold">{ctaLabel}</Text>
