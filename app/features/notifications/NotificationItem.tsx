@@ -19,7 +19,7 @@ export default memo(function NotificationItem({
   onPress?: () => void;
   onOpenDetails?: (id: number, actionType: string) => void;
   onOpenLink?: (id: number, actionType: string) => void;
-  onAcceptInvitation?: (id: number, actionType: string) => void;
+  onAcceptInvitation?: () => void;
 }) {
   const { title, text, type, isRead, created_at, id , competionID} = notification;
 
@@ -92,7 +92,7 @@ export default memo(function NotificationItem({
             //Hstack for multiple btns
             <HStack className="mt-2 self-start gap-2">
               <Pressable
-                onPress={()=> onAcceptInvitation(competionID, "acceptInvit")}// add the user as participant to the competition
+                onPress={onAcceptInvitation}// add the user as participant to the competition
                 accessibilityRole="button"
                 accessibilityLabel="Accepter"
                 hitSlop={8}

@@ -29,18 +29,23 @@ export default function Index() {
     navigation.replace("/(auth)/login")
   }
   const { t } = useTranslation("home");
-  console.log("LANG:", i18n.language);
-  console.log("WELCOME:", t("accueil.welcome"));
   const dispatch = useDispatch<any>();
   const { user, others , accessToken} = useSelector(
     (state: RootState) => state.user,
   );
-  initializeNotificationsGateway(dispatch, user?.id || 0);
   useEffect(() => {
     if (accessToken) {
       dispatch(userDatas()); //to work
     }
   }, [accessToken,dispatch]);
+
+  useEffect(()=>{
+    if(user){
+      setTimeout(() => {
+          initializeNotificationsGateway(dispatch, user.id);
+      }, 2000);
+    }
+  }, [user])
 
   // console.log(
   //   "infos: ",

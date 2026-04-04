@@ -26,7 +26,9 @@ export function connectNotificationsSocket(userId: number) {
       query: { userId: userId },
       transports: ["websocket"],
     });
+
   }
+
   return notificationsSocket;
 }
 

@@ -21,6 +21,7 @@ import { EmitEvent, initializeRoomsGateway } from '../hooks/services/socket/room
 import { LanguageContext } from '../context/LanguageProvider';
 import { createSubscription } from '../hooks/redux/competitions-suscriptions/subscription.thunks';
 import InvitationConfirm from '../helper/Dialogs/invitationConfirm';
+import { updateBalanceUser } from '../hooks/redux/users/users.slice';
 
 export default function NotificationsScreen() {
   // brancher un  userID quand l'auth sera prête
@@ -83,6 +84,9 @@ export default function NotificationsScreen() {
       if(selectedCompetition.type === "PAID_REGISTRATION_AS_WINNER_PRICE" || selectedCompetition.type === "PAID_REGISTRATION_WITH_WINNER_PRICE"){
         //inscription done and the competition is with entry fee, then we have to update the user wallet in the store before redirection
         //TODO : update the wallet of the user...
+        const wallet = user ? (user.wallet - selectedCompetition.entryFee) : 0;
+        dispatch(updateBalanceUser(wallet));
+        showToast('success', 'Invitation acceptée !', `Vous avez été enregistré à la compétition. Votre nouveau solde est de ${wallet} XAF.`);
       }else{
         showToast('success', 'Invitation acceptée !', 'Vous avez été enregistré à la compétition.');
         router.push('/(tabs)/competition');
@@ -147,6 +151,7 @@ export default function NotificationsScreen() {
         router.push('/competitions-screen/information')
       }else if (btnActionType === "acceptInvit"){
         // handle accept invit
+        console.log('check')
        checkCompetition()
       }else if (btnActionType === "joinRoom"){
           if(selectedCompetition.roomID && selectedCompetition.statut === "ONGOING"){
@@ -170,6 +175,7 @@ export default function NotificationsScreen() {
   }, [selectedCompetition])
 
   const loadCompetitionDetails = (id: number, actionType:  "openDetails" | "acceptInvit" | "joinRoom" | "update")=> {
+    console.log("load competition details with id", actionType)
       if(id && actionType){
         setBtnActionType(actionType);
         dispatch(getOne(id))

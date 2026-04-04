@@ -21,7 +21,7 @@ export default function NotificationSwipeableItem({
   onToggleRead?: () => void;
   onPress?: () => void;
   onOpenLink?: (id: number, actionType: string) => void;
-  onAcceptInvitation?: (id: number, actionType: string) => void;
+  onAcceptInvitation?: () => void;
 }) {
   const ref = useRef<Swipeable>(null);
 
@@ -96,7 +96,7 @@ export default function NotificationSwipeableItem({
         onPress={onPress}
         onOpenLink={onOpenLink ? () => onOpenLink(notification.competionID, "joinRoom") : undefined}
         onOpenDetails={onOpenDetails ? () => onOpenDetails(notification.competionID, "openDetails") : undefined}
-        onAcceptInvitation={onAcceptInvitation ? () => onAcceptInvitation(notification.competionID, "acceptInvit") : undefined}
+        onAcceptInvitation={onAcceptInvitation}
       />
     </Swipeable>
   );
