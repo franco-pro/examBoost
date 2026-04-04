@@ -14,6 +14,7 @@ export default function SubjectsPage() {
   const [search, setSearch] = useState('');
 
   const currentUserId = useSelector((s: RootState) => s.session.currentUserId);
+  console.log("current user id: ", currentUserId)
   const packID = useMemo(() => Number(packId), [packId]);
 
   const docsQuery = usePackDocumentsQuery(currentUserId ?? undefined, Number.isNaN(packID) ? undefined : packID);

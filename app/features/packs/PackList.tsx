@@ -2,6 +2,7 @@ import { memo, useMemo } from 'react';
 import { FlatList, ListRenderItem, Platform, useWindowDimensions, View } from 'react-native';
 import PackCard from './PackCard';
 import type { Pack } from './types';
+import { packProps } from '@/app/api/packService';
 
 export default memo(function PackList({
   packs,
@@ -11,9 +12,9 @@ export default memo(function PackList({
   refreshing,
   onRefresh,
 }: {
-  packs: Pack[];
-  onPressPack?: (p: Pack) => void;
-  onPressCTA?: (p: Pack) => void;
+  packs: packProps[];
+  onPressPack?: (p: packProps) => void;
+  onPressCTA?: (p: packProps) => void;
   listHeader?: React.ReactElement | null;
   refreshing?: boolean;
   onRefresh?: () => void;
@@ -27,7 +28,7 @@ export default memo(function PackList({
     return 1;
   }, [width]);
 
-  const renderItem: ListRenderItem<Pack> = ({ item }) => (
+  const renderItem: ListRenderItem<packProps> = ({ item }) => (
     <View className={"p-2"} style={numColumns > 1 ? { width: `${100 / numColumns}%` } : undefined}>
       <PackCard
         pack={item}
@@ -41,7 +42,7 @@ export default memo(function PackList({
     <FlatList
       data={packs}
       key={numColumns} // force relayout when columns change
-      keyExtractor={(p) => p.id}
+      keyExtractor={(p) => p.name}
       renderItem={renderItem}
       numColumns={numColumns}
       refreshing={!!refreshing}
