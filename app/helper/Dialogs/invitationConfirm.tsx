@@ -10,6 +10,7 @@ import {
   import { Heading } from '@/components/ui/heading';
   import { Text } from '@/components/ui/text';
   import { useTranslation } from 'react-i18next';
+import { View } from 'react-native';
     
     interface InvitationConfirmProps {
       isOpen: boolean;
@@ -20,44 +21,44 @@ import {
     export default function InvitationConfirm({isOpen, onClose, onConfirm, inscriptionFees}: InvitationConfirmProps) {  
     //   const {t}= useTranslation("competition");
       return (
-        <>
+        <View>
           <AlertDialog isOpen={isOpen} onClose={onClose}>
             <AlertDialogBackdrop />
             <AlertDialogContent className="w-[85%] max-w-[90%] gap-4 items-center">
               <AlertDialogHeader>
               <Heading className="text-typography-950 font-semibold" size="xl">
                   {/* {t("mycompetition.confirmModal.title")} */}
-                    Confirmation
+                    Confirmation d'Inscription
               </Heading>
             </AlertDialogHeader>
             <AlertDialogBody className="mt-3 mb-4">
-              <Text size="xl">
+              <Text size="md">
               {/* {t("mycompetition.confirmModal.text")} */}
-              Cette compétition exige des frais de participation... vous serez debité d'un montant de {inscriptionFees} XAF.
+              Cette compétition exige des frais de participation... vous serez debité d'un montant de {inscriptionFees.toLocaleString('fr-FR')} XAF.
                {' \n'}
               
               {/* {t("mycompetition.confirmModal.text2")} */}
               Voulez vous confirmer votre participation ?
               </Text>
             </AlertDialogBody>
-            <AlertDialogFooter>
+            <AlertDialogFooter> 
               <Button
                 className="bg-primary-defaultBlue"
-                onPress={onClose}
+                onPress={onConfirm}
                 size="sm"
               >
                 <ButtonText>
                    {/* {t("mycompetition.confirmModal.cancel")} */}
-                   Annuler
+                   Je confirmee
                 </ButtonText>
               </Button>
-              <Button size="sm" onPress={onConfirm} action="negative">
-                <ButtonText> Je confirme </ButtonText>
+              <Button size="sm" onPress={onClose} action="negative">
+                <ButtonText> Annuler </ButtonText>
               </Button>
             </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-        </>
+        </View>
       );
     }
     

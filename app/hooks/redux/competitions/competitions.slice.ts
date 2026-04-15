@@ -91,17 +91,20 @@ const competitionSlice = createSlice({
             if(action.payload){
                 const index = state.competitionList.findIndex((comp)=> comp.id == action.payload.competitionID)
                 if(index != -1){
-                    state.competitionList[index].statut = action.payload.statut as "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED";;
+                    state.competitionList[index].statut = action.payload.statut as "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED";
                 }
 
                 //my list
                 const myIndex = state.myCompetitionList.findIndex((comp)=> comp.id == action.payload.competitionID)
                 if(myIndex != -1){
-                    state.myCompetitionList[myIndex].statut = action.payload.statut as "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED";;
+                    state.myCompetitionList[myIndex].statut = action.payload.statut as "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED";
                 }
 
                 if(state.selectedCompetition && state.selectedCompetition.id == action.payload.competitionID && action.payload.statut == "ONGOING"){ 
                     state.selectedCompetition.statut = action.payload.statut;
+                    if(action.payload.roomId) {
+                        state.selectedCompetition.roomID = action.payload.roomId;
+                    }
                 }
             }
         },

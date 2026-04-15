@@ -18,9 +18,7 @@ export default function Index() {
             const currentLang = await AsyncStorage.getItem("lang");
             if (currentLang) {
                 setLang(currentLang);
-                 console.log("la valeur de i18n dans index principal 1: ", i18n);
             } else {
-                console.log("la valeur de i18n dans index principal : ", i18n)
             }
             
             const value = await getItem("onboarded")

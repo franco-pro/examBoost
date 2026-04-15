@@ -22,7 +22,7 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: "root",
   storage: AsyncStorage,
-  blacklist: ['rooms', 'competitions', 'subscriptions', 'transactions', "notification"]
+  blacklist: ['rooms', 'competitions', 'subscriptions', 'transactions', "notifications"]
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

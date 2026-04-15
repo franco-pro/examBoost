@@ -95,15 +95,12 @@ export default function Login() {
         accessToken: result.payload.accessToken,
         refreshToken: result.payload.refreshToken
       }))
-      console.log("connexion reussie:", result.payload);
       setTimeout(() => {
         navigation.replace("/(tabs)");
       }, 2000);
     } else {
       setIsLoading(false);
       setErr(result);
-      console.log("erreur:", result);
-      console.log("erreur payload:", result.payload.message);
     }
   };
   const switchSignUp = () => {

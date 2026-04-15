@@ -1,7 +1,7 @@
 // 🎯 Configuration centralisée pour les URLs WebSocket
 export const WEBSOCKET_CONFIG = {
   // URL de base du backend WebSocket
-  BASE_URL: "http://172.20.10.3:3000",
+  BASE_URL: "http://192.168.1.112:3000",
   
   // Namespaces disponibles
   NAMESPACES: {

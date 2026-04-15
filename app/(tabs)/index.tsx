@@ -35,17 +35,16 @@ export default function Index() {
   );
   useEffect(() => {
     if (accessToken) {
-      dispatch(userDatas()); //to work
+      dispatch(userDatas()) ; //to work
+      setTimeout(() => {
+
+        initializeNotificationsGateway(dispatch, user?.id);
+
+      }, 1000);
+
     }
   }, [accessToken,dispatch]);
 
-  useEffect(()=>{
-    if(user){
-      setTimeout(() => {
-          initializeNotificationsGateway(dispatch, user.id);
-      }, 2000);
-    }
-  }, [user])
 
   // console.log(
   //   "infos: ",

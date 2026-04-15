@@ -7,7 +7,7 @@ import { logout } from "../hooks/redux/users/users.slice";
 import { useRouter } from "expo-router";
 
 const apiClient = axios.create({
-  baseURL: API_URL || "http://172.20.10.3:3000",
+  baseURL: API_URL || "http://192.168.1.112:3000",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -18,19 +18,11 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(async (config) => {
   const token = await getItem("accessToken");
   const refreshToken = await getItem("refreshToken");
-  console.log(
-    "Access Token dans apiclient:",
-    token,
-    "refresh token:",
-    refreshToken,
-  );
   const keys = await AsyncStorage.getAllKeys();
-  console.log("all keys :", keys);
   
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-  console.log("config:", config);
   return config;
 });
 //refresh le acceess token si expiré avec le refresh token

@@ -279,7 +279,7 @@ function userJoinCompetition(){
   }
 
   return (
-    <View className="bg-gray-50 pt-[40px] pb-[100px] px-4">
+    <View className="bg-gray-50 pt-[40px] pb-[10px] px-4">
       {/* Bouton Retour */}
       <TouchableOpacity
         className="flex-row items-center mb-6"
@@ -363,7 +363,7 @@ function userJoinCompetition(){
       </LinearGradient>
 
       {/* --- Deuxième carte : Détails rapides --- */}
-      <ScrollView className="max-h-[100%] h-[70%]">
+      <ScrollView className="h-[300px] max-h-[100%]">
 
       <View className="bg-white rounded-2xl py-4 px-5 mt-2 shadow-md border border-gray-100">
         <Text
@@ -395,12 +395,12 @@ function userJoinCompetition(){
               selectedCompetition?.type === "FREE_REGISTRATION_WITH_WINNER_PRICE" || selectedCompetition?.type === "PAID_REGISTRATION_WITH_WINNER_PRICE" ? 
               (
                 <Text className="ml-2 text-gray-700 font-medium">
-                  {selectedCompetition?.winnerPrice} XAF
+                  {selectedCompetition?.winnerPrice.toLocaleString("fr-FR")} XAF
                  </Text>
               ) : selectedCompetition?.type == "PAID_REGISTRATION_AS_WINNER_PRICE" ? 
                 (
                   <Text className="ml-2 text-gray-700 font-medium">
-                    {selectedCompetition?.winnerPrice + " x " + selectedCompetition?.suscribers.length} XAF
+                    {selectedCompetition?.winnerPrice.toLocaleString("fr-FR") + " x " + selectedCompetition?.suscribers.length} XAF
                   </Text>
                 ): (
                   <Text className="ml-2 text-gray-700 font-medium">
@@ -561,7 +561,7 @@ function userJoinCompetition(){
               <Text className="font-semibold text-gray-800">
                 {(selectedCompetition?.entryFee === 0 || !selectedCompetition?.entryFee)
                   ? "Gratuit"
-                  : `${selectedCompetition?.entryFee} XAF`}
+                  : `${selectedCompetition?.entryFee.toLocaleString("fr-FR")} XAF`}
               </Text>
             </View>
 

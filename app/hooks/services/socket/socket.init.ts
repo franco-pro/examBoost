@@ -22,13 +22,11 @@ export function connectNotificationsSocket(userId: number) {
   if (!notificationsSocket) {
     notificationsSocket = io(WEBSOCKET_CONFIG.getNamespaceUrl(WEBSOCKET_CONFIG.NAMESPACES.NOTIFICATIONS), {
       ...WEBSOCKET_CONFIG.DEFAULT_OPTIONS,
-      auth: { userId },
       query: { userId: userId },
       transports: ["websocket"],
     });
 
   }
-
   return notificationsSocket;
 }
 

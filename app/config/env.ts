@@ -1,4 +1,4 @@
-export const API_URL = 'http://172.20.10.3:3000';
+export const API_URL = 'http://192.168.1.112:3000';
 
 export const toAbsoluteUrl = (u: string): string => {
   const base = API_URL;

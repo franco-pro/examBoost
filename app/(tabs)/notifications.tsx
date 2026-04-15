@@ -1,4 +1,3 @@
-import { useClearNotifications, useDeleteNotification, useMarkRead, useNotifications, useNotificationsRealtime } from '@/app/features/notifications/hooks';
 import type { Notification } from '@/app/features/notifications/types';
 import { Ionicons } from '@expo/vector-icons';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
@@ -35,6 +34,7 @@ export default function NotificationsScreen() {
   const {loading:competitionLoading, selectedCompetition, error:errorCompetition} = useAppSelector((state) => state.competitions);
   const {error:errorRoom, room, waitingJoining} = useAppSelector((state)=> state.rooms);
   const {loading: suscriptionLoading, error:suscriptionError} = useAppSelector((state)=> state.subscriptions);
+  const [isPageActive, setIsPageActive] = useState(true);
 
    const {language} = useContext(LanguageContext);
 
@@ -42,6 +42,8 @@ export default function NotificationsScreen() {
 
    useFocusEffect(
       useCallback(()=>{
+      stop();
+
         if(data && data.length == 0 && !loadDone){
           dispatch(getNotification(userID));
           setLoadDone(true);
@@ -72,6 +74,20 @@ export default function NotificationsScreen() {
     dispatch(deleteNotification(notifID))
   }
 
+  useFocusEffect(
+    useCallback(()=>{
+      setIsPageActive(true);
+      return ()=>{
+       setIsPageActive(false)
+      }
+    }, [])
+  )
+
+  useEffect(()=>{
+      if(errorRoom && isPageActive){
+        showToast('error', 'Erreur de connexion', 'Une erreur est survenue lors de la connexion à la salle de compétition. Veuillez réessayer plus tard. ' + errorRoom);
+      }
+  },[errorRoom])
 
   useEffect(()=>{
     if(!waitingJoining && room && !errorRoom){
@@ -80,7 +96,7 @@ export default function NotificationsScreen() {
   }, [waitingJoining])
 
   useEffect(()=>{
-    if(!suscriptionLoading && !suscriptionError && selectedCompetition){
+    if(!suscriptionLoading && !suscriptionError && selectedCompetition && isPageActive){
       if(selectedCompetition.type === "PAID_REGISTRATION_AS_WINNER_PRICE" || selectedCompetition.type === "PAID_REGISTRATION_WITH_WINNER_PRICE"){
         //inscription done and the competition is with entry fee, then we have to update the user wallet in the store before redirection
         //TODO : update the wallet of the user...
@@ -89,7 +105,6 @@ export default function NotificationsScreen() {
         showToast('success', 'Invitation acceptée !', `Vous avez été enregistré à la compétition. Votre nouveau solde est de ${wallet} XAF.`);
       }else{
         showToast('success', 'Invitation acceptée !', 'Vous avez été enregistré à la compétition.');
-        router.push('/(tabs)/competition');
       }
     }else if(suscriptionError){
       console.log("error suscription", suscriptionError)
@@ -98,6 +113,8 @@ export default function NotificationsScreen() {
   }, [suscriptionLoading, suscriptionError])
 
   const doInscription = (entryFee?: boolean)=>{
+      if(isOpenConfirmation) setIsOpen(false);
+      
       if(selectedCompetition ){
         if(!entryFee){
           dispatch(createSubscription({userID: userID, competitionID: selectedCompetition.id, score: 0, suscribeFromInvitation: true}));  
@@ -118,16 +135,8 @@ export default function NotificationsScreen() {
         if(!finded){
           if( selectedCompetition.statut === "UPCOMING"){
             //handle inscription   
-            if(selectedCompetition.type === "PAID_REGISTRATION_AS_WINNER_PRICE" || selectedCompetition.type === "PAID_REGISTRATION_WITH_WINNER_PRICE"){
-              setIsOpen(true);
-              <View>
-                <InvitationConfirm
-                  onConfirm={()=> doInscription(true)}
-                  onClose={()=> setIsOpen(false)}
-                  isOpen ={isOpenConfirmation}
-                  inscriptionFees={selectedCompetition.entryFee}
-                />  
-              </View>
+            if((selectedCompetition.type === "PAID_REGISTRATION_AS_WINNER_PRICE" || selectedCompetition.type === "PAID_REGISTRATION_WITH_WINNER_PRICE") && isPageActive){
+              setIsOpen(true);    
             }else{
               doInscription();
             }         
@@ -144,29 +153,32 @@ export default function NotificationsScreen() {
     }
   }
 
+  const joiningRoom = ()=>{
+    initializeRoomsGateway(dispatch, null, userID)
+    console.log("room initialized in notification with userID", userID)
+      const eventManager = EmitEvent(dispatch, {isManagedByIA: selectedCompetition?.isManagedByIA as any, roomId: selectedCompetition?.roomID as any});
+      eventManager.joinRoom({
+        roomId: selectedCompetition?.roomID as any,
+        userID: userID,
+        appLang: (language as any),
+        username: user ? user.username:"Dems",
+        imgUrl: user ? user.imgUrl: "https://i.ibb.co/7R4DyhQ/Avatar-1.jpg",
+        surname: user ? user.surname : "",
+        
+      })
+  }
+
   useEffect(()=>{
-    if(selectedCompetition && selectedCompetition.id != -1 && !competitionLoading){
+    if(selectedCompetition && selectedCompetition.id != -1 && !competitionLoading && isPageActive){
       if(btnActionType === "openDetails"){
       //navigate to information
         router.push('/competitions-screen/information')
       }else if (btnActionType === "acceptInvit"){
         // handle accept invit
-        console.log('check')
        checkCompetition()
       }else if (btnActionType === "joinRoom"){
           if(selectedCompetition.roomID && selectedCompetition.statut === "ONGOING"){
-            initializeRoomsGateway(dispatch, null, userID)
-              
-                const eventManager = EmitEvent(dispatch, {isManagedByIA: selectedCompetition?.isManagedByIA as any, roomId: selectedCompetition?.roomID as any});
-                eventManager.joinRoom({
-                  roomId: selectedCompetition?.roomID as any,
-                  userID: userID,
-                  appLang: (language as any),
-                  username: user ? user.username:"Dems",
-                  imgUrl: user ? user.imgUrl: "https://i.ibb.co/7R4DyhQ/Avatar-1.jpg",
-                  surname: user ? user.surname : "",
-                  
-                })
+            joiningRoom();
           }
       }else{
         // handle update
@@ -174,16 +186,26 @@ export default function NotificationsScreen() {
    }
   }, [selectedCompetition])
 
-  const loadCompetitionDetails = (id: number, actionType:  "openDetails" | "acceptInvit" | "joinRoom" | "update")=> {
-    console.log("load competition details with id", actionType)
-      if(id && actionType){
+  const loadCompetitionDetails = (id: number, actionType:  "openDetails" | "acceptInvit" | "joinRoom" | "update")=> {      
+      if(id && actionType && isPageActive && !selectedCompetition){
         setBtnActionType(actionType);
         dispatch(getOne(id))
+      }else{
+        if(actionType == "acceptInvit"){
+          checkCompetition();
+        }else if(actionType == "openDetails"){
+          router.push('/competitions-screen/information');
+        }else{
+          if(selectedCompetition.roomID && selectedCompetition.statut === "ONGOING"){
+            joiningRoom();
+          }else{
+            showToast('error', 'Impossible de rejoindre', 'La compétition n\'est pas encore commencée ou est déjà terminée.');
+          }
+        }
       }
   }
   
   //rafraîchir hors de cette page
-  const { isLoading, isRefetching, refetch, isError } = useNotifications(userID, { refetchInterval: false });
 
   const navigation = useNavigation();
   const router = useRouter();
@@ -210,9 +232,9 @@ export default function NotificationsScreen() {
     setSelected(null);
   }, []);
 
-  const onRefresh = useCallback(() => {
-    void refetch();
-  }, [refetch]);
+  // const onRefresh = useCallback(() => {
+  //   void refetch();
+  // }, [refetch]);
 
   const showToast = useCallback(
     (action: 'success' | 'error' | 'info' | 'warning' | 'muted', title: string, desc?: string) => {
@@ -270,7 +292,7 @@ export default function NotificationsScreen() {
       onOpenDetails={() => loadCompetitionDetails(item.competionID, "openDetails")}
       onAcceptInvitation={() => loadCompetitionDetails(item.competionID, "acceptInvit")}
     />
-  ), [openDetails, refetch, showToast]);
+  ), [openDetails, showToast]);
 
   const keyExtractor = useCallback((n: Notification) => n.id, []);
 
@@ -302,10 +324,11 @@ export default function NotificationsScreen() {
     );
   }
 
-  if (isError) {
+  if (error) {
     return (
       <View className="flex-1 items-center justify-center bg-background-light dark:bg-background-dark px-6">
         {Header}
+       
         <View className="mt-10 items-center">
           <Ionicons name="alert-circle" size={42} color="#ef4444" />
           <Text className="mt-3 text-center text-typography-default dark:text-typography-white">
@@ -411,9 +434,20 @@ export default function NotificationsScreen() {
             </View>
           </View>
         </BottomSheetModal>
-          <FullscreenLoader visible={competitionLoading} />
         
       </View>
+
+      {isOpenConfirmation && isPageActive && (
+          <InvitationConfirm
+            onConfirm={() => doInscription(true)}
+            onClose={() => setIsOpen(false)}
+            isOpen={isOpenConfirmation}
+            inscriptionFees={selectedCompetition.entryFee}
+          />
+        )}
+
+    <FullscreenLoader visible={competitionLoading} />
+
     </BottomSheetModalProvider>
   );
 }

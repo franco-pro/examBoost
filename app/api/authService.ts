@@ -25,13 +25,8 @@ export const authService = {
   register: async (payload: registerProps) => {
     try {
       const response = await apiClient.post("/auth/register", payload);
-      console.log("✅ register data dans authservice:", response.data);
       return response.data;
     } catch (err: any) {
-      console.log(
-        "❌ Erreur dans authService register:",
-        err?.response?.data || err.message
-      );
 
       // renvoie une erreur exploitable par ton thunk
       throw (
@@ -43,9 +38,7 @@ export const authService = {
   },
 
   login: async (payload: loginProps) => {
-    console.log("lien:", apiClient)
     const response = await apiClient.post("/auth/login", payload);
-    console.log("login datas dans authservice:", response.data);
     return response.data;
   },
   forgetPassword: async (payload: forgetPasswordProps) => {
@@ -61,7 +54,6 @@ export const authService = {
     const response = await apiClient.get("/home", {
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log("datas dans authservice:", response.data)
     return response.data;
   },
 };

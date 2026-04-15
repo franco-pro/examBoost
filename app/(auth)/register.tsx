@@ -121,8 +121,6 @@ export default function Register() {
     } else {
       setIsLoading(false);
       setErr(result);
-      console.log("Erreur:", result);
-      console.log("Erreur 2:", err);
     }
   };
   const switchSignIn = () => {

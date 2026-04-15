@@ -43,7 +43,7 @@ export default memo(function NotificationItem({
   } as const;
 
   const time = new Date(created_at);
-  const rel = timeAgo(time);
+  const rel = timeAgo(time); 
 
   // Gestion du texte long: on tronque par défaut et on propose "Voir plus"
   const [expanded, setExpanded] = useState(false);

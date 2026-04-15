@@ -28,7 +28,6 @@ export default function Index() {
 
   const handleNext = () => {
     if (i18n.language) {
-      console.log("la valeur de la langue:", i18n.language);
       navigation.navigate("/(onboarding)");
     } else {
       console.log("something wrong");

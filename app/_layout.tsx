@@ -35,7 +35,6 @@ export default function RootLayout() {
       if (storedLang) {
         await i18n.changeLanguage(storedLang);
       }
-      console.log("lang value:", storedLang);
     };
     loadLanguage();
   }, []);

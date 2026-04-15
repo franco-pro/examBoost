@@ -46,7 +46,7 @@ export default function Competition() {
     const statistics = [
       {
         nom: t("accueil.statistics.created_competitions"),
-        chiffre: homeBaseData?.competitionCreated,
+        chiffre: homeBaseData?.competitionCreated.toLocaleString("fr-FR"),
         icone: <Ionicons name="trophy-outline" size={28} color="#f97316" />,
         bgColor: "bg-orange-100",
         textColor: "text-orange-600",
@@ -54,7 +54,7 @@ export default function Competition() {
       {
         nom: t("accueil.statistics.total_participations"),
         chiffre: homeBaseData
-          ? homeBaseData.competitionFinished + homeBaseData.competitionLeaved
+          ? (homeBaseData.competitionFinished + homeBaseData.competitionLeaved).toLocaleString("fr-FR")
           : 0,
         icone: <FontAwesome5 name="users" size={25} color="#3b82f6" />,
         bgColor: "bg-blue-100",
@@ -62,7 +62,7 @@ export default function Competition() {
       },
       {
         nom: t("accueil.statistics.total_wins"),
-        chiffre: homeBaseData?.competitionWin,
+        chiffre: homeBaseData?.competitionWin.toLocaleString("fr-FR"),
         icone: (
           <MaterialCommunityIcons
             name="progress-clock"
@@ -75,7 +75,7 @@ export default function Competition() {
       },
       {
         nom: t("accueil.statistics.total_deposits"),
-        chiffre: homeBaseData?.totalPriceWin + " XAF",
+        chiffre: homeBaseData?.totalPriceWin.toLocaleString("fr-FR") + " XAF",
         icone: (
           <Ionicons
             name="checkmark-done-circle-outline"

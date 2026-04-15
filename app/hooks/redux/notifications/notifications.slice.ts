@@ -11,6 +11,7 @@ export interface Notification {
   senderID?: number;
   receiverID: number;
   created_at: Date;
+  competionID?: number;
 }
 
 // État du slice de notifications
