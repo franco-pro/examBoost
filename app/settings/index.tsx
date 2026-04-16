@@ -81,7 +81,7 @@ export default function SettingsScreen() {
           <SettingsItem icon="information-circle" label="À propos de ExamBoost" onPress={() => router.push('/settings/about' as any)} />
           <SettingsItem icon="wallet" label="Faire un retrait" onPress={() => router.push('/settings/withdraw' as any)} />
           <SettingsItem icon="key" label="Changer le mot de passe" onPress={() => router.push('/settings/password' as any)} />
-          <SettingsItem icon="key"  label="System Administration" onPress={() => router.push('/settings/password' as any)} />
+          <SettingsItem icon="key"  label="System Administration" onPress={() => router.push("/dev-admin/pages")} />
           
           <SettingsItem icon="trash" label="Supprimer mon compte" onPress={onDeleteAccount} danger />
         </View>

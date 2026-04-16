@@ -21,6 +21,7 @@ import { LanguageContext } from '../context/LanguageProvider';
 import { createSubscription } from '../hooks/redux/competitions-suscriptions/subscription.thunks';
 import InvitationConfirm from '../helper/Dialogs/invitationConfirm';
 import { updateBalanceUser } from '../hooks/redux/users/users.slice';
+import { useSoundAud } from '../hooks/useSound.hook';
 
 export default function NotificationsScreen() {
   // brancher un  userID quand l'auth sera prête
@@ -28,7 +29,7 @@ export default function NotificationsScreen() {
   const userID = user?.id ?? -1;
   const [loadDone, setLoadDone] = useState(false);
   const [isOpenConfirmation, setIsOpen]= useState(false);
-
+  const {stop} = useSoundAud();
   const [btnActionType, setBtnActionType] = useState<"openDetails" | "acceptInvit" | "joinRoom" | "update">("openDetails");
   const {notifications:data, loading, error} = useAppSelector((state) => state.notifications);
   const {loading:competitionLoading, selectedCompetition, error:errorCompetition} = useAppSelector((state) => state.competitions);
@@ -42,7 +43,7 @@ export default function NotificationsScreen() {
 
    useFocusEffect(
       useCallback(()=>{
-      stop();
+        stop();
 
         if(data && data.length == 0 && !loadDone){
           dispatch(getNotification(userID));
