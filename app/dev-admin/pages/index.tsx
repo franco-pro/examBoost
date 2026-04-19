@@ -1,15 +1,25 @@
 //new page dev administration
 
+import { getHomeData } from "@/app/hooks/redux/dev-admin/dev-admin.thunks";
+import { getAllNiveaux } from "@/app/hooks/redux/niveaux/niveaux.thunks";
+import { useAppDispatch } from "@/app/hooks/redux/redux.hooks";
+import { useAppSelector } from "@/app/redux/redux.hooks";
 import { RootState } from "@/app/redux/store";
 import { Spinner } from "@/components/ui/spinner";
 import { VStack } from "@/components/ui/vstack";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import { JSX, useEffect, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { JSX, useCallback, useEffect, useState } from "react";
 import { RefreshControl, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 import { useSelector } from "react-redux";
-
+enum AdminActions {
+    USERS = "users",
+    COMPETITIONS = "competitions",
+    PACKS_NIVEAUX = "packs_niveaux",
+    FINANCES = "finances",
+    DOCUMENTS = "documents"
+}
 export default function DevAdmin() {
     const router = useRouter();
     const [hasSearchFocus, setSerachFocus]= useState(false);
@@ -17,7 +27,24 @@ export default function DevAdmin() {
     const { user, accessToken, others } = useSelector(
         (state: RootState) => state.user
       );
+    const { competitions, totalUsers, documents, accountWallet } = useAppSelector((state)=> state.devadmin);
+    const {niveauxList} = useAppSelector((state)=> state.niveaux);
 
+    const dispatch = useAppDispatch();
+
+    // useFocusEffect(
+    //     useCallback(()=>{
+    //         if(competitions.total === 0 || totalUsers.total === 0 || documents.total === 0 || accountWallet.totalBalance === 0){
+    //             dispatch(getHomeData());
+    //         }
+                
+
+    //         return ()=>{
+    //             dispatch(getAllNiveaux());
+    //             console.log("unmounted")
+    //         }
+    //     }, [])
+    // )
       const statistique: {
         nom: string;
         chiffre: string;
@@ -27,14 +54,14 @@ export default function DevAdmin() {
       }[] = [
         {
           nom: "Examens créés",
-          chiffre: "+" + 200,
+          chiffre: "+"+competitions.total.toString().toLocaleString("fr-FR"),
           icone: <Ionicons name="trophy-outline" size={28} color="#f97316" />,
           bgColor: "bg-orange-100",
           textColor: "text-orange-600",
         },
         {
           nom: "Users inscrits",
-          chiffre: "+2889",
+          chiffre: "+"+totalUsers.total.toString().toLocaleString("fr-FR"),
           icone: <FontAwesome5 name="users" size={25} color="#3b82f6" />,
           bgColor: "bg-blue-100",
           textColor: "text-blue-600",
@@ -47,46 +74,76 @@ export default function DevAdmin() {
       icone: <FontAwesome5 name="users" size={35} color="#181c5c" />,
       text: "Utilisateurs",
       other: "Gérer les utilisateurs inscrits sur la plateforme",
-      link: "../competitions-screen/creation" as const,
+      link: "./users" as const,
       docToApprove: false,
-
+      navigationAction : AdminActions.USERS
     },
     {
       icone: <Ionicons name="trophy-outline" size={28} color="#f97316" />,
       text: "Competitions",
       other: "Gérer les compétitions en cours et passées",
-      link: "../competitions-screen/participation" as const,
-    docToApprove: false,
+      link: "./competitions" as const,
+      docToApprove: false,
+      navigationAction : AdminActions.COMPETITIONS
     },
     {
-        icone: <Ionicons name="trophy-outline" size={28} color="#f97316" />,
+        icone: <Ionicons name="analytics-sharp" size={28} color="#181c5c" />,
         text: "Packages & Niveaux",
         other: "Gérer les packs et niveux",
-        link: "../competitions-screen/participation" as const,
+        link: "./packs-niveaux/" as const,
         docToApprove: false,
+        navigationAction: AdminActions.PACKS_NIVEAUX
       },
       {
-        icone: <Ionicons name="checkmark-done-circle-outline" size={28} color="#f97316" />,
+        icone: <Ionicons name="cash" size={28} color="#f97316" />,
         text: "Finances & comptabilité",
         other: "Gérer les paiements et les transactions",
-        link: "../competitions-screen/participation" as const,
+        link: "./finances" as const,
         docToApprove: false,
+        navigationAction: AdminActions.FINANCES
       },
 
       {
-        icone: <Ionicons name="checkmark-done-circle-outline" size={28} color="#f97316" />,
+        icone: <Ionicons name="documents" size={28} color="#181c5c" />,
         text: "Documents",
         other: "Gérer les documents soumis par les profs",
-        link: "../competitions-screen/participation" as const,
+        link: "./documents" as const,
         docToApprove: true,
+        navigationAction: AdminActions.DOCUMENTS
       },
   ];
 
-    useEffect(() => {
-        console.log("user:", user);
-        console.log("accessToken:", accessToken);
-        console.log("others:", others);
-     })
+   const makeNavigation = (where: AdminActions, link: any)=>{
+    switch(where){
+        case AdminActions.USERS:
+            //TODO: load users data and then navigate...
+            router.push(link);
+            break;
+        case AdminActions.COMPETITIONS:
+            //TODO: load competitions data and then navigate...
+            router.push(link);
+            break;
+        case AdminActions.PACKS_NIVEAUX:
+            router.push(link);
+            break;
+        case AdminActions.FINANCES:
+            //TODO: load finances data and then navigate...
+            router.push(link);
+            break;
+        case AdminActions.DOCUMENTS:
+            //TODO: load document to approve and then navigate...
+            router.push(link);
+            break;
+        default:
+            router.push(link);
+    }
+   }
+
+    // useEffect(() => {
+    //     console.log("competitions", competitions);
+    //     console.log("niveaux", niveauxList);
+
+    //  }, [competitions, totalUsers, documents, accountWallet, niveauxList])
 
      
     return (
@@ -136,7 +193,7 @@ export default function DevAdmin() {
                         Montant encaissé
                     </Text>
                     <Text className={`text-xl font-bold mt-1 text-emerald-600`}>
-                        120000 XAF
+                        {"+"+accountWallet.competition.toString().toLocaleString("fr-FR")+" FCFA"}
                     </Text>
                     </TouchableOpacity>
                 </View>
@@ -151,7 +208,7 @@ export default function DevAdmin() {
                     <TouchableOpacity
                         key={index}
                         className="bg-white rounded-2xl flex-row p-4 mb-3 shadow-sm items-center"
-                        onPress={() => router.push(act.link)}
+                        onPress={() => makeNavigation(act.navigationAction, act.link) }
                     >
                         <View className="bg-blue-50 p-3 rounded-full">{act.icone}</View>
                         <View className="ml-3 flex-1">

@@ -36,7 +36,7 @@ const initialState : DevAdminState = {
 
 const devAdminSlice = createSlice(
     {
-        name: "devAdmin",
+        name: "devadmin",
         initialState,
         reducers: {
             resetState: (state)=>{
