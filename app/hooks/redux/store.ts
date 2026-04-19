@@ -1,6 +1,9 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import subscriptionReducer from "./competitions-suscriptions/subscription.slice";
 import competitionReducer from "./competitions/competitions.slice";
+import niveauReducer from "./niveaux/niveaux.slice";
+import devAdminReducer from "./dev-admin/dev-admin.slice";
+
 import roomReducer from "./rooms/rooms.slice";
 import transactionReducer from "./transactions/transactions.slice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -17,12 +20,23 @@ const rootReducer = combineReducers({
   competitions: competitionReducer,
   subscriptions: subscriptionReducer,
   transactions: transactionReducer,
+  niveaux: niveauReducer,
+  devadmin: devAdminReducer,
   notifications: notificationsReducer,
 });
+
 const persistConfig = {
   key: "root",
   storage: AsyncStorage,
-  blacklist: ['rooms', 'competitions', 'subscriptions', 'transactions', "notifications"]
+  blacklist: [  
+              'rooms', 
+              'competitions', 
+              'subscriptions', 
+              'transactions', 
+              "notifications", 
+              "devadmin", 
+              "niveaux"
+            ],   
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
