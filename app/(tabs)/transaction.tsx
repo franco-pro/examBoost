@@ -51,6 +51,7 @@ export default function Transactions() {
     | "PURCHASE_PACK"
     | "CREATE_COMPETITION"
     | "COMPETITION_FEES"
+    |"COMPETITION_FEES_RECEIVED"
   >("ALL");
 
   const filteredTransactions = (transactionList && transactionList.length >= 0) ? transactionList.filter((tx) =>
@@ -77,6 +78,7 @@ export default function Transactions() {
           "PURCHASE_PACK",
           "CREATE_COMPETITION",
           "COMPETITION_FEES",
+          "COMPETITION_FEES_RECEIVED",
         ]}
         defaultValue="ALL"
         onChange={(value) =>
@@ -87,6 +89,7 @@ export default function Transactions() {
               | "PURCHASE_PACK"
               | "CREATE_COMPETITION"
               | "COMPETITION_FEES"
+              |"COMPETITION_FEES_RECEIVED"
           )
         }
       />
