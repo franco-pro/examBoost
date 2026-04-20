@@ -8,7 +8,7 @@ export default interface DevAdminState {
             upcoming: number;
             ongoing: number;
             past: number;
-            canceled: number;
+            cancelled: number;
             amountGenerated: number;
         };
         totalUsers: {
@@ -27,6 +27,8 @@ export default interface DevAdminState {
             competition: number;
             packs: number;
             userWithdrawals: number;
+            commission: number;
+            usersCurrentBalance: number;
             netBalance: number;
         }
 }

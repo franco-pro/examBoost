@@ -11,7 +11,7 @@ const initialState : DevAdminState = {
         upcoming: 0,
         ongoing: 0,
         past: 0,
-        canceled: 0,
+        cancelled: 0,
         amountGenerated: 0
     },
     totalUsers: {
@@ -30,7 +30,9 @@ const initialState : DevAdminState = {
         competition: 0,
         packs: 0,
         userWithdrawals: 0,
-        netBalance: 0
+        netBalance: 0,
+        commission: 0,
+        usersCurrentBalance: 0,
     }
 }
 
@@ -47,7 +49,7 @@ const devAdminSlice = createSlice(
                     upcoming: 0,
                     ongoing: 0,
                     past: 0,
-                    canceled: 0,
+                    cancelled: 0,
                     amountGenerated: 0
                 };
                 state.totalUsers = {
@@ -66,7 +68,9 @@ const devAdminSlice = createSlice(
                     competition: 0,
                     packs: 0,
                     userWithdrawals: 0,
-                    netBalance: 0
+                    netBalance: 0,
+                    commission: 0,
+                    usersCurrentBalance: 0,
                 }
             },
             setCompetitionInfo: (state, action)=>{

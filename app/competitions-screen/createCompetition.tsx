@@ -33,6 +33,7 @@ import { RootState } from "../hooks/redux/store";
 const { width } = Dimensions.get("window");
 
 export default function CreateCompetitionForm() {
+  //TODO: -add condition, commission for competition where using IA
   const {homeBaseData} = useAppSelector((state)=> state.competitions)
   const { user } = useSelector((state: RootState) => state.user);
 
