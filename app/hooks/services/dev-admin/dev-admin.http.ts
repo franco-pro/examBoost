@@ -3,12 +3,12 @@ import apiClient from "@/app/api/apiClient";
 
 export default function DevAdminHttp(){
 
-    const baseEndpoint = "/dev-admin/"
+    const baseEndpoint = "/dev/"
 
     return {
         getHomeData : async ()=>{
             try {
-                const response = await apiClient.get(baseEndpoint+'home')
+                const response = await apiClient.get(baseEndpoint)
                 return {data: response.data, error: null};
                     
             } catch (error: any) {
