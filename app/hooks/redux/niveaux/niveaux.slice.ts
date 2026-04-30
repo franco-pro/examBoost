@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import NiveauxState from "./niveauxState";
-import { deleteNiveau, getAllNiveaux, updateNiveau } from "./niveaux.thunks";
+import { createNiveau, deleteNiveau, getAllNiveaux, updateNiveau } from "./niveaux.thunks";
 
 
 const initialState :NiveauxState = {
@@ -53,7 +53,8 @@ const niveauxSlice = createSlice({
             })
             .addCase(updateNiveau.fulfilled, (state, action)=>{
                 if(!action.payload.error){
-                    const updatedNiveau = action.payload.data;
+                    const updatedNiveau = {...action.payload.data};
+
                     const index = state.niveauxList.findIndex(niveau => niveau.id === updatedNiveau.id);
                     if(index !== -1){
                         state.niveauxList[index] = updatedNiveau;
@@ -73,6 +74,25 @@ const niveauxSlice = createSlice({
              .addCase(deleteNiveau.pending, (state)=>{
                 state.loading = true;
                 state.error = null
+             })
+
+             .addCase(createNiveau.pending, (state)=>{
+                state.loading = true;
+                state.error = null
+             })
+             .addCase(createNiveau.fulfilled, (state, action)=>{
+                if(!action.payload.error){
+                    state.niveauxList.unshift(action.payload.data);
+                }else{
+                    state.error = action.payload.error
+                }
+        
+                state.loading = false;
+                state.error = null;
+             })
+             .addCase(createNiveau.rejected, (state, action)=>{                state.loading = false;
+                state.error = action.payload as string
+                state.loading = false;
              })
             
     }

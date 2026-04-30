@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import DevAdminHttp from "../../services/dev-admin/dev-admin.http";
+import PacksHttp from "../../services/packs/pack..http";
 
 
 const devAmdinHttp = DevAdminHttp();

@@ -7,12 +7,14 @@ import { useRouter } from 'expo-router';
 import { Alert, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
+import { useAppSelector } from '../hooks/redux/redux.hooks';
 
 export default function SettingsScreen() {
   const router = useRouter();
   const toast = useToast();
   const dispatch = useDispatch<AppDispatch>();
-  const userID = useSelector((s: RootState) => s.session.currentUserId) ?? 42;
+  const {user} = useAppSelector(s => s.user);
+  const userID = user?.id ?? 0;
   const deleteUserMutation = useDeleteUserMutation();
 
   const showToast = (action: 'success' | 'error' | 'info' | 'warning' | 'muted', title: string, desc?: string) =>
@@ -81,8 +83,11 @@ export default function SettingsScreen() {
           <SettingsItem icon="information-circle" label="À propos de ExamBoost" onPress={() => router.push('/settings/about' as any)} />
           <SettingsItem icon="wallet" label="Faire un retrait" onPress={() => router.push('/settings/withdraw' as any)} />
           <SettingsItem icon="key" label="Changer le mot de passe" onPress={() => router.push('/settings/password' as any)} />
-          <SettingsItem icon="key"  label="System Administration" onPress={() => router.push("/dev-admin/pages")} />
-          
+            {
+            user?.role.toLowerCase() == "superadmin" ? (
+              <SettingsItem icon="shield-checkmark" label="Admin Dashboard" onPress={() => router.push("/dev-admin/pages")} />
+            ) : null
+            }          
           <SettingsItem icon="trash" label="Supprimer mon compte" onPress={onDeleteAccount} danger />
         </View>
       </ScrollView>

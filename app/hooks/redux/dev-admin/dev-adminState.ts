@@ -1,8 +1,10 @@
+import { User } from "@/app/features/user/types";
 
 
 export default interface DevAdminState {
         loading: boolean;
         error: any | null;
+        selectedUser: User | null;
         competitions: {
             total: number;
             upcoming: number;

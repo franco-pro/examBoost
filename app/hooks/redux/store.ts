@@ -12,6 +12,8 @@ import userReducer from "./users/users.slice";
 import { persistStore } from "redux-persist";
 import sessionReducer from "./session/session.slice";
 import notificationsReducer from "./notifications/notifications.slice";
+import packsReducer from "./packs/pack.slice";
+import documentsReducer from "./documents/document.slice";
 
 const rootReducer = combineReducers({
   user: userReducer,
@@ -22,6 +24,8 @@ const rootReducer = combineReducers({
   transactions: transactionReducer,
   niveaux: niveauReducer,
   devadmin: devAdminReducer,
+  packs: packsReducer,
+  documents: documentsReducer,
   notifications: notificationsReducer,
 });
 
@@ -35,7 +39,9 @@ const persistConfig = {
               'transactions', 
               "notifications", 
               "devadmin", 
-              "niveaux"
+              "niveaux",
+              "documents",
+              "packs"
             ],   
 };
 

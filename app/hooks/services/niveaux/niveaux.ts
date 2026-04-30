@@ -17,8 +17,7 @@ export default function NiveauHttp(){
         update: async (id: number, data: any)=>{
             try {
                 const response = await apiClient.patch(baseEndpoint+String(id), data);
-                console.log('response on updating:', response);
-                return {data: response.data, error: null};
+                return {data: {id: id, ...data}, error: null};
                     
             } catch (error: any) {
                 return {data: null, error: error.response.data.message};                

@@ -6,6 +6,7 @@ import { getHomeData } from "./dev-admin.thunks"
 const initialState : DevAdminState = {
     loading: false,
     error: null,
+    selectedUser: null,
     competitions: {
         total: 0,
         upcoming: 0,
@@ -88,6 +89,10 @@ const devAdminSlice = createSlice(
                     state.totalUsers = action.payload
                 }
             },
+            setSelectedUser: (state, action)=>{
+                state.selectedUser = action.payload
+            },
+          
             setAccountWalletInfo: (state, action)=>{
                 if(action.payload){
                     state.accountWallet = action.payload
@@ -127,6 +132,7 @@ export const {
     setCompetitionInfo,
     setDocumentsInfo,
     setTotalUsersInfo,
-    setAccountWalletInfo
+    setAccountWalletInfo,
+    setSelectedUser
 } = devAdminSlice.actions;
     

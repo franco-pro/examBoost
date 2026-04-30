@@ -1,43 +1,104 @@
 // screens/UsersScreen.tsx
-import { FlatList, ActivityIndicator, View , Text} from 'react-native';
+import { FlatList, ActivityIndicator, View , Text, TouchableOpacity, TextInput} from 'react-native';
 import { useEffect } from 'react';
 import { useUsers } from '@/app/hooks/users.hook';
 import { UserCard } from '@/app/helper/card/UserCard';
+import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import { useAppDispatch, useAppSelector } from '@/app/hooks/redux/redux.hooks';
+import { setSelectedUser } from '@/app/hooks/redux/dev-admin/dev-admin.slice';
 
-export function UsersScreen() {
-  const { users, loading, hasMore, fetchUsers } = useUsers();
-
+export default function Users() {
+  const { users, loading, total, hasMore, fetchUsers } = useUsers();
+  const {accountWallet} = useAppSelector((state)=> state.devadmin);
+  console.log("user current wallet", accountWallet.usersCurrentBalance)
   // Chargement initial
   useEffect(() => { fetchUsers(); }, []);
+  const dispatch = useAppDispatch();
+
+  function goToUserDetails(userId: number) {
+    const user = users.find(u => u.id === userId);
+    if(user){
+      dispatch(setSelectedUser(user));
+      router.push({
+        pathname: './usersDetails',
+        params: { id: userId },
+      });
+    }// when the user is set in the store, the details page will read it and display it
+  }
 
   return (
-    <FlatList
-      data={users}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => <UserCard user={item} />}
+    <View className='flex-1 bg-gray-50 pt-[40px] pb-[50px] px-4'>
+      
+      <TouchableOpacity
+        className="flex-row items-center mb-4"
+        onPress={() => router.back()}
+      >
+        <Ionicons name="arrow-back" size={24} color="#181c5c" />
+        <Text className="ml-2 text-lg font-semibold text-gray-800">Retour</Text>
+      </TouchableOpacity>
 
-      onEndReachedThreshold={0.2}
-      onEndReached={() => {
-        if (!loading && hasMore) fetchUsers();
-      }}
+       <View className="my-4 flex-row items-center bg-gray-100 rounded-full px-4 py-2">
+              <Ionicons name="search" size={20} color="#9ca3af" className="mr-2" />
+              <TextInput
+                placeholder="Rechercher un user"
+                className="flex-1 text-gray-700 p-2 border-0"
+                underlineColorAndroid="transparent"
+                style={{
+                  outlineWidth: 0, // supprime le contour au focus
+                }}
+                // TODO onFocus={onfocus}
+                // TODO: onEndEditing={onLoss}
+                //TODO:  onChangeText={(val: string)=> doSearch(val)}
+              />
+        </View>
+      
+      <View className="bg-white p-4 rounded-2xl mb-4 ">
+        <Text className="text-lg font-semibold">Total Chargé</Text>
+        <Text className="text-gray-500 mt-1">
+           {users.length} / {total} utilisateurs 
+        </Text>
+      </View>
+      <View className="bg-white p-4 rounded-2xl mb-4 ">
+        <Text className="text-lg font-semibold">Total Solde</Text>
+        <Text className="text-gray-500 mt-1">
+           {
+              users.reduce((acc, user) => acc + Number(user.wallet), 0).toLocaleString("fr-FR") + " FCFA"
+           }
+        </Text>
+      </View>
 
-      // Spinner en bas de liste
-      ListFooterComponent={
-        loading ? (
-          <View className="py-6 items-center">
-            <ActivityIndicator size="small" />
-          </View>
-        ) : null
-      }
+      <View>
+        <FlatList
+          data={users}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => <UserCard user={item} onPress={() => goToUserDetails(item.id)} />}
+          className='w-full'
+          
+          onEndReachedThreshold={0.2}
+          onEndReached={() => {
+            if (!loading && hasMore) fetchUsers();
+          }}
 
-      // Message si liste vide
-      ListEmptyComponent={
-        !loading ? (
-          <Text className="text-center text-gray-400 mt-20">
-            Aucun utilisateur
-          </Text>
-        ) : null
-      }
-    />
+          // Spinner en bas de liste
+          ListFooterComponent={
+            loading ? (
+              <View className="py-6 items-center">
+                <ActivityIndicator size="small" />
+              </View>
+            ) : null
+          }
+
+          // Message si liste vide
+          ListEmptyComponent={
+            !loading ? (
+              <Text className="text-center text-gray-400 mt-20">
+                Aucun utilisateur
+              </Text>
+            ) : null
+          }
+        />
+        </View>
+    </View>
   );
 }

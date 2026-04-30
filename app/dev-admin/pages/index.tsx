@@ -74,7 +74,7 @@ export default function DevAdmin() {
       icone: <FontAwesome5 name="users" size={35} color="#181c5c" />,
       text: "Utilisateurs",
       other: "Gérer les utilisateurs inscrits sur la plateforme",
-      link: "./users" as const,
+      link: "/dev-admin/pages/users" as const,
       docToApprove: false,
       navigationAction : AdminActions.USERS
     },
@@ -82,7 +82,7 @@ export default function DevAdmin() {
       icone: <Ionicons name="trophy-outline" size={28} color="#f97316" />,
       text: "Competitions",
       other: "Gérer les compétitions en cours et passées",
-      link: "./competitions" as const,
+      link: "/dev-admin/pages/competitions" as const,
       docToApprove: false,
       navigationAction : AdminActions.COMPETITIONS
     },
@@ -90,7 +90,7 @@ export default function DevAdmin() {
         icone: <Ionicons name="analytics-sharp" size={28} color="#181c5c" />,
         text: "Packages & Niveaux",
         other: "Gérer les packs et niveux",
-        link: "./packs-niveaux/" as const,
+        link: "/dev-admin/pages/packs-niveaux/" as const,
         docToApprove: false,
         navigationAction: AdminActions.PACKS_NIVEAUX
       },
@@ -98,7 +98,7 @@ export default function DevAdmin() {
         icone: <Ionicons name="cash" size={28} color="#f97316" />,
         text: "Finances & comptabilité",
         other: "Gérer les paiements et les transactions",
-        link: "./finances" as const,
+        link: "/dev-admin/pages/finances" as const,
         docToApprove: false,
         navigationAction: AdminActions.FINANCES
       },
@@ -107,7 +107,7 @@ export default function DevAdmin() {
         icone: <Ionicons name="documents" size={28} color="#181c5c" />,
         text: "Documents",
         other: "Gérer les documents soumis par les profs",
-        link: "./documents" as const,
+        link: "/dev-admin/pages/documents" as const,
         docToApprove: true,
         navigationAction: AdminActions.DOCUMENTS
       },
