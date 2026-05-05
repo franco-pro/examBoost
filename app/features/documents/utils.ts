@@ -10,6 +10,8 @@ export type DocumentRow = {
   niveauID: number;
   created_at: string;
   updated_at: string;
+  type?: string;
+  correctionId?: string
 };
 
 // Temporaire: dataset mock aligné avec l'exemple fourni
@@ -68,15 +70,16 @@ export function getDistinct<T extends keyof DocumentRow>(docs: DocumentRow[], ke
 }
 
 export type FilterParams = {
-  name: string; // matière
+  type: string; // matière
   subject?: string;
   niveauID?: number;
+
 };
 
 export function filterDocuments(docs: DocumentRow[], params: FilterParams) {
-  const { name, subject, niveauID } = params;
+  const { type, subject, niveauID } = params;
   return docs.filter((d) =>
-    d.name === name && (subject ? d.subject === subject : true) && (niveauID ? d.niveauID === niveauID : true)
+    d.type === type && (subject ? d.subject === subject : true) && (niveauID ? d.niveauID === niveauID : true)
   );
 }
 

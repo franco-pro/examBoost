@@ -1,5 +1,6 @@
 import { toAbsoluteUrl } from '@/app/config/env';
 import { getHttpErrorMessage, http } from '@/app/lib/http';
+import apiClient from '@/app/api/apiClient';
 
 export type PackAccessDTO = {
   isSubscribed: boolean;
@@ -38,13 +39,34 @@ export type DocumentDTO = {
   niveauID: number;
   created_at: string;
   updated_at: string;
+  type: string;
+  correctionId: string;
+  document?: object;
+  correction?: object;
 };
 
-export async function fetchPackDocumentsHttp(params: { userID: number; packID: number }): Promise<DocumentDTO[]> {
+export async function fetchPackDocumentsHttp(params: { userID: number }): Promise<DocumentDTO[]> {
   try {
-    const res = await http.get(`/pack/${params.packID}/documents`, { params: { userID: params.userID } });
-    const docs = (res.data?.document ?? []) as DocumentDTO[];
-    return docs.map((d) => ({ ...d, url: toAbsoluteUrl(d.url) }));
+    // const res = await http.get(`/document/user/${params.userID}`, { params: { userID: params.userID } });
+    const res = await apiClient.get(`document/user/${params.userID}`)
+    const docs = res.data as DocumentDTO[];
+    const safeDocs = Array.isArray(docs)? docs : [docs]
+    const result = safeDocs.map((d) => ({ ...d, url: (d.url) }));
+    // console.log("result datas in api: ", result, "res dans api:", res.data);
+    return result
+  } catch (e: any) {
+    throw new Error(getHttpErrorMessage(e));
+  }
+}
+export async function getDocumentsAndCorrectionHttp(params: { documentId: number }): Promise<DocumentDTO[]> {
+  try {
+    // const res = await http.get(`/document/user/${params.userID}`, { params: { userID: params.userID } });
+    const res = await apiClient.get(`document/${params.documentId}`)
+    const docs = res.data as DocumentDTO[];
+    const safeDocs = Array.isArray(docs)? docs : [docs]
+    const result = safeDocs.map((d) => ({ ...d, url: (d.url) }));
+    // console.log("result datas in api: ", result, "res dans api:", res.data);
+    return result
   } catch (e: any) {
     throw new Error(getHttpErrorMessage(e));
   }

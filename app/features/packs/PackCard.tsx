@@ -22,7 +22,7 @@ export default memo(function PackCard({
 
   return (
     <Pressable
-      onPress={onPress}
+      onPress={()=>onPress}
       className="rounded-2xl overflow-hidden bg-background-light dark:bg-background-dark border border-outline-100 dark:border-outline-800 transition-all duration-150 web:hover:-translate-y-0.5 active:opacity-95"
       accessibilityRole="button"
       accessibilityLabel={`Pack ${name}`}
@@ -46,9 +46,9 @@ export default memo(function PackCard({
               <Text className="text-white text-xxs font-bold">{canBuy ? 'Disponible' : 'Indisponible'}</Text>
             </View>
           ) : null}
-          <View className={`px-2 py-0.5 rounded-md ${canContinue ? 'bg-success-500' : 'bg-warning-500/90'}`}>
+          {/* <View className={`px-2 py-0.5 rounded-md ${canContinue ? 'bg-success-500' : 'bg-warning-500/90'}`}>
             <Text className="text-white text-xxs font-bold">{canContinue ? 'Payé' : 'Non payé'}</Text>
-          </View>
+          </View> */}
           {isNewSince(createdAt) ? (
             <View className="px-2 py-0.5 rounded-md bg-info-500">
               <Text className="text-white text-xxs font-bold">Nouveau</Text>

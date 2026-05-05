@@ -9,12 +9,12 @@ import {
 import { RootState } from "../store";
 
 interface User {
-  id: any;
+  id: number;
   username: string;
   surname: string;
   phone: string;
   email: string;
-  niveau: string;
+  niveauID: string;
   wallet: string;
   role: string;
   imgUrl: string;
@@ -106,9 +106,11 @@ export const userDatas = createAsyncThunk(
       return datas;
     } catch (err: any) {
       const state: RootState = getState() as RootState;
-      console.log("❌ userDatas thunk error:", err);
+      if (err.response?.status === 401) {
+        return rejectWithValue("UNAUTHORIZED")
+      }
       return rejectWithValue(
-        err.response?.data?.message || err?.message || "Une erreur est survenue"
+        err.response?.data?.message || err?.message || "Une erreur est survenue",
       );
     }
   }
@@ -177,7 +179,20 @@ export const userSlice = createSlice({
       .addCase(userDatas.fulfilled, (state, action) => {
         state.user = action.payload.user;
         state.others = action.payload.infos
-      });
+      })
+    
+    //redirect login page
+      .addCase(userDatas.rejected, (state, action) => {
+        state.loading = false
+        
+        if (action.payload === "UNAUTHORIZED") {
+          state.user = null,
+            state.accessToken = null
+          state.error = "Session expire"
+        } else {
+          state.error = action.payload as string
+        }
+    })
   },
 });
 

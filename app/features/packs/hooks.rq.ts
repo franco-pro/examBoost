@@ -2,7 +2,7 @@ import { queryKeys } from '@/app/lib/queryKeys';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { DocumentRow } from '../documents/utils';
 import type { User } from '../user/types';
-import { fetchPackDocumentsHttp, fetchPacksHttp, purchasePackHttp } from './api.http';
+import { fetchPackDocumentsHttp, fetchPacksHttp, getDocumentsAndCorrectionHttp, purchasePackHttp } from './api.http';
 import type { Pack } from './types';
 
 const toPackUi = (dto: any): Pack => {
@@ -85,13 +85,15 @@ export function usePurchasePackMutation() {
   });
 }
 
-export function usePackDocumentsQuery(userID?: number, packID?: number) {
+export function usePackDocumentsQuery(userID?: number) {
   return useQuery({
-    queryKey: userID && packID ? queryKeys.packDocuments(userID, packID) : ['packDocuments', 'none'],
-    queryFn: async () => {
-      if (!userID || !packID) throw new Error('Paramètres manquants');
-      const docs = await fetchPackDocumentsHttp({ userID, packID });
-      const rows: DocumentRow[] = docs.map((d) => ({
+    queryKey: ['packDocuments', userID],
+    queryFn: async ({ queryKey }) => {
+      const [,id] = queryKey as [string,number]
+      if (!userID ) throw new Error('Paramètres manquants');
+      const docs = await fetchPackDocumentsHttp({ userID:id });
+      const safeDatas = Array.isArray(docs) ? docs : [docs]
+      const rows: DocumentRow[] =  safeDatas.map((d) => ({
         id: d.id,
         name: d.name,
         format: d.format,
@@ -101,9 +103,26 @@ export function usePackDocumentsQuery(userID?: number, packID?: number) {
         niveauID: d.niveauID,
         created_at: d.created_at,
         updated_at: d.updated_at,
-      }));
+        type: d.type,
+      })) 
+
       return rows;
     },
-    enabled: !!userID && !!packID,
+    enabled: !!userID
+  });
+}
+
+export function useDocumentAndCorrection(documentId?: number) {
+  return useQuery({
+    queryKey: ["documents", documentId],
+    queryFn: async ({ queryKey }) => {
+      const [, id] = queryKey as [string, number];
+      if (!documentId) throw new Error("Paramètres manquants");
+      const docs = await getDocumentsAndCorrectionHttp({ documentId: id });
+      // const safeDatas = Array.isArray(docs) ? docs : [docs];
+// console.log("datas dans getdocument:", docs)
+      return docs;
+    },
+    enabled: !!documentId,
   });
 }

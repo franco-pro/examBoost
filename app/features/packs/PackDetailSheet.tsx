@@ -3,18 +3,19 @@ import { View, Text, Pressable } from 'react-native';
 import { Image } from 'expo-image';
 import type { Pack } from './types';
 import { Ionicons } from '@expo/vector-icons';
+import { packProps } from '@/app/api/packService';
 
 export default memo(function PackDetailSheet({
   pack,
   onClose,
   onPrimary,
 }: {
-  pack: Pack | null;
+  pack: packProps | null;
   onClose?: () => void;
   onPrimary?: (p: Pack) => void;
 }) {
   if (!pack) return null;
-  const { title, description, coverUrl, isSubscribed, modulesCount, estimatedTimeMin, rating, price, oldPrice } = pack;
+  const { name, description, coverUrl, price } = pack;
   return (
     <View className="flex-1 rounded-t-2xl bg-background-light dark:bg-background-dark p-4">
       <View className="flex-row items-start gap-3">
@@ -27,21 +28,21 @@ export default memo(function PackDetailSheet({
         )}
         <View className="flex-1">
           <Text className="text-base font-extrabold text-typography-default dark:text-typography-white" numberOfLines={2}>
-            {title}
+            {name}
           </Text>
           <View className="mt-1 flex-row items-center gap-3">
-            {typeof rating === 'number' && (
+            {/* {typeof rating === 'number' && (
               <View className="flex-row items-center gap-1">
                 <Ionicons name="star" size={14} color="#f59e0b" />
                 <Text className="text-xs text-typography-default dark:text-typography-white">{rating.toFixed(1)}</Text>
               </View>
-            )}
-            {typeof modulesCount === 'number' && (
+            )} */}
+            {/* {typeof modulesCount === 'number' && (
               <Text className="text-xs text-typography-gray">{modulesCount} modules</Text>
-            )}
-            {typeof estimatedTimeMin === 'number' && (
+            )} */}
+            {/* {typeof estimatedTimeMin === 'number' && (
               <Text className="text-xs text-typography-gray">~{Math.round(estimatedTimeMin / 60)}h</Text>
-            )}
+            )} */}
           </View>
         </View>
         <Pressable onPress={onClose} className="-mr-2 -mt-2 p-2 rounded-full active:opacity-80">
@@ -55,20 +56,20 @@ export default memo(function PackDetailSheet({
         {price != null && (
           <Text className="text-base font-bold text-typography-default dark:text-typography-white">{price}€</Text>
         )}
-        {oldPrice != null && (
+        {/* {oldPrice != null && (
           <Text className="text-xs line-through text-typography-gray">{oldPrice}€</Text>
-        )}
+        )} */}
       </View>
 
       <View className="mt-6 flex-row items-center gap-3">
-        <Pressable
+        {/* <Pressable
           onPress={() => pack && onPrimary?.(pack)}
           className="px-4 py-2 rounded-md bg-primary-500 active:opacity-90"
           accessibilityRole="button"
           accessibilityLabel={isSubscribed ? 'Continuer le pack' : 'Acheter le pack'}
         >
           <Text className="font-extrabold" style={{ color: '#181c5c' }}>{isSubscribed ? 'Continuer' : 'Acheter maintenant'}</Text>
-        </Pressable>
+        </Pressable> */}
       </View>
     </View>
   );

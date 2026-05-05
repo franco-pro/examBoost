@@ -17,7 +17,7 @@ export default function SubjectsPage() {
   console.log("current user id: ", currentUserId)
   const packID = useMemo(() => Number(packId), [packId]);
 
-  const docsQuery = usePackDocumentsQuery(currentUserId ?? undefined, Number.isNaN(packID) ? undefined : packID);
+  const docsQuery = usePackDocumentsQuery(currentUserId ?? undefined);
   const docs = docsQuery.data ?? [];
   const loading = docsQuery.isLoading;
 

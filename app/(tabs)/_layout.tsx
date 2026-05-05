@@ -5,9 +5,20 @@ import { useTranslation } from "react-i18next";
 import AppLayout from "../styles/AppLayout";
 import LogoHeaderComponent from "@/components/personalizedComponents/logoApplication";
 import RightBtn from "@/components/personalizedComponents/rightBtn";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../hooks/redux/store";
+import { useRouter } from "expo-router";
 
 export default function RootLayout() {
-  const {t} = useTranslation("competition")
+  const navigation = useRouter();
+  const { t } = useTranslation("competition");
+  const user = useSelector((state: RootState) => state.user.user);
+  useEffect(() => {
+    if (!user) {
+      navigation.replace("/login");
+    }
+  }, [user]);
   return (
     <AppLayout>
       {/* <LanguageSwitcher /> */}
@@ -56,6 +67,21 @@ export default function RootLayout() {
             ),
           }}
         />
+        {user?.role === "ADMIN" && (
+          <Tabs.Screen
+            name="enseignant"
+            options={{
+              title: t("accueil.navigationBottom.teacher"),
+              tabBarIcon: ({ focused, color }) => (
+                <Ionicons
+                  name={focused ? "book" : "book-outline"}
+                  color={color}
+                  size={24}
+                />
+              ),
+            }}
+          />
+        )}
 
         <Tabs.Screen
           name="pack"

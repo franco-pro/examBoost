@@ -38,6 +38,8 @@ export default function Index() {
   useEffect(() => {
     if (accessToken) {
       dispatch(userDatas()); //to work
+    } else {
+      logout()
     }
   }, [accessToken,dispatch]);
 

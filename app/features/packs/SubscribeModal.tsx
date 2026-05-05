@@ -3,6 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useMemo, useState } from 'react';
 import { Modal, Platform, Pressable, Text, View } from 'react-native';
 import type { Pack } from './types';
+import { packProps } from '@/app/api/packService';
 
 export default function SubscribeModal({
   visible,
@@ -13,7 +14,7 @@ export default function SubscribeModal({
   onRecharge,
 }: {
   visible: boolean;
-  pack: Pack | null;
+  pack: packProps | null;
   onCancel: () => void;
   onConfirm: (payload: { accept: boolean }) => void;
   userWallet?: number;
@@ -63,7 +64,7 @@ export default function SubscribeModal({
                 </View>
                 <View className="flex-1">
                   <Text className="text-base font-extrabold text-typography-default dark:text-typography-white" numberOfLines={2}>
-                    {pack.title}
+                    {pack.name}
                   </Text>
                   {pack.durationDays != null ? (
                     <Text className="text-xxs text-typography-gray">Durée {pack.durationDays} jours{expiredAt ? ` · jusqu'au ${expiredAt}` : ''}</Text>

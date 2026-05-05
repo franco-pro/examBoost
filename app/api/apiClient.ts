@@ -2,11 +2,8 @@ import axios from "axios";
 import { API_URL } from "../config/env";
 import { getItem, setItem } from "../utils/asyncStorage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { store } from "../redux/store";
-import { logout } from "../hooks/redux/users/users.slice";
-import { useRouter } from "expo-router";
 
-const apiClient = axios.create({
+export const apiClient = axios.create({
   baseURL: API_URL || "http://192.168.1.101:3000",
   timeout: 10000,
   headers: {

@@ -27,14 +27,18 @@ import { Text, View } from "react-native";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { packProps, packService } from "../api/packService";
+import { store } from "@/app/hooks/redux/store";
 
 const CURRENT_USER_ID = 42;
+const state = store.getState();
+const niveauID = state.user.user?.niveauID;
+// const niveauID = 2;
 
 export default function PackScreen() {
   const [search, setSearch] = useState("");
   const toast = useToast();
   const modalRef = useRef<BottomSheetModal>(null);
-  const [selected, setSelected] = useState<Pack | null>(null);
+  const [selected, setSelected] = useState<packProps | null>(null);
   const [subscribeOpen, setSubscribeOpen] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch();
@@ -42,11 +46,11 @@ export default function PackScreen() {
     (s: RootState) => s.session.currentUserId ?? CURRENT_USER_ID,
   );
 
-  useEffect(() => {
-    dispatch(setCurrentUserId(CURRENT_USER_ID));
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(setCurrentUserId(CURRENT_USER_ID));
+  // }, [dispatch]);
 
-  const packsQuery = packService.allPacks();
+  const packsQuery = packService.getAllPackByOneUser();
   const purchasePackMutation = usePurchasePackMutation();
   const userQuery = useUser(currentUserId ?? undefined);
   const currentUserWallet = userQuery.data?.wallet;
@@ -130,23 +134,26 @@ export default function PackScreen() {
             //     setSubscribeOpen(true);
             //   }
             // }}
-            // onPressCTA={(p) => {
-            //   void Haptics.selectionAsync();
-            //   if (p.isSubscribed) {
-            //     router.push({
-            //       pathname: "/(tabs)/packs/[packId]/subjects",
-            //       params: {
-            //         packId: p.id,
-            //         ...(p.niveauID != null
-            //           ? { niveauID: String(p.niveauID) }
-            //           : {}),
-            //       },
-            //     } as any);
-            //   } else {
-            //     setSelected(p);
-            //     setSubscribeOpen(true);
-            //   }
-            // }}
+            onPressCTA={(p) => {
+              void Haptics.selectionAsync();
+              if (p.isActive) {
+                console.log("niveau id in pack :", niveauID)
+                console.log("state in pack: ", state);
+                router.push({
+                  pathname: "/(packs)/[packId]/subjects/[name]",
+                  params: {
+                    packId: p.id,
+                    name: p.name,
+                    ...(niveauID != null ? { niveauID: String(niveauID) } : {}),
+                    type: p.type,
+                    categorie: p.categorie
+                  },
+                } as any);
+              } else {
+                setSelected(p);
+                setSubscribeOpen(true);
+              }
+            }}
           />
         )}
 
@@ -197,8 +204,8 @@ export default function PackScreen() {
                 pathname: "/(tabs)/packs/[packId]/subjects",
                 params: {
                   packId: String(packID),
-                  ...(selected.niveauID != null
-                    ? { niveauID: String(selected.niveauID) }
+                  ...(niveauID != null
+                    ? { niveauID: String(niveauID) }
                     : {}),
                 },
               } as any);
@@ -209,7 +216,7 @@ export default function PackScreen() {
                 render: () => (
                   <Toast action="success" variant="solid" className="mx-3">
                     <ToastTitle bold>Achat confirmé</ToastTitle>
-                    <ToastDescription>{selected?.title}</ToastDescription>
+                    <ToastDescription>{selected?.name}</ToastDescription>
                   </Toast>
                 ),
               });

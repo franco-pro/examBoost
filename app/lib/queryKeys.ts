@@ -3,7 +3,8 @@ export const queryKeys = {
   users: () => ['users'] as const,
 
   packs: (userID: number) => ['packs', { userID }] as const,
-  packDocuments: (userID: number, packID: number) => ['packDocuments', { userID, packID }] as const,
+  packDocuments: (userID: number) => ['packDocuments', { userID }] as const,
+  Documents: (documentId: number) => ['documents', { documentId }] as const,
 
   notifications: (userID: number) => ['notifications', { userID }] as const,
 } as const;
