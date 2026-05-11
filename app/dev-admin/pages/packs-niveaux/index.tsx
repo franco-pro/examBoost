@@ -30,9 +30,9 @@ export default function PacksNiveau(){
         function makeNavigation(where: "packs" | "niveaux"){
             switch(where){
                 case "packs":
-                    return router.replace("/dev-admin/pages/packs-niveaux/packs");
+                    return router.push("/dev-admin/pages/packs-niveaux/packs");
                 case "niveaux":
-                    return router.replace("/dev-admin/pages/packs-niveaux/niveaux");
+                    return router.push("/dev-admin/pages/packs-niveaux/niveaux");
             }
         }
 

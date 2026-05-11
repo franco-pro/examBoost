@@ -88,3 +88,20 @@ export const deleteAllNotifications = createAsyncThunk(
         }
     }
 )
+
+export const getAdminNotification = createAsyncThunk(
+    'notification/getAdmin',
+    async (_, {rejectWithValue}) => {
+        try {
+            const data = await Notification.getAdminNotifications();
+            return data;
+        } catch (error: any) {
+            console.log('error on loading:', error.message);
+
+            return rejectWithValue({
+                status: error.response?.status ?? 500,
+                message: error.response.data?.message ?? "Erreur lors du chargement..."
+            })
+        }
+    }
+)

@@ -48,8 +48,8 @@ const packSlice = createSlice({
             state.error = null;
         })
         .addCase(createPack.fulfilled, (state, action)=>{
-            if(!action.payload.error){
-                state.packs.unshift(action.payload.data);
+            if(!action?.payload?.error){
+                state.packs.unshift(action?.payload?.data);
             }else{
                 state.error = action.payload.error
             }

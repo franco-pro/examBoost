@@ -212,10 +212,10 @@ export default function NotificationsScreen() {
   const router = useRouter();
   const unreadCount = useMemo(() => (data?.filter((n: any) => !n.isRead).length ?? 0), [data]);
 
-  useEffect(() => {
-    // Dynamically update the tab badge for the Notifications tab
-    navigation.setOptions({ tabBarBadge: unreadCount > 0 ? unreadCount : undefined });
-  }, [navigation, unreadCount]);
+  // useEffect(() => {
+  //   // Dynamically update the tab badge for the Notifications tab
+  //   navigation.setOptions({ tabBarBadge: unreadCount > 0 ? unreadCount : undefined });
+  // }, [navigation, unreadCount]);
 
   const toast = useToast();
 
@@ -223,10 +223,10 @@ export default function NotificationsScreen() {
   const modalRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ['45%', '85%'], []);
 
-  const openDetails = useCallback((n: Notification) => {
-    setSelected(n);
-    modalRef.current?.present();
-  }, []);
+  // const openDetails = useCallback((n: Notification) => {
+  //   setSelected(n);
+  //   modalRef.current?.present();
+  // }, []);
 
   const closeDetails = useCallback(() => {
     modalRef.current?.dismiss();
@@ -253,31 +253,6 @@ export default function NotificationsScreen() {
     [toast]
   );
 
-  const handleOpenDetails = useCallback(async (id?: number, url?: string, actionType?: string) => {
-    setBtnActionType(actionType === "acceptInvit" ? "acceptInvit" : "openDetails");
-    if (!url && id){
-      showToast('info', 'Search, please wait…');
-      // loadCompetitionDetails(id)
-    }else {
-      await Haptics.selectionAsync();
-      await WebBrowser.openBrowserAsync(url??"");
-    }
-  }, [showToast]);
-
-  const handleAcceptInvitation = useCallback(async (id: number) => {
-    setBtnActionType("acceptInvit");
-    showToast('info', 'Acceptation de l\'invitation…');
-    // Implémenter l'acceptation de l'invitation
-  }, [showToast]);
-
-  const handleOpenCompetition = useCallback(async (actionType: string) => {
-    setBtnActionType(actionType === "acceptInvit" ? "acceptInvit" : "joinRoom");
-    await Haptics.selectionAsync();
-
-    showToast('info', 'Ouverture…');
-    // Utiliser le chemin Expo Router pour éviter l'erreur de typage
-    router.push('/(tabs)/competition');
-  }, [router, showToast]);
 
   const renderItem = useCallback(({ item }: { item: Notification }) => (
     <NotificationSwipeableItem
@@ -287,13 +262,13 @@ export default function NotificationsScreen() {
       }
       onPress={() => {
         markAsRead(item.id);
-        openDetails(item.isRead ? item : { ...item, isRead: true });
+        // openDetails(item.isRead ? item : { ...item, isRead: true });
       }}
       onOpenLink={() => loadCompetitionDetails(item.competionID, "joinRoom")}
       onOpenDetails={() => loadCompetitionDetails(item.competionID, "openDetails")}
       onAcceptInvitation={() => loadCompetitionDetails(item.competionID, "acceptInvit")}
     />
-  ), [openDetails, showToast]);
+  ), [showToast]);
 
   const keyExtractor = useCallback((n: Notification) => n.id, []);
 

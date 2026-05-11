@@ -16,9 +16,9 @@ export default function RootLayout() {
           animation: "fade",
           tabBarActiveTintColor: "#ff894f",
           headerStyle: {
-            backgroundColor: "#E8F5FA",
+            backgroundColor: "#FFFFFF",
           },
-          headerShadowVisible: true,
+          headerShadowVisible: false,
           tabBarInactiveTintColor: "#FFFFFF",
           headerTintColor: "#000",
           headerTransparent: false,
@@ -78,6 +78,21 @@ export default function RootLayout() {
             tabBarIcon: ({ focused, color }) => (
               <Ionicons
                 name={focused ? "trophy" : "trophy-outline"}
+                color={color}
+                size={24}
+              />
+            ),
+          }}
+        />
+
+        <Tabs.Screen
+          name="notifications"
+          options={{
+            title: "Notifications",
+            tabBarBadge: 10,
+            tabBarIcon: ({ focused, color }) => (
+              <Ionicons
+                name={focused ? "notifications" : "notifications-outline"}
                 color={color}
                 size={24}
               />

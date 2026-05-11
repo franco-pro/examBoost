@@ -37,6 +37,48 @@ export const authService = {
     }
   },
 
+  search: async(payload: {query: string, page: number, limit: number})=>{
+      try {
+          const response = await apiClient.get("/users/admin/search?data="+payload.query+"&page="+payload.page+"&limit="+payload.limit);
+          return response.data;
+      } catch (error: any) {
+          console.log(" Erreur pendant search dans authService:", error);
+          throw (
+            error?.response?.data || error || {
+              message: "Une erreur est survenue lors de la recherche",
+            }
+          );
+      } 
+  },
+
+  deleteUser : async(id: number) => {
+    try {
+        const response = await apiClient.delete("/users/"+id);
+        return response.data;
+    } catch (error: any) {
+        console.log(" Erreur pendant delete dans authService:", error);
+        throw (
+          error?.response?.data || error || {
+            message: "Une erreur est survenue lors de la suppression",
+          }
+        );
+    }
+  },
+
+  updateRole: async (data: {id: number, role: string}) => {
+    try {
+        const response = await apiClient.put("/users/"+data.id, {role: data.role});
+        return response.data;
+    }catch(error: any){
+        console.log(" Erreur pendant updateRole dans authService:", error);
+        throw (
+          error?.response?.data || error || {
+            message: "Une erreur est survenue lors de la mise à jour du rôle",
+          }
+        );
+    }
+  },
+
   login: async (payload: loginProps) => {
     const response = await apiClient.post("/auth/login", payload);
     return response.data;

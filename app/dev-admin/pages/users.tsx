@@ -1,6 +1,6 @@
 // screens/UsersScreen.tsx
 import { FlatList, ActivityIndicator, View , Text, TouchableOpacity, TextInput} from 'react-native';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useUsers } from '@/app/hooks/users.hook';
 import { UserCard } from '@/app/helper/card/UserCard';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,8 +9,10 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks/redux/redux.hooks';
 import { setSelectedUser } from '@/app/hooks/redux/dev-admin/dev-admin.slice';
 
 export default function Users() {
-  const { users, loading, total, hasMore, fetchUsers } = useUsers();
+  const { users, loading, total, hasMore, fetchUsers, searchUsers } = useUsers();
   const {accountWallet} = useAppSelector((state)=> state.devadmin);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   console.log("user current wallet", accountWallet.usersCurrentBalance)
   // Chargement initial
   useEffect(() => { fetchUsers(); }, []);
@@ -25,6 +27,28 @@ export default function Users() {
         params: { id: userId },
       });
     }// when the user is set in the store, the details page will read it and display it
+  }
+
+  useEffect(()=>{
+      return () => {
+        if (debounceRef.current) clearTimeout(debounceRef.current);
+      };
+  }, [])
+
+  function doSearch(query: string){
+      if(query.length < 3) return;
+      // debounce search to avoid too many requests
+      if(debounceRef.current) clearTimeout(debounceRef.current);
+
+      debounceRef.current = setTimeout(() => {
+        searchUsers(query);
+      }, 500);
+  }
+
+  function onFocusLoss(){
+    if(debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = null;
+    fetchUsers();
   }
 
   return (
@@ -47,9 +71,9 @@ export default function Users() {
                 style={{
                   outlineWidth: 0, // supprime le contour au focus
                 }}
-                // TODO onFocus={onfocus}
-                // TODO: onEndEditing={onLoss}
-                //TODO:  onChangeText={(val: string)=> doSearch(val)}
+                // onFocus={onfocus}
+                onEndEditing={onFocusLoss}
+                onChangeText={(val: string)=> doSearch(val)}
               />
         </View>
       

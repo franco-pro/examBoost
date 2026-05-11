@@ -27,7 +27,6 @@ const TYPE_CONFIG: Record<
   EVALUATION:         { color: "#880E4F", bg: "#FCE4EC", label: "EV" },
 };
 
-// ─── PackCard Component ───────────────────────────────────────────────────────
 interface PackCardProps {
   pack: Pack;
 }

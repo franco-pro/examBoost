@@ -2,7 +2,7 @@ import apiClient from "@/app/api/apiClient"
 
 
 export default function DocumentHttp(){
-    const baseUrl = '/documents/';
+    const baseUrl = '/document/';
 
     return {
         getDocs: async ()=>{

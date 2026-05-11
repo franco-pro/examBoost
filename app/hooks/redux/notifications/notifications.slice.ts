@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { deleteAllNotifications, deleteNotification, getNotification, loadAllNotification, setAsRead } from './notification.thunks';
+import { deleteAllNotifications, deleteNotification, getAdminNotification, getNotification, loadAllNotification, setAsRead } from './notification.thunks';
 
 // Interface pour les notifications
 export interface Notification {
   id: number;
   title: string;
   text: string;
-  type: 'INVITATION' | 'ADMIN_ALERT' | 'SYSTEM' | 'INVITATION_ACCEPTED' | 'INVITATION_DECLINED' | 'COMPETITION_START';
+  type: 'INVITATION' | 'ADMIN_ALERT' | 'SYSTEM' | 'INVITATION_ACCEPTED' | 'INVITATION_DECLINED' | 'COMPETITION_START'|'COMPETITION_CREATED';
   isRead: boolean;
   senderID?: number;
   receiverID: number;
@@ -14,9 +14,25 @@ export interface Notification {
   competionID?: number;
 }
 
+export interface NotificationAdmin {
+  id: number;
+  title: string;
+  text: string;
+  sendMode: string;
+  users: {
+    id: number;
+    username: string;
+    surname: string;
+    imgUrl: string,
+    phone: any,
+    }[];
+  created_at: Date;
+}
+
 // État du slice de notifications
 export interface NotificationsState {
   notifications: Notification[];
+  notificationsAdmin: NotificationAdmin[];
   unreadCount: number;
   loading: boolean;
   error: string | null;
@@ -26,6 +42,7 @@ export interface NotificationsState {
 // État initial
 const initialState: NotificationsState = {
   notifications: [],
+  notificationsAdmin: [],
   unreadCount: 0,
   loading: false,
   error: null,
@@ -43,6 +60,10 @@ const notificationsSlice = createSlice({
       if (!action.payload.isRead) {
         state.unreadCount += 1;
       }
+    },
+
+    addAdminNotification: (state, action: PayloadAction<NotificationAdmin>) => {
+      state.notificationsAdmin.unshift(action.payload);
     },
 
     // Marquer une notification comme lue
@@ -157,6 +178,19 @@ const notificationsSlice = createSlice({
               state.loading = false;
               state.error = action.payload ? (action.payload as any).message : 'Failed to load notifications';
            })
+
+           .addCase(getAdminNotification.pending, (state) => {
+              state.loading = true;
+              state.error = null;            
+           })
+           .addCase(getAdminNotification.fulfilled, (state, action) => {
+              state.loading = false;
+              state.notifications = action.payload.data as Notification[];
+           })
+            .addCase(getAdminNotification.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload ? (action.payload as any).message : 'Failed to load notifications';
+            })
            
            .addCase(setAsRead.pending, (state) => {
               state.loading = true;
@@ -226,6 +260,7 @@ export const {
   loadNotificationsSuccess,
   loadNotificationsError,
   updateNotification,
+  addAdminNotification
 } = notificationsSlice.actions;
 
 // Export du reducer

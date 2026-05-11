@@ -10,7 +10,7 @@ import { VStack } from "@/components/ui/vstack";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
 import { JSX, useCallback, useEffect, useState } from "react";
-import { RefreshControl, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { RefreshControl, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 import { useSelector } from "react-redux";
 enum AdminActions {
@@ -18,7 +18,8 @@ enum AdminActions {
     COMPETITIONS = "competitions",
     PACKS_NIVEAUX = "packs_niveaux",
     FINANCES = "finances",
-    DOCUMENTS = "documents"
+    DOCUMENTS = "documents",
+    NOTIF = "notif"
 }
 export default function DevAdmin() {
     const router = useRouter();
@@ -32,19 +33,18 @@ export default function DevAdmin() {
 
     const dispatch = useAppDispatch();
 
-    // useFocusEffect(
-    //     useCallback(()=>{
-    //         if(competitions.total === 0 || totalUsers.total === 0 || documents.total === 0 || accountWallet.totalBalance === 0){
-    //             dispatch(getHomeData());
-    //         }
+    useFocusEffect(
+        useCallback(()=>{
+            if(competitions.total === 0 || totalUsers.total === 0 || documents.total === 0 || accountWallet.totalBalance === 0){
+                dispatch(getHomeData());
+            }
                 
 
-    //         return ()=>{
-    //             dispatch(getAllNiveaux());
-    //             console.log("unmounted")
-    //         }
-    //     }, [])
-    // )
+            return ()=>{
+                // dispatch(getAllNiveaux());
+            }
+        }, [])
+    )
       const statistique: {
         nom: string;
         chiffre: string;
@@ -111,27 +111,34 @@ export default function DevAdmin() {
         docToApprove: true,
         navigationAction: AdminActions.DOCUMENTS
       },
+
+      {
+        icone: <Ionicons name="notifications" size={28} color="#181c5c" />,
+        text: "Notifications",
+        other: "Envoyer des notifications aux utilisateurs du système",
+        link: "/dev-admin/pages/notification" as const,
+        navigationAction: AdminActions.NOTIF
+      },
   ];
 
    const makeNavigation = (where: AdminActions, link: any)=>{
     switch(where){
         case AdminActions.USERS:
-            //TODO: load users data and then navigate...
             router.push(link);
             break;
         case AdminActions.COMPETITIONS:
-            //TODO: load competitions data and then navigate...
             router.push(link);
             break;
         case AdminActions.PACKS_NIVEAUX:
             router.push(link);
             break;
         case AdminActions.FINANCES:
-            //TODO: load finances data and then navigate...
             router.push(link);
             break;
         case AdminActions.DOCUMENTS:
-            //TODO: load document to approve and then navigate...
+            router.push(link);
+            break;
+        case AdminActions.NOTIF:
             router.push(link);
             break;
         default:
@@ -232,3 +239,4 @@ export default function DevAdmin() {
         </View>
     );
 }
+

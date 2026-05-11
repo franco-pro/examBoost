@@ -4,19 +4,13 @@ import { Document } from "@/app/hooks/entities/document";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 
-const FORMAT_ICON: Record<string, string> = {
-    pdf: "📕",
-    docx: "📘",
-    pptx: "📙",
-    xlsx: "📗",
-  };
+
 
  const formatDate = (d: Date) => d.toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" });
   
   
 export const DocumentCard = ({ doc }: { doc: Document }) => {
     const meta = TYPE_META[doc.type];
-    const fmtIcon = FORMAT_ICON[doc.format] ?? "📎";
   
     return (
       <TouchableOpacity
@@ -83,10 +77,10 @@ export const DocumentCard = ({ doc }: { doc: Document }) => {
           <View style={styles.cardBottomRow}>
             <View style={styles.cardMeta}>
               <Text style={styles.cardMetaText}>
-                {fmtIcon} {doc.format.toUpperCase()}
+                {doc.format.toUpperCase()}
               </Text>
               <Text style={styles.cardMetaDot}>·</Text>
-              <Text style={styles.cardMetaText}><Ionicons name="calendar" size={24} color="blue" /> {formatDate(doc.created_at)}</Text>
+              <Text style={styles.cardMetaText}> {formatDate(doc.created_at)}</Text>
             </View>
   
                 <TouchableOpacity

@@ -2,7 +2,7 @@ import apiClient from "@/app/api/apiClient";
 
 export default function PacksHttp(){
 
-    const baseEndpoint = "/packs/"
+    const baseEndpoint = "/pack/"
 
     return {
         getAllPacks : async ()=>{
@@ -15,19 +15,35 @@ export default function PacksHttp(){
           }
         },
 
-        create: async (data: any)=>{
+        create: async (param: any)=>{
             try {
-                const response = await apiClient.post(baseEndpoint, data)
+                if(!param.name || !param.price || !param.duration || !param.durationDays) return;
+
+                const data = {
+                    ...param,
+                    price: Number(param.price),
+                    duration: Number(param.duration),
+                    durationDays: Number(param.durationDays),
+                }
+                const response = await apiClient.post(baseEndpoint, data);
                 return {data: response.data, error: null};
                     
             } catch (error: any) {
-                return {data: null, error: error.response.data.message};
+                console.log('FULL ERROR');
+                console.log(error);
+                console.log(error.response);
+                console.log(error.request.data.message);
+            
+                return {
+                    data: null,
+                    error: error?.response?.data?.message || error.message
+                };
             }
         },
 
         update: async (id: number, data: any)=>{
             try {
-                const response = await apiClient.put(`${baseEndpoint}${id}/`, data)
+                const response = await apiClient.patch(`${baseEndpoint}${id}/`, data)
                 return {data: response.data, error: null};
                     
             } catch (error: any) {

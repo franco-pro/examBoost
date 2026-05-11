@@ -12,9 +12,9 @@ const RightBtn = () => {
   }
   return (
     <HStack className="mr-5 ">
-      <Button className=" bg-transparent w-10 h-10">
+      {/* <Button className=" bg-transparent w-10 h-10">
         <Icon as={BellIcon} className="" />
-      </Button>
+      </Button> */}
       <Button className=" bg-transparent w-10 h-10">
         <Icon as={SearchIcon} />
       </Button>

@@ -663,9 +663,9 @@ export default function CreateCompetitionForm() {
                         <TextInput
                           keyboardType="numeric"
                           placeholder={t(`mycompetition.competition.creations_screen.model.montant_min`, {amount: minWinnerPrice})}
-                          value={winnerPrice.toString()}
+                          // value={winnerPrice.toString()}
                           onChangeText={(text) =>
-                            !usePercentage && setWinnerPrice(Number(text))
+                            !usePercentage && setWinnerPrice(Number(text)) && canUseIA() ? setUseIA(true) : setUseIA(false)
                           }
                           className="border border-gray-300 p-2 rounded mb-4"
                           editable={!usePercentage || actionType=="CREATE"} // readonly si on utilise le pourcentage

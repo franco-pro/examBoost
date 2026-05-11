@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import React, { useState, useMemo } from "react";
+import { router, useFocusEffect } from "expo-router";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { DocType, TYPE_META, T, styles } from "./document.style";
 import {
   View,
@@ -15,87 +15,9 @@ import {
 } from "react-native";
 import { Document } from "@/app/hooks/entities/document";
 import { DocumentCard } from "@/app/helper/card/documentCard";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
+import { getAllDocs } from "@/app/hooks/redux/documents/document.thunks";
 
-
-const DOCS: Document[] = [
-  {
-    id: 1,
-    name: "Mathématiques – Séries numériques",
-    format: "pdf",
-    url: "https://example.com/doc1.pdf",
-    subject: "Mathématiques",
-    isValidated: true,
-    type: "EXAMEN SEMESTRE",
-    created_at: new Date("2025-03-10"),
-    updated_at: new Date("2025-03-12"),
-  },
-  {
-    id: 2,
-    name: "Physique – Lois de Newton",
-    format: "pdf",
-    url: "https://example.com/doc2.pdf",
-    subject: "Physique",
-    isValidated: false,
-    type: "TD",
-    created_at: new Date("2025-03-15"),
-    updated_at: new Date("2025-03-15"),
-  },
-  {
-    id: 3,
-    name: "Bac Blanc – Littérature",
-    format: "docx",
-    url: "https://example.com/doc3.docx",
-    subject: "Français",
-    isValidated: true,
-    type: "EXAMEN BLANC",
-    created_at: new Date("2025-02-20"),
-    updated_at: new Date("2025-02-22"),
-  },
-  {
-    id: 4,
-    name: "CC1 – Algorithmique",
-    format: "pdf",
-    url: "https://example.com/doc4.pdf",
-    subject: "Informatique",
-    isValidated: false,
-    type: "CONTROLE CONTINU",
-    created_at: new Date("2025-04-01"),
-    updated_at: new Date("2025-04-01"),
-  },
-  {
-    id: 5,
-    name: "Correction Bac 2024",
-    format: "pdf",
-    url: "https://example.com/doc5.pdf",
-    subject: "Mathématiques",
-    isValidated: true,
-    type: "CORRECTION",
-    created_at: new Date("2025-01-05"),
-    updated_at: new Date("2025-01-06"),
-  },
-  {
-    id: 6,
-    name: "Évaluation Chimie Organique",
-    format: "pdf",
-    url: "https://example.com/doc6.pdf",
-    subject: "Chimie",
-    isValidated: false,
-    type: "EVALUATION",
-    created_at: new Date("2025-04-10"),
-    updated_at: new Date("2025-04-10"),
-  },
-  {
-    id: 7,
-    name: "Examen final – Histoire",
-    format: "pdf",
-    url: "https://example.com/doc7.pdf",
-    subject: "Histoire",
-    isValidated: true,
-    type: "EXAMEN",
-    created_at: new Date("2025-03-28"),
-    updated_at: new Date("2025-03-30"),
-  },
-];
 
 const ALL_TYPES: DocType[] = [
     "CONTROLE CONTINU",
@@ -112,6 +34,16 @@ export default function DocumentListScreen() {
   const [search, setSearch] = useState("");
   const [activeType, setActiveType] = useState<DocType | "ALL">("ALL");
   const [validFilter, setValidFilter] = useState<"ALL" | "validated" | "pending">("ALL");
+  const {documentsList:DOCS} = useAppSelector(state => state.documents);
+  const dispatch = useAppDispatch();
+
+  useFocusEffect(
+    useCallback(() => {
+      if(DOCS.length === 0){
+          dispatch(getAllDocs());      
+      }
+    }, [])
+  )
 
   const filtered = useMemo(() => {
     return DOCS.filter((d) => {
@@ -261,7 +193,7 @@ export default function DocumentListScreen() {
       >
         {filtered.length === 0 ? (
           <View style={styles.empty}>
-            <Text style={styles.emptyIcon}>📭</Text>
+            <Text style={styles.emptyIcon}><Ionicons name="alert-sharp" size={24} color="black" /></Text>
             <Text style={styles.emptyTitle}>Aucun document</Text>
             <Text style={styles.emptyText}>
               Modifiez les filtres pour afficher des résultats.

@@ -279,7 +279,7 @@ function userJoinCompetition(){
   }
 
   return (
-    <View className="bg-gray-50 pt-[40px] pb-[10px] px-4">
+    <View className="flex-1 bg-gray-50 pt-[40px] pb-[10px] px-4">
       {/* Bouton Retour */}
       <TouchableOpacity
         className="flex-row items-center mb-6"
@@ -363,7 +363,8 @@ function userJoinCompetition(){
       </LinearGradient>
 
       {/* --- Deuxième carte : Détails rapides --- */}
-      <ScrollView className="h-[300px] max-h-[100%]">
+      {/* <ScrollView className="h-[300px] max-h-[100%]"> */}
+      <ScrollView>
 
       <View className="bg-white rounded-2xl py-4 px-5 mt-2 shadow-md border border-gray-100">
         <Text
@@ -644,6 +645,21 @@ function userJoinCompetition(){
           </View>
         </View>
 
+              {/* Bouton Supprimer - à gauche */}
+      <View className="flex-row items-center justify-between">
+
+        {(user?.role.toLowerCase() == "superadmin" ) &&
+          (selectedCompetition?.statut === "UPCOMING" || selectedCompetition?.statut === "CANCELLED") && (
+            <TouchableOpacity
+              className="flex-row items-center bg-red-500 self-start px-4 py-2 rounded-full"
+              onPress={() => setDeleteIsOpen(true)}
+            >
+              <Ionicons name="trash-outline" size={16} color="#ffffff" />
+              <Text className="text-white text-xs font-semibold ml-2">
+                Suppression Admin
+              </Text>
+            </TouchableOpacity>
+          )}
 
         {/* boutton pour rejoindre la competition pour un user n'etant pas son createur et si la date limite n'est pas atteinte */}
         {selectedCompetition?.registration_deadline && 
@@ -794,6 +810,7 @@ function userJoinCompetition(){
               <Ionicons name="chevron-forward" size={22} color="#ffffff" />
             </TouchableOpacity>
           )}
+      </View>
 
       <FullscreenLoader visible={waitingLaunching || loading || waitingJoining || suscriptionLoading} />
       </ScrollView>

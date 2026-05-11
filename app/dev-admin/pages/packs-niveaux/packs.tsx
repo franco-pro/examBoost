@@ -55,9 +55,16 @@ export default function PackListScreen() {
   )
 
   return (
-    <View style={packStyles.root}>
+    <View style={packStyles.root} className="flex-1 bg-gray-50 pt-[40px] pb-[50px] px-4">
       {/* Header */}
-      <View style={packStyles.header}>
+      <TouchableOpacity
+        className="flex-row items-center mb-4"
+        onPress={() => router.back()}
+      >
+        <Ionicons name="arrow-back" size={24} color="#181c5c" />
+        <Text className="ml-2 text-lg font-semibold text-gray-800">Retour</Text>
+      </TouchableOpacity>
+      <View style={packStyles.header} className="bg-white rounded-2xl mb-4 ">
         <View style={packStyles.headerAccent} />
         <Text style={packStyles.headerSub}>Catalogue</Text>
         <Text style={packStyles.headerTitle}>Nos packs</Text>
@@ -94,7 +101,7 @@ export default function PackListScreen() {
       >
         {filtered.length === 0 ? (
           <View style={packStyles.emptyState}>
-            <Text style={packStyles.emptyIcon}>📦</Text>
+            <Text style={packStyles.emptyIcon}><Ionicons name="alert-sharp" size={24} color="black" /></Text>
             <Text style={packStyles.emptyText}>Aucun pack trouvé</Text>
           </View>
         ) : (

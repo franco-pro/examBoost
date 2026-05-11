@@ -26,6 +26,7 @@ export const createPack = createAsyncThunk(
     "devAdmin/createPack",
     async (data: any, {rejectWithValue})=>{
         try {
+            console.log("exectute", data)
             const response = await packsHttp.create(data);
             return response;
         } catch (error: any) {

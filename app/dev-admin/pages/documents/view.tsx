@@ -161,17 +161,33 @@ export default function DocumentView() {
     ]);
   };
 
-  return (
-    <View style={styles.root}>
-      <View style={styles.header}>
-      <TouchableOpacity
-        className="flex-row items-center mb-4"
-        onPress={() => router.back()}
-      >
-        <Ionicons name="arrow-back" size={24} color="#181c5c" />
-        <Text className="ml-2 text-lg font-semibold text-gray-800">Retour</Text>
-      </TouchableOpacity>
+  const deleteDoc = ()=> {
+    //alert before delete
+    Alert.alert(
+      "Confirmer la suppression",
+      "Êtes-vous sûr de vouloir supprimer ce document ? Cette action est irréversible.",
+      [
+        { text: "Annuler", style: "cancel" },
+        { text: "Supprimer", style: "destructive", onPress: () => {
+          // TODO call delete api
+          Alert.alert("Document supprimé", "Le document a été supprimé avec succès.", [
+            { text: "OK", onPress: () => router.back() },
+          ]);
+        } },
+      ]
+    )
+  }
 
+  return (
+    <View style={styles.root} className="flex-1 bg-gray-50 pt-[40px] pb-[50px] px-4">
+        <TouchableOpacity
+          className="flex-row items-center mb-4"
+          onPress={() => router.back()}
+        >
+          <Ionicons name="arrow-back" size={24} color="#181c5c" />
+          <Text className="ml-2 text-lg font-semibold text-gray-800">Retour</Text>
+        </TouchableOpacity>
+      <View style={styles.header}>
         <View style={styles.headerCenter}>
           <Text style={styles.headerSub}>Document</Text>
           <Text style={styles.headerTitle} numberOfLines={1}>
@@ -325,7 +341,7 @@ export default function DocumentView() {
           <View style={styles.switchCard}>
             <View>
               <Text style={styles.switchLabel}>
-                {isValidated ? <Ionicons name="checkbox-outline" size={24} color="black" /> + " Document validé" :  <Ionicons name="timer-outline" size={24} color="black" /> + " En attente de validation"}
+                {isValidated ? "Document validé" : "En attente de validation"}
               </Text>
               <Text style={styles.switchSub}>
                 {isValidated
@@ -351,6 +367,16 @@ export default function DocumentView() {
         >
           <Text style={styles.saveBtnText}>
             {isDirty ? "Enregistrer les modifications" : "Aucune modification"}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="bg-red-600 rounded-lg px-4 py-3 items-center"
+          onPress={deleteDoc}
+          activeOpacity={0.85}
+        >
+          <Text style={styles.saveBtnText}>
+            Supprimer le document
           </Text>
         </TouchableOpacity>
 

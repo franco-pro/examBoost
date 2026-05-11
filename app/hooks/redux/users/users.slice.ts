@@ -113,6 +113,48 @@ export const userDatas = createAsyncThunk(
   }
 );
 
+export const searchUser = createAsyncThunk(
+  "user/search",
+  async (data : {query: string, page: number, limit: number}, { rejectWithValue }) => {
+    try {
+      const datas = await authService.search(data);
+      return datas;
+    } catch (err: any) {
+      return rejectWithValue(
+        err.response?.data?.message || err?.message || "Une erreur est survenue"
+      );
+    }
+  })
+
+  export const deleteUser = createAsyncThunk(
+    "user/delete",
+    async (id: number, { rejectWithValue }) => {
+      try {
+        const datas = await authService.deleteUser(id);
+        return datas;
+      } catch (err: any) {
+        return rejectWithValue(
+          err.response?.data?.message || err?.message || "Une erreur est survenue"
+        );
+      }
+    }
+  )
+
+  export const updateRole = createAsyncThunk(
+    "user/updateRole",
+    async (data: {id: number, role: string}, { rejectWithValue }) => {
+      try {
+        const datas = await authService.updateRole(data);
+        return datas
+      }
+      catch(err: any){
+        return rejectWithValue(
+          err.response?.data?.message || err?.message || "Une erreur est survenue"
+        )
+      }
+    }
+  )
+
 export const userSlice = createSlice({
   name: "user",
   initialState,
@@ -176,7 +218,21 @@ export const userSlice = createSlice({
       .addCase(userDatas.fulfilled, (state, action) => {
         state.user = action.payload.user;
         state.others = action.payload.infos
-      });
+      })
+
+      //search
+        .addCase(searchUser.fulfilled, (state, action) => {
+          state.loading = false;
+        })
+        .addCase(searchUser.rejected, (state, action) => {
+          state.loading = false;
+          state.error = action.payload as string;
+        })
+        .addCase(searchUser.pending, (state) => {
+          state.loading = true;
+          state.error = null;
+        })
+        
   },
 });
 

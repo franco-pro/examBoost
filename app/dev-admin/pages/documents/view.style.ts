@@ -25,7 +25,7 @@ export const styles = StyleSheet.create({
     // Header
     header: {
       backgroundColor: T.blue,
-      paddingTop: 34,
+      paddingTop: 15,
       paddingBottom: 16,
       paddingHorizontal: 16,
       flexDirection: "row",

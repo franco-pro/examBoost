@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 
 const GOLD = "#B8892A";
-const DARK_BG = "#F5F0E8";
+const DARK_BG = "#FFFFFF";
 const CARD_BG = "#FFFDF7";
 const BORDER = "#E4D9C3";
 const TEXT_PRIMARY = "#2C2416";
@@ -198,7 +198,7 @@ export const styleList = StyleSheet.create({
   root: { flex: 1, backgroundColor: DARK_BG },
 
   header: {
-    paddingTop: 56,
+    paddingTop: 15,
     paddingBottom: 16,
     paddingHorizontal: 24,
     backgroundColor: CARD_BG,

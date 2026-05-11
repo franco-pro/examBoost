@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,8 +11,9 @@ import {
   Alert,
 } from "react-native";
 import { styles } from "./packs.style";
-import { useAppSelector } from "@/app/hooks/redux/redux.hooks";
-import { useLocalSearchParams } from "expo-router";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
+import { createPack, updatePack } from "@/app/hooks/redux/packs/pack.thunks";
 
 type CategoryType = "SECONDARY" | "SUP";
 
@@ -38,7 +39,6 @@ interface PackFormData {
   isActive: boolean;
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
 
 const Label = ({ text, required }: { text: string; required?: boolean }) => (
   <View style={styles.labelRow}>
@@ -125,8 +125,12 @@ export default function CreatePackScreen() {
         id?: string; name?: string; categorie?: string; description?: string; duration?: number; type?: string; durationDays?: number; price?: number; isActive?: string;
       };
  const existingPack =  { id, name, categorie, description, duration, type, durationDays, price, isActive }
+  const dispatch = useAppDispatch();
+  const {packs} = useAppSelector(state => state.packs);
 
   const isEditMode = !!existingPack?.id;
+  const [operationDone, setOperationDone] = useState(false);
+
   const [form, setForm] = useState<PackFormData>({
     name:        existingPack?.name        ?? "",
     price:       existingPack?.price?.toString() ?? "",
@@ -148,22 +152,44 @@ export default function CreatePackScreen() {
     setForm((prev) => ({ ...prev, categorie: cat, type: "" }));
   };
 
+  useEffect(() => {
+      //TODO Avoid showing alert on initial load, only show it after a create/update action
+      if(operationDone){
+        //alert with message and button to go back 
+        Alert.alert(
+          "Operation Effectuée✓",
+
+        )
+
+        Alert.alert(
+          "Operation Effectuée✓", 
+          `L'opération sur le pack "${form.name}" a été éffectué avec succès.`,
+          [
+            {
+              text: "Ok", 
+              style: "cancel",
+              onPress: () => {
+                router.back();
+              }
+            }
+          ]
+        );
+      }
+
+  }, [packs])
+
   const handleSubmit = () => {
     if (!form.name || !form.description || !form.type) {
       Alert.alert("Champs requis", "Veuillez remplir tous les champs obligatoires.");
       return;
     }
         if (isEditMode) {
-          // appel PATCH /packs/:id
-          // update API
-          console.log('edit', form)
+         
+          dispatch(updatePack({ id: Number(existingPack?.id) ?? 0, data:{ ...form} })).finally(() => setOperationDone(true));
         } else {
-          // appel POST /packs
-          //create API
-          console.log('create', form)
+          dispatch(createPack(form)).finally(() => setOperationDone(true));
         }
     
-    Alert.alert("Pack créé ✓", `Le pack "${form.name}" a été enregistré avec succès.`);
   };
 
   return (

@@ -23,6 +23,17 @@ export default function NotificationHttp(){
                     return {data: null, error: error.response.data.message};                
                 }
             },
+
+            getAdminNotifications: async ()=>{
+                try {
+                    const response = await apiClient.get(baseEndpoint+'admin')
+                    return {data: response.data, error: null};
+
+                } catch (error: any) {
+                    console.log('error', error);
+                    return {data: null, error: error.response.data.message};
+                }
+            },
     
             markAsRead: async (notificationId: number)=>{
                 try {

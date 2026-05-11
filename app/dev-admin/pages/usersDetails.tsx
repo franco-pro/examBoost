@@ -12,7 +12,10 @@ import {
 } from "react-native";
 import { Avatar, AvatarFallbackText, AvatarImage } from "@/components/ui/avatar";
 import { Ionicons } from "@expo/vector-icons";
-import { useAppSelector } from "@/app/hooks/redux/redux.hooks";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
+import { deleteUser, updateRole } from "@/app/hooks/redux/users/users.slice";
+import Toast from "react-native-toast-message";
+import { useUsers } from "@/app/hooks/users.hook";
 
 // Données simulées — remplace par ton fetch API avec l'id
 const mockUser = {
@@ -26,20 +29,20 @@ const mockUser = {
   wallet: 39000,
 };
 
-function StarRating({ count = 3, total = 5 }: { count?: number; total?: number }) {
-  return (
-    <View style={styles.starsRow}>
-      {Array.from({ length: total }).map((_, i) => (
-        <Ionicons
-          key={i}
-          name={i < count ? "star" : "star-outline"}
-          size={18}
-          color={i < count ? "#F59E0B" : "#D1D5DB"}
-        />
-      ))}
-    </View>
-  );
-}
+// function StarRating({ count = 3, total = 5 }: { count?: number; total?: number }) {
+//   return (
+//     <View style={styles.starsRow}>
+//       {Array.from({ length: total }).map((_, i) => (
+//         <Ionicons
+//           key={i}
+//           name={i < count ? "star" : "star-outline"}
+//           size={18}
+//           color={i < count ? "#F59E0B" : "#D1D5DB"}
+//         />
+//       ))}
+//     </View>
+//   );
+// }
 
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
@@ -56,6 +59,7 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
 
 
 export default function UserDetailsPage() {
+    const {removeUser} = useUsers()
 
     const {selectedUser} = useAppSelector((state)=> state.devadmin);
 
@@ -63,6 +67,8 @@ export default function UserDetailsPage() {
   const user = selectedUser || mockUser;
 
   const initials = `${user.username[0]}${user.surname[0]}`.toUpperCase();
+  const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const roleLabel =
     user.role === "ADMIN"
@@ -84,13 +90,35 @@ const handleDelete = () => {
           text: "Supprimer",
           style: "destructive",
           onPress: async () => {
-            // await deleteUser(user.id);
-            router.back();
+            await dispatch(deleteUser(user.id)).finally(() => {
+              removeUser(user.id);
+              showToast("Utilisateur supprimé avec succès", "Succès", "success");
+              router.back();
+            });
           },
         },
       ]
     );
   };
+
+  function showToast(message: string, title: string, type: "success"|"error"){
+        Toast.show({
+          type: type,
+          text2: message,
+          text1: title,
+          position: 'top',
+          visibilityTime: 3500,
+        }) 
+    }
+
+  const DoUpdate = (role: string) => {
+      if(user.role.toUpperCase() === role.toUpperCase()) return;
+
+      dispatch(updateRole({id: user.id, role: role})).finally(() => {
+        showToast(`Rôle mis à jour en ${roleLabel}`, "Succès", "success");
+        router.back();
+      })
+  }
   
   const handleChangeRole = () => {
     Alert.alert(
@@ -100,19 +128,19 @@ const handleDelete = () => {
         { text: "Annuler", style: "cancel" },
         {
           text: "USER",
-          onPress: () => console.log("set USER"), // await updateRole(user.id, "USER")
+          onPress: () => DoUpdate("USER"), // await updateRole(user.id, "USER")
         },
         {
           text: "ADMIN",
-          onPress: () => console.log("set ADMIN"), // await updateRole(user.id, "ADMIN")
+          onPress: () => DoUpdate("ADMIN"), // await updateRole(user.id, "ADMIN")
         },
         {
           text: "PARTNER",
-          onPress: () => console.log("set PARTNER"), // await updateRole(user.id, "ADMIN")
+          onPress: () => DoUpdate("PARTNER"), // await updateRole(user.id, "ADMIN")
         },
         {
           text: "SUPERADMIN",
-          onPress: () => console.log("set SUPERADMIN"), // await updateRole(user.id, "ADMIN")
+          onPress: () => DoUpdate("SUPERADMIN"), // await updateRole(user.id, "ADMIN")
         },
       ]
     );
