@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import {
   Animated,
   Dimensions,
+  KeyboardAvoidingView,
   Platform,
   ScrollView,
   Switch,
@@ -403,7 +404,11 @@ export default function CreateCompetitionForm() {
 
   return (
     
-    <View className="flex-1 bg-gray-50 pt-[40px] w-full max-w-full  pb-[50px] px-4">
+    <KeyboardAvoidingView 
+          className="flex-1 bg-gray-50 pt-[40px] w-full max-w-full  pb-[50px] px-4"
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={0}       
+    >
       <TouchableOpacity
         className="flex-row items-center mb-4"
         onPress={() => router.back()}
@@ -757,6 +762,6 @@ export default function CreateCompetitionForm() {
           <FullscreenLoader visible={loading} />
         
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }

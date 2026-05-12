@@ -15,7 +15,7 @@ import { VStack } from '@/components/ui/vstack';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 
 // interface Question {
 //     id: number;
@@ -189,7 +189,11 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
   }
 
     return (
-      
+      <KeyboardAvoidingView 
+               className="flex-1 bg-gray-50 pt-[40px] w-full max-w-full  pb-[50px] px-4"
+               behavior={Platform.OS === "ios" ? "padding" : "height"}
+               keyboardVerticalOffset={0}       
+         >
       <Card size="lg" variant="elevated" className="p-5 shadow-xl rounded-lg w-[90%]">
         <Text className="text-sm font-normal mb-2 text-typography-700">
           {t("mycompetition.competition.online_game.created_at")}: {competitionInfo.createdAt}
@@ -384,5 +388,6 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
        </Button>
        <StopCompetition isOpen={isOpen} onClose={() => setIsOpen(false)} onConfirm={handleLeavingCompetition} isAI={competitionInfo.isAI} />
       </Card>
+      </KeyboardAvoidingView>
     );
   }  

@@ -30,6 +30,14 @@ interface InvitationPaylod {
   receiverID: number;
 }
 
+interface NotifiationAdmin {
+  title: string;
+  text: string;
+  type: string,
+  adminId: number;
+  receiverId: number|null;
+}
+
 // Initialisation du gateway de notifications
 export function initializeNotificationsGateway(dispatch: any, userId: number) {
   const socket = connectNotificationsSocket(userId);
@@ -116,8 +124,8 @@ export function EmitEventNotif(dispatch: any) {
       socket.emit("send-invitation", notification);
     },
 
-    notificationAdmin: (notificationId: number) => {
-      socket.emit("notification-admin", notificationId);
+    notificationAdmin: (notification: NotifiationAdmin) => {
+      socket.emit("notification-admin", notification);
     },
 
     // Vérifier si connecté

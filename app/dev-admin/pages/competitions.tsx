@@ -14,8 +14,8 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import Competition from "@/app/hooks/services/competitions/competition.entity";
 import { C, CompetitionCard, formatDate } from "@/app/helper/card/listcompetitionCard";
-import { router, useFocusEffect, useRouter } from "expo-router";
-import { clearData, setSelectedCompetition } from "@/app/hooks/redux/competitions/competitions.slice";
+import { router, useFocusEffect, useRouter, useNavigation } from "expo-router";
+import { clearData, setList, setSelectedCompetition } from "@/app/hooks/redux/competitions/competitions.slice";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
 import { getCompetitionList, getCompetitionListAdmin, searchCompetitions } from "@/app/hooks/redux/competitions/competitions.thunks";
 import Toast from "react-native-toast-message";
@@ -240,7 +240,8 @@ const { competitionList, searchResults, loading, error, pagination } = useAppSel
 
   const totalPages = Math.ceil(baseFiltered.length / PAGE_SIZE);
   const hasMore = !isSearchMode && page < pagination.totalPages;
-
+  const navigation = useNavigation();
+  
   useEffect(() => {
     if (competitionList.length === 0 && !refreshing) {
         dispatch(getCompetitionListAdmin({page, limit: PAGE_SIZE})).finally(() => setPage(prev => prev + 1));
@@ -304,13 +305,22 @@ const { competitionList, searchResults, loading, error, pagination } = useAppSel
     };
   }, [searchQuery, competitionList]);
 
-  useFocusEffect(
-    useCallback(() => {
-      return () => {
-        dispatch(clearData());
-      };
-    }, [])
-  );
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      const type = e.data.action.type;
+  
+      const isBackAction =
+        type === 'GO_BACK' ||
+        type === 'POP' ||
+        type === 'POP_TO_TOP';
+  
+      if (isBackAction) {
+        dispatch(setList([]));
+      }
+    });
+  
+    return unsubscribe;
+  }, []);
 
   useEffect(() => {
     if (!isSearchMode) return;
