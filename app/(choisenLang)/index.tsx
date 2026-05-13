@@ -36,7 +36,7 @@ export default function Index() {
   };
   const testBackend = async () => {
     try {
-      const url = "http://172.20.10.2:3000";
+      const url = "http://192.168.1.101:3000";
       console.log("TEST URL:", url);
 
       const res = await fetch(url);

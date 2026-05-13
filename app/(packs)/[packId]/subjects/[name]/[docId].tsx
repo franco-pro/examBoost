@@ -397,7 +397,7 @@ export default function DocumentViewerPage() {
             {Platform.OS === "web" ? (
               <View className="flex-1 px-4 pb-4">
                 {!corrige ? (
-                  <View className="mb-2 px-3 py-2 rounded-md bg-warning-100 dark:bg-warning-900/30 border border-outline-100 dark:border-outline-800">
+                  <View className="mb-2 px-3 py-2 rounded-md bg-red-600 dark:bg-warning-900/30 border border-outline-100 dark:border-outline-800">
                     <Text className="text-xs text-typography-gray">
                       Aucune correction dédiée trouvée. Affichage du document
                       original.
@@ -414,8 +414,8 @@ export default function DocumentViewerPage() {
             ) : (
               <View className="flex-1 px-4 pb-4">
                 {!corrige ? (
-                  <View className="mb-2 px-3 py-2 rounded-md bg-warning-100 dark:bg-warning-900/30 border border-outline-100 dark:border-outline-800">
-                    <Text className="text-xs text-typography-gray">
+                  <View className="mb-2 px-3 py-2 rounded-md bg-red-500 dark:bg-warning-900/30 border border-outline-100 dark:border-outline-800">
+                    <Text className="text-xs text-typography-white">
                       Aucune correction dédiée trouvée. Affichage du document
                       original.
                     </Text>

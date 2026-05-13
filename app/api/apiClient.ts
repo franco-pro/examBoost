@@ -23,6 +23,12 @@ apiClient.interceptors.request.use(async (config) => {
   );
   const keys = await AsyncStorage.getAllKeys();
   console.log("all keys :", keys);
+  console.log("🚀 REQUEST:");
+  console.log("METHOD:", config.method);
+  console.log("BASE URL:", config.baseURL);
+  console.log("URL:", config.url);
+  console.log("FULL URL:", `${config.baseURL}${config.url}`);
+
   
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;

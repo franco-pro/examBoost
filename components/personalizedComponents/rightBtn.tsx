@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { Button, ButtonIcon } from '../ui/button';
 import { BellIcon, Icon, SearchIcon, SettingsIcon } from '../ui/icon';
@@ -11,17 +11,27 @@ const RightBtn = () => {
     navigation.navigate("/settings")
   }
   return (
-    <HStack className="mr-5 ">
-      <Button className=" bg-transparent w-10 h-10">
+    <View className="mr-5 flex-row  justify-center items-center gap-4">
+      <TouchableOpacity
+        className=" bg-transparent  "
+        activeOpacity={0.3}
+      >
         <Icon as={BellIcon} className="" />
-      </Button>
-      <Button className=" bg-transparent w-10 h-10">
+      </TouchableOpacity>
+      <TouchableOpacity
+        className=" bg-transparent "
+        activeOpacity={0.8}
+      >
         <Icon as={SearchIcon} />
-      </Button>
-      <Button className=" bg-transparent w-10 h-10" onPress={()=>handleClick()}>
+      </TouchableOpacity>
+      <TouchableOpacity
+        className=" bg-transparent "
+        activeOpacity={0.8}
+        onPress={() => handleClick()}
+      >
         <Icon as={SettingsIcon} />
-      </Button>
-    </HStack>
+      </TouchableOpacity>
+    </View>
   );
 };
 
