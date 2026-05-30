@@ -13,7 +13,7 @@ export default function SubjectsPage() {
   const { packId, niveauID } = useLocalSearchParams<{ packId: string; niveauID?: string }>();
   const [search, setSearch] = useState('');
 
-  const currentUserId = useSelector((s: RootState) => s.session.currentUserId);
+  const currentUserId = useSelector((s: RootState) => s.user.user?.id);
   console.log("current user id: ", currentUserId)
   const packID = useMemo(() => Number(packId), [packId]);
 

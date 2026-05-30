@@ -1,6 +1,7 @@
 import type { DocumentRow } from "@/app/features/documents/utils";
 import { useDocumentAndCorrection, usePackDocumentsQuery } from "@/app/features/packs/hooks.rq";
 import { buildFileUrl } from "@/app/hooks/files/buildRouteFiles";
+import { saveRecentDocument } from "@/app/hooks/files/recentDocuments/recentDocument";
 import type { RootState } from "@/app/hooks/redux/store";
 import { Ionicons } from "@expo/vector-icons";
 import * as FileSystem from "expo-file-system/legacy";
@@ -45,6 +46,7 @@ export default function DocumentViewerPage() {
   const [activeTab, setActiveTab] = useState<"document" | "corrections">(
     "document",
   );
+  
 
   const doc = useMemo(
     () => docsForPack.find((d: DocumentRow) => d.id === id),
@@ -95,6 +97,8 @@ export default function DocumentViewerPage() {
   const [localPdfUri, setLocalPdfUri] = useState<string | null>(null);
   const [pdfError, setPdfError] = useState<string | null>(null);
   const [pdfLoading, setPdfLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     if (Platform.OS === "web") return;
@@ -192,6 +196,8 @@ export default function DocumentViewerPage() {
   }
 
   const openInBrowser = async () => {
+    if(!document?.id) return
+    await saveRecentDocument(document.id,1,1)
     if (Platform.OS === "web") {
       window.open(absoluteUrl, "_blank");
       console.log("absoluteURL 1:", absoluteUrl);
@@ -263,13 +269,26 @@ export default function DocumentViewerPage() {
         );
       }
 
-      return (
-        <Pdf
-          source={{ uri: localPdfUri }}
-          style={{ flex: 1, width: "100%" }}
-          trustAllCerts={false}
-        />
-      );
+      // return (
+      //   <Pdf
+      //     source={{ uri: localPdfUri }}
+      //     style={{ flex: 1, width: "100%" }}
+      //     trustAllCerts={false}
+      //     onLoadComplete={(pages: number) => { setTotalPages(pages) }}
+      //     onPageChanged={(page: number, pages: number) => {
+      //       setCurrentPage(page)
+      //       const progress = Math.floor(page / pages) * 100
+      //       console.log("document daans docid: ", document, "pages: ",pages, "Page: ",page)
+      //       if (!document?.id) {
+      //         console.log("document daans docid: ", document, "pages: ",pages, "Page: ",page)
+      //         return 0
+      //       }
+      //       saveRecentDocument(document.id, progress, page, totalPages);
+
+            
+      //     }}
+      //   />
+      // );
     } catch {
       return null;
     }

@@ -27,7 +27,7 @@ interface UserState {
   refreshToken: string | null;
   loading: boolean;
   error: any;
-  others: any;
+  others?: any;
 }
 
 const initialState: UserState = {
@@ -36,7 +36,7 @@ const initialState: UserState = {
   error: null,
   accessToken: null,
   refreshToken: null,
-  others: null
+  // others: null
 };
 
 //un thunk est une action asynchrone qui appelle dans ce cas mon api
@@ -142,9 +142,18 @@ export const userSlice = createSlice({
       state.refreshToken = action.payload.refreshToken
     },
 
+    updateProfile: (state, action) => {
+      state.user = {
+        ...state.user,
+        ...action.payload
+      }
+    },
+
     updateBalanceUser: (state, action) => {
       if (state.user) {
         state.user.wallet = action.payload
+      } else {
+        console.log("le state dans updateBalanceUser: ", state)
       }
     }
   },
@@ -196,5 +205,5 @@ export const userSlice = createSlice({
   },
 });
 
-export const { logout,loginSuccess, setCredentials, updateBalanceUser } = userSlice.actions;
+export const { logout,loginSuccess, setCredentials, updateBalanceUser, updateProfile } = userSlice.actions;
 export default userSlice.reducer;

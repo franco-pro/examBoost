@@ -20,6 +20,15 @@ export type PackDTO = {
   access?: PackAccessDTO;
 };
 
+export type SubscriptionPackResponse = {
+  
+  isSubscribed: boolean
+  expired: boolean
+  expireAt:Date
+  remainingDays: number
+
+}
+
 export type PurchasePackResponse = {
   done: boolean;
   userID: number;
@@ -52,7 +61,7 @@ export async function fetchPackDocumentsHttp(params: { userID: number }): Promis
     const docs = res.data as DocumentDTO[];
     const safeDocs = Array.isArray(docs)? docs : [docs]
     const result = safeDocs.map((d) => ({ ...d, url: (d.url) }));
-    // console.log("result datas in api: ", result, "res dans api:", res.data);
+    // console.log("result datas in api: ", result, "res dans api:",result);
     return result
   } catch (e: any) {
     throw new Error(getHttpErrorMessage(e));
@@ -83,7 +92,8 @@ export async function fetchPacksHttp(params: { userID: number }): Promise<PackDT
 
 export async function purchasePackHttp(params: { userID: number; packID: number }): Promise<PurchasePackResponse> {
   try {
-    const res = await http.post(`/pack/${params.packID}/purchase`, { userID: params.userID });
+    const res = await apiClient.post("user-pack", { userID: params.userID, packID: params.packID });
+    console.log("res =", res);
     return res.data as PurchasePackResponse;
   } catch (e: any) {
     throw new Error(getHttpErrorMessage(e));

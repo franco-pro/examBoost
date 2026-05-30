@@ -18,12 +18,12 @@ const RightBtn = () => {
       >
         <Icon as={BellIcon} className="" />
       </TouchableOpacity>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         className=" bg-transparent "
         activeOpacity={0.8}
       >
         <Icon as={SearchIcon} />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <TouchableOpacity
         className=" bg-transparent "
         activeOpacity={0.8}

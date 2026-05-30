@@ -1,7 +1,11 @@
 export type Pack = {
-  id: string;
-  title: string; // maps SQL `name`
-  description: string; // maps SQL `description`
+  id: number;
+  title?: string; // maps SQL `name`
+  name?: string;
+  duration?: any;
+  categorie?: any;
+  type?: any;
+  description?: string; // maps SQL `description`
   coverUrl?: string;
   price?: number;
   oldPrice?: number;
@@ -16,9 +20,10 @@ export type Pack = {
   // new fields from SQL table
   durationDays?: number; // maps SQL `durationDays`
   isActive?: boolean; // maps SQL `isActive` (1/0)
-  createdAt?: string; // maps SQL `created_at`
-  updatedAt?: string; // maps SQL `updated_at`
+  created_at?: string; // maps SQL `created_at`
+  updated_at?: string; // maps SQL `updated_at`
   isFeatured?: boolean;
   // niveau pour filtrer les documents associés
   niveauID?: number; // maps documents.niveauID
+  remainingDays: number;
 };

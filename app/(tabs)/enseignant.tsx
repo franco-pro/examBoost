@@ -151,7 +151,7 @@ export default function Enseignant() {
       showsVerticalScrollIndicator={false}
     >
       {/* HEADER */}
-      <View className="px-5 pt-16 pb-8 bg-primary-defaultBlue rounded-b-[32px] items-center">
+      <View className="px-5 pt-10 pb-8 bg-primary-defaultBlue rounded-b-[32px] items-center">
         <Text className="text-white text-3xl font-extrabold">
           Portail Enseignant
         </Text>

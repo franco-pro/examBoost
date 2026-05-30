@@ -19,7 +19,7 @@ export default function SubjectDocumentsInTabs() {
     type:string
   }>();
 
-  // console.log("params:", packId,name,niveauID,subject,categorie,type)
+  console.log("params dans [name]:", packId,name,niveauID,subject,type)
   const user = useSelector((state: RootState) => state.user.user);
   const userID = user?.id
   const docsQuery = usePackDocumentsQuery(userID);

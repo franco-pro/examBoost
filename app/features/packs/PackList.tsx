@@ -1,8 +1,14 @@
-import { memo, useMemo } from 'react';
-import { FlatList, ListRenderItem, Platform, useWindowDimensions, View } from 'react-native';
-import PackCard from './PackCard';
-import type { Pack } from './types';
-import { packProps } from '@/app/api/packService';
+import { memo, useMemo } from "react";
+import {
+  FlatList,
+  ListRenderItem,
+  Platform,
+  useWindowDimensions,
+  View,
+} from "react-native";
+import PackCard from "./PackCard";
+import type { Pack } from "./types";
+import { packProps } from "@/app/api/packService";
 
 export default memo(function PackList({
   packs,
@@ -21,7 +27,7 @@ export default memo(function PackList({
 }) {
   const { width } = useWindowDimensions();
   const numColumns = useMemo(() => {
-    if (Platform.OS === 'web') {
+    if (Platform.OS === "web") {
       if (width >= 1024) return 3;
       if (width >= 700) return 2;
     }
@@ -29,7 +35,10 @@ export default memo(function PackList({
   }, [width]);
 
   const renderItem: ListRenderItem<packProps> = ({ item }) => (
-    <View className={"p-2"} style={numColumns > 1 ? { width: `${100 / numColumns}%` } : undefined}>
+    <View
+      className={"p-2"}
+      style={numColumns > 1 ? { width: `${100 / numColumns}%` } : undefined}
+    >
       <PackCard
         pack={item}
         onPress={() => onPressPack?.(item)}
@@ -47,7 +56,13 @@ export default memo(function PackList({
       numColumns={numColumns}
       refreshing={!!refreshing}
       onRefresh={onRefresh}
-      ListHeaderComponent={listHeader ? (() => <View className={numColumns > 1 ? 'px-2' : ''}>{listHeader}</View>) : undefined}
+      ListHeaderComponent={
+        listHeader
+          ? () => (
+              <View className={numColumns > 1 ? "px-2" : ""}>{listHeader}</View>
+            )
+          : undefined
+      }
       contentContainerStyle={{ padding: 8, paddingBottom: 24 }}
     />
   );

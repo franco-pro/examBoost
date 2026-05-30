@@ -3,8 +3,9 @@ import { API_URL } from "../config/env";
 import { getItem, setItem } from "../utils/asyncStorage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+export const BASE_URL = "http://192.168.1.101";
 export const apiClient = axios.create({
-  baseURL: API_URL || "http://192.168.1.101:3000",
+  baseURL: API_URL || `${BASE_URL}:3000`,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -22,11 +23,11 @@ apiClient.interceptors.request.use(async (config) => {
     refreshToken,
   );
   const keys = await AsyncStorage.getAllKeys();
-  console.log("all keys :", keys);
-  console.log("🚀 REQUEST:");
-  console.log("METHOD:", config.method);
-  console.log("BASE URL:", config.baseURL);
-  console.log("URL:", config.url);
+  // console.log("all keys :", keys);
+  // console.log("🚀 REQUEST:");
+  // console.log("METHOD:", config.method);
+  // console.log("BASE URL:", config.baseURL);
+  // console.log("URL:", config.url);
   console.log("FULL URL:", `${config.baseURL}${config.url}`);
 
   

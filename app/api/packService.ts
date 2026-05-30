@@ -5,6 +5,7 @@ import { store } from "../hooks/redux/store";
 
 export interface packProps {
   id: number;
+  title?: string;
   name: string;
   price: number;
   description: string;
@@ -16,12 +17,14 @@ export interface packProps {
   categorie: string;
   type: string;
   niveauID: number;
+  isSubscribed: boolean;
+  remainingDays: number
 }
 
 export const packService = {
-  getAllPackByOneUser: async () => {
-    const state = store.getState();
-    const userID = state?.user?.user?.id;
+  getAllPackByOneUser: async (userID:number) => {
+    // const state = store.getState();
+    // const userID = state?.user?.user?.id;
     // console.log("userID:", userID)
     if (!userID) throw new Error("UserID Null");
     const response = await apiClient.get(`/pack/user/${userID}`);
@@ -31,7 +34,7 @@ export const packService = {
   },
   allPacks: async () => {
     const response = await apiClient.get("/pack");
-    console.log("all packs in packs services: ", (await response).data);
+    console.log("all packs in packs services: ", response);
     return response.data;
   },
 };

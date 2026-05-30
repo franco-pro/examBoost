@@ -33,20 +33,20 @@ export default memo(function PackHeader({
         ) : null}
 
         <View className="flex-row items-center justify-between">
-          <Text className="text-xl font-extrabold text-typography-default dark:text-typography-white">{title}</Text>
+          <Text className="text-2xl font-extrabold text-typography-default dark:text-typography-white">{title}</Text>
           <View className="flex-row items-center gap-2">
-            <Pressable onPress={onOpenSort} className="px-3 py-2 rounded-md bg-primary-defaultOrange active:opacity-90" accessibilityLabel="Trier">
+            {/* <Pressable onPress={onOpenSort} className="px-3 py-2 rounded-md bg-primary-defaultOrange active:opacity-90" accessibilityLabel="Trier">
               <View className="flex-row items-center gap-1">
                 <Ionicons name="swap-vertical" size={16} color="#181c5c" />
                 <Text className="text-xs font-extrabold text-primary-defaultBlue">Trier</Text>
               </View>
-            </Pressable>
-            <Pressable onPress={onOpenFilters} className="px-3 py-2 rounded-md bg-primary-defaultOrange active:opacity-90" accessibilityLabel="Filtres">
+            </Pressable> */}
+            {/* <Pressable onPress={onOpenFilters} className="px-3 py-2 rounded-md bg-primary-defaultOrange active:opacity-90" accessibilityLabel="Filtres">
               <View className="flex-row items-center gap-1">
                 <Ionicons name="funnel" size={16} color="#181c5c" />
                 <Text className="text-xs font-extrabold text-primary-defaultBlue">Filtres</Text>
               </View>
-            </Pressable>
+            </Pressable> */}
           </View>
         </View>
 
