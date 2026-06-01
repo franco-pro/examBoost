@@ -87,7 +87,12 @@ export default function SettingsScreen() {
             user?.role.toLowerCase() == "superadmin" ? (
               <SettingsItem icon="shield-checkmark" label="Admin Dashboard" onPress={() => router.push("/dev-admin/pages")} />
             ) : null
-            }          
+            } 
+            {
+            user?.role.toLowerCase() == "admin" ? (
+              <SettingsItem icon="shield-checkmark" label="Admin Dashboard" onPress={() => router.push("/others-admin/teacher-partner.page")} />
+            ) : null
+            }           
           <SettingsItem icon="trash" label="Supprimer mon compte" onPress={onDeleteAccount} danger />
         </View>
       </ScrollView>
