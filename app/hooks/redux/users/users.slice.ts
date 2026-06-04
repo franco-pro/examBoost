@@ -22,18 +22,18 @@ interface User {
 }
 
 interface UserState {
-  user: User | null;
+  user?: User | null;
   accessToken: string | null;
   refreshToken: string | null;
-  loading: boolean;
-  error: any;
+  loading?: boolean;
+  error?: any;
   others?: any;
 }
 
 const initialState: UserState = {
-  user: null,
-  loading: false,
-  error: null,
+  // user: null,
+  // loading: false,
+  // error: null,
   accessToken: null,
   refreshToken: null,
   // others: null
@@ -132,9 +132,9 @@ export const userSlice = createSlice({
     },
     logout: (state) => {
       // state.user = null;
-      // state.accessToken = null;
-      // state.refreshToken = null;
-      return initialState;
+      state.accessToken = null;
+      state.refreshToken = null;
+      // return initialState;
     },
     loginSuccess: (state, action) => {
       state.user = action.payload.user;
@@ -146,6 +146,12 @@ export const userSlice = createSlice({
       state.user = {
         ...state.user,
         ...action.payload
+      }
+    },
+
+    updateProfileImg: (state, action) => {
+      if (state.user) {
+        state.user.imgUrl = action.payload
       }
     },
 
@@ -205,5 +211,12 @@ export const userSlice = createSlice({
   },
 });
 
-export const { logout,loginSuccess, setCredentials, updateBalanceUser, updateProfile } = userSlice.actions;
+export const {
+  logout,
+  loginSuccess,
+  setCredentials,
+  updateBalanceUser,
+  updateProfile,
+  updateProfileImg,
+} = userSlice.actions;
 export default userSlice.reducer;

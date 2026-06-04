@@ -64,13 +64,7 @@ export default function SubjectDocumentsInTabs() {
         onOpenFilters={() => {}}
         onOpenSort={() => {}}
         onBack={() =>
-          router.replace({
-            pathname: '/(packs)/[packId]/subjects',
-            params: {
-              packId: String(packId),
-              ...(niveauID ? { niveauID: String(niveauID) } : {}),
-            },
-          } as any)
+          router.back()
         }
         backLabel="Retour"
         title="Liste des sujets"

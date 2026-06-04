@@ -34,7 +34,7 @@ export default function Transactions() {
   useFocusEffect(
     useCallback(()=>{
       if(transactionList && transactionList.length == 0 && !loadDone){
-        dispatch(getAllTransations(userId));
+        dispatch(getAllTransations(userId ?? 1));
         console.log("transaction load", transactionList)
         setLoadDone(true);
       }

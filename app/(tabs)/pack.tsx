@@ -77,7 +77,7 @@ const packsQuery = usePacksQuery(currentUserId ?? 0);
       ),
     );
   }, [search, packs]);
-console.log("all pack dans pack: ", packs)
+// console.log("all pack dans pack: ", packs)
   return (
     <BottomSheetModalProvider>
       <View className="flex-1 bg-background-light dark:bg-background-dark">
