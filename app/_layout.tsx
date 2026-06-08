@@ -31,11 +31,10 @@ export default function RootLayout() {
 
   useEffect(() => {
     const loadLanguage = async () => {
-      const storedLang = await AsyncStorage.getItem("lang");
+      const storedLang = await AsyncStorage.getItem("language");
       if (storedLang) {
         await i18n.changeLanguage(storedLang);
       }
-      console.log("lang value:", storedLang);
     };
     loadLanguage();
   }, []);

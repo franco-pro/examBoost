@@ -2,8 +2,8 @@ import { formatPriceXOF } from '@/app/utils/format';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useMemo, useState } from 'react';
 import { Modal, Platform, Pressable, Text, View } from 'react-native';
-import type { Pack } from './types';
 import { packProps } from '@/app/api/packService';
+import { Icon } from '@/components/ui/icon';
 
 export default function SubscribeModal({
   visible,
@@ -21,11 +21,13 @@ export default function SubscribeModal({
   onRecharge?: () => void;
 }) {
   const [accept, setAccept] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
 
   // Reset form when pack changes or when opened
   React.useEffect(() => {
     if (visible) {
       setAccept(false);
+      setIsLoading(false)
     }
   }, [visible, pack]);
 
@@ -47,7 +49,7 @@ export default function SubscribeModal({
   return (
     <Modal
       visible={visible}
-      animationType={Platform.select({ web: 'fade', default: 'slide' }) as any}
+      animationType={Platform.select({ web: "fade", default: "slide" }) as any}
       transparent
     >
       <View className="flex-1 items-center justify-center bg-black/50 px-4">
@@ -63,11 +65,17 @@ export default function SubscribeModal({
                   <Ionicons name="briefcase" size={20} color="#181c5c" />
                 </View>
                 <View className="flex-1">
-                  <Text className="text-base font-extrabold text-typography-default dark:text-typography-white" numberOfLines={2}>
+                  <Text
+                    className="text-base font-extrabold text-typography-default dark:text-typography-white"
+                    numberOfLines={2}
+                  >
                     {pack.name}
                   </Text>
                   {pack.durationDays != null ? (
-                    <Text className="text-xxs text-typography-black/80">Durée {pack.durationDays} jours{expiredAt ? ` · jusqu'au ${expiredAt}` : ''}</Text>
+                    <Text className="text-xxs text-typography-black/80">
+                      Durée {pack.durationDays} jours
+                      {expiredAt ? ` · jusqu'au ${expiredAt}` : ""}
+                    </Text>
                   ) : null}
                 </View>
               </View>
@@ -80,30 +88,42 @@ export default function SubscribeModal({
 
             {/* Message d'accroche + avantages */}
             <Text className="mt-3 text-sm text-typography-default dark:text-typography-white">
-              {"Confirmez votre achat pour débloquer l'accès immédiat aux matières, sujets et contenus inclus."}
+              {
+                "Confirmez votre achat pour débloquer l'accès immédiat aux matières, sujets et contenus inclus."
+              }
             </Text>
             <View className="mt-3 gap-2">
               <View className="flex-row items-center gap-2">
                 <Ionicons name="checkmark-circle" size={16} color="#22c55e" />
-                <Text className="text-xs text-typography-default dark:text-typography-white">Accès instantané après paiement</Text>
+                <Text className="text-xs text-typography-default dark:text-typography-white">
+                  Accès instantané après paiement
+                </Text>
               </View>
-              {typeof pack.durationDays === 'number' ? (
+              {typeof pack.durationDays === "number" ? (
                 <View className="flex-row items-center gap-2">
                   <Ionicons name="checkmark-circle" size={16} color="#22c55e" />
-                  <Text className="text-xs text-typography-default dark:text-typography-white">Valable {pack.durationDays} jours</Text>
+                  <Text className="text-xs text-typography-default dark:text-typography-white">
+                    Valable {pack.durationDays} jours
+                  </Text>
                 </View>
               ) : null}
               <View className="flex-row items-center gap-2">
                 <Ionicons name="checkmark-circle" size={16} color="#22c55e" />
-                <Text className="text-xs text-typography-default dark:text-typography-white">Support prioritaire</Text>
+                <Text className="text-xs text-typography-default dark:text-typography-white">
+                  Support prioritaire
+                </Text>
               </View>
             </View>
 
             {/* Montant prélevé */}
             {pack.price != null ? (
               <View className="mt-4 gap-1">
-                <Text className="text-xs text-typography-gray">Montant qui sera prélevé</Text>
-                <Text className="text-sm font-extrabold text-typography-default dark:text-typography-white">{formatPriceXOF(pack.price)}</Text>
+                <Text className="text-xs text-typography-gray">
+                  Montant qui sera prélevé
+                </Text>
+                <Text className="text-sm font-extrabold text-typography-default dark:text-typography-white">
+                  {formatPriceXOF(pack.price)}
+                </Text>
               </View>
             ) : null}
 
@@ -117,35 +137,56 @@ export default function SubscribeModal({
                   accessibilityState={{ checked: accept }}
                   accessibilityLabel="J’accepte de payer via mon wallet"
                 >
-                  <View className={`w-5 h-5 rounded-md items-center justify-center border ${accept ? 'bg-primary-defaultOrange border-primary-defaultOrange' : 'bg-white dark:bg-outline-900 border-outline-300 dark:border-outline-700'}`}>
-                    {accept ? <Ionicons name="checkmark" size={14} color="#181c5c" /> : null}
+                  <View
+                    className={`w-5 h-5 rounded-md items-center justify-center border ${accept ? "bg-primary-defaultOrange border-primary-defaultOrange" : "bg-white dark:bg-outline-900 border-outline-300 dark:border-outline-700"}`}
+                  >
+                    {accept ? (
+                      <Ionicons name="checkmark" size={14} color="#181c5c" />
+                    ) : null}
                   </View>
-                  <Text className="text-xs text-typography-default w-2/3 dark:text-typography-white">J’accepte de payer via mon wallet</Text>
+                  <Text className="text-xs text-typography-default w-2/3 dark:text-typography-white">
+                    J’accepte de payer via mon wallet
+                  </Text>
                 </Pressable>
 
                 {!hasFunds && (
                   <>
                     <Text className="text-xxs text-error-500">
-                      Solde insuffisant: votre solde est de {wallet != null ? formatPriceXOF(wallet) : '—'}, prix du pack {pack.price != null ? formatPriceXOF(pack.price) : '—'}.
+                      Solde insuffisant: votre solde est de{" "}
+                      {wallet != null ? formatPriceXOF(wallet) : "—"}, prix du
+                      pack{" "}
+                      {pack.price != null ? formatPriceXOF(pack.price) : "—"}.
                     </Text>
                     {onRecharge && (
-                      <Pressable onPress={onRecharge} className="self-start px-3 py-1.5 rounded-md bg-primary-defaultOrange/15 border border-primary-defaultOrange/40 active:opacity-90">
-                        <Text className="text-xs font-extrabold text-primary-defaultBlue">Recharger</Text>
+                      <Pressable
+                        onPress={onRecharge}
+                        className="self-start px-3 py-1.5 rounded-md bg-primary-defaultOrange/15 border border-primary-defaultOrange/40 active:opacity-90"
+                      >
+                        <Text className="text-xs font-extrabold text-primary-defaultBlue">
+                          Recharger
+                        </Text>
                       </Pressable>
                     )}
                   </>
                 )}
               </View>
-              <Pressable onPress={onCancel} className="px-4 py-2 rounded-md bg-white dark:bg-outline-900 border border-outline-200 dark:border-outline-700 active:opacity-90">
-                <Text className="text-sm text-typography-default dark:text-typography-white">Annuler</Text>
+              <Pressable
+                onPress={onCancel}
+                className="px-4 py-2 rounded-md bg-white dark:bg-outline-900 border border-outline-200 dark:border-outline-700 active:opacity-90"
+              >
+                <Text className="text-sm text-typography-default dark:text-typography-white">
+                  Annuler
+                </Text>
               </Pressable>
               <Pressable
                 disabled={!accept || !hasFunds}
                 onPress={() => onConfirm({ accept })}
-                className={`px-4 py-2 rounded-md ${!accept || !hasFunds ? 'bg-primary-defaultOrange/60' : 'bg-primary-defaultOrange active:opacity-90'} `}
+                className={`px-4 py-2 rounded-md ${!accept || !hasFunds ? "bg-primary-defaultOrange/60" : "bg-primary-defaultOrange active:opacity-90"} `}
                 accessibilityLabel="Confirmer l'achat"
               >
-                <Text className="text-sm font-extrabold text-primary-defaultBlue">Confirmer</Text>
+                <Text className="text-sm font-extrabold text-primary-defaultBlue">
+                  {isLoading ? "Loading ..." : "Confirmer"}
+                </Text>
               </Pressable>
             </View>
           </View>

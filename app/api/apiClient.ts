@@ -1,11 +1,11 @@
 import axios from "axios";
-import { API_URL } from "../config/env";
 import { getItem, setItem } from "../utils/asyncStorage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch } from "react-redux";
 
 export const BASE_URL = "http://192.168.1.101";
 export const apiClient = axios.create({
-  baseURL: API_URL || `${BASE_URL}:3000`,
+  baseURL:`${BASE_URL}:3000`,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -16,17 +16,11 @@ export const apiClient = axios.create({
 apiClient.interceptors.request.use(async (config) => {
   const token = await getItem("accessToken");
   const refreshToken = await getItem("refreshToken");
-  console.log(
-    "Access Token dans apiclient:",
-    token,
-    "refresh token:",
-    refreshToken,
-  );
   const keys = await AsyncStorage.getAllKeys();
-  // console.log("all keys :", keys);
+  console.log("all keys :", keys);
   // console.log("🚀 REQUEST:");
   // console.log("METHOD:", config.method);
-  // console.log("BASE URL:", config.baseURL);
+  console.log("BASE URL:", config.baseURL);
   // console.log("URL:", config.url);
   console.log("FULL URL:", `${config.baseURL}${config.url}`);
 
@@ -34,7 +28,6 @@ apiClient.interceptors.request.use(async (config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-  console.log("config:", config);
   return config;
 });
 //refresh le acceess token si expiré avec le refresh token
@@ -65,6 +58,7 @@ apiClient.interceptors.response.use(
         // stocke les nouveaux tokens (sans dépendre du Redux store pour éviter les cycles)
         await setItem("accessToken", res.data.accessToken);
         await setItem("refreshToken", res.data.refreshToken);
+        
         console.log(
           "les keys dans refresh function :",
           res.data.accessToken,
@@ -84,6 +78,7 @@ apiClient.interceptors.response.use(
       }
       return Promise.reject(error);
     }
+    return Promise.reject(error);
   },
 );
 

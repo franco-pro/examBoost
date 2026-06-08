@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import {
   Animated,
   Dimensions,
+  KeyboardAvoidingView,
   Platform,
   ScrollView,
   Switch,
@@ -33,6 +34,7 @@ import { RootState } from "../hooks/redux/store";
 const { width } = Dimensions.get("window");
 
 export default function CreateCompetitionForm() {
+  //TODO: -add condition, commission for competition where using IA
   const {homeBaseData} = useAppSelector((state)=> state.competitions)
   const { user } = useSelector((state: RootState) => state.user);
 
@@ -402,7 +404,11 @@ export default function CreateCompetitionForm() {
 
   return (
     
-    <View className="flex-1 bg-gray-50 pt-[40px] w-full max-w-full  pb-[50px] px-4">
+    <KeyboardAvoidingView 
+          className="flex-1 bg-gray-50 pt-[40px] w-full max-w-full  pb-[50px] px-4"
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={0}       
+    >
       <TouchableOpacity
         className="flex-row items-center mb-4"
         onPress={() => router.back()}
@@ -662,9 +668,9 @@ export default function CreateCompetitionForm() {
                         <TextInput
                           keyboardType="numeric"
                           placeholder={t(`mycompetition.competition.creations_screen.model.montant_min`, {amount: minWinnerPrice})}
-                          value={winnerPrice.toString()}
+                          // value={winnerPrice.toString()}
                           onChangeText={(text) =>
-                            !usePercentage && setWinnerPrice(Number(text))
+                            !usePercentage && setWinnerPrice(Number(text)) && canUseIA() ? setUseIA(true) : setUseIA(false)
                           }
                           className="border border-gray-300 p-2 rounded mb-4"
                           editable={!usePercentage || actionType=="CREATE"} // readonly si on utilise le pourcentage
@@ -756,6 +762,6 @@ export default function CreateCompetitionForm() {
           <FullscreenLoader visible={loading} />
         
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }

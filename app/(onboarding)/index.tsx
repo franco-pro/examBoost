@@ -10,7 +10,7 @@ import { ArrowRightIcon, Icon } from '@/components/ui/icon';
 
 export default function Index() {
   const handleDone = async () => {
-    await setItem("onboarded", "true");
+    await setItem("onboarded", true);
     navigation.replace("/(auth)/login");
   };
   const {width, height} = Dimensions.get("window");

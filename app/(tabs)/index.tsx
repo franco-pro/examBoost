@@ -23,6 +23,7 @@ import { useTranslation } from "react-i18next";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { handleOpenDocument, subjectDocumentype } from "../downloadFiles";
+import { initializeNotificationsGateway } from "../hooks/services/socket/notifications.gateway";
 
 import i18n from "@/lang/i18n";
 import Pdf from "react-native-pdf";
@@ -34,6 +35,7 @@ import {
 import { buildFileUrl } from "../hooks/files/buildRouteFiles";
 import { usePacksQuery } from "../features/packs/hooks.rq";
 import { packProps } from "../api/packService";
+import { getItem } from "../utils/asyncStorage";
 
 interface subjectType {
   id: number;
@@ -68,14 +70,19 @@ export default function Index() {
   // console.log("LANG:", i18n.language);
   // console.log("WELCOME:", t("accueil.welcome"));
   const dispatch = useDispatch<any>();
-  const { user, others, accessToken } = useSelector(
+  const { user, others,accessToken, isAuthenticated } = useSelector(
     (state: RootState) => state.user,
   );
-useEffect(() => {
-  if (!accessToken) {
+
+  
+  
+  useEffect(() => {
+  console.log("isauth: ", isAuthenticated)
+  if (!isAuthenticated) {
     navigation.replace("/(auth)/login");
   }
-}, [accessToken]);
+  }, [navigation, isAuthenticated]);
+  // console.log("accestoken: ", accessToken);
   //Gestion des proprietes de pack
   const currentUserId = user?.id;
   const packsQuery = usePacksQuery(currentUserId ?? 0);
@@ -90,19 +97,33 @@ useEffect(() => {
 
   useFocusEffect(
     useCallback(() => {
-      loadRecent();
+      packsQuery.refetch()
+      loadRecent()
     }, []),
   );
   useEffect(() => {
-    if (accessToken) {
+    if (isAuthenticated) {
       dispatch(userDatas()); //to work
 
       loadRecent();
     }
-  }, [accessToken, dispatch]);
+  }, [isAuthenticated, dispatch]);
 
-  console.log("useFocus after:", recentDocument);
+  // console.log("useFocus after:", recentDocument);
   // console.log("user:", user);
+  useEffect(() => {
+    if (accessToken) {
+      dispatch(userDatas()) ; //to work
+      setTimeout(() => {
+
+        initializeNotificationsGateway(dispatch, currentUserId ?? 1);
+
+      }, 1000);
+
+    }
+  }, [accessToken,dispatch]);
+
+
   // console.log(
   //   "infos: ",
   //   user,
@@ -135,7 +156,7 @@ useEffect(() => {
       packs.some((pack) => pack.type === doc.type && pack.isSubscribed),
     );
   }, [others?.subject, packs]);
-  console.log("accessible doc:", accessibleDocument)
+  // console.log("accessible doc:", accessibleDocument)
 
   const accessibleDocuments = accessibleDocument?.map(
     (item: subjectType, index: number) => {
@@ -181,6 +202,7 @@ useEffect(() => {
       console.log("error:", error);
     }
   }, [others]);
+  
   const recentDataSubjectsTab = useMemo(() => {
     try {
       if (!others?.subject) return [];

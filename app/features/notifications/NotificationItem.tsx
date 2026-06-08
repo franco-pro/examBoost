@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import type { Notification } from './types';
+import { HStack } from '@/components/ui/hstack';
 
 export default memo(function NotificationItem({
   notification,
@@ -9,36 +10,44 @@ export default memo(function NotificationItem({
   onToggleRead,
   onPress,
   onOpenLink,
+  onOpenDetails,
+  onAcceptInvitation,
 }: {
   notification: Notification;
   onDelete?: () => void;
   onToggleRead?: () => void;
   onPress?: () => void;
-  onOpenLink?: () => void;
+  onOpenDetails?: (id: number, actionType: string) => void;
+  onOpenLink?: (id: number, actionType: string) => void;
+  onAcceptInvitation?: () => void;
 }) {
-  const { title, body, type, read, createdAt, id } = notification;
+  const { title, text, type, isRead, created_at, id , competionID} = notification;
 
   const iconByType: Record<Notification['type'], keyof typeof Ionicons.glyphMap> = {
-    info: 'information-circle',
-    success: 'checkmark-circle',
-    warning: 'warning',
-    error: 'alert-circle',
+    "INVITATION": 'information-circle',
+    "INVITATION_ACCEPTED": 'checkmark-circle',
+    "ADMIN_ALERT": 'warning',
+    "COMPETITION_START": 'alert-circle',
+    "SYSTEM": 'cog',
+    "INVITATION_DECLINED": 'close-circle',
   } as const;
 
   const iconName = iconByType[type];
   const typeColor: Record<Notification['type'], string> = {
-    info: '#38bdf8', // text-info-400
-    success: '#22c55e', // text-success-500
-    warning: '#f59e0b', // text-warning-500
-    error: '#ef4444', // text-error-500
+    "INVITATION": '#38bdf8', // text-info-400
+    "INVITATION_ACCEPTED": '#22c55e', // text-success-500
+    "ADMIN_ALERT": '#f59e0b', // text-warning-500
+    "INVITATION_DECLINED": '#ef4444', // text-error-500
+    "SYSTEM": '#6b7280', // text-gray-500
+    "COMPETITION_START": '#8b5cf6', // text-purple-500
   } as const;
 
-  const time = new Date(createdAt);
-  const rel = timeAgo(time);
+  const time = new Date(created_at);
+  const rel = timeAgo(time); 
 
   // Gestion du texte long: on tronque par défaut et on propose "Voir plus"
   const [expanded, setExpanded] = useState(false);
-  const isLong = useMemo(() => (body?.length ?? 0) > 140, [body]);
+  const isLong = useMemo(() => (text?.length ?? 0) > 140, [text]);
   const toggleExpanded = useCallback(() => setExpanded((s) => !s), []);
 
   return (
@@ -58,18 +67,18 @@ export default memo(function NotificationItem({
         </View>
         <View className="flex-1">
           <View className="flex-row items-center gap-2">
-            {!read && <View className="w-2 h-2 rounded-full bg-indicator-primary" accessibilityLabel="Non lu" />}
-            <Text className={`text-base ${read ? 'font-medium text-typography-default/90 dark:text-typography-white/90' : 'font-semibold text-typography-default dark:text-typography-white'}`} numberOfLines={1}>
+            {!isRead && <View className="w-2 h-2 rounded-full bg-indicator-primary" accessibilityLabel="Non lu" />}
+            <Text className={`text-base ${isRead ? 'font-medium text-typography-default/90 dark:text-typography-white/90' : 'font-semibold text-typography-default dark:text-typography-white'}`} numberOfLines={1}>
               {title}
             </Text>
           </View>
           <Text className="mt-0.5 text-typography-gray" numberOfLines={expanded ? undefined : 3}>
-            {body}
+            {text}
           </Text>
           {/*  direct pour les compétitions */}
-          {type === 'warning' && onOpenLink && (
+          {(type === "COMPETITION_START") && onOpenLink && (
             <Pressable
-              onPress={onOpenLink}
+              onPress={() => onOpenLink(notification.competionID, "joinRoom")}
               accessibilityRole="button"
               accessibilityLabel="Rejoindre la compétition"
               hitSlop={8}
@@ -78,6 +87,43 @@ export default memo(function NotificationItem({
               <Text className="text-xs text-white font-semibold">Rejoindre</Text>
             </Pressable>
           )}
+
+           {(type === "INVITATION") && onAcceptInvitation && onOpenDetails && (
+            //Hstack for multiple btns
+            <HStack className="mt-2 self-start gap-2">
+              <Pressable
+                onPress={onAcceptInvitation}// add the user as participant to the competition
+                accessibilityRole="button"
+                accessibilityLabel="Accepter"
+                hitSlop={8}
+                className="mt-2 self-start px-2 py-1 rounded-md bg-primary-500 active:opacity-90"
+              >
+                <Text className="text-xs text-white font-semibold">Accepter 👌</Text>
+              </Pressable>
+
+              <Pressable
+                onPress={()=> onOpenDetails(id, "openDetails")}
+                accessibilityRole="button"
+                accessibilityLabel="Details"
+                hitSlop={8}
+                className="mt-2 self-start px-2 py-1 rounded-md bg-secondary-500 active:opacity-90"
+              >
+                <Text className="text-xs text-white font-semibold"> Details 👁️ </Text>
+              </Pressable>
+{/* 
+              <Pressable
+                onPress={onOpenLink}
+                accessibilityRole="button"
+                accessibilityLabel="Refusé"
+                hitSlop={8}
+                className="mt-2 self-start px-2 py-1 rounded-md bg-error-500 active:opacity-90"
+              >
+                <Text className="text-xs text-white font-semibold">Refusé et supprimé 🚫</Text>
+              </Pressable> */}
+            </HStack>
+          
+          )}
+
           {isLong && (
             <Pressable
               onPress={toggleExpanded}
@@ -94,7 +140,7 @@ export default memo(function NotificationItem({
           <View className="mt-2 flex-row items-center gap-4">
             <Text className="text-xs text-typography-gray">{rel}</Text>
             <View className="flex-row items-center gap-2 ml-auto">
-              {onToggleRead && read && (
+              {onToggleRead && isRead && (
                 <Pressable
                   onPress={onToggleRead}
                   className="p-2 rounded-md bg-outline-50 dark:bg-outline-800 active:opacity-80"

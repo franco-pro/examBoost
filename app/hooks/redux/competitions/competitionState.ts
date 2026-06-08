@@ -5,7 +5,13 @@ export default interface CompetitionState {
     selectedCompetition: Competition | null;
     competitionList: Competition[];
     myCompetitionList: Competition[];
-    searchResults: Competition[],
+    searchResults: Competition[];
+    pagination: {
+        currentPage: number;
+        totalPages: number;
+        pageSize: number;
+        totalItems: number;
+    };
     loading: boolean;
     actionDone: boolean,
     error: any | null;

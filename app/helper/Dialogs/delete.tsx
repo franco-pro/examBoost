@@ -30,7 +30,7 @@ export default function DialogDelete({isOpen, isLoading, onClose, onConfirm, hea
         <AlertDialogBackdrop />
         <AlertDialogContent className="w-[90%] max-w-[415px] gap-4 items-center">
           <Box className="rounded-full h-[52px] w-[52px] bg-background-error items-center justify-center">
-            <Icon as={TrashIcon} size="80" className="stroke-error-500" />
+            <Icon as={TrashIcon} size="xl" className="stroke-error-500" />
           </Box>
           <AlertDialogHeader className="mb-2">
             <Heading size="md">{headText}</Heading>

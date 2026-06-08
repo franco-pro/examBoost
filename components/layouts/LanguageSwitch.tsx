@@ -21,7 +21,7 @@ export default function LanguageToggle() {
   return (
     <View style={{ padding: 100 }}>
       <Button
-        title={language === "fr" ? "EN" : "FR"}
+        title={language === "fr" ? "FR" : "EN"}
         onPress={toggleLanguage}
         color="blue"
       />

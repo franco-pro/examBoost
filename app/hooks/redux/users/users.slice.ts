@@ -28,6 +28,7 @@ interface UserState {
   loading?: boolean;
   error?: any;
   others?: any;
+  isAuthenticated: boolean;
 }
 
 const initialState: UserState = {
@@ -36,6 +37,7 @@ const initialState: UserState = {
   // error: null,
   accessToken: null,
   refreshToken: null,
+  isAuthenticated:false
   // others: null
 };
 
@@ -102,7 +104,6 @@ export const userDatas = createAsyncThunk(
       if (!token) throw new Error("No token Found !");
       const datas = await authService.userDatas(token);
       // console.log("enter userData with token:", token);
-      console.log("UserDatas:", datas);
       return datas;
     } catch (err: any) {
       const state: RootState = getState() as RootState;
@@ -115,6 +116,48 @@ export const userDatas = createAsyncThunk(
     }
   }
 );
+
+export const searchUser = createAsyncThunk(
+  "user/search",
+  async (data : {query: string, page: number, limit: number}, { rejectWithValue }) => {
+    try {
+      const datas = await authService.search(data);
+      return datas;
+    } catch (err: any) {
+      return rejectWithValue(
+        err.response?.data?.message || err?.message || "Une erreur est survenue"
+      );
+    }
+  })
+
+  export const deleteUser = createAsyncThunk(
+    "user/delete",
+    async (id: number, { rejectWithValue }) => {
+      try {
+        const datas = await authService.deleteUser(id);
+        return datas;
+      } catch (err: any) {
+        return rejectWithValue(
+          err.response?.data?.message || err?.message || "Une erreur est survenue"
+        );
+      }
+    }
+  )
+
+  export const updateRole = createAsyncThunk(
+    "user/updateRole",
+    async (data: {id: number, role: string}, { rejectWithValue }) => {
+      try {
+        const datas = await authService.updateRole(data);
+        return datas
+      }
+      catch(err: any){
+        return rejectWithValue(
+          err.response?.data?.message || err?.message || "Une erreur est survenue"
+        )
+      }
+    }
+  )
 
 export const userSlice = createSlice({
   name: "user",
@@ -134,12 +177,14 @@ export const userSlice = createSlice({
       // state.user = null;
       state.accessToken = null;
       state.refreshToken = null;
+      state.isAuthenticated = false
       // return initialState;
     },
     loginSuccess: (state, action) => {
       state.user = action.payload.user;
       state.accessToken = action.payload.accessToken;
-      state.refreshToken = action.payload.refreshToken
+      state.refreshToken = action.payload.refreshToken;
+      state.isAuthenticated = true
     },
 
     updateProfile: (state, action) => {
@@ -179,6 +224,7 @@ export const userSlice = createSlice({
         state.user = action.payload.user;
         state.accessToken = action.payload.accessToken;
         state.refreshToken = action.payload.refreshToken;
+        state.isAuthenticated = true
       })
 
       //register
@@ -208,6 +254,20 @@ export const userSlice = createSlice({
           state.error = action.payload as string
         }
     })
+
+      //search
+        .addCase(searchUser.fulfilled, (state, action) => {
+          state.loading = false;
+        })
+        .addCase(searchUser.rejected, (state, action) => {
+          state.loading = false;
+          state.error = action.payload as string;
+        })
+        .addCase(searchUser.pending, (state) => {
+          state.loading = true;
+          state.error = null;
+        })
+        
   },
 });
 

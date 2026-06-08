@@ -6,6 +6,7 @@ import {
   TextInput,
   ScrollView,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system/legacy";
@@ -34,6 +35,7 @@ import { ChevronDownIcon } from "lucide-react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 import { RootState } from "../hooks/redux/store";
+import { SubmitDocument } from "../others-admin/submit-doc/submit";
 
 export default function Enseignant() {
   const [docFile, setDocFile] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
@@ -50,7 +52,6 @@ export default function Enseignant() {
 
   const user = useSelector((state: RootState) => state.user.user)
   const userID = user?.id
-
   const allType = [
     "CONTROLE CONTINU",
     "EXAMEN SEMESTRE",
@@ -83,7 +84,7 @@ export default function Enseignant() {
 
     const file = result.assets[0];
 
-    if (type === "EXAMEN") {
+    if (type !== "CORRECTION") {
       setDocFile(file);
     } else {
       setCorrectionFile(file);
@@ -98,51 +99,28 @@ export default function Enseignant() {
 
   const handleSubmit = async () => {
     try {
-      if (!docFile) {
-        alert("Veuillez sélectionner une épreuve");
-        return;
-      }
-
       setLoading(true);
-
-      const docBase64 = await fileToBase64(docFile.uri);
-
-      let correctionBase64 = null;
-
-      if (correctionFile) {
-        correctionBase64 = await fileToBase64(correctionFile.uri);
-      }
-
-      if (!userID) {
-        console.log("une ereur avec l'ID du user: ", userID)
-      }
-
-      const payload = {
-        base64Encode: docBase64,
-        correctionBase64,
-        subject,
+      await SubmitDocument(
+        fileToBase64,
+        docFile,
+        correctionFile,
         niveauID,
         fileType,
-        userID
-      };
-
-      // console.log("URL:", apiClient.defaults.baseURL + "/document");
-
-      await apiClient.post("/document", payload);
-      alert("Documents envoyés avec succès");
-
+        subject,
+        userID,
+      );
+      Alert.alert("Succes", "Documents envoyés avec succes.");
+      // reset des champs
       setDocFile(null);
       setCorrectionFile(null);
       setSubject("");
-      setNiveauId(null);
-      setFileType("EXAMEN");
     } catch (error) {
       console.log(error);
       alert("Erreur lors de l'envoi");
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   return (
     <ScrollView

@@ -51,3 +51,5 @@ export const handleOpenDocument = async (doc: subjectDocumentype) => {
 console.log("erreur lors de l'ouverture du fichier dans downloadFile: ", err)
     } 
 }
+
+export const  documentsOffice = async()=>{}

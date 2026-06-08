@@ -11,10 +11,12 @@ export default function SubscriptionsHttp(){
     return {
         createSubscription: async (data: {userID: number, competitionID: number, score: 0}) =>{
             try {
+
                 const response = await apiClient.post(baseEndpoint+'suscribe', data)
                 return {data: response.data, error: null};
             } catch (error: any) {
-                return {data: null, error: error.response.data.message};                
+
+                return {data: null, error: error.response?.data?.message || 'Une erreur est survenue'};                
             }
           
         },

@@ -49,7 +49,6 @@ export default function Information() {
 
   const dispatch = useAppDispatch();
   const [isDeleteOpen, setDeleteIsOpen] = useState(false)
-  const { id } = useLocalSearchParams();
   const {stop}= useSoundAud();
 
   const DialogDeleteText = DialogText;
@@ -165,7 +164,6 @@ export default function Information() {
 
   function observeCompetition(){
     if(selectedCompetition && selectedCompetition.roomID){
-      console.log('competition', room, selectedCompetition)
       setJoininStatut("spectator")
       initializeRoomsGateway(dispatch, null, userId)
       const eventManager = EmitEvent(dispatch, {isManagedByIA: selectedCompetition?.isManagedByIA as any, roomId: selectedCompetition?.roomID ?? room?.roomId as any});
@@ -190,8 +188,8 @@ export default function Information() {
           userID: userId,
           appLang: language as any,
           username: username ? username:"Dems",
-          imgUrl: "https://i.ibb.co/7R4DyhQ/Avatar-1.jpg",
-          surname: "Dems",
+          imgUrl: user ? user.imgUrl: "https://i.ibb.co/7R4DyhQ/Avatar-1.jpg",
+          surname: user ? user.surname : "",
           
         })
      }
@@ -211,8 +209,8 @@ function userJoinCompetition(){
       userID: userId,
       appLang: (language as any),
       username: username ? username:"Dems",
-      imgUrl: "https://i.ibb.co/7R4DyhQ/Avatar-1.jpg",
-      surname: "Dems",
+      imgUrl: user ? user.imgUrl: "https://i.ibb.co/7R4DyhQ/Avatar-1.jpg",
+      surname: user ? user.surname : "",
       
     })
 
@@ -281,7 +279,7 @@ function userJoinCompetition(){
   }
 
   return (
-    <View className="bg-gray-50 pt-[40px] pb-[100px] px-4">
+    <View className="flex-1 bg-gray-50 pt-[40px] pb-[10px] px-4">
       {/* Bouton Retour */}
       <TouchableOpacity
         className="flex-row items-center mb-6"
@@ -306,7 +304,12 @@ function userJoinCompetition(){
           </TouchableOpacity>
         )}
 
-        <InvitationPrompts isOpen={showModal} onClose={()=> setShowModal(false)} />
+        <InvitationPrompts 
+            isOpen={showModal} 
+            onClose={()=> setShowModal(false)} 
+            competitionDetails={{id: selectedCompetition ? selectedCompetition.id: 0, name: selectedCompetition ? selectedCompetition.name : ""}}
+            userDetails={{id: userId, username: (user?.surname ?? "")+ " " + username}}
+        />
 
       {/* --- Première carte avec dégradé --- */}
       <LinearGradient
@@ -360,7 +363,8 @@ function userJoinCompetition(){
       </LinearGradient>
 
       {/* --- Deuxième carte : Détails rapides --- */}
-      <ScrollView className="max-h-[100%] h-[300px]">
+      {/* <ScrollView className="h-[300px] max-h-[100%]"> */}
+      <ScrollView>
 
       <View className="bg-white rounded-2xl py-4 px-5 mt-2 shadow-md border border-gray-100">
         <Text
@@ -392,12 +396,12 @@ function userJoinCompetition(){
               selectedCompetition?.type === "FREE_REGISTRATION_WITH_WINNER_PRICE" || selectedCompetition?.type === "PAID_REGISTRATION_WITH_WINNER_PRICE" ? 
               (
                 <Text className="ml-2 text-gray-700 font-medium">
-                  {selectedCompetition?.winnerPrice} XAF
+                  {selectedCompetition?.winnerPrice.toLocaleString("fr-FR")} XAF
                  </Text>
               ) : selectedCompetition?.type == "PAID_REGISTRATION_AS_WINNER_PRICE" ? 
                 (
                   <Text className="ml-2 text-gray-700 font-medium">
-                    {selectedCompetition?.winnerPrice + " x " + selectedCompetition?.suscribers.length} XAF
+                    {selectedCompetition?.winnerPrice.toLocaleString("fr-FR") + " x " + selectedCompetition?.suscribers.length} XAF
                   </Text>
                 ): (
                   <Text className="ml-2 text-gray-700 font-medium">
@@ -558,7 +562,7 @@ function userJoinCompetition(){
               <Text className="font-semibold text-gray-800">
                 {(selectedCompetition?.entryFee === 0 || !selectedCompetition?.entryFee)
                   ? "Gratuit"
-                  : `${selectedCompetition?.entryFee} XAF`}
+                  : `${selectedCompetition?.entryFee.toLocaleString("fr-FR")} XAF`}
               </Text>
             </View>
 
@@ -641,6 +645,21 @@ function userJoinCompetition(){
           </View>
         </View>
 
+              {/* Bouton Supprimer - à gauche */}
+      <View className="flex-row items-center justify-between">
+
+        {(user?.role.toLowerCase() == "superadmin" ) &&
+          (selectedCompetition?.statut === "UPCOMING" || selectedCompetition?.statut === "CANCELLED") && (
+            <TouchableOpacity
+              className="flex-row items-center bg-red-500 self-start px-4 py-2 rounded-full"
+              onPress={() => setDeleteIsOpen(true)}
+            >
+              <Ionicons name="trash-outline" size={16} color="#ffffff" />
+              <Text className="text-white text-xs font-semibold ml-2">
+                Suppression Admin
+              </Text>
+            </TouchableOpacity>
+          )}
 
         {/* boutton pour rejoindre la competition pour un user n'etant pas son createur et si la date limite n'est pas atteinte */}
         {selectedCompetition?.registration_deadline && 
@@ -649,7 +668,7 @@ function userJoinCompetition(){
           userId !== selectedCompetition?.creatorID &&
           selectedCompetition?.suscribers.filter((user, index) => {
             return user.id === userId;
-          }).length === 0 && (
+          }).length === 0 && selectedCompetition?.statut !== "ONGOING" && (
             <TouchableOpacity className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto" onPress={()=>registerToCompetition()}>
               <Text className="text-white text-xs font-semibold mr-2">
               {t("mycompetition.information.register_comp")}
@@ -791,6 +810,7 @@ function userJoinCompetition(){
               <Ionicons name="chevron-forward" size={22} color="#ffffff" />
             </TouchableOpacity>
           )}
+      </View>
 
       <FullscreenLoader visible={waitingLaunching || loading || waitingJoining || suscriptionLoading} />
       </ScrollView>

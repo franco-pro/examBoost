@@ -8,6 +8,8 @@ export const createSubscription = createAsyncThunk(
     'subscription/create',
     async (data: {userID: number, competitionID: number, score: 0, suscribeFromInvitation: boolean}, {rejectWithValue})=>{
         try {
+            console.log('response checkkkker', data)
+
             const response = await subscriptionsHttp.createSubscription(data);
             return response;
         } catch (error: any) {
@@ -15,7 +17,7 @@ export const createSubscription = createAsyncThunk(
 
             return rejectWithValue({
                 status: error.response?.status ?? 500,
-                message: error.response?.data?.message ?? "Erreur lors du chargement..."
+                message: error.message ?? "Erreur lors du chargement..."
             })
         }
     }

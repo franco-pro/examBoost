@@ -11,11 +11,34 @@ export default function CompetitionHttp(){
     const baseEndpoint = "/competitions/"
 
     return {
-        getCompetitions: async ()=>{
+        getCompetitions: async (page: number, limit: number)=>{
             try {
-                const response = await apiClient.get(baseEndpoint)
-                return {data: response.data, error: null};
+                const response = await apiClient.get(baseEndpoint, {
+                    params: { page, limit: limit },
+                  });
+                return {data: response.data.data, error: null, pagination: {
+                    totalItems: response.data.total,
+                    totalPages: response.data.totalPages,
+                    currentPage: response.data.page,
+                    pageSize: response.data.limit
+                }};
                     
+            } catch (error: any) {
+                return {data: null, error: error.response.data.message};                
+            }
+        },
+
+        getCompetitionAdmin: async (page: number, limit: number)=>{
+            try {
+                const response = await apiClient.get(baseEndpoint+"admin", {
+                    params: { page, limit: limit },
+                  });
+                return {data: response.data.data, error: null, pagination: {
+                    totalItems: response.data.total,
+                    totalPages: response.data.totalPages,
+                    currentPage: response.data.page,
+                    pageSize: response.data.limit
+                }};
             } catch (error: any) {
                 return {data: null, error: error.response.data.message};                
             }
@@ -33,8 +56,10 @@ export default function CompetitionHttp(){
 
         createCompetition: async (data: Competition)=>{
             try {
-                const response = await apiClient.post(baseEndpoint, data);
+                console.log('competition to create', data)
 
+                const response = await apiClient.post(baseEndpoint, data);
+                console.log('competition create', response)
                 return {data: response.data, error: null};
             } catch (error: any) {
                 return {data: null, error: error.response.data.message};                
@@ -69,6 +94,20 @@ export default function CompetitionHttp(){
                     
             } catch (error: any) {
                 return {data: null, error: error.response.data.message};
+            }
+        },
+
+        searchCompetition: async (query: string, isAdmin: boolean)=>{
+            const ext = isAdmin ? "admin/search" : "user/search"
+            try {
+                const response = await apiClient.get(baseEndpoint+ext, {
+                    params: { query : query },
+                  });
+                  console.log('search result')
+                return {data: response.data, error: null};
+                    
+            } catch (error: any) {
+                return {data: null, error: error.response.data.message};                
             }
         },
 

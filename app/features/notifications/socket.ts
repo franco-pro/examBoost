@@ -11,7 +11,7 @@ export type NotificationsSocketEvents = {
 export function connectNotificationsSocket(userID: number): Socket | null {
   if (!API_URL) return null;
 
-  const socket = io(`${API_URL}/notification`, {
+  const socket = io(`${API_URL}/otification`, {
     transports: ['websocket'],
     query: { userID: String(userID) },
   });
