@@ -22,7 +22,8 @@
   "navigationBottom": {
     "home": "Home",
     "transactions": "My transactions",
-    "packs": "Packages"
+    "packs": "Packages",
+    "teacher": "teachers"
   }
 },
 "mycompetition" : {

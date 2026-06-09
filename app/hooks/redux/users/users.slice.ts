@@ -9,12 +9,12 @@ import {
 import { RootState } from "../store";
 
 interface User {
-  id: any;
+  id: number;
   username: string;
   surname: string;
   phone: string;
   email: string;
-  niveau: string;
+  niveauID: string;
   wallet: string;
   role: string;
   imgUrl: string;
@@ -27,7 +27,7 @@ interface UserState {
   refreshToken: string | null;
   loading: boolean;
   error: any;
-  others: any;
+  others?: any;
 }
 
 const initialState: UserState = {
@@ -36,7 +36,7 @@ const initialState: UserState = {
   error: null,
   accessToken: null,
   refreshToken: null,
-  others: null
+  // others: null
 };
 
 //un thunk est une action asynchrone qui appelle dans ce cas mon api
@@ -105,9 +105,11 @@ export const userDatas = createAsyncThunk(
       return datas;
     } catch (err: any) {
       const state: RootState = getState() as RootState;
-      console.log("❌ userDatas thunk error:", err);
+      if (err.response?.status === 401) {
+        return rejectWithValue("UNAUTHORIZED")
+      }
       return rejectWithValue(
-        err.response?.data?.message || err?.message || "Une erreur est survenue"
+        err.response?.data?.message || err?.message || "Une erreur est survenue",
       );
     }
   }
@@ -181,9 +183,18 @@ export const userSlice = createSlice({
       state.refreshToken = action.payload.refreshToken
     },
 
+    updateProfile: (state, action) => {
+      state.user = {
+        ...state.user,
+        ...action.payload
+      }
+    },
+
     updateBalanceUser: (state, action) => {
       if (state.user) {
         state.user.wallet = action.payload
+      } else {
+        console.log("le state dans updateBalanceUser: ", state)
       }
     }
   },
@@ -233,8 +244,21 @@ export const userSlice = createSlice({
           state.error = null;
         })
         
+    
+    //redirect login page
+      .addCase(userDatas.rejected, (state, action) => {
+        state.loading = false
+        
+        if (action.payload === "UNAUTHORIZED") {
+          state.user = null,
+            state.accessToken = null
+          state.error = "Session expire"
+        } else {
+          state.error = action.payload as string
+        }
+    })
   },
 });
 
-export const { logout,loginSuccess, setCredentials, updateBalanceUser } = userSlice.actions;
+export const { logout,loginSuccess, setCredentials, updateBalanceUser, updateProfile } = userSlice.actions;
 export default userSlice.reducer;

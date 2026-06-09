@@ -1,5 +1,6 @@
 import { filterDocuments, getDistinct } from '@/app/features/documents/utils';
-import { usePackDocumentsQuery } from '@/app/features/packs/hooks.rq';
+import { getDocumentsAndCorrectionHttp } from '@/app/features/packs/api.http';
+import { useDocumentAndCorrection, usePackDocumentsQuery } from '@/app/features/packs/hooks.rq';
 import PackHeader from '@/app/features/packs/PackHeader';
 import type { RootState } from '@/app/hooks/redux/store';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,31 +11,40 @@ import { useSelector } from 'react-redux';
 
 export default function SubjectDocumentsInTabs() {
   const router = useRouter();
-  const { packId, name, niveauID, subject } = useLocalSearchParams<{
+  const { packId, name, niveauID, subject, type } = useLocalSearchParams<{
     packId: string;
     name: string;
     niveauID?: string;
     subject?: string;
+    type:string
   }>();
 
-  const currentUserId = useSelector((s: RootState) => s.session.currentUserId);
-  const packID = useMemo(() => Number(packId), [packId]);
-  const docsQuery = usePackDocumentsQuery(currentUserId ?? undefined, Number.isNaN(packID) ? undefined : packID);
+  console.log("params dans [name]:", packId,name,niveauID,subject,type)
+  const user = useSelector((state: RootState) => state.user.user);
+  const userID = user?.id
+  const docsQuery = usePackDocumentsQuery(userID);
   const allDocsForPack = docsQuery.data ?? [];
+  // console.log("datas dans document :", userID,allDocsForPack, typeof(allDocsForPack))
   const loading = docsQuery.isLoading;
-
+  const documentId= allDocsForPack[0]?.id
+  const docsWithCorrige = useDocumentAndCorrection(documentId)
+  const allDocsWithCorrige = docsWithCorrige.data ?? []
+  const document = allDocsWithCorrige[0]?.document
+  const corrige = allDocsWithCorrige[0]?.correction
+  // console.log("document: ", document, "corrige: ",corrige)
+  // console.log("documentId: ", documentId, "documents avec son corrige : ", allDocsWithCorrige)
   const [search, setSearch] = useState('');
   const nid = Number(niveauID);
 
   const allForName = useMemo(() => allDocsForPack.filter((d) => d.name === name), [allDocsForPack, name]);
+  // console.log("allforname : ", allForName, name, subject)
   const subjects = useMemo(() => getDistinct(allForName, 'subject') as string[], [allForName]);
   const niveaux = useMemo(() => getDistinct(allForName, 'niveauID') as number[], [allForName]);
 
   const docs = useMemo(() => {
     const base = filterDocuments(allDocsForPack, {
-      name: String(name),
-      subject: subject ? String(subject) : undefined,
-      niveauID: !isNaN(nid) ? nid : undefined,
+      type: type,
+      niveauID: nid,
     });
     const q = search.trim().toLowerCase();
     if (!q) return base;
@@ -55,7 +65,7 @@ export default function SubjectDocumentsInTabs() {
         onOpenSort={() => {}}
         onBack={() =>
           router.replace({
-            pathname: '/(tabs)/packs/[packId]/subjects',
+            pathname: '/(packs)/[packId]/subjects',
             params: {
               packId: String(packId),
               ...(niveauID ? { niveauID: String(niveauID) } : {}),
@@ -90,12 +100,12 @@ export default function SubjectDocumentsInTabs() {
                   key={d.id}
                   onPress={() => {
                     const href = {
-                      pathname: '/(tabs)/packs/[packId]/subjects/[name]/[docId]' as const,
+                      pathname: '/(packs)/[packId]/subjects/[name]/[docId]' as const,
                       params: {
                         packId: String(packId),
                         name: String(name),
                         docId: String(d.id),
-                        ...(isNaN(nid) ? {} : { niveauID: String(nid) }),
+                        niveauID: d.niveauID,
                         ...(subject ? { subject: String(subject) } : {}),
                       },
                     };
@@ -121,15 +131,15 @@ export default function SubjectDocumentsInTabs() {
                   <View className="px-4 py-3 gap-2">
                     <View className="flex-row flex-wrap items-center gap-2">
                       <View className="px-2 py-1 rounded-full bg-outline-100 dark:bg-outline-800">
-                        <Text className="text-[10px] text-typography-gray uppercase tracking-wide">{d.name}</Text>
+                        <Text className="text-[10px] text-typography-800 uppercase tracking-wide">{d.name}</Text>
                       </View>
                       {/* Badge */}
                       <View className="px-2 py-1 rounded-full bg-outline-100 dark:bg-outline-800">
-                        <Text className="text-[10px] text-typography-gray uppercase tracking-wide">Niveau {d.niveauID}</Text>
+                        <Text className="text-[10px] text-typography-800 uppercase tracking-wide">Niveau {d.niveauID}</Text>
                       </View>
                       {d.created_at ? (
                         <View className="px-2 py-1 rounded-full bg-outline-100 dark:bg-outline-800">
-                          <Text className="text-[10px] text-typography-gray uppercase tracking-wide">{new Date(d.created_at).toLocaleDateString()}</Text>
+                          <Text className="text-[10px] text-typography-800 uppercase tracking-wide">{new Date(d.created_at).toLocaleDateString()}</Text>
                         </View>
                       ) : null}
                     </View>

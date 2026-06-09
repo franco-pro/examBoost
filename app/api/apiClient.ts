@@ -2,9 +2,6 @@ import axios from "axios";
 import { API_URL } from "../config/env";
 import { getItem, setItem } from "../utils/asyncStorage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { store } from "../redux/store";
-import { logout } from "../hooks/redux/users/users.slice";
-import { useRouter } from "expo-router";
 
 const apiClient = axios.create({
   baseURL: API_URL || "http://192.168.1.112:3000",
@@ -19,6 +16,13 @@ apiClient.interceptors.request.use(async (config) => {
   const token = await getItem("accessToken");
   const refreshToken = await getItem("refreshToken");
   const keys = await AsyncStorage.getAllKeys();
+  // console.log("all keys :", keys);
+  // console.log("🚀 REQUEST:");
+  // console.log("METHOD:", config.method);
+  // console.log("BASE URL:", config.baseURL);
+  // console.log("URL:", config.url);
+  console.log("FULL URL:", `${config.baseURL}${config.url}`);
+
   
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;

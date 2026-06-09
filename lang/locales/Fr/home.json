@@ -5,6 +5,8 @@
     "transactions": "Mes transactions",
     "explore_subjets": "Explorer les Sujets",
     "view_all": "Tout voir",
-    "other_subjets": "Autres Sujets"
+    "other_subjets": "Autres Sujets",
+    "recent_documents": "Documents Recemment ouverts",
+    "open": "Ouvrir"
   }
 }

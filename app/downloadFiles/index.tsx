@@ -1,6 +1,7 @@
 import * as FileSystem from "expo-file-system/legacy"
 import { buildFileUrl } from "../hooks/files/buildRouteFiles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { saveRecentDocument } from "../hooks/files/recentDocuments/recentDocument";
 
 export const downloadPdfFile = async (
     fileUrl: string,
@@ -43,7 +44,8 @@ export const handleOpenDocument = async (doc: subjectDocumentype) => {
         return { 
             localUri,
             title: doc.subject
-      }
+        }
+        // saveRecentDocument(doc.id,)
     
     } catch(err) {
 console.log("erreur lors de l'ouverture du fichier dans downloadFile: ", err)

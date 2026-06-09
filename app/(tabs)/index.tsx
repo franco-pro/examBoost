@@ -3,49 +3,93 @@ import { Text } from "@/components/ui/text";
 import { Card } from "@/components/ui/card";
 import { Image } from "@/components/ui/image";
 import { View } from "@/components/ui/view";
+import { Dimensions } from "react-native";
 import { FlatList, Modal, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import { useDispatch, useSelector } from "react-redux";
-import { persistor, RootState } from "@/app/hooks/redux/store";
-import { useEffect, useMemo, useState } from "react";
+import { RootState } from "@/app/hooks/redux/store";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { logout, userDatas } from "@/app/hooks/redux/users/users.slice";
-import { useRouter } from "expo-router";
+import { router, useFocusEffect, useRouter } from "expo-router";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/fr";
 
 import { FontAwesome } from "@expo/vector-icons";
 import { ArrowRightIcon, Icon } from "@/components/ui/icon";
-import pdfImage from "../assets/images/pdf.png";
+import * as pdfImage from "../helper/images/image";
 import { useTranslation } from "react-i18next";
-import i18n from "@/lang/i18n";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { handleOpenDocument, subjectDocumentype } from "../downloadFiles";
 import { initializeNotificationsGateway } from "../hooks/services/socket/notifications.gateway";
 
+import i18n from "@/lang/i18n";
 import Pdf from "react-native-pdf";
+import { useUserQuery } from "../features/user/hooks.rq";
+import {
+  getRecentDocuments,
+  RecentDocument,
+} from "../hooks/files/recentDocuments/recentDocument";
+import { buildFileUrl } from "../hooks/files/buildRouteFiles";
+import { usePacksQuery } from "../features/packs/hooks.rq";
+import { packProps } from "../api/packService";
 
+interface subjectType {
+  id: number;
+  content: string;
+  url: string;
+  subject: string;
+}
+
+dayjs.extend(relativeTime);
+dayjs.locale("fr");
 export default function Index() {
+
+
+  const [recentDocument, setRecentDocument] = useState<RecentDocument[]>([]);
+  
   const navigation = useRouter();
   if (!AsyncStorage.getItem("accessToken")) {
-    navigation.replace("/(auth)/login")
+    navigation.replace("/(auth)/login");
   }
   const { t } = useTranslation("home");
+  const { width } = Dimensions.get("window");
+  // console.log("LANG:", i18n.language);
+  // console.log("WELCOME:", t("accueil.welcome"));
   const dispatch = useDispatch<any>();
-  const { user, others , accessToken} = useSelector(
+  const { user, others, accessToken } = useSelector(
     (state: RootState) => state.user,
+  );
+
+  //Gestion des proprietes de pack
+  const currentUserId = user?.id
+  const packsQuery = usePacksQuery(currentUserId ?? 0);
+  const [packs, setPacks] = useState<packProps[]>([]);
+  // console.log("packs dans index: ", packs)
+    useEffect(() => {
+      setPacks(packsQuery.data??[]);
+    }, [packsQuery.data]);
+  
+  const loadRecent = async () => {
+    const data = await getRecentDocuments();
+    setRecentDocument(data);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+       loadRecent()
+    }, []),
   );
   useEffect(() => {
     if (accessToken) {
-      dispatch(userDatas()) ; //to work
-      setTimeout(() => {
-
-        initializeNotificationsGateway(dispatch, user?.id);
-
-      }, 1000);
-
+      dispatch(userDatas()); //to work
+      
+      loadRecent();
     }
-  }, [accessToken,dispatch]);
+  }, [accessToken, dispatch]);
 
-
+  console.log("useFocus after:", recentDocument)
   // console.log(
   //   "infos: ",
   //   user,
@@ -58,43 +102,94 @@ export default function Index() {
   //   others,
   // );
   // console.log("subjects:", others.subject || "subject is null");
-// console.log("others datas:", others, "user datas", user)
-  const DataSubjectsTab = useMemo(() => {
-    if (!others?.subject) return [];
-    return others.subject.map((item: any, index: number) => ({
-      id: `${index + 1}`,
-      content: item.subject || "unknown",
-      image: pdfImage,
-      url: item.url
-    }));
-  }, [others]);
+  // console.log("others datas:", others, "user datas", user)
+  const images = Object.values(pdfImage);
+  const colors = ["#E8F0FE", "#E8FFF3", "#FDECEF", "#FFF4E5", "#F3E8FF"];
+  const bgColors = ["#8FB0FF", "#7EE2A8", "#F29AAD", "#FFB86B", "#B784F7"];
+  const sombreColors = [
+    "#8FB0FFCC",
+    "#7EE2A8CC",
+    "#F29AADCC",
+    "#FFB86BCC",
+    "#B784F7CC",
+  ];
 
+  //datas subjects of users
+  const DataSubjectsTab = useMemo(() => {
+    try {
+      if (!others?.subject) return [];
+      console.log("colors: ", colors[0]);
+
+      const mapped = others.subject.map((item: subjectType, index: number) => {
+        return {
+          id: `${item.id}`,
+          content: item.subject || "Unknown",
+          image: images[index % images.length],
+          url: item.url,
+          color: colors[index % colors.length],
+          sombreColor: sombreColors[index % sombreColors.length],
+          bgColor: bgColors[index % bgColors.length],
+        };
+      });
+
+      const sliceMapped = mapped.slice(0, 5);
+      // console.log("type de mapped:", mapped.slice(0, 2));
+      return sliceMapped;
+    } catch (error) {
+      console.log("others datas:", others, "user datas", user);
+      console.log("error:", error);
+    }
+  }, [others]);
+  const recentDataSubjectsTab = useMemo(() => {
+    try {
+      if (!others?.subject) return [];
+      console.log("colors: ", colors[0]);
+
+      const mapped = others.subject.map((item: subjectType, index: number) => {
+        const recent = recentDocument.find((d) => d.documentId === item.id);
+        // console.log("openedAt: ", recentDocument)
+
+        return {
+          id: `${item.id}`,
+          content: item.subject || "Unknown",
+          image: images[index % images.length],
+          url: item.url,
+          color: colors[index % colors.length],
+          sombreColor: sombreColors[index % sombreColors.length],
+          bgColor: bgColors[index % bgColors.length],
+          progress: recent?.progress ?? 0,
+          currentPage: recent?.currentPage ?? 1,
+          totalPages: recent?.totalPages ?? 1,
+          lastOpened: recent?.openedAt ?? null,
+        };
+      });
+
+      //trier le tableau
+      mapped.sort((a: any, b: any) => {
+        if (!a.lastOpened) return 1;
+        if (!b.lastOpened) return -1;
+
+        return (
+          new Date(b.lastOpened).getTime() - new Date(a.lastOpened).getTime()
+        );
+      });
+
+      return mapped;
+    } catch (error) {
+      console.log("others datas:", others, "user datas", user);
+      console.log("error:", error);
+    }
+  }, [others]);
+  // console.log("images: ", others.subject[0])
   // console.log("datas subjects:", DataSubjectsTab);
 
   const logoutHandle = async () => {
     dispatch(logout());
-    await persistor.purge();
+    // await persistor.purge();
     navigation.replace("/(auth)/login");
   };
 
-  //flatlist
-  const DatasSubjects = [
-    {
-      id: "1",
-      content: "bloc 1",
-      image: pdfImage,
-    },
-    {
-      id: "2",
-      content: "bloc 2",
-      image: pdfImage,
-    },
-    {
-      id: "3",
-      content: "bloc 3",
-      image: pdfImage,
-    },
-  ];
+
 
   //open file
   const [loading, setLoading] = useState(false);
@@ -107,7 +202,7 @@ export default function Index() {
       setLoading(true);
       const result = await handleOpenDocument(doc);
       if (!result) {
-        console.log("result data: ", result)
+        console.log("result data: ", result);
         return "";
       }
 
@@ -120,7 +215,7 @@ export default function Index() {
       setLoading(false);
     }
   };
-
+  // console.log("wallet dans undex:", user?.wallet)
   return (
     <>
       <ScrollView
@@ -139,12 +234,23 @@ export default function Index() {
             className="my-3 bg-primary-custom-400 rounded-l-full rounded-[30px] flex-row justify-center  gap-10 items-center "
           >
             <View className="image rounded-2xl gap-3">
-              <Image
-                size={"xl"}
-                source={require("../assets/images/profile_bl.png")}
-                alt="axel profil"
-                className="rounded-full"
-              />
+              {user?.imgUrl ? (
+                <Image
+                  size={"xl"}
+                  source={{
+                    uri: buildFileUrl(user.imgUrl),
+                  }}
+                  alt="axel profil"
+                  className="rounded-full"
+                />
+              ) : (
+                <Image
+                  size={"xl"}
+                  source={require("../assets/images/profile_bl.png")}
+                  alt="axel profil"
+                  className="rounded-full"
+                />
+              )}
             </View>
             <View className="soldes_transactions gap-2">
               <View className="soldes ">
@@ -173,7 +279,7 @@ export default function Index() {
               </View>
             </View>
           </Card>
-          <View>
+          {/* <View>
             <Button
               variant={"solid"}
               action={"negative"}
@@ -181,7 +287,7 @@ export default function Index() {
             >
               <ButtonText>Logout</ButtonText>
             </Button>
-          </View>
+          </View> */}
 
           {/* Ton contenu */}
           <View className="flex-row justify-between items-center mt-10">
@@ -207,41 +313,98 @@ export default function Index() {
           </View>
           <SafeAreaProvider>
             <SafeAreaView className="flex-1">
-              <FlatList
-                data={DataSubjectsTab}
-                showsHorizontalScrollIndicator={false}
-                horizontal={true}
-                renderItem={({ item }) => (
-                  <TouchableOpacity onPress={() => handlePressDocument(item)}>
-                    <View className=" h-44 w-44 bg-gray-200 rounded-lg justify-center items-center border m-2">
-                      <View className="flex-1 justify-center items-center gap-3">
-                        <Image
-                          size={"md"}
-                          source={item.image}
-                          alt="image pdf"
-                          className=" "
-                        />
+              {!DataSubjectsTab ? (
+                <Text>Aucun sujet n`a ete trouve</Text>
+              ) : (
+                <FlatList
+                  data={DataSubjectsTab}
+                  showsHorizontalScrollIndicator={false}
+                  horizontal={true}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity onPress={() =>packs.find((p)=> p.isSubscribed=== true)? handlePressDocument(item): (router.push("/pack"))}>
+                      <View
+                        className={` h-80 w-[98%] rounded-3xl  border-[0.2px] gap-5 px-5`}
+                        style={{ backgroundColor: item.color }}
+                      >
+                        <View className=" justify-start items-start gap-3 pt-5">
+                          <View className="bg-white rounded-2xl">
+                            <Image
+                              size={"md"}
+                              source={item.image}
+                              alt="image pdf"
+                              className=""
+                            />
+                          </View>
+                        </View>
                         <Text
-                          className="text-center font-semibold text-typography-default  px-2"
+                          className="font-semibold text-typography-default text-xl max-w-36"
                           numberOfLines={2}
                           ellipsizeMode="tail"
                         >
                           {item.content}
                         </Text>
+                        <View className="h-2 bg-gray-400 rounded-full overflow-hidden">
+                          {/* <View
+                            className="h-full bg-primary-defaultOrange"
+                            style={{
+                              width: `${item.progress}%`,
+                            }}
+                          /> */}
+                        </View>
+                        <View>
+                          {/* <Text>
+                          Page {item.currentPage}/{item.totalPages}
+                        </Text>
+                        <Text>
+                          Dernière lecture :{dayjs(item.lastOpened).fromNow()}
+                        </Text> */}
+                          <View
+                            className="h-12 w-48 rounded-3xl border-[0.5px]"
+                            style={{
+                              backgroundColor: `${item.sombreColor}`,
+                              opacity: 0.8,
+                            }}
+                          >
+                            <View className="justify-between flex-row  items-center">
+                              <View className="rounded-3xl bg-white p-3">
+                                <Text
+                                  className="font-semibold"
+                                  style={{
+                                    color: `${item.bgColor}`,
+                                    // opacity: 0.8,
+                                  }}
+                                >
+                                  {t("accueil.open")}{" "}
+                                </Text>
+                              </View>
+                              <View className="mr-2">
+                                <Text className="border-[0.5px] p-1 rounded-full border-white">
+                                  <Icon
+                                    as={ArrowRightIcon}
+                                    color={item.color}
+                                    className="text-primary-custom-400"
+                                  />
+                                </Text>
+                              </View>
+                            </View>
+                          </View>
+                        </View>
                       </View>
-                    </View>
-                  </TouchableOpacity>
-                )}
-                keyExtractor={(item) => item.id}
-              />
+                    </TouchableOpacity>
+                  )}
+                  keyExtractor={(item) => item.id}
+                />
+              )}
             </SafeAreaView>
           </SafeAreaProvider>
-          <View className="title2 flex-row justify-between items-center mt-10 ">
-            <Text className="font-bold text-typography-default text-xl">
-              {" "}
-              {t("accueil.other_subjets")}
-            </Text>
-            <Button
+          {packs.find((p) => p.isSubscribed === true) && (
+            <View>
+              <View className="title2 flex-row justify-between items-center mt-10 mb-3">
+                <Text className="font-bold text-typography-default text-xl">
+                  {" "}
+                  {t("accueil.recent_documents")}
+                </Text>
+                {/* <Button
               className="bg-transparent"
               onPress={() => navigation.navigate("/(tabs)/pack")}
             >
@@ -255,23 +418,70 @@ export default function Index() {
                   className="text-primary-custom-h-440"
                 />
               </Text>
-            </Button>
-          </View>
-          <SafeAreaProvider>
-            <SafeAreaView className="flex-1">
-              <FlatList
-                data={DatasSubjects}
-                showsHorizontalScrollIndicator={false}
-                horizontal={true}
-                renderItem={({ item }) => (
-                  <View className=" h-44 w-44 bg-gray-200 rounded-lg justify-center items-center border m-2">
-                    <Text>{item.content}</Text>
-                  </View>
-                )}
-                keyExtractor={(item) => item.id}
-              />
-            </SafeAreaView>
-          </SafeAreaProvider>
+            </Button> */}
+              </View>
+              <SafeAreaProvider>
+                <SafeAreaView className="flex-1">
+                  {!DataSubjectsTab ? (
+                    <Text>Aucun sujet n`a ete trouve</Text>
+                  ) : (
+                    <FlatList
+                      data={recentDataSubjectsTab}
+                      showsHorizontalScrollIndicator={false}
+                      horizontal={true}
+                      // pagingEnabled={true}
+                      decelerationRate={"fast"}
+                      snapToInterval={width * 0.8 + 20}
+                      ItemSeparatorComponent={() => (
+                        <View style={{ width: 20 }} />
+                      )}
+                      renderItem={({ item }) => (
+                        <TouchableOpacity
+                          onPress={() => handlePressDocument(item)}
+                        >
+                          <View
+                            className={`w-full h-48 rounded-3xl border-[0.4px] gap-5 px-5`}
+                            style={{
+                              backgroundColor: item.color,
+                              width: width * 0.8,
+                            }}
+                          >
+                            <View className=" justify-start items-start gap-3"></View>
+                            <Text
+                              className="font-semibold text-typography-default text-xl"
+                              numberOfLines={2}
+                              ellipsizeMode="tail"
+                            >
+                              {item.content}
+                            </Text>
+                            <View className="h-2 bg-gray-400 rounded-full overflow-hidden">
+                              <View
+                                className="h-full bg-primary-defaultOrange"
+                                style={{
+                                  width: `${item.progress}%`,
+                                }}
+                              />
+                            </View>
+                            <View>
+                              <Text>
+                                Progression :{" "}
+                                {(item.currentPage / item.totalPages) * 100} %
+                              </Text>
+                              <Text>
+                                Dernière lecture :
+                                {dayjs(item.lastOpened).fromNow()}
+                              </Text>
+                            </View>
+                          </View>
+                        </TouchableOpacity>
+                      )}
+                      keyExtractor={(item) => item.id}
+                    />
+                  )}
+                </SafeAreaView>
+              </SafeAreaProvider>
+            </View>
+          )}
         </View>
       </ScrollView>
       <Modal

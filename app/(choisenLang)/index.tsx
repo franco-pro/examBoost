@@ -12,6 +12,7 @@ import {
   RadioLabel,
 } from "@/components/ui/radio";
 import { ArrowRightIcon, CircleIcon } from "@/components/ui/icon";
+import { BASE_URL } from "../api/apiClient";
 
 export default function Index() {
   const navigation = useRouter();
@@ -35,7 +36,7 @@ export default function Index() {
   };
   const testBackend = async () => {
     try {
-      const url = "http://172.20.10.2:3000";
+      const url = `${BASE_URL}:3000`;
       console.log("TEST URL:", url);
 
       const res = await fetch(url);

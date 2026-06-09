@@ -3,20 +3,21 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useMemo, useState } from 'react';
 import { Modal, Platform, Pressable, Text, View } from 'react-native';
 import type { Pack } from './types';
+import { packProps } from '@/app/api/packService';
 
 export default function SubscribeModal({
   visible,
   pack,
   onCancel,
   onConfirm,
-  userWallet,
+  wallet,
   onRecharge,
 }: {
   visible: boolean;
-  pack: Pack | null;
+  pack: packProps | null;
   onCancel: () => void;
   onConfirm: (payload: { accept: boolean }) => void;
-  userWallet?: number;
+  wallet?: number;
   onRecharge?: () => void;
 }) {
   const [accept, setAccept] = useState(false);
@@ -37,9 +38,9 @@ export default function SubscribeModal({
 
   const hasFunds = useMemo(() => {
     if (pack?.price == null) return true;
-    if (userWallet == null) return true; // si pas d'info, ne bloque pas
-    return userWallet >= pack.price;
-  }, [pack, userWallet]);
+    if (wallet == null) return true; // si pas d'info, ne bloque pas
+    return wallet >= pack.price;
+  }, [pack, wallet]);
 
   if (!pack) return null;
 
@@ -57,24 +58,24 @@ export default function SubscribeModal({
           <View className="p-4">
             {/* En-tête: icône + infos pack + badge prix */}
             <View className="flex-row items-start justify-between -mt-10">
-              <View className="flex-row items-center gap-3">
+              <View className="flex-row items-center gap-3 ">
                 <View className="w-12 h-12 rounded-xl bg-primary-defaultOrange items-center justify-center ring-4 ring-white/40 dark:ring-outline-900/60">
                   <Ionicons name="briefcase" size={20} color="#181c5c" />
                 </View>
                 <View className="flex-1">
                   <Text className="text-base font-extrabold text-typography-default dark:text-typography-white" numberOfLines={2}>
-                    {pack.title}
+                    {pack.name}
                   </Text>
                   {pack.durationDays != null ? (
-                    <Text className="text-xxs text-typography-gray">Durée {pack.durationDays} jours{expiredAt ? ` · jusqu'au ${expiredAt}` : ''}</Text>
+                    <Text className="text-xxs text-typography-black/80">Durée {pack.durationDays} jours{expiredAt ? ` · jusqu'au ${expiredAt}` : ''}</Text>
                   ) : null}
                 </View>
               </View>
-              {pack.price != null ? (
+              {/* {pack.price != null ? (
                 <View className="px-2 py-1 rounded-md bg-white dark:bg-outline-900 border border-outline-100 dark:border-outline-800 shadow-sm">
                   <Text className="text-xs font-extrabold text-typography-default dark:text-typography-white">{formatPriceXOF(pack.price)}</Text>
                 </View>
-              ) : null}
+              ) : null} */}
             </View>
 
             {/* Message d'accroche + avantages */}
@@ -119,13 +120,13 @@ export default function SubscribeModal({
                   <View className={`w-5 h-5 rounded-md items-center justify-center border ${accept ? 'bg-primary-defaultOrange border-primary-defaultOrange' : 'bg-white dark:bg-outline-900 border-outline-300 dark:border-outline-700'}`}>
                     {accept ? <Ionicons name="checkmark" size={14} color="#181c5c" /> : null}
                   </View>
-                  <Text className="text-xs text-typography-default dark:text-typography-white">J’accepte de payer via mon wallet</Text>
+                  <Text className="text-xs text-typography-default w-2/3 dark:text-typography-white">J’accepte de payer via mon wallet</Text>
                 </Pressable>
 
                 {!hasFunds && (
                   <>
                     <Text className="text-xxs text-error-500">
-                      Solde insuffisant: votre solde est de {userWallet != null ? formatPriceXOF(userWallet) : '—'}, prix du pack {pack.price != null ? formatPriceXOF(pack.price) : '—'}.
+                      Solde insuffisant: votre solde est de {wallet != null ? formatPriceXOF(wallet) : '—'}, prix du pack {pack.price != null ? formatPriceXOF(pack.price) : '—'}.
                     </Text>
                     {onRecharge && (
                       <Pressable onPress={onRecharge} className="self-start px-3 py-1.5 rounded-md bg-primary-defaultOrange/15 border border-primary-defaultOrange/40 active:opacity-90">

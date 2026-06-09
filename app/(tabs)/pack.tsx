@@ -6,15 +6,14 @@ import {
 } from "@/components/ui/toast";
 import {
   usePacksQuery,
+  usePackSubscription,
   usePurchasePackMutation,
 } from "@/app/features/packs/hooks.rq";
 import PackDetailSheet from "@/app/features/packs/PackDetailSheet";
 import PackHeader from "@/app/features/packs/PackHeader";
 import PackList from "@/app/features/packs/PackList";
 import SubscribeModal from "@/app/features/packs/SubscribeModal";
-import type { Pack } from "@/app/features/packs/types";
 import { useUser } from "@/app/features/user/hooks";
-import { setCurrentUserId } from "@/app/hooks/redux/session/session.slice";
 import type { RootState } from "@/app/hooks/redux/store";
 import {
   BottomSheetModal,
@@ -24,40 +23,51 @@ import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Text, View } from "react-native";
-import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { packProps, packService } from "../api/packService";
+import { packProps } from "../api/packService";
+import { store } from "@/app/hooks/redux/store";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "../lib/queryKeys";
 
-const CURRENT_USER_ID = 42;
+// const niveauID = 2;
 
 export default function PackScreen() {
+  const qc = useQueryClient();
   const [search, setSearch] = useState("");
   const toast = useToast();
   const modalRef = useRef<BottomSheetModal>(null);
-  const [selected, setSelected] = useState<Pack | null>(null);
+  const [selected, setSelected] = useState<packProps | null>(null);
   const [subscribeOpen, setSubscribeOpen] = useState(false);
   const router = useRouter();
-  const dispatch = useDispatch();
-  const currentUserId = useSelector(
-    (s: RootState) => s.session.currentUserId ?? CURRENT_USER_ID,
-  );
+  const user = useSelector((s: RootState) => s.user.user);
+  const currentUserId = user?.id
+  const niveauID = user?.niveauID
 
-  useEffect(() => {
-    dispatch(setCurrentUserId(CURRENT_USER_ID));
-  }, [dispatch]);
+  
 
-  const packsQuery = packService.allPacks();
-  const purchasePackMutation = usePurchasePackMutation();
+
+  // useEffect(() => {
+  //   dispatch(setCurrentUserId(CURRENT_USER_ID));
+  // }, [dispatch]);
+if (!currentUserId) {
+  console.error("userID dans pack n'existe pas");
+  }
+  
+  const [packs, setPacks] = useState<packProps[]>([]);
   const userQuery = useUser(currentUserId ?? undefined);
+const packsQuery = usePacksQuery(currentUserId ?? 0);
+  useEffect(() => {
+    setPacks(packsQuery.data ?? []);
+  }, [packsQuery.data]);
+
+  const purchasePackMutation = usePurchasePackMutation();
+  
+  
   const currentUserWallet = userQuery.data?.wallet;
 
-  const [packs, setPacks] = useState<packProps[]>([]);
-  useEffect(() => {
-    packsQuery.then((datas) => {
-      setPacks(datas ?? []);
-    });
-  }, []);
-
+  
+  // console.log('USERID  in pack:', currentUserId)
+  // console.log('allPack  in pack:', packsQuery)
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return packs;
@@ -67,37 +77,37 @@ export default function PackScreen() {
       ),
     );
   }, [search, packs]);
-
+console.log("all pack dans pack: ", packs)
   return (
     <BottomSheetModalProvider>
       <View className="flex-1 bg-background-light dark:bg-background-dark">
         <PackHeader
           value={search}
           onChangeSearch={setSearch}
-          onOpenFilters={() =>
-            toast.show({
-              placement: "top",
-              duration: 1500,
-              render: () => (
-                <Toast action="info" variant="solid" className="mx-3">
-                  <ToastTitle bold>Filtres</ToastTitle>
-                  <ToastDescription>Bientôt disponible…</ToastDescription>
-                </Toast>
-              ),
-            })
-          }
-          onOpenSort={() =>
-            toast.show({
-              placement: "top",
-              duration: 1500,
-              render: () => (
-                <Toast action="info" variant="solid" className="mx-3">
-                  <ToastTitle bold>Trier</ToastTitle>
-                  <ToastDescription>Bientôt disponible…</ToastDescription>
-                </Toast>
-              ),
-            })
-          }
+          // onOpenFilters={() =>
+          //   toast.show({
+          //     placement: "top",
+          //     duration: 1500,
+          //     render: () => (
+          //       <Toast action="info" variant="solid" className="mx-3">
+          //         <ToastTitle bold>Filtres</ToastTitle>
+          //         <ToastDescription>Bientôt disponible…</ToastDescription>
+          //       </Toast>
+          //     ),
+          //   })
+          // }
+          // onOpenSort={() =>
+          //   toast.show({
+          //     placement: "top",
+          //     duration: 1500,
+          //     render: () => (
+          //       <Toast action="info" variant="solid" className="mx-3">
+          //         <ToastTitle bold>Trier</ToastTitle>
+          //         <ToastDescription>Bientôt disponible…</ToastDescription>
+          //       </Toast>
+          //     ),
+          //   })
+          // }
         />
 
         {filtered.length === 0 ? (
@@ -130,23 +140,30 @@ export default function PackScreen() {
             //     setSubscribeOpen(true);
             //   }
             // }}
-            // onPressCTA={(p) => {
-            //   void Haptics.selectionAsync();
-            //   if (p.isSubscribed) {
-            //     router.push({
-            //       pathname: "/(tabs)/packs/[packId]/subjects",
-            //       params: {
-            //         packId: p.id,
-            //         ...(p.niveauID != null
-            //           ? { niveauID: String(p.niveauID) }
-            //           : {}),
-            //       },
-            //     } as any);
-            //   } else {
-            //     setSelected(p);
-            //     setSubscribeOpen(true);
-            //   }
-            // }}
+            onPressCTA={(p) => {
+              void Haptics.selectionAsync();
+              // const {data: isSubscribed} =  usePackSubscription(p.id)
+              // console.log("valeur de pack dans onpresscta dans pack: ", p)
+              if (p.isSubscribed) {
+                // console.log("valeur isSubcribed:", p.isSubscribed);
+                // console.log("niveau id in pack :", niveauID);
+                // console.log("state in pack: ", state);
+                router.push({
+                  pathname: "/(packs)/[packId]/subjects/[name]",
+                  params: {
+                    packId: p.id,
+                    name: p.name,
+                    ...(niveauID != null ? { niveauID: String(niveauID) } : {}),
+                    type: p.type,
+                    categorie: p.categorie,
+                  },
+                } as any);
+              } else {
+                console.log("valeur isSubscribed 2:", p, p.id);
+                setSelected(p);
+                setSubscribeOpen(true);
+              }
+            }}
           />
         )}
 
@@ -171,7 +188,7 @@ export default function PackScreen() {
         <SubscribeModal
           visible={subscribeOpen}
           pack={selected}
-          userWallet={
+          wallet={
             typeof currentUserWallet === "number"
               ? currentUserWallet
               : undefined
@@ -181,6 +198,8 @@ export default function PackScreen() {
             if (!accept) return;
             if (!currentUserId) return;
             if (!selected?.id) return;
+
+            
 
             const packID = Number(selected.id);
             if (Number.isNaN(packID)) return;
@@ -193,15 +212,20 @@ export default function PackScreen() {
               setSubscribeOpen(false);
               modalRef.current?.dismiss();
 
-              router.push({
-                pathname: "/(tabs)/packs/[packId]/subjects",
-                params: {
-                  packId: String(packID),
-                  ...(selected.niveauID != null
-                    ? { niveauID: String(selected.niveauID) }
-                    : {}),
-                },
-              } as any);
+              await qc.invalidateQueries({
+                queryKey: queryKeys.packDocuments(currentUserId)
+              })
+
+             router.push({
+               pathname: "/(packs)/[packId]/subjects/[name]",
+               params: {
+                 packId: selected.id,
+                 name: selected.name,
+                 ...(niveauID != null ? { niveauID: String(niveauID) } : {}),
+                 type: selected.type,
+                 categorie: selected.categorie,
+               },
+             } as any);
 
               toast.show({
                 placement: "top",
@@ -209,7 +233,7 @@ export default function PackScreen() {
                 render: () => (
                   <Toast action="success" variant="solid" className="mx-3">
                     <ToastTitle bold>Achat confirmé</ToastTitle>
-                    <ToastDescription>{selected?.title}</ToastDescription>
+                    <ToastDescription>{selected?.name}</ToastDescription>
                   </Toast>
                 ),
               });
