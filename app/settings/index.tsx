@@ -26,8 +26,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button, ButtonText } from "@/components/ui/button";
 import { buildFileUrl } from "../hooks/files/buildRouteFiles";
 import { useUploadProfileMutation } from "../features/profiles/hook.rq";
+import { useTranslation } from "react-i18next";
 
 export default function SettingsScreen() {
+  const {t} = useTranslation("setting")
   const router = useRouter();
   const toast = useToast();
   const dispatch = useDispatch<AppDispatch>();
@@ -145,7 +147,7 @@ const logoutHandle = async () => {
         </Pressable>
 
         <Text className="text-xl font-extrabold text-typography-default dark:text-white">
-          Paramètres
+          {t("setting.title")}
         </Text>
 
         <View style={{ width: 24 }} />
@@ -189,7 +191,9 @@ const logoutHandle = async () => {
 
           <View className="mt-4 border-t border-white/20 pt-4 flex-row justify-between">
             <View>
-              <Text className="text-white/70 text-xs">Solde</Text>
+              <Text className="text-white/70 text-xs">
+                {t("setting.wallet")}
+              </Text>
 
               <Text className="text-white font-bold text-lg">
                 {currentUser?.wallet ?? 0} FCFA
@@ -197,7 +201,9 @@ const logoutHandle = async () => {
             </View>
 
             <View>
-              <Text className="text-white/70 text-xs">Niveau</Text>
+              <Text className="text-white/70 text-xs">
+                {t("setting.level")}
+              </Text>
 
               <Text className="text-white font-bold text-lg">
                 {currentUser?.niveauID || "-"}
@@ -207,64 +213,64 @@ const logoutHandle = async () => {
         </View>
 
         {/* COMPTE */}
-        <SectionTitle title="Compte" />
+        <SectionTitle title={t("setting.account")} />
 
         <View className="mx-5">
           <SettingsItem
             icon="person-circle"
-            label="Mon profil"
+            label={t("setting.profile")}
             color="#2563EB"
             onPress={() => router.push("/settings/profile" as any)}
           />
 
           <SettingsItem
             icon="wallet"
-            label="Faire un retrait"
+            label={t("setting.withdraw")}
             color="#16A34A"
             onPress={() => router.push("/settings/withdraw" as any)}
           />
 
           <SettingsItem
             icon="key"
-            label="Changer le mot de passe"
+            label={t("setting.change_pass")}
             color="#F59E0B"
             onPress={() => router.push("/settings/password" as any)}
           />
         </View>
 
         {/* PREFERENCES */}
-        <SectionTitle title="Préférences" />
+        <SectionTitle title={t("setting.preference")} />
 
         <View className="mx-5">
           <SettingsItem
             icon="language"
-            label="Langue"
+            label={t("setting.language")}
             color="#8B5CF6"
             onPress={() => router.push("/settings/language" as any)}
           />
 
           <SettingsItem
             icon="color-palette"
-            label="Apparence"
+            label={t("setting.appearance")}
             color="#EC4899"
             onPress={() => router.push("/settings/appearance" as any)}
           />
         </View>
 
         {/* SUPPORT */}
-        <SectionTitle title="Support" />
+        <SectionTitle title={t("setting.support")} />
 
         <View className="mx-5">
           <SettingsItem
             icon="information-circle"
-            label="À propos de ExamBoost"
+            label={t("setting.about")}
             color="#06B6D4"
             onPress={() => router.push("/settings/about" as any)}
           />
         </View>
 
         {/* DANGER ZONE */}
-        <SectionTitle title="Zone sensible" />
+        <SectionTitle title={t("setting.sensitive_zone")} />
         <View className=" gap-5">
           <View className={` m-auto rounded-2xl`} style={{ width: halfWidth }}>
             <Button
@@ -272,7 +278,7 @@ const logoutHandle = async () => {
               action={"negative"}
               onPress={() => logoutHandle()}
             >
-              <ButtonText>Logout</ButtonText>
+              <ButtonText>{t("setting.logout")}</ButtonText>
             </Button>
           </View>
           <View className="mx-5">
@@ -286,7 +292,7 @@ const logoutHandle = async () => {
                 </View>
 
                 <Text className="ml-3 text-red-600 font-bold">
-                  Supprimer mon compte
+                  {t("setting.delete_account")}
                 </Text>
               </View>
 

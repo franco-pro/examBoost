@@ -196,11 +196,11 @@ export default function PasswordScreen() {
             ) : null}
           </View>
 
-          <View className="flex-row items-center justify-between mt-2 w-3/4">
+          <View className="flex-row items-center justify-between mt-2 ">
             <Pressable
               disabled={!valid || changingPassword}
               onPress={onSave}
-              className={`px-4 py-2 rounded-md flex-row items-center justify-center gap-2 text-white ${!valid || changingPassword ? "bg-primary-defaultOrange/30" : "bg-primary-defaultOrange active:opacity-90"}`}
+              className={`px-4 py-3 flex-1 rounded-md flex-row items-center justify-center gap-2 text-white ${!valid || changingPassword ? "bg-primary-defaultOrange/30" : "bg-primary-defaultOrange active:opacity-90"}`}
             >
               {changingPassword ? (
                 <ActivityIndicator size="small" color="#181c5c" />

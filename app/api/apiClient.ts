@@ -3,7 +3,7 @@ import { getItem, setItem } from "../utils/asyncStorage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch } from "react-redux";
 
-export const BASE_URL = "http://192.168.1.101";
+export const BASE_URL = "http://192.168.43.122";
 export const apiClient = axios.create({
   baseURL:`${BASE_URL}:3000`,
   timeout: 10000,
@@ -17,12 +17,12 @@ apiClient.interceptors.request.use(async (config) => {
   const token = await getItem("accessToken");
   const refreshToken = await getItem("refreshToken");
   const keys = await AsyncStorage.getAllKeys();
-  console.log("all keys :", keys);
+  // console.log("all keys :", keys);
   // console.log("🚀 REQUEST:");
   // console.log("METHOD:", config.method);
-  console.log("BASE URL:", config.baseURL);
+  // console.log("BASE URL:", config.baseURL);
   // console.log("URL:", config.url);
-  console.log("FULL URL:", `${config.baseURL}${config.url}`);
+  // console.log("FULL URL:", `${config.baseURL}${config.url}`);
 
   
   if (token) {

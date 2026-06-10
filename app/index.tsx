@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { getItem } from "./utils/asyncStorage";
 import { Redirect } from "expo-router";
+import { useSelector } from "react-redux";
+import { RootState } from "./hooks/redux/store";
 
 export default function Index() {
     const [accessToken, setAccesToken] = useState("")
     const [loading, setLoading] = useState(true)
     const [onboarded, setOnboarding] = useState('')
     const [lang, setLang] = useState('')
+    const {isAuthenticated} = useSelector((s:RootState)=> s.user)
     
 
     useEffect(() => {
@@ -14,6 +17,7 @@ export default function Index() {
             const token = await getItem("accessToken")
             const currentLang = await getItem("language");
             const isOnboarded = await getItem("onboarded");
+            // console.log("value onboarded:", isOnboarded)
             if (token) {
                 setAccesToken(token);
             } else {
@@ -44,7 +48,7 @@ export default function Index() {
         return <Redirect href={"./(onboarding)"}/>
     }
 
-    if (!accessToken) {
+    if (!isAuthenticated) {
         return <Redirect href="./(auth)/login"/>
     }
 

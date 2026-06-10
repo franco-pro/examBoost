@@ -1,4 +1,4 @@
-import { Dimensions, View } from 'react-native'
+import { Dimensions, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Onboarding from 'react-native-onboarding-swiper';
@@ -10,26 +10,38 @@ import { ArrowRightIcon, Icon } from '@/components/ui/icon';
 
 export default function Index() {
   const handleDone = async () => {
-    await setItem("onboarded", true);
+    try {
+  await setItem("onboarded", "true");
     navigation.replace("/(auth)/login");
+} catch (error) {
+  console.log("error :", error)
+}
   };
   const {width, height} = Dimensions.get("window");
   const navigation = useRouter();
   const SkipButtonComponent = ({...props})=>{
     return (
-      <View className='rounded-full border border-primary-custom-300 flex py-2 px-10 bg-primary-custom-100 ml-5 mb-5'>
-        <Text className='text-primary-custom-300 font-semibold text-lg' {...props}>Skip</Text>
-      </View>
-    )
+      <TouchableOpacity
+        className="rounded-full border border-primary-custom-300 flex py-2 px-10 bg-primary-custom-100 ml-5 mb-5"
+        {...props}
+      >
+        <Text className="text-primary-custom-300 font-semibold text-lg">
+          Skip
+        </Text>
+      </TouchableOpacity>
+    );
   }
 
   const NextButtonComponent = ({...props})=>{
     return (
-        <View className='rounded-full border bg-primary-custom-300 flex py-2 px-8 gap-2 flex-row justify-center  items-center border-primary-custom-100 mr-5 mb-5'>
-          <Text className='text-white font-semibold text-lg' {...props}>Next</Text>
-          <Icon as={ArrowRightIcon} size={"xl"} color='#fff'/>
-        </View>
-      )
+      <TouchableOpacity
+        {...props}
+        className="rounded-full border bg-primary-custom-300 flex py-2 px-8 gap-2 flex-row justify-center  items-center border-primary-custom-100 mr-5 mb-5"
+      >
+        <Text className="text-white font-semibold text-lg ">Next</Text>
+        <Icon className=' pt-2' as={ArrowRightIcon} size={"xl"} color="#fff" />
+      </TouchableOpacity>
+    );
     }
   
     const DoneButtonComponent = ({...props})=>{
