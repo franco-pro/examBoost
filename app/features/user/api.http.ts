@@ -1,5 +1,6 @@
 import { http } from '@/app/lib/http';
 import type { User } from './types';
+import apiClient from '@/app/api/apiClient';
 
 export type WebFile = File;
 export type RNFile = { uri: string; name: string; type: string };
@@ -29,13 +30,12 @@ export async function deleteUserImageHttp(params: { userID: number }): Promise<{
 }
 
 export type ChangePasswordPayload = {
-  userID: number;
-  oldPassword: string;
+  password: string;
   newPassword: string;
 };
 
 export async function changePasswordHttp(payload: ChangePasswordPayload): Promise<{ done: boolean }> {
-  const res = await http.put('/users/change-password', payload);
+  const res = await apiClient.put('/users/change-password', payload);
   return res.data as { done: boolean };
 }
 

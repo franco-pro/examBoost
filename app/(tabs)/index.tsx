@@ -3,14 +3,14 @@ import { Text } from "@/components/ui/text";
 import { Card } from "@/components/ui/card";
 import { Image } from "@/components/ui/image";
 import { View } from "@/components/ui/view";
-import { Dimensions } from "react-native";
+import { Alert, Dimensions } from "react-native";
 import { FlatList, Modal, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/app/hooks/redux/store";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { logout, userDatas } from "@/app/hooks/redux/users/users.slice";
+import { userDatas } from "@/app/hooks/redux/users/users.slice";
 import { router, useFocusEffect, useRouter } from "expo-router";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -20,57 +20,69 @@ import { FontAwesome } from "@expo/vector-icons";
 import { ArrowRightIcon, Icon } from "@/components/ui/icon";
 import * as pdfImage from "../helper/images/image";
 import { useTranslation } from "react-i18next";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { handleOpenDocument, subjectDocumentype } from "../downloadFiles";
 import { initializeNotificationsGateway } from "../hooks/services/socket/notifications.gateway";
 
-import i18n from "@/lang/i18n";
-import Pdf from "react-native-pdf";
-import { useUserQuery } from "../features/user/hooks.rq";
 import {
   getRecentDocuments,
   RecentDocument,
 } from "../hooks/files/recentDocuments/recentDocument";
 import { buildFileUrl } from "../hooks/files/buildRouteFiles";
 import { usePacksQuery } from "../features/packs/hooks.rq";
-import { packProps } from "../api/packService";
+
 
 interface subjectType {
   id: number;
   content: string;
   url: string;
   subject: string;
+  description: string;
+}
+interface packType {
+  id: number;
+  name: string;
+  price: number;
+  duration: string;
+  description: string;
+  durationDays: string;
 }
 
 dayjs.extend(relativeTime);
 dayjs.locale("fr");
 export default function Index() {
-
-
   const [recentDocument, setRecentDocument] = useState<RecentDocument[]>([]);
-  
+  //open file
+  const [loading, setLoading] = useState(false);
+  const [viewerVisible, setViewerVisible] = useState(false);
+  const [selectedUri, setSelectedUri] = useState<string | null>(null);
+  const [selectedTitle, setSelectedTitle] = useState("");
+  const [packs, setPacks] = useState<any[]>([]);
   const navigation = useRouter();
-  if (!AsyncStorage.getItem("accessToken")) {
-    navigation.replace("/(auth)/login");
-  }
+
   const { t } = useTranslation("home");
   const { width } = Dimensions.get("window");
   // console.log("LANG:", i18n.language);
   // console.log("WELCOME:", t("accueil.welcome"));
   const dispatch = useDispatch<any>();
-  const { user, others, accessToken } = useSelector(
+  const { user, others, accessToken, isAuthenticated } = useSelector(
     (state: RootState) => state.user,
   );
 
+  // useEffect(() => {
+  // console.log("isauth: ", isAuthenticated)
+  // if (!isAuthenticated) {
+  //   navigation.replace("/(auth)/login");
+  // }
+  // }, [navigation, isAuthenticated]);
+  // console.log("accestoken: ", accessToken);
   //Gestion des proprietes de pack
-  const currentUserId = user?.id
+  const currentUserId = user?.id;
   const packsQuery = usePacksQuery(currentUserId ?? 0);
-  const [packs, setPacks] = useState<packProps[]>([]);
-  // console.log("packs dans index: ", packs)
-    useEffect(() => {
-      setPacks(packsQuery.data??[]);
-    }, [packsQuery.data]);
-  
+  useEffect(() => {
+    setPacks(packsQuery.data ?? []);
+  }, [packsQuery.data]);
+
   const loadRecent = async () => {
     const data = await getRecentDocuments();
     setRecentDocument(data);
@@ -78,18 +90,29 @@ export default function Index() {
 
   useFocusEffect(
     useCallback(() => {
-       loadRecent()
-    }, []),
+      packsQuery.refetch();
+      loadRecent();
+    }, [packsQuery]),
   );
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(userDatas()); //to work
+
+      loadRecent();
+    }
+  }, [isAuthenticated, dispatch]);
+
+  // console.log("useFocus after:", recentDocument);
+  // console.log("user:", user);
   useEffect(() => {
     if (accessToken) {
       dispatch(userDatas()); //to work
-      
-      loadRecent();
+      setTimeout(() => {
+        initializeNotificationsGateway(dispatch, currentUserId ?? 1);
+      }, 1000);
     }
-  }, [accessToken, dispatch]);
+  }, [accessToken, dispatch,currentUserId]);
 
-  console.log("useFocus after:", recentDocument)
   // console.log(
   //   "infos: ",
   //   user,
@@ -104,22 +127,50 @@ export default function Index() {
   // console.log("subjects:", others.subject || "subject is null");
   // console.log("others datas:", others, "user datas", user)
   const images = Object.values(pdfImage);
-  const colors = ["#E8F0FE", "#E8FFF3", "#FDECEF", "#FFF4E5", "#F3E8FF"];
-  const bgColors = ["#8FB0FF", "#7EE2A8", "#F29AAD", "#FFB86B", "#B784F7"];
-  const sombreColors = [
-    "#8FB0FFCC",
-    "#7EE2A8CC",
-    "#F29AADCC",
-    "#FFB86BCC",
-    "#B784F7CC",
-  ];
+  const colors = useMemo(() =>["#E8F0FE", "#E8FFF3", "#FDECEF", "#FFF4E5", "#F3E8FF"],[]) 
+  const bgColors = useMemo(
+    () => ["#8FB0FF", "#7EE2A8", "#F29AAD", "#FFB86B", "#B784F7"],
+    [],
+  ); 
+  const sombreColors = useMemo(
+    () => ["#8FB0FFCC", "#7EE2A8CC", "#F29AADCC", "#FFB86BCC", "#B784F7CC"],
+    [],
+  );
+
+  //docunments accessible apres achats
+  const accessibleDocument = useMemo(() => {
+    if (!others?.subject || !packs?.length) return [];
+
+    return others.subject.filter((doc: any) =>
+      packs.some((pack) => pack.type === doc.type && pack.isSubscribed),
+    );
+  }, [others?.subject, packs]);
+  // console.log("accessible doc:", accessibleDocument)
+
+  const accessibleDocuments = accessibleDocument?.map(
+    (item: subjectType, index: number) => {
+      return {
+        id: `${item.id}`,
+        content: item.subject || "Unknown",
+        image: images[index % images.length],
+        url: item.url,
+        color: colors[index % colors.length],
+        sombreColor: sombreColors[index % sombreColors.length],
+        bgColor: bgColors[index % bgColors.length],
+      };
+    },
+  );
+  // console.log(
+  //   "accessible Document:",
+  //   accessibleDocuments.some((doc: any) => doc.subject),
+  // );
 
   //datas subjects of users
   const DataSubjectsTab = useMemo(() => {
     try {
       if (!others?.subject) return [];
-      console.log("colors: ", colors[0]);
-
+      // console.log("colors: ", colors[0]);
+      // console.log("subjects: ", others.subject);
       const mapped = others.subject.map((item: subjectType, index: number) => {
         return {
           id: `${item.id}`,
@@ -139,30 +190,32 @@ export default function Index() {
       console.log("others datas:", others, "user datas", user);
       console.log("error:", error);
     }
-  }, [others]);
+  }, [others, bgColors, colors, images, sombreColors, user]);
+
   const recentDataSubjectsTab = useMemo(() => {
     try {
       if (!others?.subject) return [];
-      console.log("colors: ", colors[0]);
 
-      const mapped = others.subject.map((item: subjectType, index: number) => {
-        const recent = recentDocument.find((d) => d.documentId === item.id);
-        // console.log("openedAt: ", recentDocument)
+      const mapped = accessibleDocument.map(
+        (item: subjectType, index: number) => {
+          const recent = recentDocument.find((d) => d.documentId === item.id);
+          // console.log("openedAt: ", recentDocument)
 
-        return {
-          id: `${item.id}`,
-          content: item.subject || "Unknown",
-          image: images[index % images.length],
-          url: item.url,
-          color: colors[index % colors.length],
-          sombreColor: sombreColors[index % sombreColors.length],
-          bgColor: bgColors[index % bgColors.length],
-          progress: recent?.progress ?? 0,
-          currentPage: recent?.currentPage ?? 1,
-          totalPages: recent?.totalPages ?? 1,
-          lastOpened: recent?.openedAt ?? null,
-        };
-      });
+          return {
+            id: `${item.id}`,
+            content: item.subject || "Unknown",
+            image: images[index % images.length],
+            url: item.url,
+            color: colors[index % colors.length],
+            sombreColor: sombreColors[index % sombreColors.length],
+            bgColor: bgColors[index % bgColors.length],
+            progress: recent?.progress ?? 0,
+            currentPage: recent?.currentPage ?? 1,
+            totalPages: recent?.totalPages ?? 1,
+            lastOpened: recent?.openedAt ?? null,
+          };
+        },
+      );
 
       //trier le tableau
       mapped.sort((a: any, b: any) => {
@@ -179,24 +232,43 @@ export default function Index() {
       console.log("others datas:", others, "user datas", user);
       console.log("error:", error);
     }
-  }, [others]);
+  }, [
+    others,
+    accessibleDocument,
+    recentDocument,
+    bgColors,
+    colors,
+    images,
+    sombreColors,
+    user,
+  ]);
   // console.log("images: ", others.subject[0])
   // console.log("datas subjects:", DataSubjectsTab);
+  // console.log("recents subjects:", recentDataSubjectsTab);
 
-  const logoutHandle = async () => {
-    dispatch(logout());
-    // await persistor.purge();
-    navigation.replace("/(auth)/login");
-  };
+  // console.log("doc:", others?.otherSujects);
+  const othersSubjects = others?.otherSujects?.map(
+    (item: subjectType, index: number) => {
+      return {
+        id: `${item.id}`,
+        content: item.subject || "Unknown",
+        color: colors[index % colors.length],
+        sombreColor: sombreColors[index % sombreColors.length],
+        bgColor: bgColors[index % bgColors.length],
+        desc: item.description,
+      };
+    },
+  );
 
-
-
-  //open file
-  const [loading, setLoading] = useState(false);
-  const [viewerVisible, setViewerVisible] = useState(false);
-  const [selectedUri, setSelectedUri] = useState<string | null>(null);
-  const [selectedTitle, setSelectedTitle] = useState("");
-
+  //  console.log("packs dans index: ", packs);
+  packs?.map((pack: any, index: number) => {
+    return {
+      id: `${pack.id}`,
+      desc: pack.description,
+      name: pack.name,
+      durationDays: pack.durationDays,
+    };
+  });
   const handlePressDocument = async (doc: subjectDocumentype) => {
     try {
       setLoading(true);
@@ -279,15 +351,6 @@ export default function Index() {
               </View>
             </View>
           </Card>
-          {/* <View>
-            <Button
-              variant={"solid"}
-              action={"negative"}
-              onPress={() => logoutHandle()}
-            >
-              <ButtonText>Logout</ButtonText>
-            </Button>
-          </View> */}
 
           {/* Ton contenu */}
           <View className="flex-row justify-between items-center mt-10">
@@ -313,15 +376,110 @@ export default function Index() {
           </View>
           <SafeAreaProvider>
             <SafeAreaView className="flex-1">
-              {!DataSubjectsTab ? (
-                <Text>Aucun sujet n`a ete trouve</Text>
-              ) : (
+              {DataSubjectsTab.length === 0 ? (
+                <Text>Aucun document trouvé</Text>
+              ) : accessibleDocuments.length === 0 ? (
                 <FlatList
                   data={DataSubjectsTab}
                   showsHorizontalScrollIndicator={false}
                   horizontal={true}
                   renderItem={({ item }) => (
-                    <TouchableOpacity onPress={() =>packs.find((p)=> p.isSubscribed=== true)? handlePressDocument(item): (router.push("/pack"))}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        if (
+                          accessibleDocuments.some(
+                            (doc: any) => doc.subject === item.content,
+                          )
+                        ) {
+                          handlePressDocument(item);
+                        } else {
+                          Alert.alert(
+                            "Erreur",
+                            "Ce document ne fait pas partie de votre pack !",
+                          );
+                          router.push("/pack"); // S'exécutera juste après l'apparition de l'alerte
+                        }
+                      }}
+                    >
+                      <View
+                        className={` h-80 w-[98%] rounded-3xl  border-[0.2px] gap-5 px-5`}
+                        style={{ backgroundColor: item.color }}
+                      >
+                        <View className=" justify-start items-start gap-3 pt-5">
+                          <View className="bg-white rounded-2xl">
+                            <Image
+                              size={"md"}
+                              source={item.image}
+                              alt="image pdf"
+                              className=""
+                            />
+                          </View>
+                        </View>
+                        <Text
+                          className="font-semibold text-typography-default text-xl max-w-36"
+                          numberOfLines={2}
+                          ellipsizeMode="tail"
+                        >
+                          {item.content}
+                        </Text>
+                        <View className="h-2 bg-gray-400 rounded-full overflow-hidden">
+                          {/* <View
+                            className="h-full bg-primary-defaultOrange"
+                            style={{
+                              width: `${item.progress}%`,
+                            }}
+                          /> */}
+                        </View>
+                        <View>
+                          {/* <Text>
+                          Page {item.currentPage}/{item.totalPages}
+                        </Text>
+                        <Text>
+                          Dernière lecture :{dayjs(item.lastOpened).fromNow()}
+                        </Text> */}
+                          <View
+                            className="h-12 w-48 rounded-3xl border-[0.5px]"
+                            style={{
+                              backgroundColor: `${item.sombreColor}`,
+                              opacity: 0.8,
+                            }}
+                          >
+                            <View className="justify-between flex-row  items-center">
+                              <View className="rounded-3xl bg-white p-3">
+                                <Text
+                                  className="font-semibold"
+                                  style={{
+                                    color: `${item.bgColor}`,
+                                    // opacity: 0.8,
+                                  }}
+                                >
+                                  {t("accueil.open")}{" "}
+                                </Text>
+                              </View>
+                              <View className="mr-2">
+                                <Text className="border-[0.5px] p-1 rounded-full border-white">
+                                  <Icon
+                                    as={ArrowRightIcon}
+                                    color={item.color}
+                                    className="text-primary-custom-400"
+                                  />
+                                </Text>
+                              </View>
+                            </View>
+                          </View>
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  )}
+                  keyExtractor={(item) => item.id}
+                />
+              ) : (
+                <FlatList
+                  data={accessibleDocuments}
+                  showsHorizontalScrollIndicator={false}
+                  horizontal={true}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity onPress={() => handlePressDocument(item)}>
                       <View
                         className={` h-80 w-[98%] rounded-3xl  border-[0.2px] gap-5 px-5`}
                         style={{ backgroundColor: item.color }}
@@ -397,7 +555,7 @@ export default function Index() {
               )}
             </SafeAreaView>
           </SafeAreaProvider>
-          {packs.find((p) => p.isSubscribed === true) && (
+          {accessibleDocuments && accessibleDocuments.length !== 0 ? (
             <View>
               <View className="title2 flex-row justify-between items-center mt-10 mb-3">
                 <Text className="font-bold text-typography-default text-xl">
@@ -422,9 +580,7 @@ export default function Index() {
               </View>
               <SafeAreaProvider>
                 <SafeAreaView className="flex-1">
-                  {!DataSubjectsTab ? (
-                    <Text>Aucun sujet n`a ete trouve</Text>
-                  ) : (
+                  {
                     <FlatList
                       data={recentDataSubjectsTab}
                       showsHorizontalScrollIndicator={false}
@@ -477,7 +633,83 @@ export default function Index() {
                       )}
                       keyExtractor={(item) => item.id}
                     />
-                  )}
+                  }
+                </SafeAreaView>
+              </SafeAreaProvider>
+            </View>
+          ) : (
+            <View>
+              <View className="title2 flex-row justify-between items-center mt-10 mb-3">
+                <Text className="font-bold text-typography-default text-xl">
+                  {" "}
+                  {t("accueil.other_subjets")}
+                </Text>
+                {/* <Button
+              className="bg-transparent"
+              onPress={() => navigation.navigate("/(tabs)/pack")}
+            >
+              <ButtonText className="flex-row items-center text-primary-custom-300">
+                {t("accueil.view_all")}
+              </ButtonText>
+              <Text className="text-primary-custom-300">
+                <Icon
+                  as={ArrowRightIcon}
+                  color="blue"
+                  className="text-primary-custom-h-440"
+                />
+              </Text>
+            </Button> */}
+              </View>
+              <SafeAreaProvider>
+                <SafeAreaView className="flex-1">
+                  {
+                    <FlatList
+                      data={packs}
+                      showsHorizontalScrollIndicator={false}
+                      horizontal={true}
+                      // pagingEnabled={true}
+                      decelerationRate={"fast"}
+                      snapToInterval={width * 0.8 + 20}
+                      ItemSeparatorComponent={() => (
+                        <View style={{ width: 20 }} />
+                      )}
+                      renderItem={({ item }) => (
+                        <TouchableOpacity
+                          onPress={() => navigation.navigate("/(tabs)/pack")}
+                        >
+                          <View
+                            className={`w-full h-56 rounded-3xl border-[0.4px] gap-5 px-5 pb-5`}
+                            style={{
+                              backgroundColor: item.color,
+                              width: width * 0.8,
+                            }}
+                          >
+                            <View className=" justify-start items-start gap-3"></View>
+                            <Text
+                              className="font-semibold text-typography-default text-xl"
+                              numberOfLines={2}
+                              ellipsizeMode="tail"
+                            >
+                              {item.name}
+                            </Text>
+                            <View className="h-2 bg-gray-400 rounded-full overflow-hidden">
+                              <View
+                                className="h-full bg-primary-defaultOrange"
+                                style={{
+                                  width: `${item.progress}%`,
+                                }}
+                              />
+                            </View>
+                            <View>
+                              <Text>{item.description}</Text>
+                              <Text>Durée : {item.durationDays} Jours.</Text>
+                            </View>
+                          </View>
+                        </TouchableOpacity>
+                      )}
+                      keyExtractor={(item) => item.id}
+                    />
+                  }
                 </SafeAreaView>
               </SafeAreaProvider>
             </View>

@@ -3,11 +3,23 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
+import i18n from '@/lang/i18n';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LanguageScreen() {
   const router = useRouter();
   // Par défaut: Français (réglable plus tard via persistance)
-  const [selected, setSelected] = useState<'fr' | 'en'>('fr');
+  const [selected, setSelected] = useState(i18n.language);
+
+  const changeLanguage = async (lang: "fr" | "en") => {
+    try {
+      await AsyncStorage.setItem("language",lang)
+      await i18n.changeLanguage(lang)
+      setSelected(lang)
+    } catch (error) {
+      console.log("erreur changement de langue: ", error)
+    }
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-background-light dark:bg-background-dark">
@@ -22,8 +34,8 @@ export default function LanguageScreen() {
 
       <ScrollView contentContainerStyle={{ paddingBottom: 24 }}>
         <View className="px-4 mt-2">
-          <LangItem code="fr" label="Français" selected={selected === 'fr'} onPress={() => setSelected('fr')} />
-          <LangItem code="en" label="English" selected={selected === 'en'} onPress={() => setSelected('en')} />
+          <LangItem code="fr" label="Français" selected={selected === 'fr'} onPress={() => changeLanguage("fr")} />
+          <LangItem code="en" label="English" selected={selected === 'en'} onPress={() => changeLanguage("en")} />
         </View>
       </ScrollView>
     </SafeAreaView>

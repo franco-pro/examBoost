@@ -27,7 +27,7 @@ export default function RootLayout() {
           animation: "fade",
           tabBarActiveTintColor: "#ff894f",
           headerStyle: {
-            backgroundColor: "#FFFFFF",
+            backgroundColor: "#f9fafb",
           },
           headerShadowVisible: false,
           tabBarInactiveTintColor: "#FFFFFF",

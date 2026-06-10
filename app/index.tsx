@@ -1,28 +1,39 @@
-import { useSelector } from "react-redux";
-import { RootState } from "./hooks/redux/store";
 import { useEffect, useState } from "react";
 import { getItem } from "./utils/asyncStorage";
 import { Redirect } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import i18n from "@/lang/i18n";
+import { useSelector } from "react-redux";
+import { RootState } from "./hooks/redux/store";
 
 export default function Index() {
-    const { accessToken } = useSelector((state: RootState) => state.user)
+    const [accessToken, setAccesToken] = useState("")
     const [loading, setLoading] = useState(true)
-    const [onboarded, setOnboarding] = useState(false)
+    const [onboarded, setOnboarding] = useState('')
     const [lang, setLang] = useState('')
+    const {isAuthenticated} = useSelector((s:RootState)=> s.user)
     
 
     useEffect(() => {
         (async () => {
-            const currentLang = await AsyncStorage.getItem("lang");
+            const token = await getItem("accessToken")
+            const currentLang = await getItem("language");
+            const isOnboarded = await getItem("onboarded");
+            // console.log("value onboarded:", isOnboarded)
+            if (token) {
+                setAccesToken(token);
+            } else {
+                console.log("la sauvegarde du token n'a pas pris :", token)
+            }
             if (currentLang) {
                 setLang(currentLang);
             } else {
+                console.log("la sauvegarde de la langue n'a pas pris :", currentLang)
+            }
+            if (isOnboarded) {
+                setOnboarding(isOnboarded);
+            } else {
+                console.log("la sauvegarde de ONBOARD n'a pas pris :", isOnboarded)
             }
             
-            const value = await getItem("onboarded")
-            setOnboarding(true)
             setLoading(false)
         })()
     }, [])
@@ -37,7 +48,7 @@ export default function Index() {
         return <Redirect href={"./(onboarding)"}/>
     }
 
-    if (!accessToken) {
+    if (!isAuthenticated) {
         return <Redirect href="./(auth)/login"/>
     }
 

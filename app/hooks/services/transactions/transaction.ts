@@ -8,13 +8,16 @@ export default function TransactionsHttp(){
     // });
     const baseEndpoint = "/transactions/"
     return {
-        getAllTransactions: async (userId: number)=> {
-            try {
-                const response = await apiClient.get(baseEndpoint+"user/"+ String(userId));
-                return {data: response.data, error: null}
-            } catch (error: any) {
-                return {data: null, error: error.response.data.message};                
-            }
+      getAllTransactions: async (userId: number) => {
+        try {
+          const response = await apiClient.get(
+            baseEndpoint + "user/" + String(userId),
+          );
+          return { data: response.data, error: null };
+        } catch (error: any) {
+          return { data: null, error: error.response.data.message };
         }
-    }
+      },
+     
+    };
 }

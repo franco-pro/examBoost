@@ -32,7 +32,7 @@ export type subjectDocumentype = {
 export const handleOpenDocument = async (doc: subjectDocumentype) => {
     try {
       const fullUrl = buildFileUrl(doc.url);
-      console.log("full url file:", fullUrl,"doc: ", doc);
+    //   console.log("full url file:", fullUrl,"doc: ", doc);
 
       const token = await AsyncStorage.getItem("accessToken");
       if (!token) console.log("le token est vide :", token);
@@ -51,3 +51,5 @@ export const handleOpenDocument = async (doc: subjectDocumentype) => {
 console.log("erreur lors de l'ouverture du fichier dans downloadFile: ", err)
     } 
 }
+
+export const  documentsOffice = async()=>{}

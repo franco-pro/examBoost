@@ -22,20 +22,22 @@ interface User {
 }
 
 interface UserState {
-  user: User | null;
+  user?: User | null;
   accessToken: string | null;
   refreshToken: string | null;
-  loading: boolean;
-  error: any;
+  loading?: boolean;
+  error?: any;
   others?: any;
+  isAuthenticated: boolean;
 }
 
 const initialState: UserState = {
-  user: null,
-  loading: false,
-  error: null,
+  // user: null,
+  // loading: false,
+  // error: null,
   accessToken: null,
   refreshToken: null,
+  isAuthenticated:false
   // others: null
 };
 
@@ -173,20 +175,28 @@ export const userSlice = createSlice({
     },
     logout: (state) => {
       // state.user = null;
-      // state.accessToken = null;
-      // state.refreshToken = null;
-      return initialState;
+      state.accessToken = null;
+      state.refreshToken = null;
+      state.isAuthenticated = false
+      // return initialState;
     },
     loginSuccess: (state, action) => {
       state.user = action.payload.user;
       state.accessToken = action.payload.accessToken;
-      state.refreshToken = action.payload.refreshToken
+      state.refreshToken = action.payload.refreshToken;
+      state.isAuthenticated = true
     },
 
     updateProfile: (state, action) => {
       state.user = {
         ...state.user,
         ...action.payload
+      }
+    },
+
+    updateProfileImg: (state, action) => {
+      if (state.user) {
+        state.user.imgUrl = action.payload
       }
     },
 
@@ -214,6 +224,7 @@ export const userSlice = createSlice({
         state.user = action.payload.user;
         state.accessToken = action.payload.accessToken;
         state.refreshToken = action.payload.refreshToken;
+        state.isAuthenticated = true
       })
 
       //register
@@ -230,6 +241,19 @@ export const userSlice = createSlice({
         state.user = action.payload.user;
         state.others = action.payload.infos
       })
+    
+    //redirect login page
+      .addCase(userDatas.rejected, (state, action) => {
+        state.loading = false
+        
+        if (action.payload === "UNAUTHORIZED") {
+          state.user = null,
+            state.accessToken = null
+          state.error = "Session expire"
+        } else {
+          state.error = action.payload as string
+        }
+    })
 
       //search
         .addCase(searchUser.fulfilled, (state, action) => {
@@ -244,21 +268,15 @@ export const userSlice = createSlice({
           state.error = null;
         })
         
-    
-    //redirect login page
-      .addCase(userDatas.rejected, (state, action) => {
-        state.loading = false
-        
-        if (action.payload === "UNAUTHORIZED") {
-          state.user = null,
-            state.accessToken = null
-          state.error = "Session expire"
-        } else {
-          state.error = action.payload as string
-        }
-    })
   },
 });
 
-export const { logout,loginSuccess, setCredentials, updateBalanceUser, updateProfile } = userSlice.actions;
+export const {
+  logout,
+  loginSuccess,
+  setCredentials,
+  updateBalanceUser,
+  updateProfile,
+  updateProfileImg,
+} = userSlice.actions;
 export default userSlice.reducer;

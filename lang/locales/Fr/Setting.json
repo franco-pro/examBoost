@@ -1,0 +1,19 @@
+{
+  "setting": {
+    "title": "Paramètres",
+    "wallet": "Solde",
+    "level":"Niveau",
+    "account": "Compte",
+    "profile": "Mon profile",
+    "withdraw": "Faire un retrait",
+    "change_pass": "Changer le mot de passe",
+    "preference": "Preferences",
+    "language": "Langue",
+    "appearance": "Apparence",
+    "support": "Support",
+    "about": "A propos de Examboost",
+    "sensitive_zone": "Zone sensible",
+    "lougout": "Se deconnecter",
+    "delete_account": "Supprimer mon compte"
+  }
+}

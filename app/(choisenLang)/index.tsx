@@ -19,7 +19,6 @@ export default function Index() {
   const { t, i18n } = useTranslation();
   const changeLanguage = async (lang: "fr" | "en") => {
     await i18n.changeLanguage(lang);
-    await AsyncStorage.setItem("lang", lang);
   };
 
   const languages = [
@@ -27,17 +26,21 @@ export default function Index() {
     { code: "fr", name: "Français", flag: "🇫🇷" },
   ];
 
-  const handleNext = () => {
+  const handleNext = async() => {
     if (i18n.language) {
+      await AsyncStorage.setItem("language", i18n.language);
+      console.log("langue dans choisenlang: ", await AsyncStorage.getItem("language"))
       navigation.navigate("/(onboarding)");
     } else {
       console.log("something wrong");
     }
   };
   const testBackend = async () => {
+    const cles = await AsyncStorage.getAllKeys();
     try {
       const url = `${BASE_URL}:3000`;
       console.log("TEST URL:", url);
+      console.log("Toutes les clés :", cles);
 
       const res = await fetch(url);
       const text = await res.text();
@@ -84,7 +87,10 @@ export default function Index() {
             </Radio>
           </RadioGroup>
         </View>
-        <Button onPress={()=>testBackend()}>test</Button>
+
+        {/* <View>
+          <Button onPress={() => testBackend()}>test</Button>
+        </View> */}
 
         <View className="footer gap-10">
           <Text className=" text-center font-light text-base  mx-5  ">

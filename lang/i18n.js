@@ -6,17 +6,21 @@ import competitionEn from "./locales/En/Competition.json";
 import competitionFr from "./locales/Fr/Competition.json";
 import homeEN from "./locales/En/home.json";
 import homeFr from "./locales/Fr/home.json";
+import settingFR from "./locales/Fr/Setting.json"
+import settingEN from "./locales/En/Setting.json"
 
 const resources = {
   en: {
     transaction: transactionEN,
     competition: competitionEn,
     home: homeEN,
+    setting: settingEN,
   },
   fr: {
     transaction: transactionFR,
     competition: competitionFr,
     home: homeFr,
+    setting: settingFR
   },
 };
 
@@ -26,7 +30,7 @@ i18n.use(initReactI18next).init({
   lng: "fr",
   fallbackLng: "en",
   resources,
-  ns: ["transaction", "competition", "home"],
+  ns: ["transaction", "competition", "home", "setting"],
   defaultNS: "home",
   interpolation: {
     escapeValue: false,

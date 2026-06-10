@@ -1,25 +1,78 @@
-import { Toast, ToastDescription, ToastTitle, useToast } from '@/components/ui/toast';
-import { useDeleteUserMutation } from '@/app/features/user/hooks.rq';
-import { setCurrentUserId } from '@/app/hooks/redux/session/session.slice';
-import type { AppDispatch, RootState } from '@/app/hooks/redux/store';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { Alert, Platform, Pressable, ScrollView, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useDispatch, useSelector } from 'react-redux';
-import { useAppSelector } from '../hooks/redux/redux.hooks';
+import {
+  Toast,
+  ToastDescription,
+  ToastTitle,
+  useToast,
+} from "@/components/ui/toast";
+import { useDeleteUserMutation } from "@/app/features/user/hooks.rq";
+import { setCurrentUserId } from "@/app/hooks/redux/session/session.slice";
+import { logout, userDatas } from "@/app/hooks/redux/users/users.slice";
+import type { AppDispatch, RootState } from "@/app/hooks/redux/store";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { useWindowDimensions } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import {
+  Alert,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+  Image,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useDispatch, useSelector } from "react-redux";
+import { Button, ButtonText } from "@/components/ui/button";
+import { buildFileUrl } from "../hooks/files/buildRouteFiles";
+import { useUploadProfileMutation } from "../features/profiles/hook.rq";
+import { useTranslation } from "react-i18next";
 
 export default function SettingsScreen() {
+  const {t} = useTranslation("setting")
   const router = useRouter();
   const toast = useToast();
   const dispatch = useDispatch<AppDispatch>();
-  const {user} = useAppSelector(s => s.user);
-  const userID = user?.id ?? 0;
+  const navigation = useRouter()
+  const { width } = useWindowDimensions()
+  const halfWidth = width * 0.9;
+  // console.log("width: ", width*0.5)
+
+  const currentUser = useSelector((s: RootState) => s.user.user);
+  const userID = currentUser?.id;
+const logoutHandle = async () => {
+  dispatch(logout());
+  // await persistor.purge();
+  navigation.replace("/(auth)/login");
+  };
+  
+  const uploadMutation = useUploadProfileMutation()
+
+  const pickImage = async () => {
+    try {
+      const res = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.6,
+      });
+
+      if (!res.canceled) {
+        uploadMutation.mutate({ userID: userID, image: res.assets[0] });
+      }
+    } catch (error) {
+      console.log("une erreur s'est produire :", error)
+    }
+  }
   const deleteUserMutation = useDeleteUserMutation();
 
-  const showToast = (action: 'success' | 'error' | 'info' | 'warning' | 'muted', title: string, desc?: string) =>
+  const showToast = (
+    action: "success" | "error" | "info" | "warning" | "muted",
+    title: string,
+    desc?: string,
+  ) =>
     toast.show({
-      placement: 'top',
+      placement: "top",
       duration: 2200,
       render: () => (
         <Toast action={action} variant="solid" className="mx-3">
@@ -30,104 +83,279 @@ export default function SettingsScreen() {
     });
 
   const doDeleteAccount = async () => {
+    if (userID === undefined) {
+      showToast("error", "Utilisateur introuvable");
+      return;
+    }
+
     try {
       await deleteUserMutation.mutateAsync({ userID });
+
       dispatch(setCurrentUserId(undefined));
-      showToast('success', 'Compte supprimé');
-      router.replace('/(tabs)' as any);
+
+      showToast("success", "Compte supprimé");
+
+      router.replace("/(tabs)" as any);
     } catch (e: any) {
-      showToast('error', 'Suppression échouée', e?.message || 'Réessayez plus tard');
+      showToast(
+        "error",
+        "Suppression échouée",
+        e?.message || "Réessayez plus tard",
+      );
     }
   };
 
   const onDeleteAccount = () => {
-    if (Platform.OS === 'web') {
-      const ok = typeof window !== 'undefined' ? window.confirm('Cette action est définitive. Voulez-vous vraiment supprimer votre compte ?') : false;
+    if (Platform.OS === "web") {
+      const ok =
+        typeof window !== "undefined"
+          ? window.confirm(
+              "Cette action est définitive. Voulez-vous vraiment supprimer votre compte ?",
+            )
+          : false;
+
       if (ok) void doDeleteAccount();
+
       return;
     }
 
     Alert.alert(
-      'Supprimer le compte',
-      'Cette action est définitive. Voulez-vous vraiment supprimer votre compte ?',
+      "Supprimer le compte",
+      "Cette action est définitive. Voulez-vous vraiment supprimer votre compte ?",
       [
-        { text: 'Annuler', style: 'cancel' },
         {
-          text: 'Supprimer',
-          style: 'destructive',
+          text: "Annuler",
+          style: "cancel",
+        },
+        {
+          text: "Supprimer",
+          style: "destructive",
           onPress: () => {
             void doDeleteAccount();
           },
         },
-      ]
+      ],
     );
   };
 
   return (
     <SafeAreaView className="flex-1 bg-background-light dark:bg-background-dark">
-      {/* Top bar sécurisé par SafeArea */}
-      <View className="px-4 pt-5 pb-4 flex-row items-center justify-between">
-        <Pressable onPress={() => router.back()} accessibilityLabel="Retour">
-          <Ionicons name="arrow-back" size={22} color="#181c5c" />
+      {/* HEADER */}
+      <View className="px-5 pt-2 pb-4 flex-row items-center justify-between">
+        <Pressable onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color="#181c5c" />
         </Pressable>
-        <Text className="text-lg font-extrabold text-typography-default dark:text-typography-white">Paramètres</Text>
-        <Pressable onPress={() => router.push('/(tabs)/profile' as any)} accessibilityLabel="Aller au profil">
-          <Text className="text-primary-defaultBlue font-semibold">Profil</Text>
-        </Pressable>
+
+        <Text className="text-xl font-extrabold text-typography-default dark:text-white">
+          {t("setting.title")}
+        </Text>
+
+        <View style={{ width: 24 }} />
       </View>
 
-      <ScrollView contentContainerStyle={{ paddingBottom: 24 }}>
-        <View className="px-4 mt-4">
-          <SettingsItem icon="language" label="Langue" onPress={() => router.push('/settings/language' as any)} />
-          <SettingsItem icon="color-palette" label="Apparence" onPress={() => router.push('/settings/appearance' as any)} />
-          <SettingsItem icon="information-circle" label="À propos de ExamBoost" onPress={() => router.push('/settings/about' as any)} />
-          <SettingsItem icon="wallet" label="Faire un retrait" onPress={() => router.push('/settings/withdraw' as any)} />
-          <SettingsItem icon="key" label="Changer le mot de passe" onPress={() => router.push('/settings/password' as any)} />
-            {
-            user?.role.toLowerCase() == "superadmin" ? (
-              <SettingsItem icon="shield-checkmark" label="Admin Dashboard" onPress={() => router.push("/dev-admin/pages")} />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
+        {/* PROFIL CARD */}
+        <View className="mx-5 mt-2 rounded-3xl bg-primary-defaultBlue p-5">
+          <View className="flex-row items-center">
+            <View className="h-16 w-16 rounded-full bg-white items-center justify-center">
+              {currentUser?.imgUrl ? (
+                <Image
+                  source={{ uri: buildFileUrl(currentUser.imgUrl) }}
+                  className="h-16 w-16 rounded-full"
+                />
+              ) : (
+                <Ionicons name="person" size={32} color="#181c5c" />
+              )}
+            </View>
+
+            <View className="ml-4 flex-1">
+              <Text className="text-white text-lg font-bold">
+                {currentUser?.surname || "Utilisateur"}
+              </Text>
+
+              <Text className="text-white/80">
+                {currentUser?.email || "email@examboost.com"}
+              </Text>
+            </View>
+
+            <Pressable
+              onPress={pickImage}
+              className="bg-white/20 px-3 py-2 rounded-full "
+            >
+              <Ionicons name="create-outline" size={18} color="white" />
+            </Pressable>
+          </View>
+
+          <View className="mt-4 border-t border-white/20 pt-4 flex-row justify-between">
+            <View>
+              <Text className="text-white/70 text-xs">
+                {t("setting.wallet")}
+              </Text>
+
+              <Text className="text-white font-bold text-lg">
+                {currentUser?.wallet ?? 0} FCFA
+              </Text>
+            </View>
+
+            <View>
+              <Text className="text-white/70 text-xs">
+                {t("setting.level")}
+              </Text>
+
+              <Text className="text-white font-bold text-lg">
+                {currentUser?.niveauID || "-"}
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* COMPTE */}
+        <SectionTitle title={t("setting.account")} />
+
+        <View className="mx-5">
+          <SettingsItem
+            icon="person-circle"
+            label={t("setting.profile")}
+            color="#2563EB"
+            onPress={() => router.push("/settings/profile" as any)}
+          />
+
+          <SettingsItem
+            icon="wallet"
+            label={t("setting.withdraw")}
+            color="#16A34A"
+            onPress={() => router.push("/settings/withdraw" as any)}
+          />
+
+          <SettingsItem
+            icon="key"
+            label={t("setting.change_pass")}
+            color="#F59E0B"
+            onPress={() => router.push("/settings/password" as any)}
+          />
+
+           {
+            currentUser?.role.toLowerCase() == "superadmin" ? (
+              <SettingsItem  color="#F59E0B" icon="shield-checkmark" label="Admin Dashboard" onPress={() => router.push("/dev-admin/pages")} />
             ) : null
             } 
             {
-            user?.role.toLowerCase() == "admin" ? (
-              <SettingsItem icon="shield-checkmark" label="Admin Dashboard" onPress={() => router.push("/others-admin/teacher-partner.page")} />
+            currentUser?.role.toLowerCase() == "admin" ? (
+              <SettingsItem color="#16A34A" icon="shield-checkmark" label="Admin Dashboard" onPress={() => router.push("/others-admin/teacher-partner.page")} />
             ) : null
-            }           
-          <SettingsItem icon="trash" label="Supprimer mon compte" onPress={onDeleteAccount} danger />
+            }
+        </View>
+
+        {/* PREFERENCES */}
+        <SectionTitle title={t("setting.preference")} />
+
+        <View className="mx-5">
+          <SettingsItem
+            icon="language"
+            label={t("setting.language")}
+            color="#8B5CF6"
+            onPress={() => router.push("/settings/language" as any)}
+          />
+
+          <SettingsItem
+            icon="color-palette"
+            label={t("setting.appearance")}
+            color="#EC4899"
+            onPress={() => router.push("/settings/appearance" as any)}
+          />
+        </View>
+
+        {/* SUPPORT */}
+        <SectionTitle title={t("setting.support")} />
+
+        <View className="mx-5">
+          <SettingsItem
+            icon="information-circle"
+            label={t("setting.about")}
+            color="#06B6D4"
+            onPress={() => router.push("/settings/about" as any)}
+          />
+        </View>
+
+        {/* DANGER ZONE */}
+        <SectionTitle title={t("setting.sensitive_zone")} />
+        <View className=" gap-5">
+          <View className={` m-auto rounded-2xl`} style={{ width: halfWidth }}>
+            <Button
+              variant={"solid"}
+              action={"negative"}
+              onPress={() => logoutHandle()}
+            >
+              <ButtonText>{t("setting.logout")}</ButtonText>
+            </Button>
+          </View>
+          <View className="mx-5">
+            <Pressable
+              onPress={onDeleteAccount}
+              className="bg-red-50 border border-red-200 rounded-2xl p-4 flex-row items-center justify-between"
+            >
+              <View className="flex-row items-center">
+                <View className="h-10 w-10 rounded-full bg-red-100 items-center justify-center">
+                  <Ionicons name="trash" size={18} color="#DC2626" />
+                </View>
+
+                <Text className="ml-3 text-red-600 font-bold">
+                  {t("setting.delete_account")}
+                </Text>
+              </View>
+
+              <Ionicons name="chevron-forward" size={18} color="#DC2626" />
+            </Pressable>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
+function SectionTitle({ title }: { title: string }) {
+  return (
+    <Text className="mx-5 mt-7 mb-3 text-xs uppercase tracking-widest text-typography-gray font-bold">
+      {title}
+    </Text>
+  );
+}
+
 function SettingsItem({
   icon,
   label,
+  color,
   onPress,
-  danger,
 }: {
   icon: keyof typeof Ionicons.glyphMap;
   label: string;
+  color: string;
   onPress: () => void;
-  danger?: boolean;
 }) {
   return (
     <Pressable
-      onPress={() => {
-        console.log('[settings] press:', label);
-        onPress();
-      }}
-      hitSlop={10}
-      accessibilityRole="button"
-      className={`flex-row items-center justify-between px-3 py-3 rounded-xl border ${
-        danger ? 'border-error-300 dark:border-error-500' : 'border-outline-100 dark:border-outline-800'
-      } bg-white dark:bg-outline-900 mb-2 active:opacity-90`}
+      onPress={onPress}
+      className="mb-3 bg-white dark:bg-outline-900 rounded-2xl px-4 py-4 border border-outline-100 dark:border-outline-800 flex-row items-center justify-between"
     >
-      <View className="flex-row items-center gap-3">
-        <Ionicons name={icon} size={18} color={danger ? '#ef4444' : '#6B7280'} />
-        <Text className={`text-sm font-semibold ${danger ? 'text-error-500' : 'text-typography-default dark:text-typography-white'}`}>{label}</Text>
+      <View className="flex-row items-center">
+        <View
+          className="h-11 w-11 rounded-full items-center justify-center"
+          style={{
+            backgroundColor: `${color}20`,
+          }}
+        >
+          <Ionicons name={icon} size={20} color={color} />
+        </View>
+
+        <Text className="ml-3 text-sm font-semibold text-typography-default dark:text-white">
+          {label}
+        </Text>
       </View>
-      <Ionicons name="chevron-forward" size={16} color={danger ? '#ef4444' : '#9CA3AF'} />
+
+      <Ionicons name="chevron-forward" size={18} color="#9CA3AF" />
     </Pressable>
   );
 }

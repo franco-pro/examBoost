@@ -1,14 +1,16 @@
+import { BASE_URL } from "@/app/api/apiClient";
+
 // 🎯 Configuration centralisée pour les URLs WebSocket
 export const WEBSOCKET_CONFIG = {
   // URL de base du backend WebSocket
-  BASE_URL: "http://192.168.1.112:3000",
-  
+  BASE_URL:`${BASE_URL}:3000`,
+
   // Namespaces disponibles
   NAMESPACES: {
     ROOMS: "/rooms",
     NOTIFICATIONS: "/notification",
   },
-  
+
   // Options de connexion par défaut
   DEFAULT_OPTIONS: {
     transports: ["websocket"],
@@ -19,7 +21,7 @@ export const WEBSOCKET_CONFIG = {
     reconnectionAttempts: 5,
     maxReconnectionAttempts: 5,
   },
-  
+
   // Événements disponibles
   EVENTS: {
     // Rooms
@@ -32,28 +34,28 @@ export const WEBSOCKET_CONFIG = {
     COMPETITION_END: "competition-ended",
     NEW_QUESTION: "new-question",
     QUESTION_ANSWERED: "question-answered",
-    
+
     // Notifications
     NOTIFICATION_NEW: "notification-new",
     NOTIFICATION_READ: "notification-read",
-    
+
     // Généraux
     CONNECT: "connect",
     DISCONNECT: "disconnect",
     ERROR: "error",
   },
-  
+
   // Configuration par environnement
   getBaseUrl: () => {
     // Pour le développement
     if (__DEV__) {
       return WEBSOCKET_CONFIG.BASE_URL;
     }
-    
+
     // Pour la production
     return process.env.EXPO_PUBLIC_WS_URL || WEBSOCKET_CONFIG.BASE_URL;
   },
-  
+
   // URL complète pour un namespace
   getNamespaceUrl: (namespace: string) => {
     return `${WEBSOCKET_CONFIG.getBaseUrl()}${namespace}`;

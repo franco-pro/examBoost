@@ -1,4 +1,6 @@
-export const API_URL = 'http://192.168.1.112:3000';
+import { BASE_URL } from "../api/apiClient";
+
+export const API_URL = `${BASE_URL}:3000`;
 
 export const toAbsoluteUrl = (u: string): string => {
   const base = API_URL;
