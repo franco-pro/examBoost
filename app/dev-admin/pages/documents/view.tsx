@@ -156,6 +156,14 @@ export default function DocumentView() {
       Alert.alert("Champs requis", "Le nom et la matière ne peuvent pas être vides.");
       return;
     }
+    const data = {
+      name : name.trim(),
+      subject: subject.trim(),
+      type,
+      isValidated
+    }
+    console.log("Données à sauvegarder:", data);
+    
     Alert.alert("Succès", "Document mis à jour avec succès.", [
       { text: "OK", onPress: () => router.back() },
     ]);

@@ -13,7 +13,7 @@ import { useRouter } from "expo-router";
 export default function RootLayout() {
   const navigation = useRouter();
   const { t } = useTranslation("competition");
-  const user = useSelector((state: RootState) => state.user.user);
+  const {user, others} = useSelector((state: RootState) => state.user);
   useEffect(() => {
     if (!user) {
       navigation.replace("/login");
@@ -115,7 +115,7 @@ export default function RootLayout() {
           name="notifications"
           options={{
             title: "Notifications",
-            tabBarBadge: 10,
+            tabBarBadge: others.notification.length > 0 ? others.notification.length : undefined,
             tabBarIcon: ({ focused, color }) => (
               <Ionicons
                 name={focused ? "notifications" : "notifications-outline"}

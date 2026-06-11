@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -13,43 +13,63 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Avatar, AvatarFallbackText, AvatarImage } from "@/components/ui/avatar";
 import { useAppSelector } from "../redux/redux.hooks";
+import { DocAdminHTTP } from "../hooks/services/document/doc.admin.http";
 
-const stats = {
-  totalStudent: 30,
-  totalDocSubmit: 128,
-  totalValidated: 94,
-  totalGain: 47500,
-  totalCommission: 600
+type GainDetail = {
+  count: number;
+  price: number;
+  subtotal: number;
 };
 
-const docs = [
-  { id: "1", type: "CONTROLE CONTINU", name: "CC Analyse S3", subject: "Mathématiques", isValidated: true, created_at: "2025-05-10", niveaux: { name: "Licence 2" } },
-  { id: "2", type: "EXAMEN SEMESTRE", name: "Examen Final S2", subject: "Physique", isValidated: false, created_at: "2025-05-08", niveaux: { name: "Licence 1" } },
-  { id: "3", type: "TD", name: "TD Algorithmique #4", subject: "Informatique", isValidated: true, created_at: "2025-05-07", niveaux: { name: "Licence 3" } },
-  { id: "4", type: "EXAMEN", name: "Exam Chimie Organique", subject: "Chimie", isValidated: false, created_at: "2025-05-06", niveaux: { name: "Terminale S" } },
-  { id: "5", type: "EXAMEN BLANC", name: "Blanc BAC Blanc #2", subject: "Français", isValidated: true, created_at: "2025-05-05", niveaux: { name: "Terminale A" } },
-  { id: "6", type: "EVALUATION", name: "Éval. Histoire Géo", subject: "Histoire-Géo", isValidated: false, created_at: "2025-05-04", niveaux: { name: "3ème" } },
-  { id: "7", type: "CORRECTION", name: "Correction TD Réseau", subject: "Informatique", isValidated: true, created_at: "2025-05-03", niveaux: { name: "Licence 2" } },
-  { id: "8", type: "CONTROLE CONTINU", name: "CC Probabilités", subject: "Mathématiques", isValidated: false, created_at: "2025-05-01", niveaux: { name: "Master 1" } },
-];
+type ApiResponse = {
+  dashboard: {
+    totalDocSubmit: number;
+    totalValidated: number;
+    totalGain: number;
+    totalStudent?: number;
+    totalCommission?: number;
+    last30Days: {
+      docsSent: number;
+      docsValidated: number;
+      gain: number;
+      gainDetail: Record<string, GainDetail>;
+    };
+    nextPaymentDate: string; // ISO string
+  };
+  documents: {
+    id: string;
+    name: string;
+    type: string;
+    subject: string;
+    isValidated: boolean;
+    createdAt: string; // ISO string
+    niveau: { id: string; name: string };
+  }[];
+};
+
 
 const DOC_CONFIG = {
-  "CONTROLE CONTINU": { color: "#6366F1", bg: "#EEF2FF", icon: "📝", short: "CC" },
-  "EXAMEN SEMESTRE":  { color: "#0EA5E9", bg: "#E0F2FE", icon: "📘", short: "ES" },
-  "TD":               { color: "#10B981", bg: "#D1FAE5", icon: "📋", short: "TD" },
-  "EXAMEN":           { color: "#F59E0B", bg: "#FEF3C7", icon: "📄", short: "EX" },
-  "EXAMEN BLANC":     { color: "#F97316", bg: "#FFF7ED", icon: "📃", short: "EB" },
-  "EVALUATION":       { color: "#EC4899", bg: "#FDF2F8", icon: "✏️", short: "EV" },
-  "CORRECTION":       { color: "#8B5CF6", bg: "#F5F3FF", icon: "✅", short: "CR" },
+  "CONTROLE CONTINU": { color: "#6366F1", bg: "#EEF2FF", iconName: "document-text-outline", short: "CC" },
+  "EXAMEN SEMESTRE":  { color: "#0EA5E9", bg: "#E0F2FE", iconName: "book-outline", short: "ES" },
+  "TD":               { color: "#10B981", bg: "#D1FAE5", iconName: "clipboard-outline", short: "TD" },
+  "EXAMEN":           { color: "#F59E0B", bg: "#FEF3C7", iconName: "document-outline", short: "EX" },
+  "EXAMEN BLANC":     { color: "#F97316", bg: "#FFF7ED", iconName: "reader-outline", short: "EB" },
+  "EVALUATION":       { color: "#EC4899", bg: "#FDF2F8", iconName: "pencil-outline", short: "EV" },
+  "CORRECTION":       { color: "#8B5CF6", bg: "#F5F3FF", iconName: "checkmark-circle-outline", short: "CR" },
 };
 
-const formatDate = (dateStr: any) => {
+const formatDate = (dateStr: string) => {
   const d = new Date(dateStr);
   return d.toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" });
 };
 
-const formatGain = (n: any) =>
+const formatGain = (n: number) =>
   n >= 1000 ? `${(n / 1000).toFixed(1)}k FCFA` : `${n} FCFA`;
+
+const formatNextPayment = (isoDate: string) => {
+  const d = new Date(isoDate);
+  return d.toLocaleDateString("fr-FR", { day: "numeric", month: "long" }) + " 00h";
+};
 
 function StatCard({ label, value, accent, sub }: any) {
   return (
@@ -61,13 +81,26 @@ function StatCard({ label, value, accent, sub }: any) {
   );
 }
 
+function InfoCard({ label, value, accent, legend, iconName }: any) {
+  return (
+    <View style={[styles.statCard, { borderTopColor: accent, flex: 1 }]}>
+      <Ionicons name={iconName} size={18} color={accent} style={{ marginBottom: 4 }} />
+      <Text style={[styles.statValue, { color: accent, fontSize: 13 }]} numberOfLines={1} adjustsFontSizeToFit>
+        {value}
+      </Text>
+      <Text style={styles.statLabel}>{label}</Text>
+      {legend ? <Text style={[styles.statSub, { fontStyle: "italic" }]}>{legend}</Text> : null}
+    </View>
+  );
+}
+
 function DocRow({ item }: any) {
-  const cfg = DOC_CONFIG[item.type as keyof typeof DOC_CONFIG] || { color: "#64748B", bg: "#F1F5F9", icon: "📁", short: "??" };
+  const cfg = DOC_CONFIG[item.type as keyof typeof DOC_CONFIG] || { color: "#64748B", bg: "#F1F5F9", iconName: "folder-outline", short: "??" };
   return (
     <View style={styles.docRow}>
       {/* Icône */}
       <View style={[styles.docIconWrap, { backgroundColor: cfg.bg }]}>
-        <Text style={styles.docIconEmoji}>{cfg.icon}</Text>
+        <Ionicons name={cfg.iconName as any} size={20} color={cfg.color} />
         <Text style={[styles.docIconShort, { color: cfg.color }]}>{cfg.short}</Text>
       </View>
 
@@ -75,16 +108,15 @@ function DocRow({ item }: any) {
       <View style={styles.docInfo}>
         <Text style={styles.docName} numberOfLines={1}>{item.name}</Text>
         <View style={styles.docMeta}>
-          <Text style={styles.docLevel}>{item.niveaux.name}</Text>
+          <Text style={styles.docLevel}>{item.niveau.name}</Text>
           <Text style={styles.docDot}>·</Text>
-          <Text style={styles.docDate}>{formatDate(item.created_at)}</Text>
+          <Text style={styles.docDate}>{formatDate(item.createdAt)}</Text>
         </View>
         <Text style={[styles.docTypeBadge, { color: cfg.color, backgroundColor: cfg.bg }]}>
           {item.type}
         </Text>
       </View>
 
-      {/* Statut */}
       <View style={[styles.statusDot, { backgroundColor: item.isValidated ? "#10B981" : "#F59E0B" }]} />
     </View>
   );
@@ -93,73 +125,129 @@ function DocRow({ item }: any) {
 export default function DocAdmin() {
   const [filter, setFilter] = useState("TOUS");
   const types = ["TOUS", ...Object.keys(DOC_CONFIG)];
-  const {user}  = useAppSelector(s => s.user);
-  const validationRate = Math.round((stats.totalValidated / stats.totalDocSubmit) * 100);
-  const pending = stats.totalDocSubmit - stats.totalValidated;
+  const { user } = useAppSelector(s => s.user);
   const isPartner = user?.role?.toLowerCase() === "partner";
-  const filtered = filter === "TOUS" ? docs : docs.filter((d) => d.type === filter);
+  const [dashboard, setDashboard] = useState<ApiResponse["dashboard"] | null>(null);
+  const [documents, setDocuments] = useState<ApiResponse["documents"]>([]);
+  const [loadDone, setLoadDone] = useState(false);
+
+  useEffect(() => {
+      const fetchData = async () => {
+        if (!user) router.replace("/login");
+
+        if ((dashboard === null || documents.length === 0 && !loadDone)) {
+          const dataApi = await DocAdminHTTP().getDocs(user?.id ?? 0);
+          if (dataApi && !dataApi.error) {
+            setDashboard(dataApi.data.dashboard);
+            setDocuments(dataApi.data.documents);
+          }
+
+          setLoadDone(true);
+        }
+      };
+
+      fetchData();
+  }, [user, dashboard, documents]);
+
+
+  const validationRate = (dashboard && dashboard.totalValidated && dashboard.totalDocSubmit)  ? Math.round((dashboard.totalValidated / dashboard.totalDocSubmit) * 100): 0;
+  const pending = dashboard ? dashboard.totalDocSubmit - dashboard.totalValidated: 0;
+
+  // Gain 30j : format "+N*prix FCFA" par type depuis gainDetail
+  const gainLabel = dashboard?.last30Days?.gainDetail
+  ? Object.entries(dashboard.last30Days.gainDetail)
+      .map(([, v]) => {
+        const gainDetail = v as GainDetail;
+        return `+${gainDetail.count}*${gainDetail.price}`;
+      })
+      .join(" ")
+  : "";
+  const gainDisplay = gainLabel ? `${gainLabel} FCFA` : `${dashboard ? dashboard.last30Days.gain: 0} FCFA`;
+
+  const filtered = filter === "TOUS" ? documents : documents.filter((d: any) => d.type === filter);
 
   return (
     <View style={styles.root}>
       <StatusBar barStyle="light-content" backgroundColor="#0F172A" />
 
-      {/* ── HEADER ── */}
-      <View style={styles.header}>
-      <TouchableOpacity
-        className="flex-row items-center mb-6"
-        onPress={() => router.back()}
-      >
-        <Ionicons name="arrow-back" size={24} color={"white"} />
-        <Text className="ml-2 text-lg font-semibold text-gray-800">Retour</Text>
-      </TouchableOpacity>
-        <View>
-          <Text style={styles.headerSub}>Administration</Text>
-          <Text style={styles.headerTitle}>Documents</Text>
+      <View>
+        {/* HEADER */}
+        <View style={styles.header}>
+          <TouchableOpacity
+            className="flex-row items-center mb-6"
+            onPress={() => router.back()}
+          >
+            <Ionicons name="arrow-back" size={24} color={"white"} />
+            <Text className="ml-2 text-lg font-semibold text-gray-800">Retour</Text>
+          </TouchableOpacity>
+          <View>
+            <Text style={styles.headerSub}>Administration</Text>
+            <Text style={styles.headerTitle}>Documents</Text>
+          </View>
+          <Avatar size="md" className="border-2 border-orange-400">
+            <AvatarImage source={{ uri: user?.imgUrl }} alt={user?.name ?? "User"} />
+            <AvatarFallbackText className="text-white font-bold bg-indigo-500">
+              {user?.name ?? "A"}
+            </AvatarFallbackText>
+          </Avatar>
         </View>
-        <Avatar size="md" className="border-2 border-orange-400">
-          <AvatarImage source={{ uri: user?.imgUrl }} alt={user?.name ?? "User"} />
-          <AvatarFallbackText className="text-white font-bold bg-indigo-500">
-            {user?.name ?? "A"}
-          </AvatarFallbackText>
-        </Avatar>
-      </View>
 
-      <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-
-        {/* ── DASHBOARD (≈38%) ── */}
         <View style={styles.dashboard}>
 
-          {/* Stat cards row */}
           <View style={styles.statsRow}>
             <StatCard
               label="Soumis"
-              value={stats.totalDocSubmit}
+              value={dashboard?.totalDocSubmit ?? 0}
               accent="#6366F1"
             />
             <StatCard
               label="Validés"
-              value={stats.totalValidated}
+              value={dashboard?.totalValidated ?? 0}
               accent="#10B981"
               sub={`${validationRate}%`}
             />
             <StatCard
               label="Gains"
-              value={formatGain(stats.totalGain)}
+              value={formatGain(dashboard?.totalGain ?? 0)}
               accent="#F59E0B"
             />
           </View>
-        {isPartner && (
-            <View style={[styles.statsRow, { marginTop: 10 }]}>
-                <StatCard label="Étudiants" value={stats.totalStudent} accent="#0EA5E9" icon="👥" />
-                <StatCard label="Commission" value={formatGain(stats.totalCommission)} accent="#EC4899" icon="💰" />
-            </View>
-        )}
 
-          {/* Progress bar */}
+          <View style={[styles.statsRow, { marginTop: 10 }]}>
+            <InfoCard
+              label="30 derniers jours"
+              value={`${dashboard?.last30Days?.docsValidated ?? 0} docs`}
+              accent="#0EA5E9"
+              legend="Docs envoyés"
+              iconName="calendar-outline"
+            />
+            <InfoCard
+              label="Gains calculés"
+              value={gainDisplay}
+              accent="#10B981"
+              legend={`${dashboard?.last30Days?.docsValidated ?? 0} validés`}
+              iconName="calculator-outline"
+            />
+            <InfoCard
+              label="Prochain paiement"
+              value={formatNextPayment(dashboard ? dashboard.nextPaymentDate: "")}
+              accent="#F97316"
+              legend="Date de virement"
+              iconName="time-outline"
+            />
+          </View>
+
+          {isPartner && (
+            <View style={[styles.statsRow, { marginTop: 10 }]}>
+              <StatCard label="Étudiants" value={dashboard?.totalStudent} accent="#0EA5E9" />
+              <StatCard label="Commission" value={formatGain(dashboard?.totalCommission ?? 0)} accent="#EC4899" />
+            </View>
+          )}
+
           <View style={styles.progressCard}>
             <View style={styles.progressHeader}>
               <Text style={styles.progressLabel}>Taux de validation</Text>
-              <Text style={styles.progressPct}>{validationRate}%</Text>
+              <Text style={styles.progressPct}>{isNaN(validationRate) ? 0: validationRate}%</Text>
             </View>
             <View style={styles.progressTrack}>
               <View style={[styles.progressFill, { width: `${validationRate}%` }]} />
@@ -167,7 +255,7 @@ export default function DocAdmin() {
             <View style={styles.progressFooter}>
               <View style={styles.legendItem}>
                 <View style={[styles.legendDot, { backgroundColor: "#10B981" }]} />
-                <Text style={styles.legendText}>{stats.totalValidated} validés</Text>
+                <Text style={styles.legendText}>{dashboard?.totalValidated} validés</Text>
               </View>
               <View style={styles.legendItem}>
                 <View style={[styles.legendDot, { backgroundColor: "#F59E0B" }]} />
@@ -176,15 +264,16 @@ export default function DocAdmin() {
             </View>
           </View>
         </View>
+      </View>
 
-        {/* ── SECTION LISTE ── */}
+      <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+
         <View style={styles.listSection}>
           <View style={styles.listHeader}>
             <Text style={styles.listTitle}>Liste des documents</Text>
             <Text style={styles.listCount}>{filtered.length}</Text>
           </View>
 
-          {/* Filtres horizontaux */}
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -203,7 +292,14 @@ export default function DocAdmin() {
                     active && { backgroundColor: cfg ? cfg.color : "#0F172A", borderColor: cfg ? cfg.color : "#0F172A" },
                   ]}
                 >
-                  {cfg && <Text style={styles.filterEmoji}>{cfg.icon}</Text>}
+                  {cfg && (
+                    <Ionicons
+                      name={cfg.iconName as any}
+                      size={14}
+                      color={active ? "#fff" : cfg.color}
+                      style={{ marginRight: 4 }}
+                    />
+                  )}
                   <Text style={[styles.filterText, active && styles.filterTextActive]}>
                     {t === "TOUS" ? "Tous" : cfg?.short ?? t}
                   </Text>
@@ -213,14 +309,14 @@ export default function DocAdmin() {
           </ScrollView>
 
           {/* Docs */}
-          {filtered.map((item) => (
+          {filtered.map((item: any) => (
             <DocRow key={item.id} item={item} />
           ))}
 
           <View style={{ height: 32 }} />
         </View>
       </ScrollView>
-      <TouchableOpacity style={styles.fab} activeOpacity={0.85} onPress={() => {router.push("/submit-doc/submit")}}>
+      <TouchableOpacity style={styles.fab} activeOpacity={0.85} onPress={() => {router.push("/others-admin/submit-doc/submit")}}>
         <Ionicons name="add" size={30} color="#fff" />
       </TouchableOpacity>
     </View>

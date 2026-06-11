@@ -35,7 +35,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/app/hooks/redux/store";
 import apiClient from "@/app/api/apiClient";
 
-export default function Enseignant() {
+export default function Submit() {
   const [docFile, setDocFile] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
   const [correctionFile, setCorrectionFile] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
 
