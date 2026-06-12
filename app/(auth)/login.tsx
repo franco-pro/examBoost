@@ -84,7 +84,7 @@ export default function Login() {
   const handleSubmit = async () => {
     setIsLoading(true);
     const result = await dispatch(
-      loginUser({ email: inputValue, password: passwordValue })
+      loginUser({ identifier: inputValue, password: passwordValue })
     );
     
     if (loginUser.fulfilled.match(result)) {

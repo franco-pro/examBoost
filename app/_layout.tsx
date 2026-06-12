@@ -14,12 +14,11 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import "@/lang/i18n";
 import i18n from "@/lang/i18n";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 const queryClient = new QueryClient();
 
 export default function RootLayout() {
-  const [ready, setReady] = useState(false);
 
   // useEffect(() => {
   //   (async () => {

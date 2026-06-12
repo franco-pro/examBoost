@@ -1,9 +1,11 @@
 import axios from "axios";
 import { getItem, setItem } from "../utils/asyncStorage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { updateTokens } from "../hooks/redux/users/users.slice";
 import { useDispatch } from "react-redux";
+import { store } from "../hooks/redux/store";
 
-export const BASE_URL = "http://192.168.43.122";
+export const BASE_URL = "http://192.168.1.101";
 export const apiClient = axios.create({
   baseURL:`${BASE_URL}:3000`,
   timeout: 10000,
@@ -58,11 +60,17 @@ apiClient.interceptors.response.use(
         // stocke les nouveaux tokens (sans dépendre du Redux store pour éviter les cycles)
         await setItem("accessToken", res.data.accessToken);
         await setItem("refreshToken", res.data.refreshToken);
+
+        store.dispatch(updateTokens({
+          accessToken: res.data.accessToken,
+          refreshToken: res.data.refreshToken
+        }))
         
         console.log(
           "les keys dans refresh function :",
           res.data.accessToken,
           res.data.refreshToken,
+          "res:", res
         );
 
         //réessaye la requete avec le nouveau accessToken
