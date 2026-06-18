@@ -8,10 +8,14 @@ import {
   Switch,
   Alert,
   Image,
+  Linking,
 } from "react-native";
 import { useState } from "react";
 import {styles} from "./view.style";
 import { Ionicons } from "@expo/vector-icons";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
+import { deleteDoc, updateDoc } from "@/app/hooks/redux/documents/document.thunks";
+import { deleteOne, deleteTwo } from "@/app/hooks/redux/documents/document.slice";
 
 type DocType =
   | "CONTROLE CONTINU"
@@ -117,6 +121,8 @@ export default function DocumentView() {
     subject: initialSubject,
     type: initialType,
     isValidated: initialValidated,
+    correctionId,
+    subject_docID,
     created_at,
     ownerName,
     ownerSurname,
@@ -131,6 +137,8 @@ export default function DocumentView() {
     type: string;
     isValidated: string;
     created_at: string;
+    correctionId?: string;
+    subject_docID?: string;
     ownerName?: string;
     ownerSurname?: string;
     ownerAvatar?: string;
@@ -142,6 +150,8 @@ export default function DocumentView() {
   const [subject, setSubject] = useState(initialSubject ?? "");
   const [type, setType] = useState<DocType>((initialType as DocType) ?? "EXAMEN");
   const [isValidated, setIsValidated] = useState(initialValidated === "true");
+  const dispatch = useAppDispatch();
+  const {documentsList} = useAppSelector(state => state.documents);
 
   const typeMeta = TYPE_META[type];
   const fmtIcon = FORMAT_ICON[format?.toLowerCase()] ?? "📎";
@@ -151,35 +161,129 @@ export default function DocumentView() {
     type !== (initialType as DocType) ||
     isValidated !== (initialValidated === "true");
 
+  
+  const getAssociatedDocInfo = ()=>{
+    //we use the current open doc to get the associated doc (correction if it's a subject, subject if it's a correction) to get its url and open it when user click on the button.
+    if(type === "CORRECTION" && subject_docID){
+      const subjectDoc = documentsList.find(doc => doc.id === Number(subject_docID));
+      return {
+        id: subjectDoc?.id,
+        name: subjectDoc?.name,
+        url: subjectDoc?.url
+      }
+    }else{
+      const correctionDoc = documentsList.find(doc => doc.id === Number(correctionId));
+      return {
+        id: correctionDoc?.id,
+        name: correctionDoc?.name,
+        url: correctionDoc?.url
+      }
+    }
+  }
+
+  const localDelete = (onlyOneDoc: boolean)=>{
+      if(onlyOneDoc){
+          dispatch(deleteOne(Number(id)))
+      }else{
+        //Todo: Add Correction ID here.
+          dispatch(deleteTwo([Number(id), getAssociatedDocInfo().id ?? 0]));
+      }
+  }
+
   const handleSave = () => {
+    const doSave = (data:  {documentID: number, name: string, subject: string, type: any, isValidated: boolean, reason: string|undefined})=> {
+        dispatch(updateDoc({id: Number(id), data: data})).then(() => {
+          !isValidated && localDelete(false);
+
+          Alert.alert("Succès", "Document mis à jour avec succès.", [
+            { text: "OK", onPress: () => router.back() },
+          ]);
+        })
+        .catch((error) => {
+          console.log("error on update", error)
+          Alert.alert("Erreur", "La mise à jour a échoué.");
+        });
+    }
+
     if (!name.trim() || !subject.trim()) {
       Alert.alert("Champs requis", "Le nom et la matière ne peuvent pas être vides.");
       return;
     }
+    let nonValidatationReason = "";
+
+    if(!isValidated){
+      // show prompt to enter the reason
+      Alert.prompt(
+        "Raison de la non-validation",
+        "Veuillez fournir une raison pour laquelle ce document n'est pas validé.",
+        [
+          {
+            text: "Annuler",
+            style: "cancel",
+          },
+          {
+            text: "Enregistrer",
+            onPress: (reason: string|undefined) => {
+              if (reason && reason.trim()) {
+                nonValidatationReason = reason.trim();
+              } else {
+                Alert.alert("Raison requise", "La raison de la non-validation est obligatoire.");
+              }
+            },
+          },
+        ],
+        "plain-text"
+      );
+    }
     const data = {
+      documentID: Number(id),
       name : name.trim(),
       subject: subject.trim(),
       type,
-      isValidated
+      isValidated,
+      reason: !isValidated ? nonValidatationReason : undefined
     }
-    console.log("Données à sauvegarder:", data);
-    
+    console.log('data send to update', data);
+
     Alert.alert("Succès", "Document mis à jour avec succès.", [
-      { text: "OK", onPress: () => router.back() },
+      { text: "OK", onPress: () => doSave(data) },
     ]);
   };
 
-  const deleteDoc = ()=> {
+  const openDoc = ()=> {
+    if(!url){
+      Alert.alert("Erreur", "Aucun URL disponible pour ce document.");
+      return;
+    }
+    //open url in browser
+    Linking.openURL(getAssociatedDocInfo().url ?? url);
+  }
+  const deleteDocs = ()=> {
     //alert before delete
+
+    const doDeleting = () => {
+        dispatch(deleteDoc(Number(id))).then(()=>{
+          Alert.alert("Document supprimé", "Le document a été supprimé avec succès.", [
+            { 
+              text: "OK", 
+              onPress: () => router.back() },
+          ]);
+        }).catch((error) => {
+          console.log('error on deleting', error);
+          Alert.alert("Erreur", "Erreur lors de la suppression du document.");
+        });
+    }
+
     Alert.alert(
       "Confirmer la suppression",
       "Êtes-vous sûr de vouloir supprimer ce document ? Cette action est irréversible.",
       [
         { text: "Annuler", style: "cancel" },
         { text: "Supprimer", style: "destructive", onPress: () => {
-          // TODO call delete api
           Alert.alert("Document supprimé", "Le document a été supprimé avec succès.", [
-            { text: "OK", onPress: () => router.back() },
+            { 
+              text: "OK", 
+              onPress: () => doDeleting() },
           ]);
         } },
       ]
@@ -379,8 +483,30 @@ export default function DocumentView() {
         </TouchableOpacity>
 
         <TouchableOpacity
+          className="bg-green-600 rounded-lg px-4 py-3 items-center"
+          onPress={openDoc}
+          activeOpacity={0.85}
+        >
+          <Text style={styles.saveBtnText}>
+            Consulter le document
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
           className="bg-red-600 rounded-lg px-4 py-3 items-center"
-          onPress={deleteDoc}
+          onPress={openDoc}
+          activeOpacity={0.85}
+        >
+          <Text style={styles.saveBtnText}>
+            {
+              type === "CORRECTION" ? "Ouvrir la correction" : "Ouvrir l'Epreuve"
+            }
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="bg-red-600 rounded-lg px-4 py-3 items-center"
+          onPress={deleteDocs}
           activeOpacity={0.85}
         >
           <Text style={styles.saveBtnText}>

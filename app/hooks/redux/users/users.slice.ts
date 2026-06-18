@@ -19,6 +19,7 @@ interface User {
   role: string;
   imgUrl: string;
   isActivated: string;
+  canSubmitDoc:boolean
 }
 
 interface UserState {
@@ -106,7 +107,6 @@ export const userDatas = createAsyncThunk(
       // console.log("enter userData with token:", token);
       return datas;
     } catch (err: any) {
-      const state: RootState = getState() as RootState;
       if (err.response?.status === 401) {
         return rejectWithValue("UNAUTHORIZED")
       }
@@ -194,6 +194,11 @@ export const userSlice = createSlice({
       }
     },
 
+    updateTokens: (state, action) => {
+      state.accessToken = action.payload.accessToken;
+      state.refreshToken = action.payload.refreshToken;
+    },
+
     updateProfileImg: (state, action) => {
       if (state.user) {
         state.user.imgUrl = action.payload
@@ -247,8 +252,8 @@ export const userSlice = createSlice({
         state.loading = false
         
         if (action.payload === "UNAUTHORIZED") {
-          state.user = null,
-            state.accessToken = null
+          state.user = null;
+          state.accessToken = null;
           state.error = "Session expire"
         } else {
           state.error = action.payload as string
@@ -278,5 +283,6 @@ export const {
   updateBalanceUser,
   updateProfile,
   updateProfileImg,
+  updateTokens
 } = userSlice.actions;
 export default userSlice.reducer;

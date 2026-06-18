@@ -9,8 +9,7 @@ export interface registerProps {
   niveauID: number;
 }
 export interface loginProps {
-  email?: string;
-  phone?: string;
+  identifier: string;
   password: string;
 }
 export interface forgetPasswordProps {

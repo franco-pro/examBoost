@@ -31,6 +31,9 @@ import {
 import { buildFileUrl } from "../hooks/files/buildRouteFiles";
 import { usePacksQuery } from "../features/packs/hooks.rq";
 
+import LottieView from "lottie-react-native";
+
+
 
 interface subjectType {
   id: number;
@@ -76,6 +79,7 @@ export default function Index() {
   // }
   // }, [navigation, isAuthenticated]);
   // console.log("accestoken: ", accessToken);
+
   //Gestion des proprietes de pack
   const currentUserId = user?.id;
   const packsQuery = usePacksQuery(currentUserId ?? 0);
@@ -90,28 +94,32 @@ export default function Index() {
 
   useFocusEffect(
     useCallback(() => {
-      packsQuery.refetch();
+      // packsQuery.refetch();
       loadRecent();
-    }, [packsQuery]),
+    }, []),
   );
   useEffect(() => {
     if (isAuthenticated) {
-      dispatch(userDatas()); //to work
-
-      loadRecent();
-    }
-  }, [isAuthenticated, dispatch]);
-
-  // console.log("useFocus after:", recentDocument);
-  // console.log("user:", user);
-  useEffect(() => {
-    if (accessToken) {
+      console.log("userDatas dispatch")
       dispatch(userDatas()); //to work
       setTimeout(() => {
         initializeNotificationsGateway(dispatch, currentUserId ?? 1);
       }, 1000);
+
+      loadRecent();
     }
-  }, [accessToken, dispatch,currentUserId]);
+  }, [isAuthenticated, dispatch,currentUserId]);
+
+  // console.log("useFocus after:", recentDocument);
+  // console.log("user:", user);
+  // useEffect(() => {
+  //   if (accessToken) {
+  //     dispatch(userDatas()); //to work
+  //     setTimeout(() => {
+  //       initializeNotificationsGateway(dispatch, currentUserId ?? 1);
+  //     }, 1000);
+  //   }
+  // }, [accessToken, dispatch,currentUserId]);
 
   // console.log(
   //   "infos: ",
@@ -166,6 +174,7 @@ export default function Index() {
   // );
 
   //datas subjects of users
+  // const DataSubjectsTab:any[]=[]
   const DataSubjectsTab = useMemo(() => {
     try {
       if (!others?.subject) return [];
@@ -296,6 +305,7 @@ export default function Index() {
         className="flex-1 bg-gray-50"
       >
         <View className="p-5 bg-[#E8F5A80] flex-1">
+          {/* <TouchableOpacity onPress={()=> navigation.push("/others-admin/submit-doc/submit")}><Text>teaxcher</Text></TouchableOpacity> */}
           <Text className="text-2xl font-bold">
             {t("accueil.welcome")},{" "}
             {user?.username || user?.surname || "Unknown"} 👋
@@ -377,7 +387,20 @@ export default function Index() {
           <SafeAreaProvider>
             <SafeAreaView className="flex-1">
               {DataSubjectsTab.length === 0 ? (
-                <Text>Aucun document trouvé</Text>
+                <View className="items-center flex-1 justify-center ">
+                  <LottieView
+                    autoPlay
+                    loop
+                    source={require("../assets/animation/empty.json")}
+                    style={{
+                      width: 500,
+                      height: 250,
+                    }}
+                  />
+                  <Text className="-mt-5 text-typography-300">
+                    Aucun document trouvé
+                  </Text>
+                </View>
               ) : accessibleDocuments.length === 0 ? (
                 <FlatList
                   data={DataSubjectsTab}
@@ -757,7 +780,20 @@ export default function Index() {
               //     console.log("Erreur affichage PDF:", error);
               //   }}
               // />
-              <Text style={{ padding: 20 }}>Aucun document chargé</Text>
+              <View className="items-center flex-1 justify-center ">
+                <LottieView
+                  autoPlay
+                  loop
+                  source={require("../assets/animation/empty.json")}
+                  style={{
+                    width: 500,
+                    height: 250,
+                  }}
+                />
+                <Text className="-mt-5 text-typography-300">
+                  Aucun document trouvé
+                </Text>
+              </View>
             )}
           </View>
         </View>

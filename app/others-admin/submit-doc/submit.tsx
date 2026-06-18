@@ -6,6 +6,7 @@ import {
   TextInput,
   ScrollView,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system/legacy";
@@ -49,7 +50,8 @@ export default function Submit() {
   const [fileType, setFileType] = useState("EXAMEN");
 
   const user = useSelector((state: RootState) => state.user.user)
-  const userID = user?.id
+    const userID = user?.id
+    console.log("users:", user)
 
   const allType = [
     "CONTROLE CONTINU",
@@ -101,9 +103,13 @@ export default function Submit() {
       if (!docFile) {
         alert("Veuillez sélectionner une épreuve");
         return;
-      }
-
-      setLoading(true);
+        }
+        
+        if (user && !user.canSubmitDoc) {
+            Alert.alert("Suspension", "Vous ne pouvez plus envoyer de documents, rapprochez vous des administrateurs pour la cause!")
+            return
+        }
+        setLoading(true);
 
       const docBase64 = await fileToBase64(docFile.uri);
 
@@ -138,7 +144,7 @@ export default function Submit() {
       setFileType("EXAMEN");
     } catch (error) {
       console.log(error);
-      alert("Erreur lors de l'envoi");
+      alert(`Erreur lors de l'envoi : ${error}`);
     } finally {
       setLoading(false);
     }

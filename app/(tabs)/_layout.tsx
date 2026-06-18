@@ -115,7 +115,7 @@ export default function RootLayout() {
           name="notifications"
           options={{
             title: "Notifications",
-            tabBarBadge: others.notification.length > 0 ? others.notification.length : undefined,
+            tabBarBadge: (others.notification && Array.isArray(others.notification)) ? (others.notification.length > 0 ? others.notification.length : null): null,
             tabBarIcon: ({ focused, color }) => (
               <Ionicons
                 name={focused ? "notifications" : "notifications-outline"}

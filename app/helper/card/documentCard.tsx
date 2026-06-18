@@ -3,6 +3,7 @@ import { TYPE_META, DocType , styles, T} from "@/app/dev-admin/pages/document.st
 import { Document } from "@/app/hooks/entities/document";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { useAppSelector } from "@/app/hooks/redux/redux.hooks";
 
 
 
@@ -11,7 +12,8 @@ import { router } from "expo-router";
   
 export const DocumentCard = ({ doc }: { doc: Document }) => {
     const meta = TYPE_META[doc.type];
-  
+    const {documentsList} = useAppSelector(state => state.documents);
+
     return (
       <TouchableOpacity
         style={styles.card}
@@ -25,6 +27,8 @@ export const DocumentCard = ({ doc }: { doc: Document }) => {
                 format: doc.format,
                 subject: doc.subject,
                 type: doc.type,
+                correctionId: doc.type != "CORRECTION" ? documentsList.find(data => (data.correctionId === doc.correctionId && data.id != doc.id))?.id : null,
+                subject_docID : doc.type == "CORRECTION" ? documentsList.find(data => (data.correctionId === doc.correctionId && data.id != doc.id))?.id : null,
                 ownerName: doc.user ? doc.user.username: null,
                 ownerSurname: doc.user? doc.user.surname: null,
                 ownerSolde: doc.user ? doc.user.wallet:null,
@@ -85,7 +89,6 @@ export const DocumentCard = ({ doc }: { doc: Document }) => {
   
                 <TouchableOpacity
                         style={[styles.openBtn, { backgroundColor: T.blueFade }]}
-                        //TODO onPress={() => Linking.openURL(doc.url)}
                         >
                     <Text style={[styles.openBtnText, { color: T.blue }]}>Afficher</Text>
             </TouchableOpacity>

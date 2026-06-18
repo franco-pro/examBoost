@@ -6,6 +6,7 @@ export interface Document {
   subject: string;
   isValidated: boolean;
   type: DocType;
+  correctionId?: number;
   user?: {
     id: number;
     username: string;
