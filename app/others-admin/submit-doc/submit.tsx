@@ -51,7 +51,7 @@ export default function Submit() {
 
   const user = useSelector((state: RootState) => state.user.user)
     const userID = user?.id
-    console.log("users:", user)
+    // console.log("users:", user)
 
   const allType = [
     "CONTROLE CONTINU",
@@ -106,7 +106,9 @@ export default function Submit() {
         }
         
         if (user && !user.canSubmitDoc) {
-            Alert.alert("Suspension", "Vous ne pouvez plus envoyer de documents, rapprochez vous des administrateurs pour la cause!")
+            Alert.alert(
+              "Vous ne pouvez plus envoyer de documents pour le moment. Veuillez reessayer plus tard.",
+            );
             return
         }
         setLoading(true);

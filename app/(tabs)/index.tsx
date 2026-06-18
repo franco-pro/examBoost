@@ -387,11 +387,11 @@ export default function Index() {
           <SafeAreaProvider>
             <SafeAreaView className="flex-1">
               {DataSubjectsTab.length === 0 ? (
-                <View className="items-center flex-1 justify-center ">
+                <View className="items-center flex-1 justify-center mt-4">
                   <LottieView
                     autoPlay
                     loop
-                    source={require("../assets/animation/empty.json")}
+                    source={require("../assets/animation/documents_not_found.json")}
                     style={{
                       width: 500,
                       height: 250,
