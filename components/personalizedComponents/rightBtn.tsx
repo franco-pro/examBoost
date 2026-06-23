@@ -12,12 +12,12 @@ const RightBtn = () => {
   }
   return (
     <View className="mr-5 flex-row  justify-center items-center gap-4">
-      <TouchableOpacity
+      {/* <TouchableOpacity
         className=" bg-transparent  "
         activeOpacity={0.3}
       >
         <Icon as={BellIcon} className="" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       {/* <TouchableOpacity
         className=" bg-transparent "
         activeOpacity={0.8}

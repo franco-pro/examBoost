@@ -1,6 +1,6 @@
 // app/dev-admin/pages/usersDetails.tsx
 
-import { router, useLocalSearchParams, useRouter } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import {
   ScrollView,
   View,
@@ -16,6 +16,13 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
 import { deleteUser, updateRole } from "@/app/hooks/redux/users/users.slice";
 import Toast from "react-native-toast-message";
 import { useUsers } from "@/app/hooks/users.hook";
+import { Box } from "@/components/ui/box";
+import { Switch } from "@/components/ui/switch";
+import apiClient from "@/app/api/apiClient";
+import { updateUser } from "@/app/hooks/redux/dev-admin/dev-admin.slice";
+import { User } from "@/app/features/user/types";
+import { useCallback } from "react";
+import { getAllNiveaux } from "@/app/hooks/redux/niveaux/niveaux.thunks";
 
 // Données simulées — remplace par ton fetch API avec l'id
 const mockUser = {
@@ -27,6 +34,8 @@ const mockUser = {
   surname: "Franz",
   username: "Deussom",
   wallet: 39000,
+  niveauID: 1,
+  canSubmitDoc: true
 };
 
 // function StarRating({ count = 3, total = 5 }: { count?: number; total?: number }) {
@@ -59,10 +68,10 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
 
 
 export default function UserDetailsPage() {
-    const {removeUser} = useUsers()
+    const {removeUser, updateUser: localUserUpdate} = useUsers()
 
     const {selectedUser} = useAppSelector((state)=> state.devadmin);
-
+    const {niveauxList} = useAppSelector((state) => state.niveaux);
   // TODO: remplace mockUser par un fetch réel avec l'id
   const user = selectedUser || mockUser;
 
@@ -79,7 +88,14 @@ export default function UserDetailsPage() {
       : "Utilisateur";
 
 
-
+  useFocusEffect(
+    useCallback(() => {
+      if(niveauxList.length === 0){
+        dispatch(getAllNiveaux());
+      }
+    }, [])
+  )
+  
 const handleDelete = () => {
     Alert.alert(
       "Supprimer l'utilisateur",
@@ -118,6 +134,32 @@ const handleDelete = () => {
         showToast(`Rôle mis à jour en ${roleLabel}`, "Succès", "success");
         router.back();
       })
+  }
+
+  const setSendingStatut =async ()=>{
+    try {
+      const response = await apiClient.get(user.canSubmitDoc ? "document/suspension/"+user.id : "/document/activation/"+user.id);
+    
+
+      dispatch(updateUser({ ...user, canSubmitDoc: !user.canSubmitDoc }));
+  
+      localUserUpdate({
+        ...user,
+        canSubmitDoc: !user.canSubmitDoc,
+      } as User);
+  
+      showToast(
+        user.canSubmitDoc
+          ? "L'utilisateur ne peut plus soumettre de documents"
+          : "L'utilisateur peut désormais soumettre des documents",
+        "Succès",
+        "success"
+      );
+  
+    } catch (error: any) {
+      console.log('error on updating statut:', error.message);
+      showToast(error.message || "Une erreur est survenue", "Erreur", "error");
+    }
   }
   
   const handleChangeRole = () => {
@@ -202,11 +244,18 @@ const handleDelete = () => {
 
           <InfoRow label="Username" value={`@${user.username}`} />
           <View style={styles.divider} />
+
           <InfoRow label="Email" value={user.email} />
           <View style={styles.divider} />
+
           <InfoRow label="Téléphone" value={user.phone} />
           <View style={styles.divider} />
+
           <InfoRow label="Rôle" value={roleLabel} />
+
+          <View style={styles.divider} />
+          <InfoRow label="Niveau" value={Array.isArray(niveauxList) && niveauxList.length!=0 ? niveauxList.find(niveau => niveau.id == user.niveauID)?.name : ""} />
+
           <View style={styles.divider} />
           <InfoRow label="ID" value={`#${user.id}`} />
           <View style={styles.divider} />
@@ -215,6 +264,31 @@ const handleDelete = () => {
             value={<StarRating count={3} total={5} />}
           /> */}
         </View>
+    <Box className="mb-4 mt-[15px]">
+      <Text className="mb-2 text-base font-medium text-typography-900">
+        Statut de validation
+      </Text>
+
+      <Box className="flex-row items-center justify-between rounded-xl border border-outline-200 bg-background-50 p-4">
+        <Box className="flex-1 mr-4">
+          <Text className="text-base font-semibold text-typography-900">
+            {user.canSubmitDoc ? "Envoi activé" : "Envoi suspendu"}
+          </Text>
+
+          <Text className="mt-1 text-sm text-typography-500">
+            {user.canSubmitDoc
+              ? "Peux soumettre des documents"
+              : "Ne peut pas soumettre de documents"}
+          </Text>
+        </Box>
+
+        <Switch
+          value={user.canSubmitDoc}
+          onValueChange={setSendingStatut}
+          size="md"
+        />
+      </Box>
+    </Box>
       </ScrollView>
     </View>
   );

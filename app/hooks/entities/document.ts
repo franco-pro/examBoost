@@ -11,9 +11,10 @@ export interface Document {
     id: number;
     username: string;
     surname: string;
-    imgUrl: string;
+    imgUrl: string|null;
     wallet: number
   }
+  niveauID: number;
   created_at: Date;
   updated_at: Date;
 }

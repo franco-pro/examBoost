@@ -4,7 +4,7 @@ import InvitationPrompts from "@/app/helper/Dialogs/invitation";
 import FullscreenLoader from "@/app/helper/Dialogs/loaderFullScreen";
 import { setActionDoneNULL, setSuscriptionErrorNULL } from "@/app/hooks/redux/competitions-suscriptions/subscription.slice";
 import { createSubscription } from "@/app/hooks/redux/competitions-suscriptions/subscription.thunks";
-import { setCompetitioErrorNull, updateSelectedCompetition, updateStatut, updateSuscribers } from "@/app/hooks/redux/competitions/competitions.slice";
+import { setCompetitioErrorNull, setSelectedCompetitionNull, updateSelectedCompetition, updateStatut, updateSuscribers } from "@/app/hooks/redux/competitions/competitions.slice";
 import { deleteOne } from "@/app/hooks/redux/competitions/competitions.thunks";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
 import { resetRoomState, setErrorType, setRoomsErrorNull, setWaitingJoinin } from "@/app/hooks/redux/rooms/rooms.slice";
@@ -24,13 +24,14 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { RootState } from "../hooks/redux/store";
 import { useSelector } from "react-redux";
+import { toastConfig } from "../config/toast.config";
 
 export default function Information() {
   const router = useRouter();
   const { user, accessToken, others } = useSelector(
     (state: RootState) => state.user
   );
-  const userId = user?.id;
+  const userId = user && user.id ? user.id: 0;
   const email= user?.email;
   const phone= user?.phone;
   const username = user?.username;
@@ -65,6 +66,7 @@ export default function Information() {
     if(errorType) dispatch(setErrorType(null));
   
     dispatch(setActionDoneNULL());
+    dispatch(setSelectedCompetitionNull())
     dispatch(setWaitingJoinin(false));
   }, [
     error,
@@ -76,7 +78,6 @@ export default function Information() {
   useFocusEffect(
     useCallback(()=>{
       stop();
-
       if(actionDone && !errorSuscription){
           showToast(t("mycompetition.information.success.subscriptionDone"), "Success", "success");
            dispatch(updateSuscribers(
@@ -111,8 +112,6 @@ export default function Information() {
     if(!waitingLaunching && room && competitionLaunch){
       dispatch(updateSelectedCompetition({statut: "ONGOING", roomId: room.roomId}));
       dispatch(updateStatut("ONGOING"))
-      console.log('rooms id', room?.roomId);
-      console.log('console', selectedCompetition);
       
       showToast(t("mycompetition.information.success.competition_launched"), "Succès", "success");
     }
@@ -814,6 +813,9 @@ function userJoinCompetition(){
 
       <FullscreenLoader visible={waitingLaunching || loading || waitingJoining || suscriptionLoading} />
       </ScrollView>
+      <Toast config={toastConfig} />
+     
+      
     </View>
   );
 }

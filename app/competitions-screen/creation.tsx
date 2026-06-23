@@ -82,7 +82,7 @@ export default function Creation() {
   )
   useEffect(()=> {
     if(myCompetitionList.length == 0 && !refreshing){
-        dispatch(getMyCompetitions(userId))
+        dispatch(getMyCompetitions(userId ?? 0))
     }
   }, [])
 
@@ -134,7 +134,7 @@ export default function Creation() {
       dispatch(clearData())
       setRefreshing(true);
   
-        dispatch(getMyCompetitions(userId))
+        dispatch(getMyCompetitions(userId ?? 0))
   
         setRefreshing(false);
     };

@@ -9,7 +9,6 @@ export default function DevAdminHttp(){
         getHomeData : async ()=>{
             try {
                 const response = await apiClient.get(baseEndpoint)
-                console.log('response:', response.data);
                 return {data: response.data, error: null};
                     
             } catch (error: any) {

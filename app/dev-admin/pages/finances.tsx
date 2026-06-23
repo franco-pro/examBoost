@@ -150,7 +150,6 @@ const SummaryRow = ({
   </View>
 );
 
-// ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function AccountWalletScreen() {
   // Split cards into pairs for the 2-column grid (exclude netBalance shown in header)
@@ -170,15 +169,12 @@ export default function AccountWalletScreen() {
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 32 }}
     >
-      {/* Header with hero card */}
       <Header netBalance={wallet.netBalance} />
 
-      {/* Summary row */}
       <View className="mt-6">
         <SummaryRow wallet={wallet} />
       </View>
 
-      {/* Section title */}
       <View className="px-6 mb-4">
         <Text className="text-defaultBlue text-base font-bold">
           Détails par catégorie
@@ -188,7 +184,6 @@ export default function AccountWalletScreen() {
         </Text>
       </View>
 
-      {/* 2-column grid */}
       <View className="px-6 gap-3">
         {rows.map((row, rowIndex) => (
           <View key={rowIndex} className="flex-row gap-3">
@@ -199,7 +194,6 @@ export default function AccountWalletScreen() {
                 value={wallet[card.key] as number}
               />
             ))}
-            {/* Fill empty slot if odd number of cards */}
             {row.length === 1 && <View className="flex-1" />}
           </View>
         ))}

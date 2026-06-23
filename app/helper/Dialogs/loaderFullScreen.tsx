@@ -9,7 +9,7 @@ export default function FullscreenLoader({ visible }: { visible: boolean }) {
     >
       <View style={styles.container}>
         <View>
-          <ActivityIndicator size="large"/>
+          <ActivityIndicator size="large" color={"blue"}/>
         </View>
       </View>
     </Modal>

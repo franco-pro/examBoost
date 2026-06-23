@@ -3,7 +3,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, Text, View } from 'react-native';
 
-import { Toast, ToastDescription, ToastTitle, useToast } from '@/components/ui/toast';
+import Toast from "react-native-toast-message";
+
 import NotificationSwipeableItem from '@/app/features/notifications/NotificationSwipeableItem';
 import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import * as Haptics from 'expo-haptics';
@@ -22,6 +23,8 @@ import { createSubscription } from '../hooks/redux/competitions-suscriptions/sub
 import InvitationConfirm from '../helper/Dialogs/invitationConfirm';
 import { updateBalanceUser } from '../hooks/redux/users/users.slice';
 import { useSoundAud } from '../hooks/useSound.hook';
+import { setCompetitioErrorNull } from '../hooks/redux/competitions/competitions.slice';
+import { toastConfig } from '../config/toast.config';
 
 export default function NotificationsScreen() {
   // brancher un  userID quand l'auth sera prête
@@ -59,6 +62,7 @@ export default function NotificationsScreen() {
     useEffect(()=>{
       if (error) {
         showToast(error, "Error", "error");
+        console.log('error', error)
       }
     }, [error, errorCompetition])
 
@@ -78,6 +82,7 @@ export default function NotificationsScreen() {
   useFocusEffect(
     useCallback(()=>{
       setIsPageActive(true);
+      dispatch(setCompetitioErrorNull())
       return ()=>{
        setIsPageActive(false)
       }
@@ -100,7 +105,6 @@ export default function NotificationsScreen() {
     if(!suscriptionLoading && !suscriptionError && selectedCompetition && isPageActive){
       if(selectedCompetition.type === "PAID_REGISTRATION_AS_WINNER_PRICE" || selectedCompetition.type === "PAID_REGISTRATION_WITH_WINNER_PRICE"){
         //inscription done and the competition is with entry fee, then we have to update the user wallet in the store before redirection
-        //TODO : update the wallet of the user...
         const wallet = user ? (user.wallet - selectedCompetition.entryFee) : 0;
         dispatch(updateBalanceUser(wallet));
         showToast('success', 'Invitation acceptée !', `Vous avez été enregistré à la compétition. Votre nouveau solde est de ${wallet} XAF.`);
@@ -109,7 +113,7 @@ export default function NotificationsScreen() {
       }
     }else if(suscriptionError){
       console.log("error suscription", suscriptionError)
-      showToast('error', 'Erreur inscription', 'Une erreur est survenue lors de votre inscription à la compétition. Veuillez réessayer plus tard.' + suscriptionError);
+      showToast('error', 'Erreur inscription', 'Une erreur est survenue: ' + suscriptionError);
     }
   }, [suscriptionLoading, suscriptionError])
 
@@ -151,12 +155,18 @@ export default function NotificationsScreen() {
           showToast('success', 'Bienvenue !', 'Vous êtes déjà inscrit à la compétition, redirection vers les détails.');
           router.push('/competitions-screen/information')
         }
+    }else{
+      //handle inscription   
+        if((selectedCompetition.type === "PAID_REGISTRATION_AS_WINNER_PRICE" || selectedCompetition.type === "PAID_REGISTRATION_WITH_WINNER_PRICE") && isPageActive){
+          setIsOpen(true);    
+        }else{
+          doInscription();
+        }
     }
   }
 
   const joiningRoom = ()=>{
     initializeRoomsGateway(dispatch, null, userID)
-    console.log("room initialized in notification with userID", userID)
       const eventManager = EmitEvent(dispatch, {isManagedByIA: selectedCompetition?.isManagedByIA as any, roomId: selectedCompetition?.roomID as any});
       eventManager.joinRoom({
         roomId: selectedCompetition?.roomID as any,
@@ -176,6 +186,7 @@ export default function NotificationsScreen() {
         router.push('/competitions-screen/information')
       }else if (btnActionType === "acceptInvit"){
         // handle accept invit
+        console.log('accept invit checking')
        checkCompetition()
       }else if (btnActionType === "joinRoom"){
           if(selectedCompetition.roomID && selectedCompetition.statut === "ONGOING"){
@@ -188,13 +199,15 @@ export default function NotificationsScreen() {
   }, [selectedCompetition])
 
   const loadCompetitionDetails = (id: number, actionType:  "openDetails" | "acceptInvit" | "joinRoom" | "update")=> {      
-      if(id && actionType && isPageActive && !selectedCompetition){
+    console.log('loadCompetitionDetails', id, actionType, isPageActive, selectedCompetition)
+    if(id && actionType && isPageActive && !selectedCompetition){
         setBtnActionType(actionType);
         dispatch(getOne(id))
       }else{
-        if(actionType == "acceptInvit"){
+        if(actionType === "acceptInvit"){
+          console.log('check competition execute')
           checkCompetition();
-        }else if(actionType == "openDetails"){
+        }else if(actionType === "openDetails"){
           router.push('/competitions-screen/information');
         }else{
           if(selectedCompetition.roomID && selectedCompetition.statut === "ONGOING"){
@@ -217,7 +230,6 @@ export default function NotificationsScreen() {
   //   navigation.setOptions({ tabBarBadge: unreadCount > 0 ? unreadCount : undefined });
   // }, [navigation, unreadCount]);
 
-  const toast = useToast();
 
   const [selected, setSelected] = useState<Notification | null>(null);
   const modalRef = useRef<BottomSheetModal>(null);
@@ -237,21 +249,16 @@ export default function NotificationsScreen() {
   //   void refetch();
   // }, [refetch]);
 
-  const showToast = useCallback(
-    (action: 'success' | 'error' | 'info' | 'warning' | 'muted', title: string, desc?: string) => {
-      toast.show({
-        placement: 'top',
-        duration: 2000,
-        render: ({ id }) => (
-          <Toast action={action} variant="solid" className="mx-3">
-            <ToastTitle bold>{title}</ToastTitle>
-            {desc ? <ToastDescription>{desc}</ToastDescription> : null}
-          </Toast>
-        ),
-      });
-    },
-    [toast]
-  );
+    function showToast(type: "success"|"error" ,title: string, message: string,){
+        Toast.show({
+          type: type,
+          topOffset: 60,
+          text2: message,
+          text1: title,
+          position: 'top',
+          visibilityTime: 3500,
+        }) 
+    }
 
 
   const renderItem = useCallback(({ item }: { item: Notification }) => (
@@ -260,10 +267,6 @@ export default function NotificationsScreen() {
       onDelete={() =>
         deleteOne(item.id)
       }
-      onPress={() => {
-        markAsRead(item.id);
-        // openDetails(item.isRead ? item : { ...item, isRead: true });
-      }}
       onOpenLink={() => loadCompetitionDetails(item.competionID, "joinRoom")}
       onOpenDetails={() => loadCompetitionDetails(item.competionID, "openDetails")}
       onAcceptInvitation={() => loadCompetitionDetails(item.competionID, "acceptInvit")}
@@ -274,8 +277,8 @@ export default function NotificationsScreen() {
 
   const items = data ?? [];
 
-  const Header = (
-    <View className="px-4 pt-4 pb-2 bg-background-light dark:bg-background-dark flex-row items-center justify-between">
+  const Header = items.length !== 0 ? (
+     <View className="px-4 pt-4 pb-2 bg-background-light dark:bg-background-dark flex-row items-center justify-between">
       <Text className="text-lg font-extrabold text-typography-default dark:text-typography-white">Notifications</Text>
       <Pressable
         onPress={() =>
@@ -289,7 +292,7 @@ export default function NotificationsScreen() {
         <Text className="text-white font-semibold">Tout supprimer</Text>
       </Pressable>
     </View>
-  );
+  ): null;
 
   if (loading) {
     return (
@@ -318,6 +321,8 @@ export default function NotificationsScreen() {
     );
   }
   return (
+    <>
+
     <BottomSheetModalProvider>
       <View className="flex-1 bg-background-light dark:bg-background-dark">
         {Header}
@@ -402,6 +407,7 @@ export default function NotificationsScreen() {
                     deleteOne(selected.id);
                     closeDetails();
                   }}
+                  disabled={selected.id===undefined || selected.id === null}
                   className="px-3 py-2 rounded-md bg-error-400 active:opacity-90 ml-auto"
                 >
                   <Text className="text-white font-semibold">Supprimer</Text>
@@ -425,6 +431,8 @@ export default function NotificationsScreen() {
     <FullscreenLoader visible={competitionLoading} />
 
     </BottomSheetModalProvider>
+    <Toast config={toastConfig} />
+    </>
   );
 }
 

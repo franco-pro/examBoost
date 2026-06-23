@@ -11,7 +11,6 @@ export default function NotificationSwipeableItem({
   onDelete,
   onOpenDetails,
   onToggleRead,
-  onPress,
   onOpenLink,
   onAcceptInvitation,
 }: {
@@ -19,7 +18,6 @@ export default function NotificationSwipeableItem({
   onDelete?: () => void;
   onOpenDetails?: (id: number, actionType: string) => void;
   onToggleRead?: () => void;
-  onPress?: () => void;
   onOpenLink?: (id: number, actionType: string) => void;
   onAcceptInvitation?: () => void;
 }) {
@@ -93,7 +91,6 @@ export default function NotificationSwipeableItem({
           void Haptics.selectionAsync();
           onToggleRead?.();
         }}
-        onPress={onPress}
         onOpenLink={onOpenLink ? () => onOpenLink(notification.competionID, "joinRoom") : undefined}
         onOpenDetails={onOpenDetails ? () => onOpenDetails(notification.competionID, "openDetails") : undefined}
         onAcceptInvitation={onAcceptInvitation}

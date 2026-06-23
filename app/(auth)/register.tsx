@@ -53,6 +53,8 @@ import { useRouter } from "expo-router";
 import { setItem } from "@/app/utils/asyncStorage";
 import { Spinner } from "@/components/ui/spinner";
 import apiClient from "../api/apiClient";
+import { useAppDispatch } from "../hooks/redux/redux.hooks";
+import { setNiveauxList } from "../hooks/redux/niveaux/niveaux.slice";
 
 export default function Register() {
   const { width, height } = useWindowDimensions();
@@ -65,6 +67,10 @@ export default function Register() {
   const [passwordValue, setPasswordValue] = useState<string>("");
   const [allLevels, setAllLevels] = useState<any[]>([])
 
+
+  const dispatch = useAppDispatch();
+
+
   const changeTypePassword = () => {
     if (passType === "password") {
       setPassType("text");
@@ -76,6 +82,10 @@ export default function Register() {
   const getLevels = async ()=>{
     try {
       const response = await apiClient.get("/niveaux");
+      dispatch(setNiveauxList(
+        Array.isArray(response.data) && response.data.length != 0 ?
+        response.data : []
+      ));
       setAllLevels(response.data)
     } catch (error) {
       console.log("Quelque chose n'a pas marcher:", error)
@@ -93,7 +103,6 @@ export default function Register() {
     { name: "Linkedin", icon: require("../assets/icons/linkedin.png") },
   ];
   const navigation = useRouter();
-  const dispatch = useDispatch<any>();
   const { user, loading, error } = useSelector(
     (state: RootState) => state.user
   );

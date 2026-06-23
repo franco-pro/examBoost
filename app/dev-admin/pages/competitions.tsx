@@ -15,13 +15,12 @@ import { Ionicons } from "@expo/vector-icons";
 import Competition from "@/app/hooks/services/competitions/competition.entity";
 import { C, CompetitionCard, formatDate } from "@/app/helper/card/listcompetitionCard";
 import { router, useFocusEffect, useRouter, useNavigation } from "expo-router";
-import { clearData, setList, setSelectedCompetition } from "@/app/hooks/redux/competitions/competitions.slice";
+import { clearData, setList, setSelectedCompetition, setSelectedCompetitionNull } from "@/app/hooks/redux/competitions/competitions.slice";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
 import { getCompetitionList, getCompetitionListAdmin, searchCompetitions } from "@/app/hooks/redux/competitions/competitions.thunks";
 import Toast from "react-native-toast-message";
 
 
-// ─── Mock Data ───────────────────────────────────────────────────────────────
 
 const TYPES: Competition["type"][] = [
   "PAID_REGISTRATION_AS_WINNER_PRICE",

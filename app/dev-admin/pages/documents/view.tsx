@@ -16,6 +16,26 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
 import { deleteDoc, updateDoc } from "@/app/hooks/redux/documents/document.thunks";
 import { deleteOne, deleteTwo } from "@/app/hooks/redux/documents/document.slice";
+import {
+  FormControl,
+  FormControlLabel,
+  FormControlLabelText,
+} from "@/components/ui/form-control";
+import {
+  Select,
+  SelectBackdrop,
+  SelectContent,
+  SelectDragIndicator,
+  SelectDragIndicatorWrapper,
+  SelectIcon,
+  SelectInput,
+  SelectItem,
+  SelectPortal,
+  SelectTrigger,
+} from "@/components/ui/select";
+import { ChevronDownIcon } from "@/components/ui/icon";
+import { Document } from "@/app/hooks/entities/document";
+import { Avatar, AvatarFallbackText, AvatarImage } from "@/components/ui/avatar";
 
 type DocType =
   | "CONTROLE CONTINU"
@@ -124,6 +144,7 @@ export default function DocumentView() {
     correctionId,
     subject_docID,
     created_at,
+    niveauID,
     ownerName,
     ownerSurname,
     ownerAvatar,
@@ -137,6 +158,7 @@ export default function DocumentView() {
     type: string;
     isValidated: string;
     created_at: string;
+    niveauID: string
     correctionId?: string;
     subject_docID?: string;
     ownerName?: string;
@@ -151,7 +173,128 @@ export default function DocumentView() {
   const [type, setType] = useState<DocType>((initialType as DocType) ?? "EXAMEN");
   const [isValidated, setIsValidated] = useState(initialValidated === "true");
   const dispatch = useAppDispatch();
-  const {documentsList} = useAppSelector(state => state.documents);
+  // const {documentsList} = useAppSelector(state => state.documents);
+  const documentsList: Document[] = [
+    {
+      id: 1,
+      name: "Controle_Analyse_1.pdf",
+      format: "pdf",
+      url: "https://example.com/documents/controle-analyse-1.pdf",
+      subject: "Analyse Mathématique",
+      isValidated: true,
+      type: "CONTROLE CONTINU",
+      correctionId: 101,
+      user: {
+        id: 1,
+        username: "jdoe",
+        surname: "Doe",
+        imgUrl: "https://example.com/users/jdoe.jpg",
+        wallet: 2500,
+      },
+      niveauID: 1,
+      created_at: new Date("2025-01-10T08:00:00"),
+      updated_at: new Date("2025-01-15T10:30:00"),
+    },
+    {
+      id: 2,
+      name: "TD_Programmation_Web.docx",
+      format: "docx",
+      url: "https://example.com/documents/td-programmation-web.docx",
+      subject: "Programmation Web",
+      isValidated: false,
+      type: "TD",
+      user: {
+        id: 2,
+        username: "asmith",
+        surname: "Smith",
+        imgUrl: "https://example.com/users/asmith.jpg",
+        wallet: 1800,
+      },
+      niveauID: 2,
+      created_at: new Date("2025-02-05T09:15:00"),
+      updated_at: new Date("2025-02-05T09:15:00"),
+    },
+    {
+      id: 3,
+      name: "Examen_Reseaux_S1.pdf",
+      format: "pdf",
+      url: "https://example.com/documents/examen-reseaux-s1.pdf",
+      subject: "Réseaux Informatiques",
+      isValidated: true,
+      type: "EXAMEN SEMESTRE",
+      correctionId: 102,
+      user: {
+        id: 3,
+        username: "mbappe",
+        surname: "Ngono",
+        imgUrl: "https://example.com/users/ngono.jpg",
+        wallet: 3200,
+      },
+      niveauID: 3,
+      created_at: new Date("2025-03-12T14:00:00"),
+      updated_at: new Date("2025-03-13T08:20:00"),
+    },
+    {
+      id: 4,
+      name: "Evaluation_BDD.pdf",
+      format: "pdf",
+      url: "https://example.com/documents/evaluation-bdd.pdf",
+      subject: "Bases de Données",
+      isValidated: false,
+      type: "EVALUATION",
+      user: {
+        id: 4,
+        username: "alice",
+        surname: "Kamga",
+        imgUrl: "https://example.com/users/alice.jpg",
+        wallet: 950,
+      },
+      niveauID: 2,
+      created_at: new Date("2025-04-08T11:45:00"),
+      updated_at: new Date("2025-04-08T11:45:00"),
+    },
+    {
+      id: 5,
+      name: "Correction_Algorithmique.pdf",
+      format: "pdf",
+      url: "https://example.com/documents/correction-algorithmique.pdf",
+      subject: "Algorithmique",
+      isValidated: true,
+      type: "CORRECTION",
+      user: {
+        id: 5,
+        username: "bmartin",
+        surname: "Martin",
+        imgUrl: "https://example.com/users/bmartin.jpg",
+        wallet: 4100,
+      },
+      niveauID: 1,
+      created_at: new Date("2025-05-01T16:20:00"),
+      updated_at: new Date("2025-05-02T09:00:00"),
+    },
+    {
+      id: 6,
+      name: "Examen_Blanc_Physique.pdf",
+      format: "pdf",
+      url: "https://example.com/documents/examen-blanc-physique.pdf",
+      subject: "Physique Générale",
+      isValidated: true,
+      type: "EXAMEN BLANC",
+      correctionId: 103,
+      user: {
+        id: 6,
+        username: "karl",
+        surname: "Moukouri",
+        imgUrl: null,
+        wallet: 1500,
+      },
+      niveauID: 3,
+      created_at: new Date("2025-05-15T13:30:00"),
+      updated_at: new Date("2025-05-16T08:00:00"),
+    },
+  ];
+  const {niveauxList: allLevels} = useAppSelector(state => state.niveaux)
+  const [newLevel, setNiveau] = useState<any|null>(niveauID);
 
   const typeMeta = TYPE_META[type];
   const fmtIcon = FORMAT_ICON[format?.toLowerCase()] ?? "📎";
@@ -159,7 +302,8 @@ export default function DocumentView() {
     name !== (initialName ?? "") ||
     subject !== (initialSubject ?? "") ||
     type !== (initialType as DocType) ||
-    isValidated !== (initialValidated === "true");
+    isValidated !== (initialValidated === "true") || 
+    niveauID !== newLevel;
 
   
   const getAssociatedDocInfo = ()=>{
@@ -235,10 +379,12 @@ export default function DocumentView() {
         "plain-text"
       );
     }
+
     const data = {
       documentID: Number(id),
       name : name.trim(),
       subject: subject.trim(),
+      niveauID: newLevel ? Number(newLevel): Number(niveauID),
       type,
       isValidated,
       reason: !isValidated ? nonValidatationReason : undefined
@@ -356,10 +502,10 @@ export default function DocumentView() {
           <View style={styles.submitterCard}>
             <View style={styles.submitterLeft}>
               {ownerAvatar ? (
-                <Image
-                  source={{ uri: ownerAvatar }}
-                  style={styles.avatar}
-                />
+                <Avatar size="md">
+                <AvatarImage source={{ uri: ownerAvatar }} />
+                <AvatarFallbackText>{(ownerName ?? "") + (ownerSurname ?? "")}</AvatarFallbackText>
+              </Avatar>
               ) : (
                 <View style={styles.avatarFallback}>
                   <Text style={styles.avatarInitials}>
@@ -374,7 +520,7 @@ export default function DocumentView() {
                   {ownerSurname} {ownerName}
                 </Text>
                 <Text style={styles.submitterName}>
-                   {ownerSolde ? `Solde: ${ownerSolde} crédits` : "—"}
+                   {ownerSolde ? `Solde: ${String(ownerSolde)} XAFF` : "—"}
                 </Text>
               </View>
             </View>
@@ -448,6 +594,41 @@ export default function DocumentView() {
           </View>
         </View>
 
+        <View className="niveau">
+           <FormControl>
+                    <FormControlLabel>
+                      <FormControlLabelText>
+                        Niveau scolaire <Text className="text-red-500">*({allLevels.length != 0 ? ("Pour : " + allLevels.find(level => level.id === Number(niveauID))?.name): ''} ) </Text>
+                      </FormControlLabelText>
+                    </FormControlLabel>
+                    <Select onValueChange={(value) => setNiveau(value)}>
+                      <SelectTrigger
+                        variant="outline"
+                        size="lg"
+                        className="flex-1 justify-between"
+                      >
+                        <SelectInput placeholder="Select option" />
+                        <SelectIcon className="mr-3" as={ChevronDownIcon} />
+                      </SelectTrigger>
+                      <SelectPortal>
+                        <SelectBackdrop />
+                        <SelectContent>
+                          <SelectDragIndicatorWrapper>
+                            <SelectDragIndicator />
+                          </SelectDragIndicatorWrapper>
+                          {allLevels.map((level, index) => (
+                            <SelectItem
+                              key={index}
+                              value={String(level.id)}
+                              label={level.name}
+                            />
+                          ))}
+                        </SelectContent>
+                      </SelectPortal>
+                    </Select>
+              </FormControl>
+        </View>
+
         <View style={styles.fieldGroup}>
           <Text style={styles.fieldLabel}>Statut de validation</Text>
           <View style={styles.switchCard}>
@@ -483,7 +664,7 @@ export default function DocumentView() {
         </TouchableOpacity>
 
         <TouchableOpacity
-          className="bg-green-600 rounded-lg px-4 py-3 items-center"
+          className="bg-green-600 rounded-lg px-4 py-3 mt-[15px] items-center"
           onPress={openDoc}
           activeOpacity={0.85}
         >
@@ -493,7 +674,7 @@ export default function DocumentView() {
         </TouchableOpacity>
 
         <TouchableOpacity
-          className="bg-red-600 rounded-lg px-4 py-3 items-center"
+          className="bg-primary-600 rounded-lg px-4 py-3 mt-[15px] items-center"
           onPress={openDoc}
           activeOpacity={0.85}
         >
@@ -505,7 +686,7 @@ export default function DocumentView() {
         </TouchableOpacity>
 
         <TouchableOpacity
-          className="bg-red-600 rounded-lg px-4 py-3 items-center"
+          className="bg-red-600 rounded-lg px-4 py-3 mt-[15px] items-center"
           onPress={deleteDocs}
           activeOpacity={0.85}
         >

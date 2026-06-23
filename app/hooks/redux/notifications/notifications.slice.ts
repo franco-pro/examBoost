@@ -2,6 +2,30 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { deleteAllNotifications, deleteNotification, getAdminNotification, getNotification, loadAllNotification, setAsRead } from './notification.thunks';
 
 // Interface pour les notifications
+export interface NotificationAdmin {
+  id: number;
+  title: string;
+  text: string;
+  type: 'INVITATION' | 'ADMIN_ALERT' | 'SYSTEM' | 'INVITATION_ACCEPTED' | 'INVITATION_DECLINED' | 'COMPETITION_START'|'COMPETITION_CREATED';
+  isRead: boolean;
+  senderID?: number;
+  receiverID: number;
+  created_at: Date;
+  competionID?: number;
+  receiver: {
+			username: string,
+			surname: string,
+			imgUrl: string|null,
+			phone: any
+		},
+  sender: {
+			username: string,
+			surname: string,
+			imgUrl: string|null,
+			phone: any
+		}
+}
+
 export interface Notification {
   id: number;
   title: string;
@@ -14,20 +38,20 @@ export interface Notification {
   competionID?: number;
 }
 
-export interface NotificationAdmin {
-  id: number;
-  title: string;
-  text: string;
-  sendMode: string;
-  users: {
-    id: number;
-    username: string;
-    surname: string;
-    imgUrl: string,
-    phone: any,
-    }[];
-  created_at: Date;
-}
+// export interface NotificationAdmin {
+//   id: number;
+//   title: string;
+//   text: string;
+//   sendMode: string;
+//   users: {
+//     id: number;
+//     username: string;
+//     surname: string;
+//     imgUrl: string,
+//     phone: any,
+//     }[];
+//   created_at: Date;
+// }
 
 // État du slice de notifications
 export interface NotificationsState {
@@ -185,7 +209,7 @@ const notificationsSlice = createSlice({
            })
            .addCase(getAdminNotification.fulfilled, (state, action) => {
               state.loading = false;
-              state.notifications = action.payload.data as Notification[];
+              state.notificationsAdmin = action.payload.data as NotificationAdmin[];
            })
             .addCase(getAdminNotification.rejected, (state, action) => {
                 state.loading = false;

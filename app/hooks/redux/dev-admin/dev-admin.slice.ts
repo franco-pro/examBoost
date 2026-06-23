@@ -92,6 +92,12 @@ const devAdminSlice = createSlice(
             setSelectedUser: (state, action)=>{
                 state.selectedUser = action.payload
             },
+
+            updateUser: (state, action)=>{
+                if(state.selectedUser && action.payload && state.selectedUser.id === action.payload.id){
+                    state.selectedUser = action.payload
+                }
+            },
           
             setAccountWalletInfo: (state, action)=>{
                 if(action.payload){
@@ -133,6 +139,7 @@ export const {
     setDocumentsInfo,
     setTotalUsersInfo,
     setAccountWalletInfo,
-    setSelectedUser
+    setSelectedUser,
+    updateUser
 } = devAdminSlice.actions;
     

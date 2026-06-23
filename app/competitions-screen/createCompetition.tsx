@@ -55,6 +55,7 @@ export default function CreateCompetitionForm() {
   const MIN_TO_USE_IA_PUBLIC = homeBaseData ? homeBaseData.MIN_WINNERPRICE_TO_USE_AI_IN_PUBLIC_COMP : 15000;
   const userId = user?.id;
   const [formError, setFormError] = useState<string>("");
+  const [isFirstCalendarOpen, setIsFirstCalendarOpen] = useState(true);
 
   const dispatch = useAppDispatch()
   const {error, actionDone,loading} = useAppSelector((state)=> state.competitions)
@@ -398,6 +399,7 @@ export default function CreateCompetitionForm() {
   };
 
   const openCalendar = (field: any) => {
+    setIsFirstCalendarOpen(field === "date");
     setCurrentField(field);
     setShowDatePicker(true);
   };
@@ -521,7 +523,16 @@ export default function CreateCompetitionForm() {
                 </Text>
               </TouchableOpacity>
 
-              <Text className="mb-1 font-semibold">
+              {showDatePicker && isFirstCalendarOpen && (
+                  <DateTimePicker
+                    value={formData[currentField] || new Date()}
+                    mode="datetime"
+                    display="default"
+                    onChange={handleDateChange}
+                  />
+                )}
+
+              <Text className="mb-1 font-semibold mt-[10px]">
               {t('mycompetition.competition.creations_screen.model.deadlineDate')} (GMT +1)
               </Text>
               <TouchableOpacity
@@ -533,10 +544,19 @@ export default function CreateCompetitionForm() {
                   {formData.registration_deadline && formatCameroonDate(formData.registration_deadline)}
                 </Text>
               </TouchableOpacity>
+                {/* Affichage du calendrier */}
+                {showDatePicker && !isFirstCalendarOpen && (
+                  <DateTimePicker
+                    value={formData[currentField] || new Date()}
+                    mode="datetime"
+                    display="default"
+                    onChange={handleDateChange}
+                  />
+                )}
 
               {/* Nombre max d'utilisateurs */}
             
-                          <Text className="mb-1 font-semibold">
+                          <Text className="mb-1 font-semibold mt-[10px]">
                           {t('mycompetition.competition.creations_screen.model.maxUsers')} (max: {MAX_PARTICIPANTS}, min: {MIN_PARTICIPANTS})
                           </Text>
                           <TextInput
@@ -610,15 +630,7 @@ export default function CreateCompetitionForm() {
             </View>
           )}
 
-          {/* Affichage du calendrier */}
-          {showDatePicker && (
-            <DateTimePicker
-              value={formData[currentField] || new Date()}
-              mode="datetime"
-              display="default"
-              onChange={handleDateChange}
-            />
-          )}
+        
 
 
            {/*Etape 3*/}

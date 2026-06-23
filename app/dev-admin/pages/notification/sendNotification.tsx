@@ -29,18 +29,20 @@ export default function SendNotification() {
   }, [user]);
 
   const doSending =async ()=>{
+    console.log("press 1")
     if(notifText.length != 0 && notifTitle.length != 0){
         console.log('send notfi')
         const eventNotf = EmitEventNotif(dispatch);
-        eventNotf.notificationAdmin(
-                              {
-                                receiverId: null,
-                                adminId: user ? user.id: 0, 
-                                text: notifText,
-                                title: notifTitle,
-                                type: "ADMIN_ALERT"
-                              }
-                            )
+        // eventNotf.notificationAdmin(
+        //                       {
+        //                         receiverId: null,
+        //                         adminId: user ? user.id: 0, 
+        //                         text: notifText,
+        //                         title: notifTitle,
+        //                         type: "ADMIN_ALERT",
+        //                         created_at: new Date()
+        //                       }
+        //                     )
         await new Promise((resolve)=> setTimeout(resolve, 2000))
         setNotifText("");
         setNotifTitle("");
@@ -239,7 +241,7 @@ export default function SendNotification() {
             {isGeneralNotif ? (
               <Pressable
                 className="bg-blue-500 rounded-2xl py-4 flex-row items-center justify-center gap-3 shadow-md shadow-blue-200"
-                onPress={() => {doSending}}
+                onPress={doSending}
               >
                 <Ionicons name="send" size={18} color="#fff" />
                 <Text className="text-white font-bold text-sm">
@@ -287,6 +289,9 @@ export default function SendNotification() {
         userDetails={{
           username: user ? user.username : "",
           id: user ? user.id : 0,
+          imgUrl: user ? user.imgUrl : "",
+          phone: user ? user.phone : null,
+          surname: user ? user.surname : "",
         }}
         notifDetail={{ title: notifTitle, text: notifText }}
       />

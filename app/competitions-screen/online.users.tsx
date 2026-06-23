@@ -115,7 +115,7 @@ useFocusEffect(
       console.log('Changement d’état de l’application :', nextAppState);
 
       if (nextAppState === 'background') {
-        Events.leaveCompetition(user?.id, room?.roomId as any);
+        Events.leaveCompetition((user && user.id ? user.id:0), room?.roomId as any);
         router.back()
       }
 
@@ -133,7 +133,7 @@ useFocusEffect(
             //ecran actif
             return () => {
              //ecran quitté deconnecté de la competition.
-              Events.leaveCompetition(user?.id, room?.roomId as any);
+              Events.leaveCompetition((user && user.id ? user.id:0), room?.roomId as any);
             };
           }, [])
         );
@@ -189,7 +189,7 @@ useFocusEffect(
                                 } 
                 loading={socketWaiting}   
                 userData={{
-                    id: user ? user.id: null, 
+                    id: user ? user.id: 0, 
                     username: user ? user.username : "",
                     surname: user ? user.surname : "",
                     imgUrl : user ? user.imgUrl : "",

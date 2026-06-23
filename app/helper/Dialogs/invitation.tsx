@@ -1,3 +1,4 @@
+import { toastConfig } from '@/app/config/toast.config';
 import { SearchHttp } from '@/app/hooks/services/search/search';
 import { EmitEventNotif } from '@/app/hooks/services/socket/notifications.gateway';
 import { useAppDispatch, useAppSelector } from '@/app/redux/redux.hooks';
@@ -211,7 +212,10 @@ interface InvitationPromptsProps {
               </Button>
             </ModalFooter>
           </ModalContent>
-        </Modal>
+         </Modal>
+      
+        <Toast config={toastConfig} />
+        
       </>
     );
   }

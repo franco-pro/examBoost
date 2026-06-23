@@ -6,7 +6,8 @@ import { deleteDoc, getAllDocs, updateDoc } from "./document.thunks";
 const initialState: DocumentState = {
     loading: false,
     error: null,
-    documentsList: []
+    documentsList: [],
+    isSendingSuspended: false
 }
 
 const documentSlice = createSlice({
@@ -29,6 +30,9 @@ const documentSlice = createSlice({
                 state.documentsList = state.documentsList.filter(doc => (doc.id != doc_id && doc.id != cor_id))
             }
         },
+        updateSendingStatut: (state, action)=>{
+            state.isSendingSuspended = action.payload;
+        },
         resetState: (state)=>{
             state.loading = false;
             state.error = null;
@@ -43,7 +47,8 @@ const documentSlice = createSlice({
                 })
                 .addCase(getAllDocs.fulfilled, (state, action)=>{
                     if(!action.payload.error){
-                        state.documentsList = action.payload.data;
+                        state.documentsList = action.payload.data.documents;
+                        state.isSendingSuspended = action.payload.data.isSendingSuspended;
                     }else{
                         state.error = action.payload.error;
                     }
@@ -101,5 +106,6 @@ export const {
     setDocumentsList,
     resetState,
     deleteOne,
-    deleteTwo
+    deleteTwo,
+    updateSendingStatut
 } = documentSlice.actions;

@@ -6,6 +6,7 @@ export type User = {
   wallet: number;
   role: string;
   phone: string;
+  canSubmitDoc: boolean;
   imgUrl: string | null;
   isActivated: 0 | 1 | boolean;
   niveauID: number;

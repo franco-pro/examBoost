@@ -43,7 +43,7 @@ export default function PacksHttp(){
 
         update: async (id: number, data: any)=>{
             try {
-                const response = await apiClient.patch(`${baseEndpoint}${id}/`, data)
+                const response = await apiClient.patch(`${baseEndpoint}${id}`, data)
                 return {data: response.data, error: null};
                     
             } catch (error: any) {

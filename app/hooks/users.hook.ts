@@ -1,8 +1,8 @@
 // hooks/useUsers.ts
 import { useState, useCallback } from 'react';
-import User from './entities/user';
 import apiClient from '../api/apiClient';
 import { authService } from '../api/authService';
+import { User } from '../features/user/types';
 
 const PAGE_SIZE = 20;
 
@@ -22,6 +22,14 @@ export function useUsers() {
 
   const removeUser = useCallback((userId: number) => {
     setUsers(prev => prev.filter(user => user.id !== userId));
+  }, []);
+
+  const updateUser = useCallback((updatedUser: User) => {
+    console.log('executing updateUser with', updatedUser);
+    console.log('update date before', users);
+
+    setUsers(prev => prev.map(user => user.id === updatedUser.id ? updatedUser : user));
+    console.log('update date after', users);
   }, []);
 
   const fetchUsers = useCallback(async () => {
@@ -100,5 +108,5 @@ export function useUsers() {
     }
   }, [page, loading, hasMore]);
   
-  return { users, loading, total, hasMore, fetchUsers, searchUsers, removeUser };
+  return { users, loading, total, hasMore, fetchUsers, searchUsers, removeUser, updateUser};
 }

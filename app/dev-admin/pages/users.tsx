@@ -1,5 +1,5 @@
 // screens/UsersScreen.tsx
-import { FlatList, ActivityIndicator, View , Text, TouchableOpacity, TextInput} from 'react-native';
+import { FlatList, ActivityIndicator, View , Text, TouchableOpacity, TextInput, ScrollView, Alert, RefreshControl} from 'react-native';
 import { useEffect, useRef } from 'react';
 import { useUsers } from '@/app/hooks/users.hook';
 import { UserCard } from '@/app/helper/card/UserCard';
@@ -8,12 +8,12 @@ import { router } from 'expo-router';
 import { useAppDispatch, useAppSelector } from '@/app/hooks/redux/redux.hooks';
 import { setSelectedUser } from '@/app/hooks/redux/dev-admin/dev-admin.slice';
 
+
 export default function Users() {
   const { users, loading, total, hasMore, fetchUsers, searchUsers } = useUsers();
   const {accountWallet} = useAppSelector((state)=> state.devadmin);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  console.log("user current wallet", accountWallet.usersCurrentBalance)
+  
   // Chargement initial
   useEffect(() => { fetchUsers(); }, []);
   const dispatch = useAppDispatch();
@@ -92,13 +92,12 @@ export default function Users() {
         </Text>
       </View>
 
-      <View>
         <FlatList
           data={users}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => <UserCard user={item} onPress={() => goToUserDetails(item.id)} />}
           className='w-full'
-          
+          refreshControl={<RefreshControl refreshing={loading} onRefresh={() => fetchUsers() } />}
           onEndReachedThreshold={0.2}
           onEndReached={() => {
             if (!loading && hasMore) fetchUsers();
@@ -122,7 +121,8 @@ export default function Users() {
             ) : null
           }
         />
-        </View>
+
+     
     </View>
   );
 }

@@ -3,11 +3,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Constants from 'expo-constants';
+import { Config } from '../config/version';
 
 export default function AboutScreen() {
   const router = useRouter();
   const appName = Constants.expoConfig?.name ?? 'ExamBoost';
-  const version = Constants.expoConfig?.version ?? '1.0.0';
+  const version = Config.APP_VERSION;
 
   const open = (url: string) => Linking.openURL(url);
 
@@ -53,7 +54,7 @@ export default function AboutScreen() {
           <View className="rounded-2xl border border-outline-100 dark:border-outline-800 bg-white dark:bg-outline-900 p-3">
             <Text className="text-xs text-typography-gray">Informations</Text>
             <Text className="mt-1 text-sm text-typography-default dark:text-typography-white">Canal: {Constants.executionEnvironment ?? 'web'}</Text>
-            <Text className="text-sm text-typography-default dark:text-typography-white">SDK Expo: {Constants.expoConfig?.sdkVersion ?? 'N/A'}</Text>
+            <Text className="text-sm text-typography-default dark:text-typography-white">Version : {version}</Text>
           </View>
         </View>
       </ScrollView>

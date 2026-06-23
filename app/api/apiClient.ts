@@ -5,11 +5,7 @@ import { updateTokens } from "../hooks/redux/users/users.slice";
 import { useDispatch } from "react-redux";
 import { store } from "../hooks/redux/store";
 
-<<<<<<< HEAD
 export const BASE_URL = "http://172.20.10.4";
-=======
-export const BASE_URL = "http://10.161.175.122";
->>>>>>> franco-pro
 export const apiClient = axios.create({
   baseURL:`${BASE_URL}:3000`,
   timeout: 10000,

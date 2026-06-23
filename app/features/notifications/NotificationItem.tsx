@@ -72,7 +72,7 @@ export default memo(function NotificationItem({
               {title}
             </Text>
           </View>
-          <Text className="mt-0.5 text-typography-gray" numberOfLines={expanded ? undefined : 3}>
+          <Text className="mt-0.5 text-typography-bold" numberOfLines={expanded ? undefined : 3}>
             {text}
           </Text>
           {/*  direct pour les compétitions */}
@@ -155,6 +155,7 @@ export default memo(function NotificationItem({
               {onDelete && (
                 <Pressable
                   onPress={onDelete}
+                  disabled={id ===undefined || id === null}
                   className="p-2 rounded-md bg-error-400 active:opacity-80"
                   accessibilityRole="button"
                   accessibilityLabel="Supprimer"

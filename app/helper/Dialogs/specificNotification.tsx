@@ -1,3 +1,4 @@
+import { toastConfig } from '@/app/config/toast.config';
 import { SearchHttp } from '@/app/hooks/services/search/search';
 import { EmitEventNotif } from '@/app/hooks/services/socket/notifications.gateway';
 import { useAppDispatch, useAppSelector } from '@/app/redux/redux.hooks';
@@ -28,7 +29,7 @@ interface SpecificNotificationPromptsProps {
     isOpen: boolean;
     onClose: () => void;
     notifDetail: {title: string, text: string};
-    userDetails: {id: number, username: string };
+    userDetails: {id: number, username: string, surname: string, imgUrl: string, phone: any};
 }
 
  export default function SpecificNotification({isOpen, onClose, notifDetail, userDetails}: SpecificNotificationPromptsProps) {
@@ -65,10 +66,27 @@ interface SpecificNotificationPromptsProps {
                     eventNotf.notificationAdmin(
                       {
                         receiverId: response.id,
-                        adminId: userDetails.id, 
+                        adminId: userDetails.id,  
                         text: notifDetail.text,
                         title: notifDetail.title,
-                        type: "ADMIN_ALERT"
+                        type: "ADMIN_ALERT",
+                        created_at: new Date()
+                      },
+                      {
+                        receiver: {
+                          id: response.id,
+                          username: response.username,
+                          surname: response.surname,
+                          imgUrl: response.imgUrl,
+                          phone: response.phone
+                        },
+                        sender: {
+                          id: userDetails.id,
+                          username: userDetails.username,
+                          surname: userDetails.surname,
+                          imgUrl: userDetails.imgUrl,
+                          phone: userDetails.phone
+                        }
                       }
                     )
                     await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -216,6 +234,9 @@ interface SpecificNotificationPromptsProps {
             </ModalFooter>
           </ModalContent>
         </Modal>
+      
+      <Toast config={toastConfig} />
+        
       </>
     );
   }

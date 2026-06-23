@@ -263,7 +263,6 @@ const competitionSlice = createSlice({
             .addCase(getOne.fulfilled, (state, action)=>{
                 if(!action.payload.error){
                     state.selectedCompetition = action.payload.data;
-
                 }else{
                     state.error = action.payload.error
                 }

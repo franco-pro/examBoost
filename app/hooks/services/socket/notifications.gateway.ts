@@ -3,7 +3,8 @@ import {
   addNotification, 
   markNotificationAsRead, 
   setNotificationsConnectionStatus,
-  loadNotificationsError
+  loadNotificationsError,
+  addAdminNotification
 } from '../../redux/notifications/notifications.slice';
 import { updateStatut } from "../../redux/competitions/competitions.slice";
 
@@ -36,6 +37,7 @@ interface NotifiationAdmin {
   type: string,
   adminId: number;
   receiverId: number|null;
+  created_at: any
 }
 
 // Initialisation du gateway de notifications
@@ -98,7 +100,6 @@ export function initializeNotificationsGateway(dispatch: any, userId: number) {
   });
 
   socket.on("admin-notif", (data: NotificationPayload) => {
-    console.log("Notification admin:", data);
     dispatch(addNotification(data));
   });
 
@@ -124,8 +125,37 @@ export function EmitEventNotif(dispatch: any) {
       socket.emit("send-invitation", notification);
     },
 
-    notificationAdmin: (notification: NotifiationAdmin) => {
+    notificationAdmin: (notification: NotifiationAdmin,
+                        extraData: {
+                          receiver: {
+                            id: number;
+                            username: string;
+                            surname: string;
+                            imgUrl: string;
+                            phone: string;
+                          },
+                          sender: {
+                            id: number;
+                            username: string;
+                            surname: string;
+                            imgUrl: string;
+                            phone: string;
+                          }
+                        }
+    ) => {
       socket.emit("notification-admin", notification);
+      dispatch(addAdminNotification({
+        id: Date.now(), // Générer un ID temporaire
+        title: notification.title,
+        text: notification.text,
+        type: notification.type as 'INVITATION' | 'ADMIN_ALERT' | 'SYSTEM' | 'INVITATION_ACCEPTED' | 'INVITATION_DECLINED' | 'COMPETITION_START',
+        isRead: false,
+        senderID: notification.adminId,
+        receiverID: notification.receiverId ?? 0, // Utiliser 0 si receiverId est null
+        created_at: new Date(notification.created_at),
+        sender: extraData.sender,
+        receiver: extraData.receiver
+      }))
     },
 
     // Vérifier si connecté

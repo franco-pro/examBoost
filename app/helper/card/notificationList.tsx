@@ -1,10 +1,17 @@
-import { NotificationAdmin } from "@/app/dev-admin/pages/notification";
+import { NotificationAdmin } from "@/app/hooks/redux/notifications/notifications.slice";
 import { Divider } from "@/components/ui/divider";
 import { HStack } from "@/components/ui/hstack";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { View, Text, Pressable } from "react-native";
-
+import { Box } from "@/components/ui/box";
+import { Badge, BadgeText } from "@/components/ui/badge";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallbackText,
+} from "@/components/ui/avatar";
+import { VStack } from "@/components/ui/vstack";
 
 function formatDate(date: Date) {
   const d = new Date(date);
@@ -44,82 +51,112 @@ function ExpandableText({ text, limit = 100 }: { text: string; limit?: number })
   }
 
 
-export function NotificationCard({ item }: { item: NotificationAdmin }) {
-    const isGeneral = item.sendMode === "general";
-    const userCount = item.users.length;
-  
-    return (
-      <View className="bg-white rounded-2xl mx-5 mb-4 shadow-sm border border-gray-100 overflow-hidden">
-        <View
-          className={`h-1 w-full ${isGeneral ? "bg-blue-400" : "bg-amber-400"}`}
-        />
-  
-        <View className="p-4">
-          <HStack className="items-start justify-between mb-2">
-            <HStack className="items-center flex-1 mr-3" space="sm">
-              <View
-                className={`w-8 h-8 rounded-full items-center justify-center ${
-                  isGeneral ? "bg-blue-50" : "bg-amber-50"
-                }`}
-              >
-                <Ionicons
-                  name={isGeneral ? "people" : "person"}
-                  size={15}
-                  color={isGeneral ? "#3B82F6" : "#F59E0B"}
-                />
-              </View>
-              <Text
-                className="text-sm font-bold text-gray-900 flex-1"
-                numberOfLines={1}
-              >
-                {item.title}
-              </Text>
-            </HStack>
-  
-            <View
-              className={`px-2 py-1 rounded-full ${
-                isGeneral ? "bg-blue-50" : "bg-amber-50"
+export const NotificationCard = ({ item }: { item: NotificationAdmin }) => {
+  return (
+    <Pressable className="mx-4 mb-4 rounded-2xl border border-blue-100 bg-white p-4 shadow-sm">
+      {/* Header */}
+      <HStack className="justify-between items-start">
+        <HStack space="sm" className="flex-1">
+          <Avatar size="md">
+            <AvatarImage
+              source={{
+                uri:
+                  item.sender?.imgUrl ||
+                  "https://ui-avatars.com/api/?name=" +
+                    encodeURIComponent(
+                      `${item.sender?.username ?? ""} ${item.sender?.surname ?? ""}`
+                    ),
+              }}
+            />
+            <AvatarFallbackText>
+              {item.sender?.username} {item.sender?.surname}
+            </AvatarFallbackText>
+          </Avatar>
+
+          <VStack className="flex-1">
+            <Text className="font-semibold text-gray-900">
+              {item.sender?.username} {item.sender?.surname}
+            </Text>
+
+            <Text className="text-xs text-gray-500">
+              @{item.sender?.username}
+            </Text>
+
+            <Badge
+              action={item.isRead ? "success" : "warning"}
+              className={`mt-2 self-start ${
+                item.isRead
+                  ? "bg-green-50 border-green-200"
+                  : "bg-orange-50 border-orange-200"
               }`}
             >
-              <Text
-                className={`text-[10px] font-semibold ${
-                  isGeneral ? "text-blue-500" : "text-amber-500"
-                }`}
+              <BadgeText
+                className={
+                  item.isRead ? "text-green-700" : "text-orange-700"
+                }
               >
-                {isGeneral ? "Général" : "Spécifique"}
-              </Text>
-            </View>
-          </HStack>
-  
-          <ExpandableText text={item.text} />
-  
-          <Divider className="my-3 bg-gray-100" />
-  
-          <HStack className="items-center justify-between">
-            {/* Users count */}
-            <HStack className="items-center" space="xs">
-              <View className="w-6 h-6 rounded-full bg-gray-100 items-center justify-center">
-                <Ionicons name="people-outline" size={13} color="#6B7280" />
-              </View>
-              <Text className="text-xs text-gray-500 font-medium">
-                {userCount === 0
-                  ? "Aucun destinataire"
-                  : userCount === 1
-                  ? "1 destinataire"
-                  : `${userCount} destinataires`}
-              </Text>
-            </HStack>
-  
-            {/* Date */}
-            <HStack className="items-center" space="xs">
-              <Ionicons name="time-outline" size={12} color="#9CA3AF" />
-              <Text className="text-[11px] text-gray-400">
-                {formatDate(item.created_at)}
-              </Text>
-            </HStack>
-          </HStack>
-        </View>
-      </View>
-    );
-  }
-  
+                {item.isRead ? "Lu" : "Non lu"}
+              </BadgeText>
+            </Badge>
+          </VStack>
+        </HStack>
+
+        <Text className="text-xs text-gray-400">
+          {formatDate(item.created_at)}
+        </Text>
+      </HStack>
+
+      {/* Titre */}
+      <Text className="mt-4 text-base font-bold text-blue-700">
+        {item.title}
+      </Text>
+
+      {/* Message */}
+      <ExpandableText text={item.text} limit={150} />
+
+      {/* Type */}
+      <HStack className="mt-4">
+        <Badge className="bg-blue-50 border-blue-100">
+          <BadgeText className="text-blue-700">{item.type}</BadgeText>
+        </Badge>
+      </HStack>
+
+      {/* Receiver */}
+      <Box className="mt-4 rounded-xl bg-orange-50 px-3 py-3 border border-orange-100">
+        <Text className="mb-2 text-xs font-medium uppercase tracking-wide text-orange-700">
+          Destinataire
+        </Text>
+
+        <HStack space="sm" className="items-center">
+          <Avatar size="sm">
+            <AvatarImage
+              source={{
+                uri:
+                  item.receiver?.imgUrl ||
+                  "https://ui-avatars.com/api/?name=" +
+                    encodeURIComponent(
+                      `${item.receiver?.username ?? ""} ${
+                        item.receiver?.surname ?? ""
+                      }`
+                    ),
+              }}
+            />
+            <AvatarFallbackText>
+              {item.receiver?.username} {item.receiver?.surname}
+            </AvatarFallbackText>
+          </Avatar>
+
+          <VStack>
+            <Text className="font-medium text-gray-900">
+              {item.receiver?.username} {item.receiver?.surname}
+            </Text>
+
+            <Text className="text-xs text-gray-500">
+              @{item.receiver?.username}
+            </Text>
+          </VStack>
+        </HStack>
+      </Box>
+    </Pressable>
+  );
+};

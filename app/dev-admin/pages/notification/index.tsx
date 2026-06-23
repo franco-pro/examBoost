@@ -9,6 +9,7 @@ import { NotificationCard } from "@/app/helper/card/notificationList";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
 import { getAdminNotification } from "@/app/hooks/redux/notifications/notification.thunks";
 
+
 export interface NotificationAdmin {
   id: number;
   title: string;
@@ -49,9 +50,10 @@ export default function NotificationList() {
 
   useFocusEffect(
     useCallback(() => {
-        if(notifications.length === 0){
+        if(notifications.length == 0){
             dispatch(getAdminNotification());
         }
+        
     }, [notifications])
   )
     

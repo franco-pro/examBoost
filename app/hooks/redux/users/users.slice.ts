@@ -205,6 +205,17 @@ export const userSlice = createSlice({
       }
     },
 
+    setAllNotifAsRead: (state, action)=> {
+      if (state.others.notification && Array.isArray(state.others.notification)) {
+        state.others.notification = state.others.notification.map((notif: any) => {
+          return {
+            ...notif,
+            isRead: true
+          }
+        })
+      }
+    },
+
     updateBalanceUser: (state, action) => {
       if (state.user) {
         state.user.wallet = action.payload

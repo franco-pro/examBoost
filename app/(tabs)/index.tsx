@@ -32,6 +32,7 @@ import { buildFileUrl } from "../hooks/files/buildRouteFiles";
 import { usePacksQuery } from "../features/packs/hooks.rq";
 
 import LottieView from "lottie-react-native";
+import { setSelectedCompetitionNull } from "../hooks/redux/competitions/competitions.slice";
 
 
 
@@ -96,6 +97,10 @@ export default function Index() {
     useCallback(() => {
       // packsQuery.refetch();
       loadRecent();
+
+      return ()=>{
+        dispatch(setSelectedCompetitionNull())
+      }
     }, []),
   );
   useEffect(() => {
@@ -103,7 +108,7 @@ export default function Index() {
       console.log("userDatas dispatch")
       dispatch(userDatas()); //to work
       setTimeout(() => {
-        initializeNotificationsGateway(dispatch, currentUserId ?? 1);
+        initializeNotificationsGateway(dispatch, currentUserId ?? 0);
       }, 1000);
 
       loadRecent();

@@ -10,7 +10,7 @@ export default function BtnHeaderComponent() {
     }
 
   return (
-    <View className='flex gap-3'>
+    <View style={{ display: 'flex', gap: 3 }}>
       <Button> <ButtonIcon as={"search"}/></Button>
       <Button> <ButtonIcon as={"search"}/></Button>
       <Button> <ButtonIcon as={"search"}/></Button>

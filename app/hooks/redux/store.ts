@@ -14,6 +14,7 @@ import sessionReducer from "./session/session.slice";
 import notificationsReducer from "./notifications/notifications.slice";
 import packsReducer from "./packs/pack.slice";
 import documentsReducer from "./documents/document.slice";
+import othersReducer from "./others/others.slice";
 
 const rootReducer = combineReducers({
   user: userReducer,
@@ -27,6 +28,7 @@ const rootReducer = combineReducers({
   packs: packsReducer,
   documents: documentsReducer,
   notifications: notificationsReducer,
+  others: othersReducer
 });
 
 const persistConfig = {
@@ -41,7 +43,8 @@ const persistConfig = {
               "devadmin", 
               "niveaux",
               "documents",
-              "packs"
+              "packs",
+              "others"
             ],   
 };
 

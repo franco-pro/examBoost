@@ -139,7 +139,7 @@ export default function CreatePackScreen() {
     categorie:   (existingPack?.categorie ?? "SECONDARY") as any,
     type:        (existingPack?.type ?? "") as any,
     durationDays: existingPack?.durationDays?.toString() ?? "30",
-    isActive:    (existingPack?.isActive ?? true) as any,
+    isActive:    (existingPack?.isActive  === "true" ) as boolean,
   });
 
   const set = <K extends keyof PackFormData>(key: K, val: PackFormData[K]) =>
@@ -184,10 +184,24 @@ export default function CreatePackScreen() {
       return;
     }
         if (isEditMode) {
-         
-          dispatch(updatePack({ id: Number(existingPack?.id) ?? 0, data:{ ...form} })).finally(() => setOperationDone(true));
+          const newForm = {
+            ...form,
+            isActive: form.isActive,
+            price: Number(form.price),
+            duration: Number(form.duration),
+            durationDays: Number(form.durationDays),
+          }
+          console.log('send data', newForm);
+          dispatch(updatePack({ id: Number(existingPack?.id) ?? 0, data:{ ...newForm} })).then(()=> router.back()).catch((err: any)=> {console.log("Error:", err)});
         } else {
-          dispatch(createPack(form)).finally(() => setOperationDone(true));
+          const newForm = {
+            ...form,
+            isActive: form.isActive ?? true,
+            price: Number(form.price),
+            duration: Number(form.duration),
+            durationDays: Number(form.durationDays),
+          }
+          dispatch(createPack(newForm)).then(()=> {router.back()}).catch((err: any)=> {console.log("Error:", err)});
         }
     
   };

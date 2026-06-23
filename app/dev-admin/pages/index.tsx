@@ -19,7 +19,8 @@ enum AdminActions {
     PACKS_NIVEAUX = "packs_niveaux",
     FINANCES = "finances",
     DOCUMENTS = "documents",
-    NOTIF = "notif"
+    NOTIF = "notif",
+    MAJ= "maj"
 }
 export default function DevAdmin() {
     const router = useRouter();
@@ -119,6 +120,14 @@ export default function DevAdmin() {
         link: "/dev-admin/pages/notification" as const,
         navigationAction: AdminActions.NOTIF
       },
+
+      {
+        icone: <Ionicons name="settings" size={28} color="#181c5c" />,
+        text: "Mise à jour",
+        other: "Notifier les utilisateurs MAJ et gerer les alertes de MAJ.  ",
+        link: "/dev-admin/pages/maj.others" as const,
+        navigationAction: AdminActions.MAJ
+      },
   ];
 
    const makeNavigation = (where: AdminActions, link: any)=>{
@@ -139,6 +148,9 @@ export default function DevAdmin() {
             router.push(link);
             break;
         case AdminActions.NOTIF:
+            router.push(link);
+            break;
+        case AdminActions.MAJ:
             router.push(link);
             break;
         default:
