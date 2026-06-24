@@ -7,9 +7,9 @@ const devAmdinHttp = DevAdminHttp();
 
 export const getHomeData = createAsyncThunk(
     "devAdmin/getHomeData",
-    async (_, {rejectWithValue})=>{
+    async (userid: number, {rejectWithValue})=>{
         try {
-            const data = await devAmdinHttp.getHomeData();
+            const data = await devAmdinHttp.getHomeData(userid);
             return data;
         } catch (error: any) {
             console.log('error on loading:', error.message);

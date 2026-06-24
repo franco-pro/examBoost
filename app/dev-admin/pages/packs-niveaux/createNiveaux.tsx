@@ -1,5 +1,7 @@
+import { toastConfig } from "@/app/config/toast.config";
 import { createNiveau, updateNiveau } from "@/app/hooks/redux/niveaux/niveaux.thunks";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
+import { config } from "@/components/ui/gluestack-ui-provider/config";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
@@ -178,6 +180,9 @@ export default function NiveauFormPage() {
           )}
         </TouchableOpacity>
       </ScrollView>
+      
+      <Toast config={toastConfig} />
+      
     </View>
   );
 }

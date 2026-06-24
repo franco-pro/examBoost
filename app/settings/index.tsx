@@ -27,6 +27,10 @@ import { Button, ButtonText } from "@/components/ui/button";
 import { buildFileUrl } from "../hooks/files/buildRouteFiles";
 import { useUploadProfileMutation } from "../features/profiles/hook.rq";
 import { useTranslation } from "react-i18next";
+import { toastConfig } from "../config/toast.config";
+import { disconnectAllSockets } from "../hooks/services/socket/socket.init";
+import { useState } from "react";
+import FullscreenLoader from "../helper/Dialogs/loaderFullScreen";
 
 export default function SettingsScreen() {
   const {t} = useTranslation("setting")
@@ -40,10 +44,17 @@ export default function SettingsScreen() {
 
   const currentUser = useSelector((s: RootState) => s.user.user);
   const userID = currentUser?.id;
+  const [isLoaderShow, setShowLoader] = useState(false);
 const logoutHandle = async () => {
+  disconnectAllSockets();
+
   dispatch(logout());
   // await persistor.purge();
-  navigation.replace("/(auth)/login");
+  setShowLoader(true);
+  setTimeout(() => {
+    navigation.replace("/(auth)/login");
+    setShowLoader(false);    
+  }, 3000);
   };
   
   const uploadMutation = useUploadProfileMutation()
@@ -312,6 +323,8 @@ const logoutHandle = async () => {
           </View>
         </View>
       </ScrollView>
+      <FullscreenLoader visible={isLoaderShow} />
+      <Toast />
     </SafeAreaView>
   );
 }

@@ -89,6 +89,11 @@ const devAdminSlice = createSlice(
                     state.totalUsers = action.payload
                 }
             },
+            setTotalActiveUser: (state, action)=> {
+                if(!isNaN(action.payload)){
+                    state.totalUsers.active = action.payload;
+                }
+            },
             setSelectedUser: (state, action)=>{
                 state.selectedUser = action.payload
             },
@@ -140,6 +145,7 @@ export const {
     setTotalUsersInfo,
     setAccountWalletInfo,
     setSelectedUser,
-    updateUser
+    updateUser,
+    setTotalActiveUser
 } = devAdminSlice.actions;
     

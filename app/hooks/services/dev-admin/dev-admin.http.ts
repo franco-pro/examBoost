@@ -6,9 +6,9 @@ export default function DevAdminHttp(){
     const baseEndpoint = "/dev/"
 
     return {
-        getHomeData : async ()=>{
+        getHomeData : async (userid: number)=>{
             try {
-                const response = await apiClient.get(baseEndpoint)
+                const response = await apiClient.get(baseEndpoint+userid)
                 return {data: response.data, error: null};
                     
             } catch (error: any) {

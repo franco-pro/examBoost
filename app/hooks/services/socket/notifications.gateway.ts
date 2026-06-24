@@ -7,6 +7,7 @@ import {
   addAdminNotification
 } from '../../redux/notifications/notifications.slice';
 import { updateStatut } from "../../redux/competitions/competitions.slice";
+import { setTotalActiveUser } from "../../redux/dev-admin/dev-admin.slice";
 
 // Interface pour les notifications
 export interface NotificationPayload {
@@ -52,6 +53,8 @@ export function initializeNotificationsGateway(dispatch: any, userId: number) {
   socket.off("error");
   socket.off("new-competition-registration");
   socket.off("competition-started-change-statut");
+  socket.off("new-connection");
+
   socket.off("connect");
   socket.off("disconnect");
 
@@ -69,6 +72,10 @@ export function initializeNotificationsGateway(dispatch: any, userId: number) {
     dispatch(addNotification(notification));
   });
 
+  socket.on('new-connection', (notificaiton: {size: number})=>{
+    console.log('size of connection status', notificaiton)
+    dispatch(setTotalActiveUser(notificaiton.size))
+  })
   socket.on("competition-started", (data: NotificationPayload) => {
     console.log("Notification competition started:", data);
     const {roomId, statut, competitionID} = data;

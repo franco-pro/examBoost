@@ -37,7 +37,7 @@ export default function DevAdmin() {
     useFocusEffect(
         useCallback(()=>{
             if(competitions.total === 0 || totalUsers.total === 0 || documents.total === 0 || accountWallet.totalBalance === 0){
-                dispatch(getHomeData());
+                dispatch(getHomeData(user.id ?? 0));
             }
                 
 
@@ -67,6 +67,23 @@ export default function DevAdmin() {
           bgColor: "bg-blue-100",
           textColor: "text-blue-600",
         },
+        {
+          nom: "Users actif",
+          chiffre: String(totalUsers.active),
+          icone: <FontAwesome5 name="users" size={25} color="#3b82f6" />,
+          bgColor: "bg-blue-100",
+          textColor: "text-blue-600", 
+        },
+        {
+            nom: "Montant encaissé",
+            chiffre: `+${accountWallet.competition.toLocaleString("fr-FR")} FCFA`,
+            icone: (
+              // Mets ici ton icône
+              <FontAwesome5 name="wallet" size={24} color="#059669" />
+            ),
+            bgColor: "bg-orange-100",
+            textColor: "text-orange-600",
+          },
       ];
 
 
@@ -198,23 +215,7 @@ export default function DevAdmin() {
                     </Text>
                     </TouchableOpacity>
                 ))}
-                        <TouchableOpacity
-                    className={` ml-[10px] w-[90%] bg-blue-100 p-4 rounded-xl mb-3 items-center shadow-sm`}
-                    >
-                    <View className="mb-2">
-                        <Ionicons
-                            name="checkmark-done-circle-outline"
-                            size={28}
-                            color="#22c55e"
-                        />
-                    </View>
-                    <Text className={`font-semibold text-center text-emerald-600`}>
-                        Montant encaissé
-                    </Text>
-                    <Text className={`text-xl font-bold mt-1 text-emerald-600`}>
-                        {"+"+accountWallet.competition.toString().toLocaleString("fr-FR")+" FCFA"}
-                    </Text>
-                    </TouchableOpacity>
+                    
                 </View>
                 )
             }

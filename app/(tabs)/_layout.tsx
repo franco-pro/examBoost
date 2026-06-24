@@ -38,7 +38,7 @@ export default function RootLayout() {
   }
   
   useEffect(() =>{
-    if(others.other && others.other.length > 0){
+    if( others && others.other && others.other.length > 0){
       if(others.other[0].newUpdate && isCurrentVersionOld(others.other[0].version_available ?? "1.0.0")){
         setShowModal(true)
       }
