@@ -32,6 +32,7 @@ import { buildFileUrl } from "../hooks/files/buildRouteFiles";
 import { usePacksQuery } from "../features/packs/hooks.rq";
 
 import LottieView from "lottie-react-native";
+import { PlusCircle } from "lucide-react-native";
 
 
 
@@ -71,7 +72,7 @@ export default function Index() {
   const { user, others, accessToken, isAuthenticated } = useSelector(
     (state: RootState) => state.user,
   );
-
+const wallet = Number(user?.wallet).toLocaleString("Fr-fr")
   // useEffect(() => {
   // console.log("isauth: ", isAuthenticated)
   // if (!isAuthenticated) {
@@ -79,7 +80,7 @@ export default function Index() {
   // }
   // }, [navigation, isAuthenticated]);
   // console.log("accestoken: ", accessToken);
-
+console.log("users: ", user, "image: ", user?.imgUrl);
   //Gestion des proprietes de pack
   const currentUserId = user?.id;
   const packsQuery = usePacksQuery(currentUserId ?? 0);
@@ -305,7 +306,7 @@ export default function Index() {
         className="flex-1 bg-gray-50"
       >
         <View className="p-5 bg-[#E8F5A80] flex-1">
-          {/* <TouchableOpacity onPress={()=> navigation.push("/others-admin/submit-doc/submit")}><Text>teaxcher</Text></TouchableOpacity> */}
+          <TouchableOpacity onPress={()=> navigation.push("/others-admin/submit-doc/submit")}><Text>teacher</Text></TouchableOpacity>
           <Text className="text-2xl font-bold">
             {t("accueil.welcome")},{" "}
             {user?.username || user?.surname || "Unknown"} 👋
@@ -320,7 +321,7 @@ export default function Index() {
                 <Image
                   size={"xl"}
                   source={{
-                    uri: buildFileUrl(user.imgUrl),
+                    uri: (user.imgUrl),
                   }}
                   alt="axel profil"
                   className="rounded-full"
@@ -342,10 +343,13 @@ export default function Index() {
                     {t("accueil.principal_amount")}
                   </Text>
                 </View>
-                <View>
+                <View className="flex-row items-center gap-4">
                   <Text className="text-white text-2xl ">
-                    {user ? user?.wallet : "----"} Fcfa
+                    {user ? wallet: "----"} Fcfa
                   </Text>
+                  <TouchableOpacity onPress={()=> navigation.push("/users")} className="text-white text-2xl " >
+                    <Icon as={PlusCircle} className="text-white"/>
+                  </TouchableOpacity>
                 </View>
               </View>
               <View className="transaction gap-3 flex-row items-center ">

@@ -134,7 +134,8 @@ export default function Enseignant() {
         userID
       };
 
-      // console.log("URL:", apiClient.defaults.baseURL + "/document");
+      console.log("URL:", apiClient.defaults.baseURL + "/document");
+      // console.log("payload:", {subject,niveauID,fileType, userID})
 
       await apiClient.post("/document", payload);
       alert("Documents envoyés avec succès");
@@ -143,7 +144,7 @@ export default function Enseignant() {
       setCorrectionFile(null);
       setSubject("");
       setNiveauId(null);
-      setFileType("EXAMEN");
+      setFileType("");
     } catch (error) {
       console.log(error);
       alert(`Erreur lors de l'envoi : ${error}`);

@@ -145,8 +145,8 @@ export default function Login() {
               <View className="bg-white p-3 rounded-t-[40px] shadow-2xl mt-64 ">
                 {/* header form */}
                 <View className="header items-center justify-center mb-6">
-                  <Heading className="font-montserrat text-3xl text-primary-custom-300">
-                    Se connecter
+                  <Heading className="font-montserrat text-3xl text-primary-custom-300 capitalize">
+                    Se Connecter
                   </Heading>
                   <Text className="font-poppins text-lg text-secondary-custom-300 text-center">
                     Bon retour parmi nous !
@@ -255,7 +255,7 @@ export default function Login() {
                       {isLoading ? (
                         <Spinner size={"large"} color={"white"} />
                       ) : (
-                        "se connecter"
+                        <Text className="capitalize">se connecter</Text>
                       )}
                     </ButtonText>
                   </Button>
@@ -266,39 +266,40 @@ export default function Login() {
                         : err?.payload?.message || err?.payload}
                     </Text>
                   )}
-            
                 </FormControl>
-                <Center className="mt-10 flex-row items-center justify-center gap-2 w-2/3 mx-auto">
-                  <Divider />
-                  <Text className="text-gray-400">Se connecter avec</Text>
-                  <Divider />
-                </Center>
-                <Center className="social-btns flex-row gap-2 ">
-                  {socialsBtns.map((btn, index) => (
-                    <Button
-                      key={index}
-                      className=" my-2 bg-white rounded-full  shadow-md w-16 h-16"
-                      size="xl"
-                      onPress={btn.action}
-                      disabled={!btn.requestAction}
-                    >
-                      <Image
-                        source={btn.icon}
-                        style={{ width: 40, height: 40, borderRadius: 100 }}
-                      />
+                <View className="social">
+                  {/* <Center className="mt-10 flex-row items-center justify-center gap-2 w-2/3 mx-auto">
+                    <Divider />
+                    <Text className="text-gray-400">Se connecter avec</Text>
+                    <Divider />
+                  </Center>
+                  <Center className="social-btns flex-row gap-2 ">
+                    {socialsBtns.map((btn, index) => (
+                      <Button
+                        key={index}
+                        className=" my-2 bg-white rounded-full  shadow-md w-16 h-16"
+                        size="xl"
+                        onPress={btn.action}
+                        disabled={!btn.requestAction}
+                      >
+                        <Image
+                          source={btn.icon}
+                          style={{ width: 40, height: 40, borderRadius: 100 }}
+                        />
+                      </Button>
+                    ))}
+                  </Center> */}
+                  <Center className="sign in mt-3 flex-row">
+                    <Text className="text-gray-400">
+                      Vous n&rsquo;avez pas un compte?{" "}
+                    </Text>
+                    <Button onPress={switchSignUp} variant={"link"}>
+                      <ButtonText className="text-primary-custom-300 font-bold">
+                        S&rsquo;inscrire
+                      </ButtonText>
                     </Button>
-                  ))}
-                </Center>
-                <Center className="sign in mt-3 flex-row">
-                  <Text className="text-gray-400">
-                    Vous n&rsquo;avez pas un compte?{" "}
-                  </Text>
-                  <Button onPress={switchSignUp} variant={"link"}>
-                    <ButtonText className="text-primary-custom-300 font-bold">
-                      S&rsquo;inscrire
-                    </ButtonText>
-                  </Button>
-                </Center>
+                  </Center>
+                </View>
               </View>
             </KeyboardAwareScrollView>
           </View>

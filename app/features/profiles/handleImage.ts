@@ -16,6 +16,7 @@ export const uploadImage = async (image: any)=>{
         const response = await apiClient.patch("users/photo", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
+        // console.log("res dans handle image:", response)
         Alert.alert("Succès",response.data?.message ?? "Mise a jour effectuee.")
         return response
     } catch (error) {

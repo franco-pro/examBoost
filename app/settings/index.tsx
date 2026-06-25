@@ -6,11 +6,11 @@ import {
 } from "@/components/ui/toast";
 import { useDeleteUserMutation } from "@/app/features/user/hooks.rq";
 import { setCurrentUserId } from "@/app/hooks/redux/session/session.slice";
-import { logout, userDatas } from "@/app/hooks/redux/users/users.slice";
+import { deleteUser, logout, userDatas } from "@/app/hooks/redux/users/users.slice";
 import type { AppDispatch, RootState } from "@/app/hooks/redux/store";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useWindowDimensions } from "react-native";
+import { ActivityIndicator, useWindowDimensions } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import {
   Alert,
@@ -20,6 +20,7 @@ import {
   Text,
   View,
   Image,
+  TouchableOpacity
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
@@ -38,13 +39,49 @@ export default function SettingsScreen() {
   const halfWidth = width * 0.9;
   // console.log("width: ", width*0.5)
 
-  const currentUser = useSelector((s: RootState) => s.user.user);
-  const userID = currentUser?.id;
+  const {user,loading} = useSelector((s: RootState) => s.user);
+  const userID = user?.id;
 const logoutHandle = async () => {
   dispatch(logout());
-  // await persistor.purge();
   navigation.replace("/(auth)/login");
   };
+
+  const handleDelete = async () => {
+    try {
+      //unwrap() c'est pour aller dans le catch si jamais un probleme survient
+      await dispatch(deleteUser(userID ?? 0)).unwrap();
+      Alert.alert("Success", "Votre compte a été supprimé.");
+      // setTimeout(() => {
+      //   navigation.replace("/(auth)/login");
+      // },3000)
+    } catch (error) {
+      Alert.alert("Erreur", String(error) || "Impossible de supprimer le compte.");
+    }
+  }
+
+  //securite avant suppression
+  const triggerConfirmDelete = () => {
+    Alert.alert(
+      "Suppression du compte",
+      "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.",
+      [
+        { text: "Annuler", style: "cancel" },
+        { text: "Supprimer", style: "destructive", onPress: handleDelete }
+      ]
+    );
+  }
+
+  //securite avant deconnexion
+  const triggerConfirmLogout = () => {
+    Alert.alert(
+      "Se Deconnecter",
+      "Êtes-vous sûr de vouloir vous deconnecter ?",
+      [
+        { text: "Annuler", style: "cancel" },
+        {text:"Se Deconnecter", style:"default", onPress: logoutHandle}
+      ]
+    );
+  }
   
   const uploadMutation = useUploadProfileMutation()
 
@@ -82,61 +119,7 @@ const logoutHandle = async () => {
       ),
     });
 
-  const doDeleteAccount = async () => {
-    if (userID === undefined) {
-      showToast("error", "Utilisateur introuvable");
-      return;
-    }
 
-    try {
-      await deleteUserMutation.mutateAsync({ userID });
-
-      dispatch(setCurrentUserId(undefined));
-
-      showToast("success", "Compte supprimé");
-
-      router.replace("/(tabs)" as any);
-    } catch (e: any) {
-      showToast(
-        "error",
-        "Suppression échouée",
-        e?.message || "Réessayez plus tard",
-      );
-    }
-  };
-
-  const onDeleteAccount = () => {
-    if (Platform.OS === "web") {
-      const ok =
-        typeof window !== "undefined"
-          ? window.confirm(
-              "Cette action est définitive. Voulez-vous vraiment supprimer votre compte ?",
-            )
-          : false;
-
-      if (ok) void doDeleteAccount();
-
-      return;
-    }
-
-    Alert.alert(
-      "Supprimer le compte",
-      "Cette action est définitive. Voulez-vous vraiment supprimer votre compte ?",
-      [
-        {
-          text: "Annuler",
-          style: "cancel",
-        },
-        {
-          text: "Supprimer",
-          style: "destructive",
-          onPress: () => {
-            void doDeleteAccount();
-          },
-        },
-      ],
-    );
-  };
 
   return (
     <SafeAreaView className="flex-1 bg-background-light dark:bg-background-dark">
@@ -161,9 +144,9 @@ const logoutHandle = async () => {
         <View className="mx-5 mt-2 rounded-3xl bg-primary-defaultBlue p-5">
           <View className="flex-row items-center">
             <View className="h-16 w-16 rounded-full bg-white items-center justify-center">
-              {currentUser?.imgUrl ? (
+              {user?.imgUrl ? (
                 <Image
-                  source={{ uri: buildFileUrl(currentUser.imgUrl) }}
+                  source={{ uri: (user.imgUrl) }}
                   className="h-16 w-16 rounded-full"
                 />
               ) : (
@@ -173,11 +156,11 @@ const logoutHandle = async () => {
 
             <View className="ml-4 flex-1">
               <Text className="text-white text-lg font-bold">
-                {currentUser?.surname || "Utilisateur"}
+                {user?.surname || "Utilisateur"}
               </Text>
 
               <Text className="text-white/80">
-                {currentUser?.email || "email@examboost.com"}
+                {user?.email || "email@examboost.com"}
               </Text>
             </View>
 
@@ -196,7 +179,7 @@ const logoutHandle = async () => {
               </Text>
 
               <Text className="text-white font-bold text-lg">
-                {currentUser?.wallet ?? 0} FCFA
+                {user?.wallet ?? 0} FCFA
               </Text>
             </View>
 
@@ -206,7 +189,7 @@ const logoutHandle = async () => {
               </Text>
 
               <Text className="text-white font-bold text-lg">
-                {currentUser?.niveauID || "-"}
+                {user?.niveauID || "-"}
               </Text>
             </View>
           </View>
@@ -276,24 +259,30 @@ const logoutHandle = async () => {
             <Button
               variant={"solid"}
               action={"negative"}
-              onPress={() => logoutHandle()}
+              onPress={() => triggerConfirmLogout()}
             >
               <ButtonText>{t("setting.logout")}</ButtonText>
             </Button>
           </View>
           <View className="mx-5">
             <Pressable
-              onPress={onDeleteAccount}
-              className="bg-red-50 border border-red-200 rounded-2xl p-4 flex-row items-center justify-between"
+              onPress={triggerConfirmDelete}
+              disabled={loading}
+              className={`bg-red-50 border border-red-200 rounded-2xl p-4 flex-row items-center justify-between ${loading && "bg-[#ffaaaa]"}`}
             >
               <View className="flex-row items-center">
                 <View className="h-10 w-10 rounded-full bg-red-100 items-center justify-center">
                   <Ionicons name="trash" size={18} color="#DC2626" />
                 </View>
-
-                <Text className="ml-3 text-red-600 font-bold">
-                  {t("setting.delete_account")}
-                </Text>
+                  {loading ? (
+                    <ActivityIndicator />
+                  ) : (
+                    <Text
+                      className={`ml-3 text-red-600 font-bold`}
+                    >
+                      {t("setting.delete_account")}
+                    </Text>
+                  )}
               </View>
 
               <Ionicons name="chevron-forward" size={18} color="#DC2626" />
