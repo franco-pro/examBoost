@@ -45,7 +45,7 @@ const dispatch = useDispatch()
   return useMutation({
     mutationFn: uploadImage,
     onSuccess: (res, vars) => {
-      // console.log("res: ",res?.data)
+      // console.log("res dans profile hook: ",res?.data)
       qc.invalidateQueries({ queryKey: queryKeys.user(vars.userID) });
       dispatch(updateProfileImg(res?.data.url));
     },

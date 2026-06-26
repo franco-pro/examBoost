@@ -205,14 +205,17 @@ export const userSlice = createSlice({
       }
     },
 
-    setAllNotifAsRead: (state, action)=> {
+    setAllNotifAsRead: (state)=> {
       if (state.others.notification && Array.isArray(state.others.notification)) {
-        state.others.notification = state.others.notification.map((notif: any) => {
-          return {
-            ...notif,
-            isRead: true
-          }
-        })
+        state.others.notification = []
+      }
+    },
+
+    addNotif: (state, action) => {
+      if (state.others.notification && Array.isArray(state.others.notification)) {
+        state.others.notification.unshift(action.payload)
+      } else {
+        state.others.notification = [action.payload]
       }
     },
 
@@ -283,6 +286,21 @@ export const userSlice = createSlice({
           state.loading = true;
           state.error = null;
         })
+    
+    //delete user
+      .addCase(deleteUser.fulfilled, (state, action) => {
+        state.loading = false
+          state.user = null
+      })
+      .addCase(deleteUser.pending, (state, action) => {
+        state.loading = true
+        state.error = null
+      })
+    
+      .addCase(deleteUser.rejected, (state, action) => {
+        state.loading = true
+        state.error = action.payload as string
+    })
         
   },
 });
@@ -294,6 +312,8 @@ export const {
   updateBalanceUser,
   updateProfile,
   updateProfileImg,
-  updateTokens
+  updateTokens,
+  setAllNotifAsRead,
+  addNotif
 } = userSlice.actions;
 export default userSlice.reducer;

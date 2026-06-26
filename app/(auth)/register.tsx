@@ -261,7 +261,7 @@ export default function Register() {
                         type="text"
                         keyboardType="phone-pad"
                         value={phone}
-                        placeholder="Entrer votre email"
+                        placeholder="Entrer votre numero de telephone"
                         onChangeText={(text) => {
                           setPhone(text.replace(/[^0-9]/g, ""));
                         }}

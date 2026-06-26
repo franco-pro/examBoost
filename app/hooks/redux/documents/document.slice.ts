@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { DocumentState } from "./document.state";
 import { deleteDoc, getAllDocs, updateDoc } from "./document.thunks";
+import { Document } from "../../entities/document";
 
 
 const initialState: DocumentState = {
@@ -14,6 +15,11 @@ const documentSlice = createSlice({
     name: 'documents',
     initialState,
     reducers: {
+        addDocument: (state, action)=> {
+            if(action.payload){
+                state.documentsList.unshift(action.payload);
+            }
+        },
         setDocumentsList: (state, action)=>{
             state.documentsList = action.payload;
         },
@@ -64,12 +70,31 @@ const documentSlice = createSlice({
                 })
                 .addCase(updateDoc.fulfilled, (state, action)=>{
                     if(!action.payload.error){
-                        const updatedDoc = {...action.payload.data};
-    
-                        const index = state.documentsList.findIndex(doc => doc.id === updatedDoc.id);
-                        if(index !== -1){
-                            state.documentsList[index] = updatedDoc;
+                        const updatedDocData = {...action.payload.data} as Document;
+
+                        if(updatedDocData.isValidated){
+                            const index = state.documentsList.findIndex(doc => doc.id === updatedDocData.id);
+                            const docLinkedIndex = state.documentsList.findIndex(doc => doc.id !== updatedDocData.id && doc.correctionId === updatedDocData.correctionId);
+
+                            if(index !== -1 && docLinkedIndex !== -1){
+                                state.documentsList[index] = updatedDocData;
+                                state.documentsList[docLinkedIndex].isValidated = updatedDocData.isValidated; 
+                            }
+                        }else{
+                            const firstIndex = state.documentsList.findIndex(doc => doc.id === updatedDocData.id);
+
+                            const linkID = state.documentsList.find((doc)=> doc.correctionId === updatedDocData.correctionId && doc.id !== updatedDocData.id)?.id;
+                            if(linkID){
+                                const index = state.documentsList.findIndex((doc)=> doc.id === linkID);
+
+                                if(index !== -1 && firstIndex !== -1){
+                                    //delete in the list 
+                                    state.documentsList.splice(index, 1);
+                                    state.documentsList.splice(firstIndex, 1);
+                                }
+                            }
                         }
+                       
                     }else{
                         state.error = action.payload.error;
                     }
@@ -86,8 +111,12 @@ const documentSlice = createSlice({
                 .addCase(deleteDoc.fulfilled, (state, action)=>{
                     if(!action.payload.error){
                         const deletedDocId = action.payload.data;
-    
-                        state.documentsList = state.documentsList.filter(doc => doc.id !== deletedDocId);
+                        const docData = state.documentsList.find(doc => doc.id === deletedDocId);
+
+                        if(docData){
+                            let list = state.documentsList.filter(doc => doc.id !== deletedDocId);
+                            state.documentsList = list.filter(doc => doc.correctionId !== docData.correctionId);
+                        }
                     }else{
                         state.error = action.payload.error;
                     }
@@ -107,5 +136,6 @@ export const {
     resetState,
     deleteOne,
     deleteTwo,
-    updateSendingStatut
+    updateSendingStatut,
+    addDocument,
 } = documentSlice.actions;

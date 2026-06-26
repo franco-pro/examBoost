@@ -4,6 +4,8 @@ import transactionEN from "./locales/En/Transaction.json";
 import transactionFR from "./locales/Fr/Transaction.json";
 import competitionEn from "./locales/En/Competition.json";
 import competitionFr from "./locales/Fr/Competition.json";
+import notificationEN from "./locales/En/notification.json";
+import notificationFR from "./locales/Fr/notification.json";
 import homeEN from "./locales/En/home.json";
 import homeFr from "./locales/Fr/home.json";
 import settingFR from "./locales/Fr/Setting.json"
@@ -15,12 +17,14 @@ const resources = {
     competition: competitionEn,
     home: homeEN,
     setting: settingEN,
+    notification: notificationEN
   },
   fr: {
     transaction: transactionFR,
     competition: competitionFr,
     home: homeFr,
-    setting: settingFR
+    setting: settingFR,
+    notification: notificationFR
   },
 };
 

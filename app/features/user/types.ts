@@ -7,7 +7,7 @@ export type User = {
   role: string;
   phone: string;
   canSubmitDoc: boolean;
-  imgUrl: string | null;
+  imgUrl: any;
   isActivated: 0 | 1 | boolean;
   niveauID: number;
   created_at?: string;

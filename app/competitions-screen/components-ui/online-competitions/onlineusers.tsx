@@ -53,12 +53,14 @@ export default function OnlineUsers({user, max}: OnlineUsersProps) {
      ) : user.map((u, index) => (
       <Box key={index} className="flex-row mb-4 items-center">
         <Avatar className="mr-3">
-          <AvatarFallbackText>
-            {u.username ? u.username.split(" ").map((n) => n[0]).join(""): null}
-          </AvatarFallbackText>
+         
           {u.imgUrl ? (
             <AvatarImage source={{ uri: u.imgUrl }} alt="image" />
-          ) : null}
+          ) : 
+            <AvatarFallbackText>
+            {u.username ? u.username.split(" ").map((n) => n[0]).join(""): null}
+          </AvatarFallbackText>
+          }
           {
             u.isConnected ? (
                 <AvatarBadge />

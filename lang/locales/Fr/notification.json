@@ -1,0 +1,10 @@
+{
+    "notification": {
+        "delete_all": "Supprimer tout",
+        "delete": "Supprimer",
+        "loading_text": "Chargement des notifications…",
+        "error_on_loading": "Erreur lors du chargement des notifications.",
+        "try_again": "Réessayer",
+        "no_notifications": "Aucune notification disponible."
+    }
+}

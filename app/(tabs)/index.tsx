@@ -33,6 +33,7 @@ import { usePacksQuery } from "../features/packs/hooks.rq";
 
 import LottieView from "lottie-react-native";
 import { setSelectedCompetitionNull } from "../hooks/redux/competitions/competitions.slice";
+import { PlusCircle } from "lucide-react-native";
 
 
 
@@ -72,7 +73,7 @@ export default function Index() {
   const { user, others, accessToken, isAuthenticated } = useSelector(
     (state: RootState) => state.user,
   );
-
+const wallet = Number(user?.wallet).toLocaleString("fr-FR")
   // useEffect(() => {
   // console.log("isauth: ", isAuthenticated)
   // if (!isAuthenticated) {
@@ -80,7 +81,7 @@ export default function Index() {
   // }
   // }, [navigation, isAuthenticated]);
   // console.log("accestoken: ", accessToken);
-
+console.log("users: ", user, "image: ", user?.imgUrl);
   //Gestion des proprietes de pack
   const currentUserId = user?.id;
   const packsQuery = usePacksQuery(currentUserId ?? 0);
@@ -310,11 +311,23 @@ export default function Index() {
         className="flex-1 bg-gray-50"
       >
         <View className="p-5 bg-[#E8F5A80] flex-1">
-          {/* <TouchableOpacity onPress={()=> navigation.push("/others-admin/submit-doc/submit")}><Text>teaxcher</Text></TouchableOpacity> */}
-          <Text className="text-2xl font-bold">
-            {t("accueil.welcome")},{" "}
-            {user?.username || user?.surname || "Unknown"} 👋
-          </Text>
+          <TouchableOpacity onPress={()=> navigation.push("/others-admin/submit-doc/submit")}><Text>teacher</Text></TouchableOpacity>
+          <View className="flex-row items-center justify-between">
+              <Text className="flex-1 text-2xl font-bold mr-4">
+                {t("accueil.welcome")},{" "}
+                {user?.username || user?.surname || "Unknown"} 👋
+              </Text>
+
+              <TouchableOpacity
+                onPress={() => navigation.push("/payment-transactions/deposit")}
+                className="bg-orange-500 px-4 h-12 rounded-lg flex-row items-center justify-center"
+              >
+                <Icon as={PlusCircle} className="text-white mr-2" />
+                <Text className="text-white font-semibold">
+                  {t("accueil.load")}
+                </Text>
+              </TouchableOpacity>
+            </View>
           <Card
             size={"lg"}
             variant={"filled"}
@@ -325,7 +338,7 @@ export default function Index() {
                 <Image
                   size={"xl"}
                   source={{
-                    uri: buildFileUrl(user.imgUrl),
+                    uri: (user.imgUrl),
                   }}
                   alt="axel profil"
                   className="rounded-full"
@@ -347,10 +360,12 @@ export default function Index() {
                     {t("accueil.principal_amount")}
                   </Text>
                 </View>
-                <View>
+                <View className="flex-row items-center gap-4">
                   <Text className="text-white text-2xl ">
-                    {user ? user?.wallet : "----"} Fcfa
+                    {user ? wallet: "----"} XAF
+                
                   </Text>
+                 
                 </View>
               </View>
               <View className="transaction gap-3 flex-row items-center ">

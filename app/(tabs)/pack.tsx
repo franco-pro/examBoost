@@ -50,7 +50,7 @@ export default function PackScreen() {
   //   dispatch(setCurrentUserId(CURRENT_USER_ID));
   // }, [dispatch]);
 if (!currentUserId) {
-  console.error("userID dans pack n'existe pas");
+  console.log("userID dans pack n'existe pas");
   }
   
   const [packs, setPacks] = useState<packProps[]>([]);

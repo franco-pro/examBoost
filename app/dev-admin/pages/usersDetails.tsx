@@ -206,8 +206,10 @@ const handleDelete = () => {
           <Avatar size="xl" style={styles.avatar}>
             {user.imgUrl ? (
               <AvatarImage source={{ uri: user.imgUrl }} />
-            ) : null}
+            ) : 
             <AvatarFallbackText style={styles.avatarText}>{initials}</AvatarFallbackText>
+            
+            }
           </Avatar>
 
           <Text style={styles.name}>{user.username} {user.surname}</Text>

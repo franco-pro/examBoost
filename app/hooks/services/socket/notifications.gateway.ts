@@ -8,6 +8,7 @@ import {
 } from '../../redux/notifications/notifications.slice';
 import { updateStatut } from "../../redux/competitions/competitions.slice";
 import { setTotalActiveUser } from "../../redux/dev-admin/dev-admin.slice";
+import { addNotif } from "../../redux/users/users.slice";
 
 // Interface pour les notifications
 export interface NotificationPayload {
@@ -70,6 +71,8 @@ export function initializeNotificationsGateway(dispatch: any, userId: number) {
   socket.on("new-invitation", (notification: NotificationPayload) => {
     console.log("New invitation received:", notification);
     dispatch(addNotification(notification));
+    dispatch(addNotif(notification)); //just to indicate the badge represent the numer of notifications
+
   });
 
   socket.on('new-connection', (notificaiton: {size: number})=>{
@@ -83,6 +86,8 @@ export function initializeNotificationsGateway(dispatch: any, userId: number) {
       ...data,
       competionID: data.competitionID
     }));
+
+    dispatch(addNotif(data))
     
     if(roomId && statut && competitionID){
       dispatch(updateStatut({roomId: roomId, competitionId: competitionID, statut: statut}))
@@ -93,6 +98,7 @@ export function initializeNotificationsGateway(dispatch: any, userId: number) {
   socket.on("new-competition-registration", (data: NotificationPayload) => {
     console.log("Notification new registration:", data);
     dispatch(addNotification(data));
+    dispatch(addNotif(data))
   });
 
  
@@ -104,10 +110,13 @@ export function initializeNotificationsGateway(dispatch: any, userId: number) {
   socket.on("invitation-response", (data: NotificationPayload) => {
     console.log("Notification invitation response:", data);
     dispatch(addNotification(data));
+    dispatch(addNotif(data))
   });
 
   socket.on("admin-notif", (data: NotificationPayload) => {
     dispatch(addNotification(data));
+    dispatch(addNotif(data))
+
   });
 
   socket.on("error", (error: any) => {
