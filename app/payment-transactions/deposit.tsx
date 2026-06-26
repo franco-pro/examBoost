@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -16,6 +16,11 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useAppSelector } from "../hooks/redux/redux.hooks";
+import Toast from "react-native-toast-message";
+import { toastConfig } from "../config/toast.config";
+import apiClient from "../api/apiClient";
+// import {InAppBrowser} from 'react-native-inappbrowser-reborn';
+import * as WebBrowser from 'expo-web-browser';
 
 export default function Deposit() {
   const { t } = useTranslation("competition");
@@ -37,6 +42,8 @@ export default function Deposit() {
   const handleDeposit = async () => {
     if (!isFormValid) return;
     console.log("data", { phone, amount, operator, userID: user?.id ?? 0});
+
+
     setLoading(true);
 
     try {
@@ -45,14 +52,45 @@ export default function Deposit() {
       //    amount,
       //    operator,
       // });
+      const dto = {
+        amount: Number(amount),
+        customerName: user?.username,
+        userID: user && user.id,
+        customerEmail: user && user.email,
+        operator: operator,
+        customerPhone: phone
+      }
 
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-    } finally {
-      setLoading(false);
-    }
+      const response = await apiClient.post("/payment", dto);
+      if(response.data && response.data.success){
+          setLoading(false);
+          console.log('data', response.data);
+          // await InAppBrowser.open(response.data.pay_url);
+          await WebBrowser.openBrowserAsync(response.data.pay_url);
+      }
+    } catch(error: any) {
+      showToast('Une erreur est survenue: ' + error, "Error", "error");
+      console.log('error', error);
+    } 
   };
 
+  useEffect(()=>{
+      showToast("Votre compte à été crédité d'un montant de " + amount + " XAF.", "Recharge", "success");
+  }, [user])
+
+    function showToast(message: string, title: string, type: "success"|"error"){
+              Toast.show({
+                type: type,
+                text2: message,
+                text1: title,
+                position: 'top',
+                visibilityTime: 3500,
+              }) 
+      }
+    
+      
   return (
+    
 <KeyboardAvoidingView
     className="flex-1 bg-gray-50 px-5 pt-12"
     behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -306,6 +344,7 @@ export default function Deposit() {
         </View>
 
       )}
+      <Toast config={toastConfig} />  
 
     </KeyboardAvoidingView>
   );

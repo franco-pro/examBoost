@@ -8,7 +8,6 @@ export function DocAdminHTTP(){
         getDocs: async (userId: number)=>{
             try {
                 const docs = await apiClient.get(baseUrl, {params: {userId}});
-                console.log('docs:', docs.data);
                 return {data: docs.data, error: null};
                 
             } catch (error: any) {

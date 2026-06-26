@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { styles } from "./styles";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { Avatar, AvatarFallbackText, AvatarImage } from "@/components/ui/avatar";
 import { useAppSelector } from "../redux/redux.hooks";
 import { DocAdminHTTP } from "../hooks/services/document/doc.admin.http";
@@ -110,7 +110,7 @@ function DocRow({ item }: any) {
         <View style={styles.docMeta}>
           <Text style={styles.docLevel}>{item.niveau.name}</Text>
           <Text style={styles.docDot}>·</Text>
-          <Text style={styles.docDate}>{formatDate(item.createdAt)}</Text>
+          <Text style={styles.docDate}>{formatDate(item.created_at)}</Text>
         </View>
         <Text style={[styles.docTypeBadge, { color: cfg.color, backgroundColor: cfg.bg }]}>
           {item.type}
@@ -131,23 +131,28 @@ export default function DocAdmin() {
   const [documents, setDocuments] = useState<ApiResponse["documents"]>([]);
   const [loadDone, setLoadDone] = useState(false);
 
-  useEffect(() => {
+  useFocusEffect(
+    useCallback(() => {
+      // Réinitialiser loadDone pour permettre le rechargement
+      setLoadDone(false);
+      
       const fetchData = async () => {
-        if (!user) router.replace("/login");
-
-        if ((dashboard === null || documents.length === 0 && !loadDone)) {
-          const dataApi = await DocAdminHTTP().getDocs(user?.id ?? 0);
-          if (dataApi && !dataApi.error) {
-            setDashboard(dataApi.data.dashboard);
-            setDocuments(dataApi.data.documents);
-          }
-
-          setLoadDone(true);
+        if (!user) {
+          router.replace("/login");
+          return;
         }
+  
+        const dataApi = await DocAdminHTTP().getDocs(user?.id ?? 0);
+        if (dataApi && !dataApi.error) {
+          setDashboard(dataApi.data.dashboard);
+          setDocuments(dataApi.data.documents);
+        }
+        setLoadDone(true);
       };
-
+  
       fetchData();
-  }, [user, dashboard, documents]);
+    }, [user]) // Seulement dépendant de user
+  );
 
 
   const validationRate = (dashboard && dashboard.totalValidated && dashboard.totalDocSubmit)  ? Math.round((dashboard.totalValidated / dashboard.totalDocSubmit) * 100): 0;
