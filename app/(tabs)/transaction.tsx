@@ -13,6 +13,7 @@ import { useAppDispatch, useAppSelector } from "../hooks/redux/redux.hooks";
 import { getAllTransations } from "../hooks/redux/transactions/transaction.thunks";
 import { RootState } from "../hooks/redux/store";
 import { useSelector } from "react-redux";
+import { toastConfig } from "../config/toast.config";
 
 export default function Transactions() {
   const [loadDone, setLoadDone] = useState(false);
@@ -56,7 +57,8 @@ export default function Transactions() {
 
   const filteredTransactions = (transactionList && transactionList.length >= 0) ? transactionList.filter((tx) =>
     filter === "ALL" ? true : tx.type === filter
-    ):[];
+    ).reverse():[];
+    console.log('transaction checker', filteredTransactions)
 
   function showToast(message: string, title: string, type: "success"|"error"){
             Toast.show({
@@ -124,6 +126,8 @@ export default function Transactions() {
                 {transType[game?.type as keyof typeof transType]}
                   
                 <Text className="text-xs mt-[7px] text-gray-400">PID: {game?.PID}</Text>
+                <Text className={"text-xs mt-[7px] "+ (game?.status === "COMPLETED" ? "text-green-500":"text-error-500") } >{ game.status === "COMPLETED" ? "Done":"Failed" }</Text>
+                
               </View>
 
               <View
@@ -171,6 +175,7 @@ export default function Transactions() {
         }
 
       </ScrollView>
+      <Toast config={toastConfig} />  
     </View>
   );
 }

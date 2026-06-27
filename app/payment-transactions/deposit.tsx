@@ -15,12 +15,17 @@ import {
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { useAppSelector } from "../hooks/redux/redux.hooks";
+import { useAppDispatch, useAppSelector } from "../hooks/redux/redux.hooks";
 import Toast from "react-native-toast-message";
 import { toastConfig } from "../config/toast.config";
 import apiClient from "../api/apiClient";
 // import {InAppBrowser} from 'react-native-inappbrowser-reborn';
 import * as WebBrowser from 'expo-web-browser';
+import { connectNotificationsSocket } from "../hooks/services/socket/socket.init";
+import { updateBalanceUser } from "../hooks/redux/users/users.slice";
+import { addTransaction } from "../hooks/redux/transactions/transactions.slice";
+import { Transaction } from "../hooks/entities/transaction";
+import WebViewPay from "./webview";
 
 export default function Deposit() {
   const { t } = useTranslation("competition");
@@ -30,6 +35,8 @@ export default function Deposit() {
   const [operator, setOperator] = useState<"MTN" | "ORANGE" | null>(null);
   const [loading, setLoading] = useState(false);
   const  {user} = useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
+  
   const orangeUSSD = "#150*50#";
   const mtnUSSD = "*126#";
   const isPhoneValid = /^6\d{8}$/.test(phone);
@@ -39,9 +46,26 @@ export default function Deposit() {
     Number(amount) > 0 &&
     operator !== null;
 
+    const socketPay =  () => {
+      const socket = connectNotificationsSocket(user?.id ?? 0);
+      socket.off("payment-ended");
+
+      socket.on("payment-ended", (data: {status: string, amout: number, transaction: Transaction})=> {
+        if(data.status.toUpperCase() === "COMPLETED"){
+          dispatch(updateBalanceUser(data.amout));
+          dispatch(addTransaction(data.transaction));
+          showToast("Votre compte à été crédité d'un montant de " + amount + " XAF.", "Recharge", "success");
+        }else{
+          showToast("Une erreur est survénue lors de votre transaction !", "Error", "error");
+
+        }
+        router.replace("/(tabs)");
+      })
+
+    }
+
   const handleDeposit = async () => {
     if (!isFormValid) return;
-    console.log("data", { phone, amount, operator, userID: user?.id ?? 0});
 
 
     setLoading(true);
@@ -52,6 +76,8 @@ export default function Deposit() {
       //    amount,
       //    operator,
       // });
+
+
       const dto = {
         amount: Number(amount),
         customerName: user?.username,
@@ -64,19 +90,21 @@ export default function Deposit() {
       const response = await apiClient.post("/payment", dto);
       if(response.data && response.data.success){
           setLoading(false);
-          console.log('data', response.data);
+          socketPay();
           // await InAppBrowser.open(response.data.pay_url);
-          await WebBrowser.openBrowserAsync(response.data.pay_url);
+          // await WebBrowser.openBrowserAsync(response.data.pay_url);
+          router.push({
+            pathname: '/payment-transactions/webview',
+            params: {
+              payUrl: response.data.pay_url,
+            },
+          });
       }
     } catch(error: any) {
       showToast('Une erreur est survenue: ' + error, "Error", "error");
       console.log('error', error);
     } 
   };
-
-  useEffect(()=>{
-      showToast("Votre compte à été crédité d'un montant de " + amount + " XAF.", "Recharge", "success");
-  }, [user])
 
     function showToast(message: string, title: string, type: "success"|"error"){
               Toast.show({
@@ -332,7 +360,7 @@ export default function Deposit() {
             </Text>
 
             <Text className="text-center text-gray-500 mt-3">
-              Une demande de confirmation a été envoyée sur votre téléphone.
+              Demande de confirmation en attente, ne quittez pas !
             </Text>
 
             <Text className="text-center text-gray-400 mt-2 text-sm">

@@ -110,13 +110,6 @@ export function initializeNotificationsGateway(dispatch: any, userId: number) {
       dispatch(updateStatut({roomId: data.roomId, competitionId: data?.competitionId, statut: data?.statut}));
   });
 
-  socket.on("payment-ended", (data: {status: string, amout: number, transaction: Transaction})=> {
-    console.log('notif payment details', data);
-    if(data.status === "COMPLETED"){
-      dispatch(updateBalanceUser(data.amout));
-      dispatch(addTransaction(data.transaction));
-    }
-  })
 
   socket.on("invitation-response", (data: NotificationPayload) => {
     console.log("Notification invitation response:", data);
