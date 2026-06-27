@@ -22,13 +22,13 @@ import apiClient from "../api/apiClient";
 // import {InAppBrowser} from 'react-native-inappbrowser-reborn';
 import * as WebBrowser from 'expo-web-browser';
 import { connectNotificationsSocket } from "../hooks/services/socket/socket.init";
-import { updateBalanceUser } from "../hooks/redux/users/users.slice";
+import { updateBalanceUser, updateDepositAction } from "../hooks/redux/users/users.slice";
 import { addTransaction } from "../hooks/redux/transactions/transactions.slice";
 import { Transaction } from "../hooks/entities/transaction";
 import WebViewPay from "./webview";
 
 export default function Deposit() {
-  const { t } = useTranslation("competition");
+  const { t } = useTranslation("deposit");
 
   const [phone, setPhone] = useState("");
   const [amount, setAmount] = useState("");
@@ -52,14 +52,16 @@ export default function Deposit() {
 
       socket.on("payment-ended", (data: {status: string, amout: number, transaction: Transaction})=> {
         if(data.status.toUpperCase() === "COMPLETED"){
-          dispatch(updateBalanceUser(data.amout));
-          dispatch(addTransaction(data.transaction));
-          showToast("Votre compte à été crédité d'un montant de " + amount + " XAF.", "Recharge", "success");
+            dispatch(updateBalanceUser((user?.wallet ?  (Number(user?.wallet) + Number(data.amout)): data.amout)));
+            dispatch(updateDepositAction("COMPLETED"));
+          showToast(t("deposit.pay_done.text", {amount: data.amout}), t("deposit.pay_done.title"), "success");
         }else{
-          showToast("Une erreur est survénue lors de votre transaction !", "Error", "error");
+          dispatch(updateDepositAction("FAILED"));
+          showToast(t("deposit.pay_failed.text"), t("deposit.pay_failed.title"), "error");
 
         }
-        router.replace("/(tabs)");
+
+        dispatch(addTransaction(data.transaction));
       })
 
     }
@@ -80,7 +82,7 @@ export default function Deposit() {
 
       const dto = {
         amount: Number(amount),
-        customerName: user?.username,
+        customerName: user?.username + " " + user?.surname,
         userID: user && user.id,
         customerEmail: user && user.email,
         operator: operator,
@@ -93,7 +95,7 @@ export default function Deposit() {
           socketPay();
           // await InAppBrowser.open(response.data.pay_url);
           // await WebBrowser.openBrowserAsync(response.data.pay_url);
-          router.push({
+          router.replace({
             pathname: '/payment-transactions/webview',
             params: {
               payUrl: response.data.pay_url,
@@ -143,18 +145,20 @@ export default function Deposit() {
         />
 
         <Text className="ml-2 text-lg font-semibold text-gray-700">
-          {t("mycompetition.back")}
+          {t("deposit.back")}
         </Text>
       </TouchableOpacity>
 
       {/* Title */}
 
       <Text className="text-3xl font-bold text-gray-800">
-        Recharge Mobile Money
+        {t("deposit.first_title")}
+
       </Text>
 
       <Text className="text-gray-500 mt-2">
-        Effectuez votre recharge de compte rapidement et en toute sécurité.
+        {t("deposit.sub_text")}
+
       </Text>
 
       {/* Security Banner */}
@@ -170,11 +174,11 @@ export default function Deposit() {
         <View className="ml-3 flex-1">
 
           <Text className="font-bold text-blue-600">
-            Transaction 100 % sécurisé
+          {t("deposit.other_text1")}  
           </Text>
 
           <Text className="text-blue-500 text-sm mt-1">
-            Vos transactions sont protégées et chiffrées.
+            {t("deposit.other_text2")}
           </Text>
 
         </View>
@@ -186,7 +190,7 @@ export default function Deposit() {
       <View className="mb-6">
 
         <Text className="font-medium text-gray-700 mb-2">
-          Numéro de téléphone
+          {t("deposit.form.tel")}
         </Text>
 
         <TextInput
@@ -207,13 +211,16 @@ export default function Deposit() {
 
         {phone.length > 0 && !isPhoneValid && (
           <Text className="text-red-500 text-sm mt-2">
-            Le numéro doit commencer par 6 et contenir exactement 9 chiffres.
+            {t("deposit.form.tel_error")}
+
           </Text>
         )}
 
         {isPhoneValid && (
           <Text className="text-green-600 text-sm mt-2">
-            ✓ Numéro valide
+           
+            {t("deposit.form.tel_valid")}
+
           </Text>
         )}
 
@@ -224,7 +231,9 @@ export default function Deposit() {
       <View className="mb-6">
 
         <Text className="font-medium text-gray-700 mb-3">
-          Choisissez votre opérateur
+          
+          {t("deposit.form.operator")}
+
         </Text>
 
         <View className="flex-row">
@@ -306,7 +315,9 @@ export default function Deposit() {
       <View className="mb-8">
 
         <Text className="font-medium text-gray-700 mb-2">
-          Montant (FCFA)
+          
+          {t("deposit.form.amount")}
+
         </Text>
 
         <TextInput
@@ -333,7 +344,7 @@ export default function Deposit() {
       >
 
         <Text className="text-white text-lg font-bold">
-          Procéder à la recharge
+        {t("deposit.form.btnText")}
         </Text>
 
       </TouchableOpacity>
@@ -356,15 +367,17 @@ export default function Deposit() {
             />
 
             <Text className="mt-5 text-xl font-bold text-blue-500">
-              Paiement en cours...
+              
+              {t("deposit.loading.first_title")}
+
             </Text>
 
             <Text className="text-center text-gray-500 mt-3">
-              Demande de confirmation en attente, ne quittez pas !
+            {t("deposit.loading.second_title")}
             </Text>
 
             <Text className="text-center text-gray-400 mt-2 text-sm">
-              Veuillez valider la transaction Mobile Money.
+            {t("deposit.loading.third_title")}
             </Text>
 
           </View>

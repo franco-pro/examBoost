@@ -29,6 +29,7 @@ interface UserState {
   loading?: boolean;
   error?: any;
   others?: any;
+  depositActionStatut: "FAILED"|"COMPLETED"|"NO ACTION",
   isAuthenticated: boolean;
 }
 
@@ -38,7 +39,8 @@ const initialState: UserState = {
   // error: null,
   accessToken: null,
   refreshToken: null,
-  isAuthenticated:false
+  isAuthenticated:false,
+  depositActionStatut: "NO ACTION"
   // others: null
 };
 
@@ -225,6 +227,12 @@ export const userSlice = createSlice({
       } else {
         console.log("le state dans updateBalanceUser: ", state)
       }
+    },
+
+    updateDepositAction: (state, action)=>{
+      if(action.payload){
+        state.depositActionStatut = action.payload;
+      }
     }
   },
 
@@ -314,6 +322,7 @@ export const {
   updateProfileImg,
   updateTokens,
   setAllNotifAsRead,
-  addNotif
+  addNotif,
+  updateDepositAction
 } = userSlice.actions;
 export default userSlice.reducer;

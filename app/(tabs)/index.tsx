@@ -70,7 +70,7 @@ export default function Index() {
   // console.log("LANG:", i18n.language);
   // console.log("WELCOME:", t("accueil.welcome"));
   const dispatch = useDispatch<any>();
-  const { user, others, accessToken, isAuthenticated } = useSelector(
+  const { user, others, accessToken, isAuthenticated, depositActionStatut } = useSelector(
     (state: RootState) => state.user,
   );
 const wallet = Number(user?.wallet).toLocaleString("fr-FR")
@@ -81,7 +81,6 @@ const wallet = Number(user?.wallet).toLocaleString("fr-FR")
   // }
   // }, [navigation, isAuthenticated]);
   // console.log("accestoken: ", accessToken);
-console.log("users: ", user, "image: ", user?.imgUrl);
   //Gestion des proprietes de pack
   const currentUserId = user?.id;
   const packsQuery = usePacksQuery(currentUserId ?? 0);
@@ -98,7 +97,6 @@ console.log("users: ", user, "image: ", user?.imgUrl);
     useCallback(() => {
       // packsQuery.refetch();
       loadRecent();
-
       return ()=>{
         dispatch(setSelectedCompetitionNull())
       }

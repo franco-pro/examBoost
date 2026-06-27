@@ -23,7 +23,7 @@
         },
         "loading": {
             "first_title": "Paiement en cours...",
-            "second_title": "Demande de confirmation en attente, ne quittez pas !",
+            "second_title": "Demande de page de confirmation en attente, ne quittez pas !",
             "third_title": "Veuillez valider la transaction Mobile Money apres la page de confirmation."
         }
 
