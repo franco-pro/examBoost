@@ -56,7 +56,7 @@ export default function SubjectDocumentsInTabs() {
  
 
   return (
-    <View className="flex-1 bg-background-light dark:bg-background-dark">
+    <View className="flex-1 mt-10 bg-background-light dark:bg-background-dark">
       {/* */}
       <PackHeader
         value={search}

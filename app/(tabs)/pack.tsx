@@ -80,7 +80,7 @@ const packsQuery = usePacksQuery(currentUserId ?? 0);
 // console.log("all pack dans pack: ", packs)
   return (
     <BottomSheetModalProvider>
-      <View className="flex-1 bg-background-light dark:bg-background-dark">
+      <View className="flex-1  bg-background-light dark:bg-background-dark">
         <PackHeader
           value={search}
           onChangeSearch={setSearch}

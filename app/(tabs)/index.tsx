@@ -10,7 +10,10 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/app/hooks/redux/store";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { userDatas } from "@/app/hooks/redux/users/users.slice";
+import {
+  updateBalanceUser,
+  userDatas,
+} from "@/app/hooks/redux/users/users.slice";
 import { router, useFocusEffect, useRouter } from "expo-router";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -33,9 +36,8 @@ import { usePacksQuery } from "../features/packs/hooks.rq";
 
 import LottieView from "lottie-react-native";
 import { setSelectedCompetitionNull } from "../hooks/redux/competitions/competitions.slice";
-import { PlusCircle } from "lucide-react-native";
-
-
+import { PlusCircle, RefreshCcwIcon } from "lucide-react-native";
+import { useUserQuery } from "../features/user/hooks.rq";
 
 interface subjectType {
   id: number;
@@ -70,10 +72,9 @@ export default function Index() {
   // console.log("LANG:", i18n.language);
   // console.log("WELCOME:", t("accueil.welcome"));
   const dispatch = useDispatch<any>();
-  const { user, others, accessToken, isAuthenticated, depositActionStatut } = useSelector(
-    (state: RootState) => state.user,
-  );
-const wallet = Number(user?.wallet).toLocaleString("fr-FR")
+  const { user, others, accessToken, isAuthenticated, depositActionStatut } =
+    useSelector((state: RootState) => state.user);
+  const wallet = Number(user?.wallet).toLocaleString("fr-FR");
   // useEffect(() => {
   // console.log("isauth: ", isAuthenticated)
   // if (!isAuthenticated) {
@@ -84,6 +85,9 @@ const wallet = Number(user?.wallet).toLocaleString("fr-FR")
   //Gestion des proprietes de pack
   const currentUserId = user?.id;
   const packsQuery = usePacksQuery(currentUserId ?? 0);
+  const userQuery = useUserQuery(currentUserId ?? 0);
+  const { data: usersData, refetch } = userQuery;
+  // console.log("userquery:", usersData?.wallet);
   useEffect(() => {
     setPacks(packsQuery.data ?? []);
   }, [packsQuery.data]);
@@ -97,14 +101,14 @@ const wallet = Number(user?.wallet).toLocaleString("fr-FR")
     useCallback(() => {
       // packsQuery.refetch();
       loadRecent();
-      return ()=>{
-        dispatch(setSelectedCompetitionNull())
-      }
+      return () => {
+        dispatch(setSelectedCompetitionNull());
+      };
     }, []),
   );
   useEffect(() => {
     if (isAuthenticated) {
-      console.log("userDatas dispatch")
+      console.log("userDatas dispatch");
       dispatch(userDatas()); //to work
       setTimeout(() => {
         initializeNotificationsGateway(dispatch, currentUserId ?? 0);
@@ -112,7 +116,7 @@ const wallet = Number(user?.wallet).toLocaleString("fr-FR")
 
       loadRecent();
     }
-  }, [isAuthenticated, dispatch,currentUserId]);
+  }, [isAuthenticated, dispatch, currentUserId]);
 
   // console.log("useFocus after:", recentDocument);
   // console.log("user:", user);
@@ -139,11 +143,14 @@ const wallet = Number(user?.wallet).toLocaleString("fr-FR")
   // console.log("subjects:", others.subject || "subject is null");
   // console.log("others datas:", others, "user datas", user)
   const images = Object.values(pdfImage);
-  const colors = useMemo(() =>["#E8F0FE", "#E8FFF3", "#FDECEF", "#FFF4E5", "#F3E8FF"],[]) 
+  const colors = useMemo(
+    () => ["#E8F0FE", "#E8FFF3", "#FDECEF", "#FFF4E5", "#F3E8FF"],
+    [],
+  );
   const bgColors = useMemo(
     () => ["#8FB0FF", "#7EE2A8", "#F29AAD", "#FFB86B", "#B784F7"],
     [],
-  ); 
+  );
   const sombreColors = useMemo(
     () => ["#8FB0FFCC", "#7EE2A8CC", "#F29AADCC", "#FFB86BCC", "#B784F7CC"],
     [],
@@ -300,6 +307,21 @@ const wallet = Number(user?.wallet).toLocaleString("fr-FR")
       setLoading(false);
     }
   };
+
+  const refreshWalletHandle = async () => {
+    try {
+      const { data: freshQueryData } = await refetch();
+      if (freshQueryData?.wallet !== undefined) {
+        dispatch(updateBalanceUser(freshQueryData.wallet));
+        console.log(
+          "Le solde réel du serveur est maintenant :",
+          freshQueryData?.wallet,
+        );
+      }
+    } catch (error) {
+      console.error("Impossible de rafraîchir le solde :", error);
+    }
+  };
   // console.log("wallet dans undex:", user?.wallet)
   return (
     <>
@@ -309,23 +331,27 @@ const wallet = Number(user?.wallet).toLocaleString("fr-FR")
         className="flex-1 bg-gray-50"
       >
         <View className="p-5 bg-[#E8F5A80] flex-1">
-          <TouchableOpacity onPress={()=> navigation.push("/others-admin/submit-doc/submit")}><Text>teacher</Text></TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.push("/others-admin/submit-doc/submit")}
+          >
+            <Text>teacher</Text>
+          </TouchableOpacity>
           <View className="flex-row items-center justify-between">
-              <Text className="flex-1 text-2xl font-bold mr-4">
-                {t("accueil.welcome")},{" "}
-                {user?.username || user?.surname || "Unknown"} 👋
-              </Text>
+            <Text className="flex-1 text-2xl font-bold mr-4">
+              {t("accueil.welcome")},{" "}
+              {user?.username || user?.surname || "Unknown"} 👋
+            </Text>
 
-              <TouchableOpacity
-                onPress={() => navigation.push("/payment-transactions/deposit")}
-                className="bg-orange-500 px-4 h-12 rounded-lg flex-row items-center justify-center"
-              >
-                <Icon as={PlusCircle} className="text-white mr-2" />
-                <Text className="text-white font-semibold">
-                  {t("accueil.load")}
-                </Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              onPress={() => navigation.push("/payment-transactions/deposit")}
+              className="bg-orange-500 px-4 h-12 rounded-lg flex-row items-center justify-center"
+            >
+              <Icon as={PlusCircle} className="text-white mr-2" />
+              <Text className="text-white font-semibold">
+                {t("accueil.load")}
+              </Text>
+            </TouchableOpacity>
+          </View>
           <Card
             size={"lg"}
             variant={"filled"}
@@ -336,7 +362,7 @@ const wallet = Number(user?.wallet).toLocaleString("fr-FR")
                 <Image
                   size={"xl"}
                   source={{
-                    uri: (user.imgUrl),
+                    uri: user.imgUrl,
                   }}
                   alt="axel profil"
                   className="rounded-full"
@@ -360,10 +386,17 @@ const wallet = Number(user?.wallet).toLocaleString("fr-FR")
                 </View>
                 <View className="flex-row items-center gap-4">
                   <Text className="text-white text-2xl ">
-                    {user ? wallet: "----"} XAF
-                
+                    {user ? wallet : "----"} XAF
                   </Text>
-                 
+                  <TouchableOpacity
+                    onPress={() => refreshWalletHandle()}
+                    className="  text-2xl "
+                  >
+                    <Icon
+                      as={RefreshCcwIcon}
+                      className="text-secondary-custom-400"
+                    />
+                  </TouchableOpacity>
                 </View>
               </View>
               <View className="transaction gap-3 flex-row items-center ">
