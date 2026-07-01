@@ -1,0 +1,31 @@
+{
+    "deposit" : {
+        "back": "Retour",
+        "pay_done":{
+            "title": "Recharge",
+            "text": "Votre compte à été crédité d'un montant de {{amount}}  XAF."
+        },
+        "pay_failed": {
+            "title": "Erreur",
+            "text": "Une erreur est survénue lors de votre transaction !"
+        },
+        "first_title" : "Recharge Mobile Money",
+        "sub_text": "Effectuez votre recharge de compte rapidement et en toute sécurité.",
+        "other_text1": "Transaction 100% sécurisé",
+        "other_text2": "Vos transactions sont protégées et chiffrées",
+        "form": {
+            "tel": "Numéro de téléphone",
+            "tel_error": "Le numéro doit commencer par 6 et conténir exavtement 9 chiffres.",
+            "tel_valid": "✓ Numéro valide",
+            "operator": "Choisissez votre opérateur",
+            "amount": "Montant (FCFA)",
+            "btnText": "Procéder à la recharge"
+        },
+        "loading": {
+            "first_title": "Paiement en cours...",
+            "second_title": "Demande de page de confirmation en attente, ne quittez pas !",
+            "third_title": "Veuillez valider la transaction Mobile Money apres la page de confirmation."
+        }
+
+    }
+}

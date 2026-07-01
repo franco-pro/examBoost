@@ -21,13 +21,15 @@ import { EmitEvent, initializeRoomsGateway } from '../hooks/services/socket/room
 import { LanguageContext } from '../context/LanguageProvider';
 import { createSubscription } from '../hooks/redux/competitions-suscriptions/subscription.thunks';
 import InvitationConfirm from '../helper/Dialogs/invitationConfirm';
-import { updateBalanceUser } from '../hooks/redux/users/users.slice';
+import { setAllNotifAsRead, updateBalanceUser } from '../hooks/redux/users/users.slice';
 import { useSoundAud } from '../hooks/useSound.hook';
 import { setCompetitioErrorNull } from '../hooks/redux/competitions/competitions.slice';
 import { toastConfig } from '../config/toast.config';
+import { useTranslation } from 'react-i18next';
 
 export default function NotificationsScreen() {
   // brancher un  userID quand l'auth sera prête
+  const {t} = useTranslation("notification");
   const {user} = useSelector((state: RootState) => state.user);
   const userID = user?.id ?? -1;
   const [loadDone, setLoadDone] = useState(false);
@@ -81,10 +83,12 @@ export default function NotificationsScreen() {
 
   useFocusEffect(
     useCallback(()=>{
+      dispatch(setAllNotifAsRead());
       setIsPageActive(true);
-      dispatch(setCompetitioErrorNull())
+      dispatch(setCompetitioErrorNull());
       return ()=>{
        setIsPageActive(false)
+
       }
     }, [])
   )
@@ -289,7 +293,7 @@ export default function NotificationsScreen() {
         className="flex-row items-center gap-2 px-3 py-2 rounded-md bg-error-400 opacity-100 disabled:opacity-50"
       >
         <Ionicons name="trash" size={18} color="#FFFFFF" />
-        <Text className="text-white font-semibold">Tout supprimer</Text>
+        <Text className="text-white font-semibold">{t("notification.delete_all")}</Text>
       </Pressable>
     </View>
   ): null;
@@ -298,7 +302,7 @@ export default function NotificationsScreen() {
     return (
       <View className="flex-1 items-center justify-center bg-background-light dark:bg-background-dark">
         <ActivityIndicator size="large" color="#181c5c" />
-        <Text className="mt-3 text-typography-gray">Chargement des notifications…</Text>
+        <Text className="mt-3 text-typography-gray">{t('notification.loading_text')} </Text>
       </View>
     );
   }
@@ -311,10 +315,10 @@ export default function NotificationsScreen() {
         <View className="mt-10 items-center">
           <Ionicons name="alert-circle" size={42} color="#ef4444" />
           <Text className="mt-3 text-center text-typography-default dark:text-typography-white">
-            Une erreur est survenue lors du chargement des notifications.
+            {t("notification.error_on_loading")}
           </Text>
           <Pressable onPress={()=> dispatch(getNotification(userID))} className="mt-4 px-4 py-2 rounded-md bg-primary-500">
-            <Text className="text-white font-semibold">Réessayer</Text>
+            <Text className="text-white font-semibold">{t("notification.try_again")} </Text>
           </Pressable>
         </View>
       </View>
@@ -329,7 +333,7 @@ export default function NotificationsScreen() {
         {items.length === 0 ? (
           <View className="flex-1 items-center justify-center px-8">
             <Ionicons name="notifications-off" size={48} color="#9CA3AF" />
-            <Text className="mt-3 text-typography-gray">Aucune notification pour le moment</Text>
+            <Text className="mt-3 text-typography-gray">{t("notification.no_notifications")} </Text>
           </View>
         ) : (
           <FlatList<Notification>
@@ -410,7 +414,7 @@ export default function NotificationsScreen() {
                   disabled={selected.id===undefined || selected.id === null}
                   className="px-3 py-2 rounded-md bg-error-400 active:opacity-90 ml-auto"
                 >
-                  <Text className="text-white font-semibold">Supprimer</Text>
+                  <Text className="text-white font-semibold">{t("delete")}</Text>
                 </Pressable>
               )}
             </View>

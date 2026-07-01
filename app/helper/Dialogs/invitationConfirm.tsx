@@ -19,7 +19,7 @@ import { View } from 'react-native';
       inscriptionFees: number;
     }
     export default function InvitationConfirm({isOpen, onClose, onConfirm, inscriptionFees}: InvitationConfirmProps) {  
-    //   const {t}= useTranslation("competition");
+      const {t}= useTranslation("competition");
       return (
         <View>
           <AlertDialog isOpen={isOpen} onClose={onClose}>
@@ -27,18 +27,18 @@ import { View } from 'react-native';
             <AlertDialogContent className="w-[85%] max-w-[90%] gap-4 items-center">
               <AlertDialogHeader>
               <Heading className="text-typography-950 font-semibold" size="xl">
-                  {/* {t("mycompetition.confirmModal.title")} */}
-                    Confirmation d'Inscription
+                  {t("mycompetition.invitationPrompt.title")}
+                    
               </Heading>
             </AlertDialogHeader>
             <AlertDialogBody className="mt-3 mb-4">
               <Text size="md">
-              {/* {t("mycompetition.confirmModal.text")} */}
-              Cette compétition exige des frais de participation... vous serez debité d'un montant de {inscriptionFees.toLocaleString('fr-FR')} XAF.
+              {t("mycompetition.invitationPrompt.text")}
                {' \n'}
               
               {/* {t("mycompetition.confirmModal.text2")} */}
-              Voulez vous confirmer votre participation ?
+              {t("mycompetition.invitationPrompt.subtext", {inscriptionFees: inscriptionFees.toLocaleString("fr-FR")})}
+
               </Text>
             </AlertDialogBody>
             <AlertDialogFooter> 
@@ -48,12 +48,11 @@ import { View } from 'react-native';
                 size="sm"
               >
                 <ButtonText>
-                   {/* {t("mycompetition.confirmModal.cancel")} */}
-                   Je confirmee
+                   {t("mycompetition.invitationPrompt.joinBtn")}
                 </ButtonText>
               </Button>
               <Button size="sm" onPress={onClose} action="negative">
-                <ButtonText> Annuler </ButtonText>
+                <ButtonText> {t("mycompetition.invitationPrompt.ignoreBtn")} </ButtonText>
               </Button>
             </AlertDialogFooter>
             </AlertDialogContent>

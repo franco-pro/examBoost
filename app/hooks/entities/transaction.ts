@@ -9,5 +9,6 @@ export interface Transaction{
         |'COMPETITION_FEES_RECEIVED'
     amount: number,
     created_at: any,
-    PID: any
+    PID: any,
+    status: any
 } 

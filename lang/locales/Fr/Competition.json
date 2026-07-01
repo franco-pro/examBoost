@@ -213,6 +213,13 @@
      },
      "all": "Tout"
   },
+  "invitationPrompt": {
+    "title": "Confirmation d'inscription",
+    "text": "Cette compétition exige des frais de participation... vous serez debité d'un montant de {{inscriptionFees}} XAF",
+    "subtext": "Voulez vous confirmer votre participation ?",
+    "joinBtn": "Je confirme",
+    "ignoreBtn": "Ignorer l'invitation"
+  },
   "information": {
     "more_info": "Informations supplémentaires",
     "delete_modal": {

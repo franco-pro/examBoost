@@ -45,9 +45,10 @@ export default function SettingsScreen() {
 
   const currentUser = useSelector((s: RootState) => s.user.user);
   // const userID = currentUser?.id;
-  const [isLoaderShow, setShowLoader] = useState(false);
+ 
   const {user,loading} = useSelector((s: RootState) => s.user);
   const userID = user?.id;
+  const [isLoaderShow, setShowLoader] = useState(false);
 const logoutHandle = async () => {
   disconnectAllSockets();
 
@@ -236,12 +237,12 @@ const logoutHandle = async () => {
           />
 
            {
-            currentUser?.role.toLowerCase() == "superadmin" ? (
+            user?.role.toLowerCase() == "superadmin" ? (
               <SettingsItem  color="#F59E0B" icon="shield-checkmark" label="Admin Dashboard" onPress={() => router.push("/dev-admin/pages")} />
             ) : null
             } 
             {
-            currentUser?.role.toLowerCase() == "admin" ? (
+            user?.role.toLowerCase() == "admin" ? (
               <SettingsItem color="#16A34A" icon="shield-checkmark" label="Admin Dashboard" onPress={() => router.push("/others-admin/teacher-partner.page")} />
             ) : null
             }

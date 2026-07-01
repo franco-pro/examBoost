@@ -70,10 +70,10 @@ export default function Index() {
   // console.log("LANG:", i18n.language);
   // console.log("WELCOME:", t("accueil.welcome"));
   const dispatch = useDispatch<any>();
-  const { user, others, accessToken, isAuthenticated } = useSelector(
+  const { user, others, accessToken, isAuthenticated, depositActionStatut } = useSelector(
     (state: RootState) => state.user,
   );
-const wallet = Number(user?.wallet).toLocaleString("Fr-fr")
+const wallet = Number(user?.wallet).toLocaleString("fr-FR")
   // useEffect(() => {
   // console.log("isauth: ", isAuthenticated)
   // if (!isAuthenticated) {
@@ -81,7 +81,6 @@ const wallet = Number(user?.wallet).toLocaleString("Fr-fr")
   // }
   // }, [navigation, isAuthenticated]);
   // console.log("accestoken: ", accessToken);
-console.log("users: ", user, "image: ", user?.imgUrl);
   //Gestion des proprietes de pack
   const currentUserId = user?.id;
   const packsQuery = usePacksQuery(currentUserId ?? 0);
@@ -98,7 +97,6 @@ console.log("users: ", user, "image: ", user?.imgUrl);
     useCallback(() => {
       // packsQuery.refetch();
       loadRecent();
-
       return ()=>{
         dispatch(setSelectedCompetitionNull())
       }
@@ -312,10 +310,22 @@ console.log("users: ", user, "image: ", user?.imgUrl);
       >
         <View className="p-5 bg-[#E8F5A80] flex-1">
           <TouchableOpacity onPress={()=> navigation.push("/others-admin/submit-doc/submit")}><Text>teacher</Text></TouchableOpacity>
-          <Text className="text-2xl font-bold">
-            {t("accueil.welcome")},{" "}
-            {user?.username || user?.surname || "Unknown"} 👋
-          </Text>
+          <View className="flex-row items-center justify-between">
+              <Text className="flex-1 text-2xl font-bold mr-4">
+                {t("accueil.welcome")},{" "}
+                {user?.username || user?.surname || "Unknown"} 👋
+              </Text>
+
+              <TouchableOpacity
+                onPress={() => navigation.push("/payment-transactions/deposit")}
+                className="bg-orange-500 px-4 h-12 rounded-lg flex-row items-center justify-center"
+              >
+                <Icon as={PlusCircle} className="text-white mr-2" />
+                <Text className="text-white font-semibold">
+                  {t("accueil.load")}
+                </Text>
+              </TouchableOpacity>
+            </View>
           <Card
             size={"lg"}
             variant={"filled"}
@@ -350,11 +360,10 @@ console.log("users: ", user, "image: ", user?.imgUrl);
                 </View>
                 <View className="flex-row items-center gap-4">
                   <Text className="text-white text-2xl ">
-                    {user ? wallet: "----"} Fcfa
+                    {user ? wallet: "----"} XAF
+                
                   </Text>
-                  <TouchableOpacity onPress={()=> navigation.push("/users")} className="text-white text-2xl " >
-                    <Icon as={PlusCircle} className="text-white"/>
-                  </TouchableOpacity>
+                 
                 </View>
               </View>
               <View className="transaction gap-3 flex-row items-center ">

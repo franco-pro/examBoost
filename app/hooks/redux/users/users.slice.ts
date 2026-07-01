@@ -29,6 +29,7 @@ interface UserState {
   loading?: boolean;
   error?: any;
   others?: any;
+  depositActionStatut: "FAILED"|"COMPLETED"|"NO ACTION",
   isAuthenticated: boolean;
 }
 
@@ -38,7 +39,8 @@ const initialState: UserState = {
   // error: null,
   accessToken: null,
   refreshToken: null,
-  isAuthenticated:false
+  isAuthenticated:false,
+  depositActionStatut: "NO ACTION"
   // others: null
 };
 
@@ -205,14 +207,17 @@ export const userSlice = createSlice({
       }
     },
 
-    setAllNotifAsRead: (state, action)=> {
+    setAllNotifAsRead: (state)=> {
       if (state.others.notification && Array.isArray(state.others.notification)) {
-        state.others.notification = state.others.notification.map((notif: any) => {
-          return {
-            ...notif,
-            isRead: true
-          }
-        })
+        state.others.notification = []
+      }
+    },
+
+    addNotif: (state, action) => {
+      if (state.others.notification && Array.isArray(state.others.notification)) {
+        state.others.notification.unshift(action.payload)
+      } else {
+        state.others.notification = [action.payload]
       }
     },
 
@@ -221,6 +226,12 @@ export const userSlice = createSlice({
         state.user.wallet = action.payload
       } else {
         console.log("le state dans updateBalanceUser: ", state)
+      }
+    },
+
+    updateDepositAction: (state, action)=>{
+      if(action.payload){
+        state.depositActionStatut = action.payload;
       }
     }
   },
@@ -309,6 +320,9 @@ export const {
   updateBalanceUser,
   updateProfile,
   updateProfileImg,
-  updateTokens
+  updateTokens,
+  setAllNotifAsRead,
+  addNotif,
+  updateDepositAction
 } = userSlice.actions;
 export default userSlice.reducer;

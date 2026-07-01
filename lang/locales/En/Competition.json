@@ -211,6 +211,13 @@
    },
    "all": "All"
 },
+"invitationPrompt": {
+  "title": "Registration confirmation",
+  "text": "This competition requires an entry fee... you will be charged {{registrationFees}} XAF",
+  "subtext": "Are you sure you want to join this competition ?",
+  "joinBtn": "Confirm",
+  "ignoreBtn": "Cancel"
+},
 "information": {
   "more_info": "Additional Information",
   "delete_modal": {

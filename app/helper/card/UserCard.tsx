@@ -1,6 +1,6 @@
 // components/UserCard.tsx
 
-import User from "@/app/hooks/entities/user";
+import { User } from "@/app/features/user/types";
 import { Avatar, AvatarFallbackText, AvatarImage } from "@/components/ui/avatar";
 import { Box } from "@/components/ui/box";
 import { HStack } from "@/components/ui/hstack";
@@ -19,8 +19,12 @@ export function UserCard({ user, onPress }: UserCardProps) {
       <Box className="bg-white mx-4 my-2 p-4 rounded-2xl shadow-sm">
         <HStack className="items-center gap-3">
           <Avatar size="md">
-            <AvatarImage source={{ uri: user.imgUrl }} />
-            <AvatarFallbackText>{user.surname}</AvatarFallbackText>
+             {user.imgUrl ? (
+                          <AvatarImage source={{ uri: user.imgUrl }} />
+                        ) : 
+                        <AvatarFallbackText>{user.username}</AvatarFallbackText>
+                        
+                        }
           </Avatar>
 
           <VStack className="flex-1">

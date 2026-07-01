@@ -39,12 +39,12 @@ export default function DocumentListScreen() {
   const [search, setSearch] = useState("");
   const [activeType, setActiveType] = useState<DocType | "ALL">("ALL");
   const [validFilter, setValidFilter] = useState<"ALL" | "validated" | "pending">("ALL");
-  const {documentsList:DOCS, isSendingSuspended} = useAppSelector(state => state.documents);
+  const {documentsList, isSendingSuspended, loading} = useAppSelector(state => state.documents);
   const {niveauxList} = useAppSelector(state => state.niveaux);
   
   const doGlobalActivation = async ()=>{
     try {
-     await apiClient.get(isSendingSuspended ? '/document/global/suspension':'/document/global/activation');
+     await apiClient.get(isSendingSuspended ?  '/document/global/activation':'/document/global/suspension');
      dispatch(updateSendingStatut(!isSendingSuspended));
       
     } catch (error: any) {
@@ -58,9 +58,9 @@ export default function DocumentListScreen() {
   }
     const handleToggle = () => {
       Alert.alert(
-        isSendingSuspended ? "Désactiver": "Activer",
+        isSendingSuspended ? "Activer" :"Désactiver",
         isSendingSuspended
-          ? "Voulez-vous désactiver la soumission générale des documents par les profs ?":"Voulez-vous activer la soumission générale des documents ?",
+          ? "Voulez-vous activer la soumission générale des documents ?":"Voulez-vous désactiver la soumission générale des documents par les profs ?",
         [
           {
             text: "Annuler",
@@ -73,6 +73,15 @@ export default function DocumentListScreen() {
         ]
       );
     };
+    
+    useEffect(()=>{
+      if(documentsList.length === 0){
+        dispatch(getAllDocs());   
+      }
+      if(niveauxList.length === 0){
+        dispatch(getAllNiveaux());
+      }
+    },[])   
 
   // const DOCS: Document[] = [
   //   {
@@ -195,20 +204,16 @@ export default function DocumentListScreen() {
   // ];
   const dispatch = useAppDispatch();
 
-  useFocusEffect(
-    useCallback(() => {
-      if(DOCS.length === 0){
-          dispatch(getAllDocs());      
-      }
+  // useFocusEffect(
+  //   useCallback(() => {
+     
 
-      if(niveauxList.length === 0){
-        dispatch(getAllNiveaux());
-      }
-    }, [])
-  )
+     
+  //   }, [])
+  // )
 
   const filtered = useMemo(() => {
-    return DOCS.filter((d) => {
+    return documentsList.filter((d) => {
       const matchType = activeType === "ALL" || d.type === activeType;
       const matchValid =
         validFilter === "ALL" ||
@@ -220,12 +225,12 @@ export default function DocumentListScreen() {
         d.subject.toLowerCase().includes(search.toLowerCase());
       return matchType && matchValid && matchSearch;
     });
-  }, [activeType, validFilter, search]);
+  }, [documentsList, activeType, validFilter, search]);
 
   const countForType = (t: DocType | "ALL") =>
     t === "ALL"
-      ? DOCS.length
-      : DOCS.filter((d) => d.type === t).length;
+      ? documentsList.length
+      : documentsList.filter((d) => d.type === t).length;
 
   return (
     <View className='flex-1 bg-gray-50 pt-[40px] pb-[50px] px-4'>
@@ -286,7 +291,7 @@ export default function DocumentListScreen() {
                 activeType === "ALL" && styles.typeChipTextActive,
               ]}
             >
-              Tous ({DOCS.length})
+              Tous ({documentsList.length})
             </Text>
           </TouchableOpacity>
 
@@ -353,7 +358,7 @@ export default function DocumentListScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {filtered.length === 0 ? (
+        {filtered.length === 0 && !loading ? (
           <View style={styles.empty}>
             <Text style={styles.emptyIcon}><Ionicons name="alert-sharp" size={24} color="black" /></Text>
             <Text style={styles.emptyTitle}>Aucun document</Text>
@@ -361,9 +366,18 @@ export default function DocumentListScreen() {
               Modifiez les filtres pour afficher des résultats.
             </Text>
           </View>
-        ) : (
+        ) : filtered.length !== 0 && !loading ? (
           filtered.map((doc) => <DocumentCard key={doc.id} doc={doc} />)
-        )}
+        ): (
+          <View style={styles.empty}>
+            <Text style={styles.emptyIcon}><Ionicons name="hourglass" size={24} color="black" /></Text>
+            <Text style={styles.emptyTitle}>Chargement...</Text>
+            <Text style={styles.emptyText}>
+              Veuillez patienter pendant le chargement des documents.
+            </Text>
+          </View>
+        ) 
+        }
         <View style={{ height: 40 }} />
       </ScrollView>
 
@@ -371,11 +385,11 @@ export default function DocumentListScreen() {
         <Button
           onPress={handleToggle}
           className={`h-16 w-20 rounded-full shadow-lg ${
-            isSendingSuspended ?  "bg-orange-500" : "bg-green-500"
+            isSendingSuspended ?   "bg-green-500" : "bg-orange-500"
           }`}
         >
           <ButtonText className="text-sm font-bold text-white">
-            {isSendingSuspended ? "OFF" : "ON"}
+            {isSendingSuspended ? "ON" : "OFF"}
           </ButtonText>
         </Button>
       </Box>

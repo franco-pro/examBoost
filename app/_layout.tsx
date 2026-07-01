@@ -15,6 +15,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import "@/lang/i18n";
 import i18n from "@/lang/i18n";
 import { useEffect } from "react";
+import Toast from "react-native-toast-message";
+import { toastConfig } from "./config/toast.config";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +51,7 @@ export default function RootLayout() {
           </GestureHandlerRootView>
         </GluestackUIProvider>
       </PersistGate>
+      <Toast config={toastConfig} />  
     </Provider>
   );
 }

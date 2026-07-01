@@ -19,7 +19,7 @@ export default function DocumentHttp(){
         updateDoc: async (id: number, data: any)=>{
             try {
                 const response = await apiClient.patch(baseUrl+String(id), data);
-                return {data: response ? {id: id, ...data}:{id: id, ...data}, error: null};
+                return {data: response.data ? {id: id, ...response.data}:{id: id, ...data}, error: null};
                     
             } catch (error: any) {
                 return {data: null, error: error.response.data.message};
@@ -29,7 +29,7 @@ export default function DocumentHttp(){
         delete: async (id: number)=>{
             try {
                 const response = await apiClient.delete(baseUrl+String(id));
-                return {data: response.data ? id:id, error: null};
+                return {data: response.data.done ? id:null, error: null};
                     
             } catch (error: any) {
                 return {data: null, error: error.response.data.message};

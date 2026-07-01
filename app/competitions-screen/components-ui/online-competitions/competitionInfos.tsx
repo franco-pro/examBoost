@@ -54,15 +54,15 @@ export default function CompetitionInfos({data, competitionInfo}: CompetitionInf
                 </Text>
                 <Box className="flex-row">
                     <Avatar size="sm" className="mr-3">
-                    <AvatarFallbackText>
-                    {data.creatorName ? data.creatorName.split(" ").map((n) => n[0]).join(""): 'O'}
-                    </AvatarFallbackText>
-                    <AvatarImage
-                        source={{
-                        uri: data.imgUrl,
-                        }}
-                        alt="image"
-                    />
+
+                    {data.imgUrl ? (
+                        <AvatarImage source={{ uri: data.imgUrl }} alt="image" />
+                    ) : 
+                        <AvatarFallbackText>
+                                {data.creatorName ? data.creatorName.split(" ").map((n) => n[0]).join(""): 'O'}
+                        </AvatarFallbackText>
+                    }
+                
                     </Avatar>
                     <VStack>
                     <Heading size="sm" className="mb-1 text-typography-white">
