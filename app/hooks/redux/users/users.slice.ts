@@ -283,6 +283,21 @@ export const userSlice = createSlice({
           state.loading = true;
           state.error = null;
         })
+    
+    //delete user
+      .addCase(deleteUser.fulfilled, (state, action) => {
+        state.loading = false
+          state.user = null
+      })
+      .addCase(deleteUser.pending, (state, action) => {
+        state.loading = true
+        state.error = null
+      })
+    
+      .addCase(deleteUser.rejected, (state, action) => {
+        state.loading = true
+        state.error = action.payload as string
+    })
         
   },
 });

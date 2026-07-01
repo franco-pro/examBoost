@@ -87,11 +87,12 @@ export default function DocumentViewerPage() {
     console.log("url dans absolute: ", url, correctionIdDocument, correctionIdCorrige)
     // const url = correction ? correction?.url : doc.url;
     const raw = (
-      activeTab === "corrections" ? buildFileUrl(url) : buildFileUrl(document?.url ?? "")
+      activeTab === "corrections" ? (url) : (document?.url ?? "")
     ) as string;
     if (/^http?:\/\//i.test(raw)) return raw;
-    if (!baseApi) return raw;
-    return raw.startsWith("/") ? `${baseApi}${raw}` : `${baseApi}/${raw}`;
+    if (!baseApi) return raw; 
+    console.log("baseurl:", baseApi)
+    return raw.startsWith("/") ? `${baseApi}${raw}` : `${raw}`;
   }, [activeTab, baseApi, corrige?.url, document]);
 
   const [localPdfUri, setLocalPdfUri] = useState<string | null>(null);
