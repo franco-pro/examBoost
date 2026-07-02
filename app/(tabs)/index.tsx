@@ -317,7 +317,7 @@ const wallet = Number(user?.wallet).toLocaleString("fr-FR")
               </Text>
 
               <TouchableOpacity
-                onPress={() => navigation.push("/payment-transactions/deposit")}
+                onPress={() => navigation.push({ pathname: "/payment-transactions/deposit", params: {type: "DEPOSIT"}})}
                 className="bg-orange-500 px-4 h-12 rounded-lg flex-row items-center justify-center"
               >
                 <Icon as={PlusCircle} className="text-white mr-2" />

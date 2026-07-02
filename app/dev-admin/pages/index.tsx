@@ -55,14 +55,14 @@ export default function DevAdmin() {
       }[] = [
         {
           nom: "Examens créés",
-          chiffre: "+"+competitions.total.toString().toLocaleString("fr-FR"),
+          chiffre: competitions.total.toString().toLocaleString("fr-FR")+"+",
           icone: <Ionicons name="trophy-outline" size={28} color="#f97316" />,
           bgColor: "bg-orange-100",
           textColor: "text-orange-600",
         },
         {
           nom: "Users inscrits",
-          chiffre: "+"+totalUsers.total.toString().toLocaleString("fr-FR"),
+          chiffre: totalUsers.total.toString().toLocaleString("fr-FR")+"+",
           icone: <FontAwesome5 name="users" size={25} color="#3b82f6" />,
           bgColor: "bg-blue-100",
           textColor: "text-blue-600",

@@ -14,6 +14,7 @@ import { getAllTransations } from "../hooks/redux/transactions/transaction.thunk
 import { RootState } from "../hooks/redux/store";
 import { useSelector } from "react-redux";
 import { toastConfig } from "../config/toast.config";
+import { RefreshControl } from "react-native";
 
 export default function Transactions() {
   const [loadDone, setLoadDone] = useState(false);
@@ -31,6 +32,11 @@ export default function Transactions() {
     CREATE_COMPETITION:  <Text>{t("createCompetition")}</Text>,
     COMPETITION_FEES: <Text>{t("competition_fess")}</Text>,
   }
+
+  const onRefresh = async () => {
+    dispatch(getAllTransations(userId ?? 0));
+    
+  };
 
   useFocusEffect(
     useCallback(()=>{
@@ -96,7 +102,14 @@ export default function Transactions() {
         }
       />
 
-      <ScrollView className="mt-5">
+      <ScrollView className="mt-5"
+        refreshControl={
+          <RefreshControl
+            refreshing={loading}
+            onRefresh={onRefresh}
+          />
+        }
+      >
         {filteredTransactions && filteredTransactions.length !=0 && filteredTransactions.map((game, index) => {
           return (
             <TouchableOpacity
@@ -126,7 +139,12 @@ export default function Transactions() {
                 {transType[game?.type as keyof typeof transType]}
                   
                 <Text className="text-xs mt-[7px] text-gray-400">PID: {game?.PID}</Text>
-                <Text className={"text-xs mt-[7px] "+ (game?.status === "COMPLETED" ? "text-green-500":"text-error-500") } >{ game.status === "COMPLETED" ? "Done":"Failed" }</Text>
+                <Text className={"text-xs mt-[7px] "+ (game?.status === "COMPLETED" 
+                                                                                  ? "text-green-500":
+                                                                                 game.status === "PENDING" ? "text-yellow-500" :
+                                                                                  "text-error-500") } >{ game.status === "COMPLETED" ? t('completed') : 
+                                                                                                                                                          game.type === 'WITHDRAWAL' && game.status === "PENDING" ? t('pending') :
+                                                                                                                                                          "Failed" }</Text>
                 
               </View>
 

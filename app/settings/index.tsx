@@ -222,7 +222,7 @@ const logoutHandle = async () => {
             icon="wallet"
             label={t("setting.withdraw")}
             color="#16A34A"
-            onPress={() => router.push("/settings/withdraw" as any)}
+            onPress={() => router.push({ pathname: "/payment-transactions/deposit", params: {type: "WITHDRAWAL"}})}
           />
 
           <SettingsItem
