@@ -43,6 +43,9 @@ export default function SettingsScreen() {
   const halfWidth = width * 0.9;
   // console.log("width: ", width*0.5)
 
+  const currentUser = useSelector((s: RootState) => s.user.user);
+  // const userID = currentUser?.id;
+ 
   const {user,loading} = useSelector((s: RootState) => s.user);
   const userID = user?.id;
   const [isLoaderShow, setShowLoader] = useState(false);
@@ -56,6 +59,7 @@ const logoutHandle = async () => {
     navigation.replace("/(auth)/login");
     setShowLoader(false);    
   }, 3000);
+  navigation.replace("/(auth)/login");
   };
 
   const handleDelete = async () => {
