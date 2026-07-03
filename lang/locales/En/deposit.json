@@ -54,7 +54,8 @@
         "error" : {
           "title": "Error",
           "text": "An error occurred during your transaction!",
-          "insufficient_balence": "Insufficient balance to complete the transaction."
+          "insufficient_balence": "Insufficient balance to complete the transaction.",
+          "invalid_amount": "The minimum withdrawal amount is 1000 XAF."
         }
       }
   }

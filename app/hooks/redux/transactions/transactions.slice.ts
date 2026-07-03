@@ -17,6 +17,13 @@ const transactionSlice = createSlice({
             if(action.payload){
                 state.transactionList.push(action.payload);
             }
+        },
+        updateTransactionStatus(state, action){
+            const { transactionId, newStatut } = action.payload;
+            const transactionIndex = state.transactionList.findIndex(t => t.id === transactionId);
+            if(transactionIndex !== -1){
+                state.transactionList[transactionIndex].status = newStatut;
+            }
         }
     },
     extraReducers: (builder)=>{
@@ -45,5 +52,6 @@ const transactionSlice = createSlice({
 export default transactionSlice.reducer;
 
 export const {
-    addTransaction
+    addTransaction,
+    updateTransactionStatus
 } = transactionSlice.actions

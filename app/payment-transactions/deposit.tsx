@@ -21,7 +21,7 @@ import { toastConfig } from "../config/toast.config";
 import apiClient from "../api/apiClient";
 import { connectNotificationsSocket } from "../hooks/services/socket/socket.init";
 import { updateBalanceUser, updateDepositAction } from "../hooks/redux/users/users.slice";
-import { addTransaction } from "../hooks/redux/transactions/transactions.slice";
+import { addTransaction, updateTransactionStatus } from "../hooks/redux/transactions/transactions.slice";
 import { Transaction } from "../hooks/entities/transaction";
 
 export default function Deposit() {
@@ -110,7 +110,15 @@ export default function Deposit() {
         console.log('error', error);
       } 
     }else{
+      if(Number(amount) < 1000) {
+        
+        showToast(t("withdrawal.error.invalid_amount"), t("withdrawal.error.title"), "error");
+        return;
+      }
+      
       setLoading(true);
+      let transactionID: number = 0;
+
       const userWallet = user && user.wallet;
 
       if(userWallet && Number(userWallet) < Number(amount)){
@@ -133,8 +141,11 @@ export default function Deposit() {
            const response = await apiClient.post("/payment/payout", dto);
 
             if(response.data && response.data.success){
+              transactionID = response.data.transaction.id;
+              dispatch(updateBalanceUser((user?.wallet ?  (Number(user?.wallet) - Number(amount)): 0))).payload;
+
               showToast(t("withdrawal.pay_done.text", {amount: amount}), t("withdrawal.pay_done.title"), "success");
-              dispatch(updateBalanceUser((user?.wallet ?  (Number(user?.wallet) - Number(amount)): 0)));
+              console.log('response user reduicing', user?.wallet);
               dispatch(addTransaction(response.data.transaction));
               setLoading(false);
 
@@ -143,9 +154,12 @@ export default function Deposit() {
           setLoading(false);
         } catch (error: any) {
           setLoading(false);
+          dispatch(updateDepositAction("FAILED"));
+          dispatch(updateTransactionStatus({transactionId: transactionID, newStatut: "FAILED"}));
 
+          // dispatch(updateBalanceUser((user?.wallet ?  (Number(user?.wallet) + Number(amount)): 0))); // if the transaction failed, we add back the amount to the user wallet 
+          
           showToast('Une erreur est survenue: ' + error, "Error", "error");
-          console.log('error', error);
           
         } 
         
@@ -353,6 +367,14 @@ export default function Deposit() {
             className="h-14 bg-white border border-gray-200 rounded-xl px-4 text-base"
           />
 
+          {type === "WITHDRAWAL" && Number(amount) < 1000 && (
+            <Text className="text-red-600 text-sm mt-2">
+            
+              {t("withdrawal.error.invalid_amount")}
+
+            </Text>
+          )}
+
         </View>
 
 
@@ -368,7 +390,7 @@ export default function Deposit() {
         >
 
           <Text className="text-white text-lg font-bold">
-          {t("deposit.form.btnText")}
+          {type === "DEPOSTI" ? t("deposit.form.btnText"):t("withdrawal.form.btnText")}
           </Text>
 
         </TouchableOpacity>

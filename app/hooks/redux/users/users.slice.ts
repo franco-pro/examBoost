@@ -222,6 +222,7 @@ export const userSlice = createSlice({
     },
 
     updateBalanceUser: (state, action) => {
+      console.log('value', action.payload)
       if (state.user) {
         state.user.wallet = action.payload
       } else {
