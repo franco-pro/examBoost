@@ -102,8 +102,8 @@ export const userDatas = createAsyncThunk(
   async (_, { rejectWithValue, getState }) => {
     try {
       // console.log("enter")
-      const state: RootState = getState() as RootState;
-      const token = state?.user?.accessToken;
+      const state = getState() as { user?: UserState | null };
+      const token = state.user?.accessToken;
       if (!token) throw new Error("No token Found !");
       const datas = await authService.userDatas(token);
       // console.log("enter userData with token:", token);
@@ -222,7 +222,6 @@ export const userSlice = createSlice({
     },
 
     updateBalanceUser: (state, action) => {
-      console.log('value', action.payload)
       if (state.user) {
         state.user.wallet = action.payload
       } else {

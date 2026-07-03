@@ -6,7 +6,7 @@ export type WebFile = File;
 export type RNFile = { uri: string; name: string; type: string };
 
 export async function getUserByIdHttp(userID: number): Promise<User> {
-  const res = await http.get(`/users/${userID}`);
+  const res = await apiClient(`/users/${userID}`);
   return res.data as User;
 }
 

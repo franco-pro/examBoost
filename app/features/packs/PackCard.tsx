@@ -1,13 +1,17 @@
-import { formatDays, formatPriceXOF, isNewSince } from '@/app/utils/format';
-import { Ionicons } from '@expo/vector-icons';
-import { memo, useEffect, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
-import type { Pack } from './types';
-import { packProps } from '@/app/api/packService';
-import apiClient from '@/app/api/apiClient';
-import { useQuery } from '@tanstack/react-query';
-import { usePackSubscription } from './hooks.rq';
+import React, { memo } from "react";
+import { View, Text, Pressable } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
 
+interface packProps {
+  id: string | number;
+  name: string;
+  description: string;
+  price: number;
+  durationDays: number;
+  remainingDays: number;
+  isSubscribed?: boolean;
+}
 
 export default memo(function PackCard({
   pack,
@@ -18,119 +22,173 @@ export default memo(function PackCard({
   onPress?: () => void;
   onPressCTA?: () => void;
 }) {
-  const { name, description, price, durationDays, createdAt,id, remainingDays } = pack;
+  const { name, description, price, durationDays, remainingDays } = pack;
 
-  // const {data: isSubscribed} =  usePackSubscription(id)
   const canContinue = !!pack.isSubscribed;
-  const canBuy = !!!pack.isSubscribed;
-  const ctaLabel = canContinue ? 'Continuer' : canBuy ? 'Acheter' : 'Indisponible';
-// console.log("all pack dans packCard :", pack)
+  const canBuy = !pack.isSubscribed;
+  const ctaLabel = canContinue
+    ? "Continuer"
+    : canBuy
+      ? "Acheter"
+      : "Indisponible";
+
+  // Calcul dynamique du pourcentage restant de la barre de progression
+  const progressPercentage =
+    durationDays > 0
+      ? Math.min(Math.max((remainingDays / durationDays) * 100, 0), 100)
+      : 0;
+
+  // Fonctions de formatage locales (Remplacez par vos fonctions globales si nécessaire)
+  const formatDays = (days: number) => `${days} Jours`;
+  const formatPriceXOF = (amount: number) => `${amount.toLocaleString()} XAF`;
+
   return (
     <Pressable
-      onPress={() => onPress}
-      className="rounded-2xl overflow-hidden bg-background-light dark:bg-background-dark border border-outline-100 dark:border-outline-800 transition-all duration-150 web:hover:-translate-y-0.5 active:opacity-95"
+      onPress={onPress}
+      className="rounded-3xl overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 shadow-sm active:opacity-98 m-2"
       accessibilityRole="button"
       accessibilityLabel={`Pack ${name}`}
     >
-      {/* Header icône avec gradient web-only et glow conditionnel */}
-      <View
-        className="relative w-full h-36 items-center justify-center border-b border-outline-100 dark:border-outline-800"
-        style={{ backgroundColor: "rgba(25, 28, 92, 0.09)" }}
+      {/* 1. HEADER : Dégradé + Icônes en arrière-plan */}
+      <LinearGradient
+        colors={["#1D35D9", "#3B59F4"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        className="relative w-full h-36 flex-row items-center justify-between px-5 overflow-hidden"
       >
-        {/* Pastille icône */}
-        <View
-          className={`${canContinue ? "ring-2 ring-primary-defaultOrange/40" : "ring-1 ring-primary-defaultOrange/30"} w-14 h-14 rounded-full bg-primary-defaultOrange items-center justify-center`}
-        >
-          <Ionicons
-            name={canContinue ? "star" : "layers"}
-            size={24}
-            color="#181c5c"
-          />
+        {/* Grand cercle transparent avec l'icône de gauche */}
+        <View className="absolute -left-5 -top-5 w-40 h-40 rounded-full bg-white/10 items-center justify-center">
+          <View className="w-24 h-24 rounded-full border border-white/10 items-center justify-center">
+            <Ionicons
+              name={canContinue ? "star" : "layers"}
+              size={32}
+              color="white"
+            />
+          </View>
         </View>
-        {/* Gradient subtil bleu en haut (toutes plateformes) */}
-        <View className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-[rgba(24,28,92,0.30)] to-transparent pointer-events-none" />
-      </View>
 
-      <View className="p-3 gap-2">
-        <View className="flex-row items-center gap-2">
-          {typeof pack.isSubscribed === "boolean" ? (
-            <View
-              className={`px-2 py-0.5 rounded-md ${canBuy ? "bg-info-500" : "bg-info-500"}`}
-            >
-              <Text className="text-white text-xxs font-bold">
-                {canBuy ? "Disponible" : "Actif "}
-              </Text>
-            </View>
-          ) : null}
+        {/* Deuxième icône livre transparente en filigrane à droite */}
+        <View className="absolute -right-4 bottom-1 opacity-10 rotate-12">
+          <Ionicons name="book" size={100} color="white" />
+        </View>
+
+        {/* Textes du Header (Alignés à droite) */}
+        <View className="flex-1 items-end pl-28 z-10 py-5 pr-5">
           <View
-            className={`px-2 py-0.5 rounded-md ${canContinue ? "bg-success-500" : "bg-warning-500/90"}`}
+            className={`px-2.5 py-0.5 rounded-full mb-1 flex-row items-center gap-1 ${canContinue ? "bg-emerald-500" : "bg-amber-500"}`}
           >
-            <Text className="text-white text-xxs font-bold">
-              {canContinue ? "Payé" : "Non payé"}
+            <Ionicons
+              name={canContinue ? "checkmark-circle" : "eye"}
+              size={10}
+              color="white"
+            />
+            <Text className="text-white text-[10px] font-black uppercase tracking-wider">
+              {canContinue ? "Actif" : "Non Payé"}
             </Text>
           </View>
-          {/* {isNewSince(createdAt) ? (
-            <View className="px-2 py-0.5 rounded-md bg-info-500">
-              <Text className="text-white text-xxs font-bold">Nouveau</Text>
-            </View>
-          ) : null} */}
+
+          <Text
+            className="text-white text-lg font-black text-right"
+            numberOfLines={1}
+          >
+            {name}
+          </Text>
+          <Text
+            className="text-white/80 text-xs text-right mt-0.5 leading-4"
+            numberOfLines={2}
+          >
+            {description}
+          </Text>
         </View>
+      </LinearGradient>
 
-        <Text
-          className="text-base font-extrabold text-typography-default dark:text-typography-white"
-          numberOfLines={1}
-        >
-          {name}
-        </Text>
-        <Text
-          className="text-sm text-typography-default/90 dark:text-typography-white/90"
-          numberOfLines={2}
-        >
-          {description}
-        </Text>
-
-        <View className="flex-row items-center gap-3">
-          {typeof durationDays === "number" ? (
-            <View className="flex-row items-center gap-1">
-              <Ionicons name="time" size={14} color="#6B7280" />
-              {remainingDays > 0 ? (
-                <Text className="text-xs text-typography-gray">
-                  Il vous reste :{" "}
-                  <Text className=" font-base">
-                    {formatDays(remainingDays)}
-                  </Text>
-                </Text>
-              ) : (
-                <Text className="text-xs text-typography-gray">
-                  durée du pack:{" "}
-                  <Text className="font-base">
-                    {formatDays(durationDays)}
-                  </Text>
-                </Text>
-              )}
+      {/*  BODY  */}
+      <View className="p-4 gap-4 parent">
+        <View className="duree flex-row items-center justify-between gap-3">
+          <View className="flex-1 p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-2xl border border-zinc-100/70 dark:border-zinc-800 flex-row items-center gap-3">
+            <View className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950 items-center justify-center">
+              <Ionicons name="time" size={16} color="#3B59F4" />
             </View>
-          ) : null}
-        </View>
+            <View>
+              <Text className="text-[10px] text-zinc-400 font-bold uppercase">
+                Durée
+              </Text>
+              <Text className="text-sm font-extrabold text-zinc-800 dark:text-zinc-100">
+                {formatDays(durationDays)}
+              </Text>
+            </View>
+          </View>
 
-        <View className="mt-1 flex-row items-center justify-between">
-          <View className="flex-row items-baseline gap-2">
-            {price != null ? (
-              <Text className="text-base font-extrabold text-typography-default dark:text-typography-white">
+          <View className="price flex-1 p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-2xl border border-zinc-100/70 dark:border-zinc-800 flex-row items-center gap-3">
+            <View className="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950 items-center justify-center">
+              <Ionicons name="wallet" size={16} color="#F59E0B" />
+            </View>
+            <View>
+              <Text className="text-[10px] text-zinc-400 font-bold uppercase">
+                Prix
+              </Text>
+              <Text className="text-sm font-extrabold text-zinc-800 dark:text-zinc-100">
                 {formatPriceXOF(price)}
               </Text>
-            ) : null}
+            </View>
           </View>
+        </View>
+
+        {/* Barre de progression */}
+        {canContinue && (
+          <View className="w-full gap-1.5 px-0.5">
+            <View className="flex-row justify-between items-center">
+              <Text className="text-zinc-400 dark:text-zinc-500 text-xs font-bold">
+                Validité du pack
+              </Text>
+              <Text className="text-zinc-800 dark:text-zinc-200 text-xs font-black">
+                {remainingDays > 0
+                  ? `${remainingDays} jours restants`
+                  : "Expiré"}
+              </Text>
+            </View>
+
+            <View className="flex-row items-center gap-3">
+              {/* Fond de la barre */}
+              <View className="flex-1 h-2.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                {/* Barre verte dynamique */}
+                <View
+                  className="h-full bg-emerald-500 rounded-full"
+                  style={{ width: `${progressPercentage}%` }}
+                />
+              </View>
+              {/* Pourcentage à droite */}
+              <Text className="text-emerald-500 text-xs font-black w-8 text-right">
+                {Math.round(progressPercentage)}%
+              </Text>
+            </View>
+          </View>
+        )}
+
+        {/* Ligne du bas */}
+        <View className="mt-1 pt-3 border-t border-zinc-100 dark:border-zinc-800 flex-row items-center justify-between">
+          <Text className="text-zinc-400 dark:text-zinc-500 text-xs font-medium">
+            {canContinue ? "Contenu débloqué" : "Accès non disponible"}
+          </Text>
 
           <Pressable
             onPress={ctaLabel === "Indisponible" ? undefined : onPressCTA}
-            className={`px-4 py-2 rounded-full bg-primary-defaultOrange active:opacity-90 web:hover:brightness-105 flex-row items-center gap-1`}
-            accessibilityRole="button"
-            accessibilityLabel={`Pack ${name} · ${price != null ? formatPriceXOF(price) : ""} · ${typeof durationDays === "number" ? formatDays(durationDays) : ""}`}
-            hitSlop={8}
+            className={`px-5 py-2.5 rounded-full flex-row items-center gap-1.5 shadow-sm active:scale-95 transition-transform ${
+              canContinue
+                ? "bg-secondary-custom-400 dark:bg-secondary-custom-400"
+                : "bg-secondary-custom-400"
+            }`}
           >
-            <Text className="text-primary-defaultBlue text-sm font-extrabold">
+            <Text
+              className={`text-sm font-black ${canContinue ? "text-white dark:text-zinc-900" : "text-white"}`}
+            >
               {ctaLabel}
             </Text>
+            <Ionicons
+              name={canContinue ? "arrow-forward" : "cart"}
+              size={14}
+              color={canContinue ? (canContinue ? "#FFF" : "#000") : "white"}
+            />
           </Pressable>
         </View>
       </View>

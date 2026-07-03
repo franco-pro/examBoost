@@ -21,8 +21,8 @@ export default memo(function PackHeader({
   title?: string;
 }) {
   return (
-    <SafeAreaView edges={['top', 'left', 'right']} className="bg-background-light dark:bg-background-dark">
-      <View className="px-4 pt-0 pb-3">
+    <SafeAreaView edges={['left', 'right']} className="bg-background-light dark:bg-background-dark p-0 mt-10">
+      <View className="px-4 pt-0 pb-3 ">
         {onBack ? (
           <View className="mt-1 mb-2">
             <Pressable onPress={onBack} className="flex-row items-center gap-1 active:opacity-80" accessibilityLabel={backLabel ?? 'Retour'}>
