@@ -48,7 +48,7 @@ export default function Deposit() {
         position: 'top',
         visibilityTime: 3500,
       }) 
-}
+  }
 
     const socketPay = () => {
       const socket = connectNotificationsSocket(user?.id ?? 0);
@@ -88,7 +88,7 @@ export default function Deposit() {
           customerName: user?.username + " " + user?.surname,
           userID: user && user.id,
           customerEmail: user && user.email,
-          operator: operator,
+          operator: operator === "MTN" ? "mtn_momo":"orange_money",
           customerPhone: phone
         }
   

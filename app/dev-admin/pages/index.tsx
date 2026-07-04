@@ -20,6 +20,7 @@ enum AdminActions {
     FINANCES = "finances",
     DOCUMENTS = "documents",
     NOTIF = "notif",
+    TRANSACTIONS = "transactions",
     MAJ= "maj"
 }
 export default function DevAdmin() {
@@ -115,10 +116,18 @@ export default function DevAdmin() {
       {
         icone: <Ionicons name="cash" size={28} color="#f97316" />,
         text: "Finances & comptabilité",
-        other: "Gérer les paiements et les transactions",
+        other: "Gérer les paiements",
         link: "/dev-admin/pages/finances" as const,
         docToApprove: false,
         navigationAction: AdminActions.FINANCES
+      },
+      {
+        icone: <Ionicons name="analytics-sharp" size={28} color="#f97316" />,
+        text: "Transactions",
+        other: "Gérer les transactions",
+        link: "/dev-admin/pages/transactions" as const,
+        docToApprove: false,
+        navigationAction: AdminActions.TRANSACTIONS
       },
 
       {

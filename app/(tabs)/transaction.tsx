@@ -64,7 +64,6 @@ export default function Transactions() {
   const filteredTransactions = (transactionList && transactionList.length >= 0) ? transactionList.filter((tx) =>
     filter === "ALL" ? true : tx.type === filter
     ).reverse():[];
-    console.log('transaction checker', filteredTransactions)
 
   function showToast(message: string, title: string, type: "success"|"error"){
             Toast.show({
@@ -139,13 +138,25 @@ export default function Transactions() {
                 {transType[game?.type as keyof typeof transType]}
                   
                 <Text className="text-xs mt-[7px] text-gray-400">PID: {game?.PID}</Text>
+                {
+                game?.method && <Text
+                  className={`${
+                    (game?.method === "mtn_momo")
+                      ? "text-yellow-500 "
+                      : "text-orange-500"
+                  }`}
+                >
+                  {game?.method === "mtn_momo" ? "MTN MoMo" : "Orange Money"}
+                </Text>
+                }
                 <Text className={"text-xs mt-[7px] "+ (game?.status === "COMPLETED" 
                                                                                   ? "text-green-500":
                                                                                  game.status === "PENDING" ? "text-yellow-500" :
                                                                                   "text-error-500") } >{ game.status === "COMPLETED" ? t('completed') : 
                                                                                                                                                           game.type === 'WITHDRAWAL' && game.status === "PENDING" ? t('pending') :
                                                                                                                                                           "Failed" }</Text>
-                
+
+               
               </View>
 
               <View
@@ -164,6 +175,7 @@ export default function Transactions() {
                   {game?.amount} XAF
                 </Text>
               </View>
+              
             </TouchableOpacity>
           );
         })}

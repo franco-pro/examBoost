@@ -38,7 +38,7 @@
         "title": "Error",
         "text": "An error occurred during your transaction!"
         },
-        "first_title": "Mobile Money WITHDRAWAL",
+        "first_title": "Mobile Money Withdrawal",
         "sub_text": "Make your withdrawal request quickly and securely.",
         "other_text1": "100% Secure Transaction",
         "other_text2": "Your transactions are protected and encrypted",
@@ -49,7 +49,7 @@
           "tel_valid": "✓ Valid Number",
           "operator": "Choose your operator",
           "amount": "Amount (FCFA)",
-          "btnText": "Proceed with Withdrawal Request"
+          "btnText": "Proceed With Withdrawal Request"
         },
         "error" : {
           "title": "Error",

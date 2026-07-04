@@ -59,7 +59,6 @@ const logoutHandle = async () => {
     navigation.replace("/(auth)/login");
     setShowLoader(false);    
   }, 3000);
-  navigation.replace("/(auth)/login");
   };
 
   const handleDelete = async () => {

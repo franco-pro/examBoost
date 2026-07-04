@@ -151,7 +151,7 @@ export default function DocAdmin() {
       };
   
       fetchData();
-    }, [user]) // Seulement dépendant de user
+    }, [user])
   );
 
 
