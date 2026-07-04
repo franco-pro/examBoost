@@ -23,6 +23,7 @@ import { connectNotificationsSocket } from "../hooks/services/socket/socket.init
 import { updateBalanceUser, updateDepositAction } from "../hooks/redux/users/users.slice";
 import { addTransaction, updateTransactionStatus } from "../hooks/redux/transactions/transactions.slice";
 import { Transaction } from "../hooks/entities/transaction";
+import { playSound } from "../helper/audio/audio.manager";
 
 export default function Deposit() {
   const { t } = useTranslation("deposit");
@@ -58,7 +59,7 @@ export default function Deposit() {
         if(data.status.toUpperCase() === "COMPLETED"){
             dispatch(updateBalanceUser((user?.wallet ?  (Number(user?.wallet) + Number(data.amout)): data.amout)));
             dispatch(updateDepositAction("COMPLETED"));
-
+            playSound("TopUpSuccess");
           showToast(t("deposit.pay_done.text", {amount: data.amout}), t("deposit.pay_done.title"), "success");
       
         }else{
@@ -143,7 +144,7 @@ export default function Deposit() {
             if(response.data && response.data.success){
               transactionID = response.data.transaction.id;
               dispatch(updateBalanceUser((user?.wallet ?  (Number(user?.wallet) - Number(amount)): 0))).payload;
-
+              playSound("WithdrawSuccess");
               showToast(t("withdrawal.pay_done.text", {amount: amount}), t("withdrawal.pay_done.title"), "success");
               console.log('response user reduicing', user?.wallet);
               dispatch(addTransaction(response.data.transaction));

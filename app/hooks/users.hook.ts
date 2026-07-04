@@ -77,36 +77,38 @@ export function useUsers() {
 
   const searchUsers = useCallback(async (query: string) => {
     if (loading || !hasMore) return;
-
+  
     setTmpParam({
       users: users,
       page: page,
       total: total,
       hasMore: hasMore
     });
-
+  
     setLoading(true);
     try {
-      const { data } = await authService.search({query, page: 1, limit: PAGE_SIZE});
-      if(data && data.users && Array.isArray(data.users) && data.total){
-        // data.users should be an array of User objects
-          if(data.users.length === 0){
-            // No more users to load
-            setHasMore(false);
-            return;
-          }
-          setUsers(prev => [...prev, ...data.users]);
-          setHasMore(page < data.totalPages); 
-          setPage(prev => prev + 1);
-          setTotal(data.total);
+      const { data } = await authService.search({ query, page: 1, limit: PAGE_SIZE });
+      
+      if (data && data.users && Array.isArray(data.users)) {
+        if (data.users.length === 0) {
+          setUsers([]);
+          setHasMore(false);
+          setTotal(0);
+        } else {
+          setUsers(data.users);
+          setTotal(data.total || 0);
+          
+        
+          setPage(2); 
+          setHasMore(1 < data.totalPages); 
+        }
       }
-  }catch(error : any){
-    console.log("une erreur est survenue", error);
-  }
-    finally {
+    } catch (error: any) {
+      console.log("Erreur lors de la recherche :", error?.response?.data || error);
+    } finally {
       setLoading(false);
     }
-  }, [page, loading, hasMore]);
+  }, [loading, users, page, total, hasMore]); 
   
   return { users, loading, total, hasMore, fetchUsers, searchUsers, removeUser, updateUser};
 }

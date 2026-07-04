@@ -67,8 +67,10 @@ export default function TransactionsScreen() {
       setLoading(true);
       // Remplacez cette URL par votre véritable endpoint API
       const {data} = await apiClient.get("/transactions"); 
-      
-      setTransactions(data);
+      if(Array.isArray(data)){
+        setTransactions(data.reverse());
+
+      }
     } catch (error) {
       showToast("Impossible de charger les transactions. Veuillez réessayer plus tard.", "Erreur", "error");
       console.error('Erreur lors du chargement des transactions:', error);
