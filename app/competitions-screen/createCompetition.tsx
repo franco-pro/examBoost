@@ -68,6 +68,9 @@ export default function CreateCompetitionForm() {
   const [isPublic, setCompetitionType] = useState<Boolean>(
     false
   );
+  const [isExamBoostCompetition, setIsExamBoostCompetition] = useState(false);
+  const isSuperAdmin = user && user.role === "SUPERADMIN" ? true : false;
+
   const [type, setType]= useState<
                                 "PAID_REGISTRATION_AS_WINNER_PRICE"
                                 |"FREE_REGISTRATION_WITH_WINNER_PRICE"
@@ -100,7 +103,7 @@ export default function CreateCompetitionForm() {
           setCompetitionType(competitionToUpdate.isPublic);
           setType(competitionToUpdate.type);
           setWinnerPrice(competitionToUpdate.winnerPrice);
-
+          setIsExamBoostCompetition(competitionToUpdate.isExamBoostCompetition);
         }else{
           setActionType("CREATE")
         }
@@ -346,13 +349,17 @@ export default function CreateCompetitionForm() {
     
     if(actionType==="CREATE"){
       updatedData.username = user?.surname + " " + user?.username;
+      updatedData.isExamBoostCompetition = isExamBoostCompetition;
       dispatch(createCompetition(updatedData))
     }else{
+      updatedData.isExamBoostCompetition = isExamBoostCompetition;
       dispatch(update(updatedData))
     }
   };
 
   function canUseIA(): boolean{
+    if(isSuperAdmin) return true;
+
     if(type == "PAID_REGISTRATION_WITH_WINNER_PRICE" || type == "FREE_REGISTRATION_WITH_WINNER_PRICE"){
       if(isPublic){
         return Number(winnerPrice) >= MIN_TO_USE_IA_PUBLIC;
@@ -731,6 +738,16 @@ export default function CreateCompetitionForm() {
                     <Text className="ml-2">{t('mycompetition.competition.creations_screen.model.isManagedByIA')}</Text>
                   </View>
                 )}
+
+                {
+                  isSuperAdmin && (
+                    
+                    <View className="flex-row items-center mb-4">
+                      <Switch value={isExamBoostCompetition} onValueChange={()=> setIsExamBoostCompetition(true)} />
+                      <Text className="ml-2">{t('mycompetition.competition.creations_screen.model.isExamBoostCompetition')}</Text>
+                    </View>
+                  )
+                }
               </View>
 
             )

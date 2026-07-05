@@ -106,7 +106,8 @@
            "nombreMaxQts": "Total Number of Questions",
            "isManagedByIA": "AI-generated questions",
            "help": "HELP",
-           "agree": "Okay understood !"
+           "agree": "Okay understood !",
+           "isExamBoostCompetition": "ExamBoost Competition"
         },
         "errors" : {
           "name": "The name of the competition is not defined.",
@@ -251,7 +252,8 @@
   "register_comp": "Register for Competition",
   "max_participants": "Maximum Participants",
   "min_participants": "Minimum Participants",
-  "participationFee": "Participation Fee",
+  "participationFee": "Participation Fees",
+  "free": "Free",
   "errors": {
      "participantNbr_not_reached": "The minimum number of participants to start the competition has not been reached."
   },
