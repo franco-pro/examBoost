@@ -15,11 +15,12 @@ interface User {
   phone: string;
   email: string;
   niveauID: string;
+  niveau: any;
   wallet: string;
   role: string;
   imgUrl: string;
   isActivated: string;
-  canSubmitDoc:boolean
+  canSubmitDoc: boolean;
 }
 
 interface UserState {
@@ -29,7 +30,7 @@ interface UserState {
   loading?: boolean;
   error?: any;
   others?: any;
-  depositActionStatut: "FAILED"|"COMPLETED"|"NO ACTION",
+  depositActionStatut: "FAILED" | "COMPLETED" | "NO ACTION";
   isAuthenticated: boolean;
 }
 
@@ -39,8 +40,8 @@ const initialState: UserState = {
   // error: null,
   accessToken: null,
   refreshToken: null,
-  isAuthenticated:false,
-  depositActionStatut: "NO ACTION"
+  isAuthenticated: false,
+  depositActionStatut: "NO ACTION",
   // others: null
 };
 
@@ -54,7 +55,7 @@ export const loginUser = createAsyncThunk(
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || err);
     }
-  }
+  },
 );
 
 export const registerUser = createAsyncThunk(
@@ -66,10 +67,12 @@ export const registerUser = createAsyncThunk(
     } catch (err: any) {
       console.log("❌ Erreur pendant register dans slice user:", err);
       return rejectWithValue(
-        err.response?.data?.message || err?.message || "Une erreur est survenue"
+        err.response?.data?.message ||
+          err?.message ||
+          "Une erreur est survenue",
       );
     }
-  }
+  },
 );
 
 export const resetPassword = createAsyncThunk(
@@ -81,7 +84,7 @@ export const resetPassword = createAsyncThunk(
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || err);
     }
-  }
+  },
 );
 
 export const forgetPassword = createAsyncThunk(
@@ -93,7 +96,7 @@ export const forgetPassword = createAsyncThunk(
     } catch (err: any) {
       rejectWithValue(err.response?.data?.message || err);
     }
-  }
+  },
 );
 
 //thunk pour charger le home
@@ -110,56 +113,67 @@ export const userDatas = createAsyncThunk(
       return datas;
     } catch (err: any) {
       if (err.response?.status === 401) {
-        return rejectWithValue("UNAUTHORIZED")
+        return rejectWithValue("UNAUTHORIZED");
       }
       return rejectWithValue(
-        err.response?.data?.message || err?.message || "Une erreur est survenue",
+        err.response?.data?.message ||
+          err?.message ||
+          "Une erreur est survenue",
       );
     }
-  }
+  },
 );
 
 export const searchUser = createAsyncThunk(
   "user/search",
-  async (data : {query: string, page: number, limit: number}, { rejectWithValue }) => {
+  async (
+    data: { query: string; page: number; limit: number },
+    { rejectWithValue },
+  ) => {
     try {
       const datas = await authService.search(data);
       return datas;
     } catch (err: any) {
       return rejectWithValue(
-        err.response?.data?.message || err?.message || "Une erreur est survenue"
+        err.response?.data?.message ||
+          err?.message ||
+          "Une erreur est survenue",
       );
     }
-  })
+  },
+);
 
-  export const deleteUser = createAsyncThunk(
-    "user/delete",
-    async (id: number, { rejectWithValue }) => {
-      try {
-        const datas = await authService.deleteUser(id);
-        return datas;
-      } catch (err: any) {
-        return rejectWithValue(
-          err.response?.data?.message || err?.message || "Une erreur est survenue"
-        );
-      }
+export const deleteUser = createAsyncThunk(
+  "user/delete",
+  async (id: number, { rejectWithValue }) => {
+    try {
+      const datas = await authService.deleteUser(id);
+      return datas;
+    } catch (err: any) {
+      return rejectWithValue(
+        err.response?.data?.message ||
+          err?.message ||
+          "Une erreur est survenue",
+      );
     }
-  )
+  },
+);
 
-  export const updateRole = createAsyncThunk(
-    "user/updateRole",
-    async (data: {id: number, role: string}, { rejectWithValue }) => {
-      try {
-        const datas = await authService.updateRole(data);
-        return datas
-      }
-      catch(err: any){
-        return rejectWithValue(
-          err.response?.data?.message || err?.message || "Une erreur est survenue"
-        )
-      }
+export const updateRole = createAsyncThunk(
+  "user/updateRole",
+  async (data: { id: number; role: string }, { rejectWithValue }) => {
+    try {
+      const datas = await authService.updateRole(data);
+      return datas;
+    } catch (err: any) {
+      return rejectWithValue(
+        err.response?.data?.message ||
+          err?.message ||
+          "Une erreur est survenue",
+      );
     }
-  )
+  },
+);
 
 export const userSlice = createSlice({
   name: "user",
@@ -170,7 +184,7 @@ export const userSlice = createSlice({
       action: PayloadAction<{
         token: string | null;
         refreshToken: string | null;
-      }>
+      }>,
     ) => {
       state.accessToken = action.payload.token;
       state.refreshToken = action.payload.refreshToken;
@@ -179,21 +193,21 @@ export const userSlice = createSlice({
       // state.user = null;
       state.accessToken = null;
       state.refreshToken = null;
-      state.isAuthenticated = false
+      state.isAuthenticated = false;
       // return initialState;
     },
     loginSuccess: (state, action) => {
       state.user = action.payload.user;
       state.accessToken = action.payload.accessToken;
       state.refreshToken = action.payload.refreshToken;
-      state.isAuthenticated = true
+      state.isAuthenticated = true;
     },
 
     updateProfile: (state, action) => {
       state.user = {
         ...state.user,
-        ...action.payload
-      }
+        ...action.payload,
+      };
     },
 
     updateTokens: (state, action) => {
@@ -203,37 +217,43 @@ export const userSlice = createSlice({
 
     updateProfileImg: (state, action) => {
       if (state.user) {
-        state.user.imgUrl = action.payload
+        state.user.imgUrl = action.payload;
       }
     },
 
-    setAllNotifAsRead: (state)=> {
-      if (state.others.notification && Array.isArray(state.others.notification)) {
-        state.others.notification = []
+    setAllNotifAsRead: (state) => {
+      if (
+        state.others.notification &&
+        Array.isArray(state.others.notification)
+      ) {
+        state.others.notification = [];
       }
     },
 
     addNotif: (state, action) => {
-      if (state.others.notification && Array.isArray(state.others.notification)) {
-        state.others.notification.unshift(action.payload)
+      if (
+        state.others.notification &&
+        Array.isArray(state.others.notification)
+      ) {
+        state.others.notification.unshift(action.payload);
       } else {
-        state.others.notification = [action.payload]
+        state.others.notification = [action.payload];
       }
     },
 
     updateBalanceUser: (state, action) => {
       if (state.user) {
-        state.user.wallet = action.payload
+        state.user.wallet = action.payload;
       } else {
-        console.log("le state dans updateBalanceUser: ", state)
+        console.log("le state dans updateBalanceUser: ", state);
       }
     },
 
-    updateDepositAction: (state, action)=>{
-      if(action.payload){
+    updateDepositAction: (state, action) => {
+      if (action.payload) {
         state.depositActionStatut = action.payload;
       }
-    }
+    },
   },
 
   extraReducers: (builder) => {
@@ -251,7 +271,7 @@ export const userSlice = createSlice({
         state.user = action.payload.user;
         state.accessToken = action.payload.accessToken;
         state.refreshToken = action.payload.refreshToken;
-        state.isAuthenticated = true
+        state.isAuthenticated = true;
       })
 
       //register
@@ -266,50 +286,49 @@ export const userSlice = createSlice({
       //user Datas
       .addCase(userDatas.fulfilled, (state, action) => {
         state.user = action.payload.user;
-        state.others = action.payload.infos
+        state.others = action.payload.infos;
       })
-    
-    //redirect login page
+
+      //redirect login page
       .addCase(userDatas.rejected, (state, action) => {
-        state.loading = false
-        
+        state.loading = false;
+
         if (action.payload === "UNAUTHORIZED") {
           state.user = null;
           state.accessToken = null;
-          state.error = "Session expire"
+          state.error = "Session expire";
         } else {
-          state.error = action.payload as string
+          state.error = action.payload as string;
         }
-    })
+      })
 
       //search
-        .addCase(searchUser.fulfilled, (state, action) => {
-          state.loading = false;
-        })
-        .addCase(searchUser.rejected, (state, action) => {
-          state.loading = false;
-          state.error = action.payload as string;
-        })
-        .addCase(searchUser.pending, (state) => {
-          state.loading = true;
-          state.error = null;
-        })
-    
-    //delete user
+      .addCase(searchUser.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(searchUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(searchUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+
+      //delete user
       .addCase(deleteUser.fulfilled, (state, action) => {
-        state.loading = false
-          state.user = null
+        state.loading = false;
+        state.user = null;
       })
       .addCase(deleteUser.pending, (state, action) => {
-        state.loading = true
-        state.error = null
+        state.loading = true;
+        state.error = null;
       })
-    
+
       .addCase(deleteUser.rejected, (state, action) => {
-        state.loading = true
-        state.error = action.payload as string
-    })
-        
+        state.loading = true;
+        state.error = action.payload as string;
+      });
   },
 });
 
@@ -323,6 +342,6 @@ export const {
   updateTokens,
   setAllNotifAsRead,
   addNotif,
-  updateDepositAction
+  updateDepositAction,
 } = userSlice.actions;
 export default userSlice.reducer;

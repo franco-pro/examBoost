@@ -2,7 +2,7 @@
   "setting": {
     "title": "Paramètres",
     "wallet": "Solde",
-    "level":"Niveau",
+    "level": "Niveau",
     "account": "Compte",
     "profile": "Mon profile",
     "withdraw": "Faire un retrait",
@@ -14,6 +14,16 @@
     "about": "A propos de Examboost",
     "sensitive_zone": "Zone sensible",
     "lougout": "Se deconnecter",
-    "delete_account": "Supprimer mon compte"
+    "delete_account": "Supprimer mon compte",
+    "change_datas": {
+      "firstname": "Nom",
+      "surname": "Prenom",
+      "email": "Email",
+      "number": "Numero de telephone",
+      "level": "Niveau",
+      "editText": "Modifier Vos Informations",
+      "save": "Sauvegarder",
+      "cancel":"Anuler"
+    }
   }
 }
