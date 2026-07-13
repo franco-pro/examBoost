@@ -1,15 +1,30 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
+import WebView from "react-native-webview";
 
-import { Pressable, Text, View } from "react-native";
+import { Platform, Pressable, Text, View } from "react-native";
+import { Dimensions } from "react-native";
 
 interface Props {
   localUri: string;
 }
 
 export default function PdfFallback({ localUri }: Props) {
+    console.log("localUri:", localUri)
+
+    const {width, height} = Dimensions.get("window")
     const openPdf = async () => {
       console.log("localUri:", localUri)
+
+        //sur android 
+        const formattedUri =
+          Platform.OS === "android"
+            ? `https://google.com{encodeURIComponent(localUri)}`
+                : localUri;
+         const isAndroidLocal =
+            Platform.OS === "android" && localUri.includes("192.168.");
+        
+
     await WebBrowser.openBrowserAsync(localUri);
   };
 
@@ -22,7 +37,7 @@ export default function PdfFallback({ localUri }: Props) {
         padding: 30,
       }}
     >
-      <Ionicons name="document-text" size={70} color="#1E3A8A" />
+      {/* <Ionicons name="document-text" size={70} color="#1E3A8A" />
 
       <Text
         style={{
@@ -62,7 +77,14 @@ export default function PdfFallback({ localUri }: Props) {
         >
           Ouvrir le PDF
         </Text>
-      </Pressable>
+      </Pressable> */}
+
+      {/* Webview */}
+      <WebView
+        style={{ flex: 1, width: width, height: height }}
+        // originWhitelist={["*"]}
+        source={{ uri: localUri }}
+      />
     </View>
   );
 }
