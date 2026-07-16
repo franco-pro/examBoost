@@ -204,7 +204,7 @@ const logoutHandle = async () => {
               </Text>
 
               <Text className="text-white font-bold text-lg">
-                {user?.niveauID || "-"}
+                {user? user?.niveau?.name || console.log("user:", user):"--"}
               </Text>
             </View>
           </View>

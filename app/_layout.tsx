@@ -10,6 +10,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { persistor, store } from "@/app/hooks/redux/store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import "@/lang/i18n";
@@ -44,14 +45,16 @@ export default function RootLayout() {
       <PersistGate persistor={persistor}>
         <GluestackUIProvider>
           <GestureHandlerRootView style={{ flex: 1 }}>
-            <QueryClientProvider client={queryClient}>
-              {/* <AppNavigator /> */}
-              <Stack screenOptions={{ headerShown: false }} />
-            </QueryClientProvider>
+            <BottomSheetModalProvider>
+              <QueryClientProvider client={queryClient}>
+                {/* <AppNavigator /> */}
+                <Stack screenOptions={{ headerShown: false }} />
+              </QueryClientProvider>
+            </BottomSheetModalProvider>
           </GestureHandlerRootView>
         </GluestackUIProvider>
       </PersistGate>
-      <Toast config={toastConfig} />  
+      <Toast config={toastConfig} />
     </Provider>
   );
 }

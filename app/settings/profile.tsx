@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ScrollView,
   Text,
@@ -10,10 +10,18 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useGetProfile, useUpdateProfileMutation } from "../features/profiles/hook.rq";
-import { useSelector } from "react-redux";
-import { RootState } from "../hooks/redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../hooks/redux/store";
+import { useTranslation } from "react-i18next";
+import { getAllNiveaux } from "../hooks/redux/niveaux/niveaux.thunks";
+import BottomSheet from "@gorhom/bottom-sheet";
+import LevelBottomSheet from "./utils/levelBottomSheet";
 
 export default function UserInformationsScreen() {
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const {t} = useTranslation("setting")
+  const dispatch = useDispatch<AppDispatch>()
+  const {niveauxList}= useSelector((state:RootState)=>state.niveaux)
   const user = useSelector((s: RootState) => s.user.user)
   const userID = user?.id;
   const [isEditing, setIsEditing] = useState(false);
@@ -23,32 +31,47 @@ export default function UserInformationsScreen() {
     surname: "",
     email: "",
     phone: "",
+    niveauID: 0
     // city: "Douala",
   });
 
+  const selectedLevel = niveauxList.find((niveau) => niveau.id === form.niveauID);
+
+  //fonction d'ouverture
+  const openLevels = () => {
+    bottomSheetRef.current?.expand();
+  };
+
   useEffect(() => {
-    if (!profile) return
-    
+    if (!profile) return    
     setForm({
       username: profile?.username ?? "",
       surname: profile?.surname ?? "",
       email: profile?.email ?? "",
       phone: profile?.phone ?? "",
+      niveauID: profile?.niveauID??""
     });
   },[profile])
-const uploadProfileMutation = useUpdateProfileMutation(String(userID) || "1", form)
+
+  useEffect(() => {
+    dispatch(getAllNiveaux())
+  },[])
+const uploadProfileMutation = useUpdateProfileMutation(String(userID))
 
   const router = useRouter();
 
   
-
+const initialLevel = profile?.niveauID
+const levelChanged = initialLevel !== form.niveauID
   const handleSave = async () => {
     try {
-      console.log(form);
+      console.log("form and levels value:", form, "initial level:", initialLevel, "levelchanged:", levelChanged);
       // mutation update profile
-      await uploadProfileMutation.mutateAsync();
-
+      await uploadProfileMutation.mutateAsync({...form, levelChanged});
       setIsEditing(false);
+      if (form.niveauID !== selectedLevel?.id) {
+        router.replace("/(auth)/login")
+      }
     } catch (error) {
       console.log(error);
     }
@@ -72,7 +95,6 @@ const uploadProfileMutation = useUpdateProfileMutation(String(userID) || "1", fo
           </TouchableOpacity>
         </View>
 
-
         {/* Informations */}
 
         <View className="mx-5 mt-6">
@@ -83,7 +105,9 @@ const uploadProfileMutation = useUpdateProfileMutation(String(userID) || "1", fo
           {/* Username */}
 
           <View className="bg-white rounded-3xl p-4 mb-4">
-            <Text className="text-gray-500 mb-2">Nom utilisateur</Text>
+            <Text className="text-gray-500 mb-2">
+              {t("setting.change_datas.firstname")}
+            </Text>
             <TextInput
               editable={isEditing}
               value={form.username}
@@ -100,7 +124,9 @@ const uploadProfileMutation = useUpdateProfileMutation(String(userID) || "1", fo
           {/* Surname */}
 
           <View className="bg-white rounded-3xl p-4 mb-4">
-            <Text className="text-gray-500 mb-2">Nom</Text>
+            <Text className="text-gray-500 mb-2">
+              {t("setting.change_datas.surname")}
+            </Text>
 
             <TextInput
               editable={isEditing}
@@ -118,10 +144,12 @@ const uploadProfileMutation = useUpdateProfileMutation(String(userID) || "1", fo
           {/* Email */}
 
           <View className="bg-white rounded-3xl p-4 mb-4">
-            <Text className="text-gray-500 mb-2">Email</Text>
+            <Text className="text-gray-500 mb-2">
+              {t("setting.change_datas.email")}
+            </Text>
 
             <TextInput
-              editable={isEditing}
+              editable={false}
               value={form.email}
               keyboardType="email-address"
               onChangeText={(text) =>
@@ -130,17 +158,19 @@ const uploadProfileMutation = useUpdateProfileMutation(String(userID) || "1", fo
                   email: text,
                 })
               }
-              className="text-lg font-semibold"
+              className="text-lg text-gray-500 font-semibold"
             />
           </View>
 
           {/* Phone */}
 
           <View className="bg-white rounded-3xl p-4 mb-4">
-            <Text className="text-gray-500 mb-2">Téléphone</Text>
+            <Text className="text-gray-500 mb-2">
+              {t("setting.change_datas.number")}
+            </Text>
 
             <TextInput
-              editable={isEditing}
+              editable={false}
               value={form.phone}
               keyboardType="phone-pad"
               onChangeText={(text) =>
@@ -149,8 +179,31 @@ const uploadProfileMutation = useUpdateProfileMutation(String(userID) || "1", fo
                   phone: text,
                 })
               }
-              className="text-lg font-semibold"
+              className="text-lg font-semibold text-gray-500"
             />
+          </View>
+
+          {/* niveaux */}
+          <View className="bg-white rounded-3xl p-4 mb-4">
+            <Text className="text-gray-500 mb-2">
+              {t("setting.change_datas.level")}
+            </Text>
+
+            <TouchableOpacity
+              onPress={openLevels}
+              disabled={!isEditing}
+              className={`h-14 rounded-2xl px-4 justify-center ${
+                isEditing ? "bg-white" : "bg-gray-100"
+              }`}
+            >
+              <View className="flex-row justify-between items-center">
+                <Text className="text-lg font-semibold">
+                  {selectedLevel?.name ?? "Choisir un niveau"}
+                </Text>
+
+                <Ionicons name="chevron-down" size={20} />
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -163,7 +216,7 @@ const uploadProfileMutation = useUpdateProfileMutation(String(userID) || "1", fo
               className="bg-blue-600 h-14 rounded-2xl items-center justify-center"
             >
               <Text className="text-white font-bold text-base">
-                Modifier les informations
+                {t("setting.change_datas.editText")}
               </Text>
             </TouchableOpacity>
           ) : (
@@ -173,7 +226,7 @@ const uploadProfileMutation = useUpdateProfileMutation(String(userID) || "1", fo
                 className="bg-green-600 h-14 rounded-2xl items-center justify-center"
               >
                 <Text className="text-white font-bold text-base">
-                  Sauvegarder
+                  {t("setting.change_datas.save")}
                 </Text>
               </TouchableOpacity>
 
@@ -181,12 +234,29 @@ const uploadProfileMutation = useUpdateProfileMutation(String(userID) || "1", fo
                 onPress={() => setIsEditing(false)}
                 className="bg-red-500 h-14 rounded-2xl items-center justify-center"
               >
-                <Text className="text-white font-bold text-base">Annuler</Text>
+                <Text className="text-white font-bold text-base">
+                  {t("setting.change_datas.cancel")}
+                </Text>
               </TouchableOpacity>
             </>
           )}
         </View>
       </ScrollView>
+      <LevelBottomSheet
+        ref={bottomSheetRef}
+        data={niveauxList}
+        selected={form.niveauID}
+        onSelect={(item) => {
+          setForm({
+            ...form,
+            niveauID: item.id,
+          });
+
+          bottomSheetRef.current?.close();
+        }}
+      />
     </SafeAreaView>
   );
 }
+
+

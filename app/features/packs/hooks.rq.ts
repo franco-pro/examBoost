@@ -58,7 +58,7 @@ export function usePacksQuery(userID: number) {
       // don't let a slightly stale server response flip it back to false.
       if (!prev?.length) return next;
       const prevById = new Map(prev.map((p) => [p.id, p] as const));
-      return next.map((p:any) => {
+      return next.map((p: any) => {
         const old = prevById.get(p.id);
         if (old?.isSubscribed) return { ...p, isSubscribed: true };
         return p;
@@ -67,13 +67,13 @@ export function usePacksQuery(userID: number) {
     enabled: !!userID,
     // Mobile: avoid immediate refetch on focus/mount that can overwrite optimistic `isSubscribed: true`
     // right after a purchase when backend propagation is slightly delayed.
-    staleTime: 60_000,
+    staleTime: 1000 * 60 * 10,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     // Auto-refresh so newly created packs in DB appear without user action.
     // We keep a moderate interval to avoid battery drain.
-    refetchInterval: 20_000,
+    refetchInterval: false,
   });
 }
 export function usePackDocumentsQuery(userID?: number) {
