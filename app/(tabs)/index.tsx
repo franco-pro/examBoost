@@ -331,11 +331,6 @@ export default function Index() {
         className="flex-1 bg-gray-50"
       >
         <View className="p-5 bg-[#E8F5A80] flex-1">
-          <TouchableOpacity
-            onPress={() => navigation.push("/others-admin/submit-doc/submit")}
-          >
-            <Text>teacher</Text>
-          </TouchableOpacity>
           <View className="flex-row items-center justify-between">
             <Text className="flex-1 text-2xl font-bold mr-4">
               {t("accueil.welcome")},{" "}
