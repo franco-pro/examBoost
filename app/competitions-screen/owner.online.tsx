@@ -41,7 +41,7 @@ export default function OwnerCompetitionsScreen() {
                                                    imgUrl : room ? (room.creatorInfo ? room.creatorInfo.imgUrl: ''):'',
                                                    roomName: room ? (room.roomName ? room.roomName : ''):'',
                                                    viewers: room ? (room.spectators ? room.spectators : 0):0,
-                                                   isExamBoostCompetition : room ? (room.isExamBoostCompetition ? room.isExamBoostCompetition : false):false
+                                                   isExamBoostCompetition : room ? (room.competitionInfo && room.competitionInfo.isExamBoostCompetition ? room.competitionInfo.isExamBoostCompetition : false):false
                                                    }}
                                 competitionInfo={{
                                                     questionNbr: room ? (room.competitionInfo ? room.competitionInfo.questionsNbr : 0):0,
