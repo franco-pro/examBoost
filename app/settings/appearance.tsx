@@ -22,8 +22,8 @@ export default function AppearanceScreen() {
 
       <ScrollView contentContainerStyle={{ paddingBottom: 24 }}>
         <View className="px-4 mt-2">
-          <ThemeItem code="light" label="Clair" selected={selected === 'light'} onPress={() => setSelected('light')} />
-          <ThemeItem code="dark" label="Sombre" selected={selected === 'dark'} onPress={() => setSelected('dark')} />
+          <ThemeItem code="light" label="Clair" selected={selected === 'light'} onPress={() => setSelected('light')} disabled/>
+          <ThemeItem code="dark" label="Sombre" selected={selected === 'dark'} onPress={() => setSelected('dark')} disabled/>
           <ThemeItem code="system" label="Système" selected={selected === 'system'} onPress={() => setSelected('system')} />
         </View>
       </ScrollView>
@@ -31,14 +31,44 @@ export default function AppearanceScreen() {
   );
 }
 
-function ThemeItem({ code, label, selected, onPress }: { code: 'light' | 'dark' | 'system'; label: string; selected: boolean; onPress: () => void }) {
+function ThemeItem({ code, label, selected, onPress, disabled }: { code: 'light' | 'dark' | 'system'; label: string; selected: boolean; onPress: () => void, disabled?: boolean }) {
   return (
-    <Pressable onPress={onPress} className={`flex-row items-center justify-between px-3 py-3 rounded-xl border mb-2 active:opacity-90 ${selected ? 'border-primary-defaultOrange bg-primary-defaultOrange/10' : 'border-outline-100 dark:border-outline-800 bg-white dark:bg-outline-900'}`}>
+    <Pressable
+      onPress={onPress}
+      disabled={disabled}
+      className={`flex-row items-center justify-between px-3 py-3 rounded-xl border mb-2 
+        ${disabled ? "opacity-40 border-gray-300 bg-gray-100 dark:bg-neutral-800" : "active:opacity-90"} 
+        ${!disabled && selected ? "border-primary-defaultOrange bg-primary-defaultOrange/10" : ""} 
+        ${!disabled && !selected ? "border-outline-100 dark:border-outline-800 bg-white dark:bg-outline-900" : ""}
+      `}
+    >
       <View className="flex-row items-center gap-3">
-        <Ionicons name={code === 'light' ? 'sunny' : code === 'dark' ? 'moon' : 'phone-portrait'} size={18} color="#6B7280" />
-        <Text className="text-sm font-semibold text-typography-default dark:text-typography-white">{label}</Text>
+        <Ionicons
+          name={
+            code === "light"
+              ? "sunny"
+              : code === "dark"
+                ? "moon"
+                : "phone-portrait"
+          }
+          size={18}
+          color={disabled ? "#9CA3AF" : "#6B7280"}
+        />
+        <Text
+          className={`text-sm font-semibold ${disabled ? "text-gray-400" : "text-typography-default dark:text-typography-white"}`}
+        >
+          {label}
+        </Text>
       </View>
-      {selected ? <Ionicons name="checkmark-circle" size={18} color="#f97316" /> : <Ionicons name="ellipse-outline" size={18} color="#9CA3AF" />}
+      {selected ? (
+        <Ionicons
+          name="checkmark-circle"
+          size={18}
+          color={disabled ? "#9CA3AF" : "#f97316"}
+        />
+      ) : (
+        <Ionicons name="ellipse-outline" size={18} color="#9CA3AF" />
+      )}
     </Pressable>
   );
 }

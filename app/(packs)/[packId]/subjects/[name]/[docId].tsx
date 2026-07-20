@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Platform, Text, View } from "react-native";
+import { Alert, Platform, Text, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSelector } from "react-redux";
 
@@ -23,10 +23,9 @@ const EMPTY_DOCS: DocumentRow[] = [];
 export default function DocumentViewerPage() {
   const router = useRouter();
 
-  const { docId } =
-    useLocalSearchParams<{
-      docId: string;
-    }>();
+  const { docId } = useLocalSearchParams<{
+    docId: string;
+  }>();
 
   const documentID = Number(docId);
 
@@ -36,9 +35,7 @@ export default function DocumentViewerPage() {
    * ==========================
    */
 
-  const user = useSelector(
-    (state: RootState) => state.user.user
-  );
+  const user = useSelector((state: RootState) => state.user.user);
 
   const userID = user?.id;
 
@@ -56,38 +53,27 @@ export default function DocumentViewerPage() {
    * ==========================
    */
 
-  const packsQuery =
-    usePackDocumentsQuery(userID);
+  const packsQuery = usePackDocumentsQuery(userID);
 
-  const docsForPack =
-    packsQuery.data ?? EMPTY_DOCS;
+  const docsForPack = packsQuery.data ?? EMPTY_DOCS;
 
-  const docsWithCorrection =
-    useDocumentAndCorrection(documentID);
+  const docsWithCorrection = useDocumentAndCorrection(documentID);
 
-  const all =
-    docsWithCorrection.data ?? [];
+  const all = docsWithCorrection.data ?? [];
 
-  const document =
-    all[0]?.document as
-    | DocumentRow
-    | undefined;
+  const document = all[0]?.document as DocumentRow | undefined;
 
-  const correction =
-    all[0]?.correction as
-    | DocumentRow
-    | undefined;
-
+  const correction = all[0]?.correction as DocumentRow | undefined;
+  // console.log("correction:", all[0]);
   /**
    * ==========================
    * TAB
    * ==========================
    */
 
-  const [activeTab, setActiveTab] =
-    useState<
-      "document" | "correction"
-    >("document");
+  const [activeTab, setActiveTab] = useState<"document" | "correction">(
+    "document",
+  );
 
   /**
    * ==========================
@@ -95,23 +81,14 @@ export default function DocumentViewerPage() {
    * ==========================
    */
 
-  const currentDocument =
-    useMemo(() => {
+  
+  const currentDocument = useMemo(() => {
+    if (activeTab === "correction" ) {
+      return correction ? correction : null;
+    }
 
-      if (
-        activeTab === "correction" &&
-        correction
-      ) {
-        return correction;
-      }
-
-      return document;
-
-    }, [
-      activeTab,
-      document,
-      correction,
-    ]);
+    return document;
+  }, [activeTab, document, correction]);
 
   /**
    * ==========================
@@ -119,15 +96,11 @@ export default function DocumentViewerPage() {
    * ==========================
    */
 
-  const absoluteUrl =
-    useMemo(() => {
+  const absoluteUrl = useMemo(() => {
+    if (!currentDocument) return "";
 
-      if (!currentDocument)
-        return "";
-
-      return currentDocument.url;
-
-    }, [currentDocument]);
+    return currentDocument.url;
+  }, [currentDocument]);
 
   /**
    * ==========================
@@ -135,17 +108,12 @@ export default function DocumentViewerPage() {
    * ==========================
    */
 
-  const pdfDownload =
-    usePdfDownload();
+  const pdfDownload = usePdfDownload();
 
   useEffect(() => {
-
     if (!absoluteUrl) return;
 
-    pdfDownload.downloadPdf(
-      absoluteUrl
-    );
-
+    pdfDownload.downloadPdf(absoluteUrl);
   }, [absoluteUrl]);
 
   /**
@@ -154,10 +122,9 @@ export default function DocumentViewerPage() {
    * ==========================
    */
 
-  const reader =
-    usePdfReader({
-      documentID,
-    });
+  const reader = usePdfReader({
+    documentID,
+  });
 
   /**
    * ==========================
@@ -166,17 +133,19 @@ export default function DocumentViewerPage() {
    */
 
   if (!document) {
-
     return (
       <View className="flex-1 justify-center items-center">
-        <Text>
-          Document introuvable
-        </Text>
+        <Text>Document introuvable</Text>
       </View>
     );
-
   }
 
+    if (!currentDocument) {
+      Alert.alert("Infos", "Aucune correction trouvee.")
+      setActiveTab('document')
+    }
+
+// console.log("value de exist document:", noExistDocument, currentDocument)
   return (
     <View className="mt-10 flex-1 bg-background-light dark:bg-background-dark">
       <PdfToolbar
@@ -192,7 +161,7 @@ export default function DocumentViewerPage() {
             pdfDownload.downloadPdf(absoluteUrl);
           }
         }}
-        onMore={() => { }}
+        onMore={() => {}}
       />
 
       <View className="flex-1">
@@ -215,5 +184,4 @@ export default function DocumentViewerPage() {
       </View>
     </View>
   );
-
 }

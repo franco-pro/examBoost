@@ -8,6 +8,7 @@ interface PdfToolbarProps {
   progress: number;
   currentPage: number;
   totalPages: number;
+  disabled?: boolean
   onBack: () => void;
   onChangeTab: (tab: "document" | "correction") => void;
   onDownload?: () => void;
@@ -17,6 +18,7 @@ interface PdfToolbarProps {
 export default function PdfToolbar({
   title,
   activeTab,
+  disabled,
   progress,
   currentPage,
   totalPages,
@@ -25,11 +27,12 @@ export default function PdfToolbar({
   onDownload,
   onMore,
 }: PdfToolbarProps) {
+  // console.log("valeur de disable:", disabled);
   return (
     <View
       className="bg-white border-b border-gray-200"
       style={{
-        paddingTop: 50,
+        paddingTop: 10,
       }}
     >
       {/* HEADER */}
@@ -81,6 +84,7 @@ export default function PdfToolbar({
 
       <View className="flex-row justify-center py-3 px-4 gap-3">
         <TouchableOpacity
+          // disabled={disabled}
           onPress={() => onChangeTab("document")}
           className={`flex-1 h-12 rounded-full justify-center items-center ${
             activeTab === "document" ? "bg-[#181C5C]" : "bg-gray-100"
@@ -96,6 +100,7 @@ export default function PdfToolbar({
         </TouchableOpacity>
 
         <TouchableOpacity
+          // disabled={disabled}
           onPress={() => onChangeTab("correction")}
           className={`flex-1 h-12 rounded-full justify-center items-center ${
             activeTab === "correction" ? "bg-[#181C5C]" : "bg-gray-100"
