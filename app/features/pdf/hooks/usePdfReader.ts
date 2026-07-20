@@ -23,7 +23,7 @@ export function usePdfReader({ documentID }: PdfReaderProps) {
       setLoadingHistory(true);
       const history = await getRecentDocuments();
       const recent = history.find((doc:RecentDocument) => doc.documentId === documentID);
-
+console.log("recent dans pdf reader:", recent, "documentid:", documentID)
       if (!recent) return;
 
       setCurrentPage(recent.currentPage);

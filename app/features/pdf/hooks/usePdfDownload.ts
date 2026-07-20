@@ -18,8 +18,8 @@ export function usePdfDownload() {
       try {
         setLoading(true);
         setError(null);
-        const absoluteUrl = buildFileUrl(pdfUrl);
-        //   const absoluteUrl = pdfUrl;
+        // const absoluteUrl = buildFileUrl(pdfUrl);
+          const absoluteUrl = pdfUrl;
         //   console.log("pdfuri:", absoluteUrl)
 
         const fileName =
