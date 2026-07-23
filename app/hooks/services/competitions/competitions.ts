@@ -1,19 +1,44 @@
 import axios from "axios";
 import Competition from "./competition.entity";
-
+import apiClient from "@/app/api/apiClient";
 
 export default function CompetitionHttp(){
-    const api = axios.create({
-        baseURL: 'http://172.20.10.2:3000/competitions/',
-        timeout: 3000
-    })
+    // const api = axios.create({
+    //     baseURL: 'http://172.20.10.2:3000/competitions/',
+    //     timeout: 3000
+    // })
+
+    const baseEndpoint = "/competitions/"
 
     return {
-        getCompetitions: async ()=>{
+        getCompetitions: async (page: number, limit: number)=>{
             try {
-                const response = await api.get('')
-                return {data: response.data, error: null};
+                const response = await apiClient.get(baseEndpoint, {
+                    params: { page, limit: limit },
+                  });
+                return {data: response.data.data, error: null, pagination: {
+                    totalItems: response.data.total,
+                    totalPages: response.data.totalPages,
+                    currentPage: response.data.page,
+                    pageSize: response.data.limit
+                }};
                     
+            } catch (error: any) {
+                return {data: null, error: error.response.data.message};                
+            }
+        },
+
+        getCompetitionAdmin: async (page: number, limit: number)=>{
+            try {
+                const response = await apiClient.get(baseEndpoint+"admin", {
+                    params: { page, limit: limit },
+                  });
+                return {data: response.data.data, error: null, pagination: {
+                    totalItems: response.data.total,
+                    totalPages: response.data.totalPages,
+                    currentPage: response.data.page,
+                    pageSize: response.data.limit
+                }};
             } catch (error: any) {
                 return {data: null, error: error.response.data.message};                
             }
@@ -21,7 +46,7 @@ export default function CompetitionHttp(){
 
         getMyCompetitio: async (userId: number)=>{
             try {
-                const response = await api.get('user/'+userId)
+                const response = await apiClient.get(baseEndpoint+'user/'+userId)
                 return {data: response.data, error: null};
             } catch (error: any) {
                 return {data: null, error: error.response.data.message};                
@@ -31,8 +56,10 @@ export default function CompetitionHttp(){
 
         createCompetition: async (data: Competition)=>{
             try {
-                const response = await api.post('', data);
+                console.log('competition to create', data)
 
+                const response = await apiClient.post(baseEndpoint, data);
+                console.log('competition create', response)
                 return {data: response.data, error: null};
             } catch (error: any) {
                 return {data: null, error: error.response.data.message};                
@@ -42,7 +69,7 @@ export default function CompetitionHttp(){
 
         getOne: async (id: number)=> {
             try {
-                const response = await api.get(String(id));
+                const response = await apiClient.get(baseEndpoint+String(id));
                 return {data: response.data, error: null};
                     
             } catch (error: any) {
@@ -52,7 +79,7 @@ export default function CompetitionHttp(){
 
         delete: async (id: number) =>{
             try {
-                 const response = await api.delete(String(id))
+                 const response = await apiClient.delete(baseEndpoint+String(id))
                  return {data: response.data, error: null};
                 
             } catch (error: any) {
@@ -62,7 +89,7 @@ export default function CompetitionHttp(){
 
         update: async (id: number, data: Competition)=>{
             try {
-                const response = await api.patch(String(id), data);
+                const response = await apiClient.patch(baseEndpoint+String(id), data);
                 return {data: response.data, error: null};
                     
             } catch (error: any) {
@@ -70,9 +97,23 @@ export default function CompetitionHttp(){
             }
         },
 
+        searchCompetition: async (query: string, isAdmin: boolean)=>{
+            const ext = isAdmin ? "admin/search" : "user/search"
+            try {
+                const response = await apiClient.get(baseEndpoint+ext, {
+                    params: { query : query },
+                  });
+                  console.log('search result')
+                return {data: response.data, error: null};
+                    
+            } catch (error: any) {
+                return {data: null, error: error.response.data.message};                
+            }
+        },
+
         getHomeBase: async (userId: number) =>{
             try{
-                const response = api.get("home/"+userId)
+                const response = apiClient.get(baseEndpoint+"home/"+userId)
                 return {data: (await response).data, error: null}
             }catch (error: any) {
                 return {data: null, error: error.response.data.message};                

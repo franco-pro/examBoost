@@ -34,4 +34,5 @@ export default interface Competition{
       id: number;
       name: string;
     }[];
+    isExamBoostCompetition: boolean;
   }

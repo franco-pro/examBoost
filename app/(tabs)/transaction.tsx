@@ -1,5 +1,5 @@
 import SegmentedFilter from "@/components/layouts/filter/SegmentedFilter";
-import { Image } from '@/components/ui/image';
+import { Image } from "@/components/ui/image";
 import { Spinner } from "@/components/ui/spinner";
 import { VStack } from "@/components/ui/vstack";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -11,39 +11,59 @@ import { ScrollView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 import { useAppDispatch, useAppSelector } from "../hooks/redux/redux.hooks";
 import { getAllTransations } from "../hooks/redux/transactions/transaction.thunks";
+import { RootState } from "../hooks/redux/store";
+import { useSelector } from "react-redux";
+import { toastConfig } from "../config/toast.config";
+import { RefreshControl } from "react-native";
 
 export default function Transactions() {
   const [loadDone, setLoadDone] = useState(false);
-
+  const { user, accessToken, others } = useSelector(
+    (state: RootState) => state.user
+  );
   const dispatch = useAppDispatch();
-  const userId = 1;
+  const userId = user?.id;
   const {transactionList, loading, error} = useAppSelector((state)=> state.transactions)
   const {t} = useTranslation("transaction");
+  const transType = {
+    WITHDRAWAL: <Text>{t("withdrawal")}</Text>,
+    DEPOSIT: <Text>{t("deposit")}</Text>,
+    PURCHASE_PACK: <Text>{t("purchase_pack")}</Text>,
+    CREATE_COMPETITION:  <Text>{t("createCompetition")}</Text>,
+    COMPETITION_FEES: <Text>{t("competition_fess")}</Text>,
+  }
+
+  const onRefresh = async () => {
+    dispatch(getAllTransations(userId ?? 0));
+    
+  };
 
   useFocusEffect(
     useCallback(()=>{
-      if(transactionList && transactionList.length == 0){
-        dispatch(getAllTransations(userId));
+      if(transactionList && transactionList.length == 0 && !loadDone){
+        dispatch(getAllTransations(userId ?? 1));
+        console.log("transaction load", transactionList)
         setLoadDone(true);
       }
-      if(error){
-          showToast(error, 'Error', "error");
-          setLoadDone(true);
+      if (error) {
+        showToast(error, "Error", "error");
+        setLoadDone(true);
       }
     }, [transactionList, error])
   )
   const [filter, setFilter] = useState<
-  | 'ALL'
-  | 'DEPOSIT'
-  | 'WITHDRAWAL'
-  | 'PURCHASE_PACK'
-  | 'CREATE_COMPETITION'
-  | 'COMPETITION_FEES'
+    | "ALL"
+    | "DEPOSIT"
+    | "WITHDRAWAL"
+    | "PURCHASE_PACK"
+    | "CREATE_COMPETITION"
+    | "COMPETITION_FEES"
+    |"COMPETITION_FEES_RECEIVED"
   >("ALL");
 
-  const filteredTransactions = transactionList ? transactionList.filter((tx) =>
+  const filteredTransactions = (transactionList && transactionList.length >= 0) ? transactionList.filter((tx) =>
     filter === "ALL" ? true : tx.type === filter
-    ):[];
+    ).reverse():[];
 
   function showToast(message: string, title: string, type: "success"|"error"){
             Toast.show({
@@ -54,6 +74,7 @@ export default function Transactions() {
               visibilityTime: 3500,
             }) 
     }
+  
   return (
     <View style={{ flex: 1, padding: 16 }} className="bg-gray ">
       <SegmentedFilter
@@ -64,21 +85,30 @@ export default function Transactions() {
           "PURCHASE_PACK",
           "CREATE_COMPETITION",
           "COMPETITION_FEES",
+          "COMPETITION_FEES_RECEIVED",
         ]}
         defaultValue="ALL"
         onChange={(value) =>
           setFilter(
             value as
-            | 'DEPOSIT'
-            | 'WITHDRAWAL'
-            | 'PURCHASE_PACK'
-            | 'CREATE_COMPETITION'
-            | 'COMPETITION_FEES'
+              | "DEPOSIT"
+              | "WITHDRAWAL"
+              | "PURCHASE_PACK"
+              | "CREATE_COMPETITION"
+              | "COMPETITION_FEES"
+              |"COMPETITION_FEES_RECEIVED"
           )
         }
       />
 
-      <ScrollView className="mt-5">
+      <ScrollView className="mt-5"
+        refreshControl={
+          <RefreshControl
+            refreshing={loading}
+            onRefresh={onRefresh}
+          />
+        }
+      >
         {filteredTransactions && filteredTransactions.length !=0 && filteredTransactions.map((game, index) => {
           return (
             <TouchableOpacity
@@ -87,7 +117,7 @@ export default function Transactions() {
             >
               <MaterialCommunityIcons
                 name={
-                  game?.type === "WITHDRAWAL"
+                  game?.type === "DEPOSIT"
                     ? "arrow-up-circle"
                     : "arrow-down-circle"
                 }
@@ -105,7 +135,28 @@ export default function Transactions() {
                     minute: "2-digit",
                   })}
                 </Text>
-                <Text>{game?.PID}</Text>
+                {transType[game?.type as keyof typeof transType]}
+                  
+                <Text className="text-xs mt-[7px] text-gray-400">PID: {game?.PID}</Text>
+                {
+                game?.method && <Text
+                  className={`${
+                    (game?.method === "mtn_momo")
+                      ? "text-yellow-500 "
+                      : "text-orange-500"
+                  }`}
+                >
+                  {game?.method === "mtn_momo" ? "MTN MoMo" : "Orange Money"}
+                </Text>
+                }
+                <Text className={"text-xs mt-[7px] "+ (game?.status === "COMPLETED" 
+                                                                                  ? "text-green-500":
+                                                                                 game.status === "PENDING" ? "text-yellow-500" :
+                                                                                  "text-error-500") } >{ game.status === "COMPLETED" ? t('completed') : 
+                                                                                                                                                          game.type === 'WITHDRAWAL' && game.status === "PENDING" ? t('pending') :
+                                                                                                                                                          "Failed" }</Text>
+
+               
               </View>
 
               <View
@@ -115,7 +166,7 @@ export default function Transactions() {
                
                 <Text
                   className={`${
-                    game?.type === "WITHDRAWAL"
+                    (game?.type !== "DEPOSIT")
                       ? "text-error-500 "
                       : "text-success-500"
                   }`}
@@ -124,6 +175,7 @@ export default function Transactions() {
                   {game?.amount} XAF
                 </Text>
               </View>
+              
             </TouchableOpacity>
           );
         })}
@@ -148,11 +200,12 @@ export default function Transactions() {
               alt="image"
             />
             <Text>{t("no_transaction")} </Text>
-
             </VStack>
-        </View>
+          </View>
         }
+
       </ScrollView>
+      <Toast config={toastConfig} />  
     </View>
   );
 }

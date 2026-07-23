@@ -1,84 +1,60 @@
-import { Stack } from 'expo-router';
-import { store } from './hooks/redux/store';
+import { Stack } from "expo-router";
+import "react-native-gesture-handler";
+import "react-native-reanimated";
+import { Provider } from "react-redux";
 
-import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
-import '@/global.css';
+import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
+import "@/global.css";
+import { PersistGate } from "redux-persist/integration/react";
+
+import { persistor, store } from "@/app/hooks/redux/store";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
-import { Provider } from 'react-redux';
-import "../lang/i18n";
-import { LanguageProvider } from './context/LanguageProvider';
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import "@/lang/i18n";
+import i18n from "@/lang/i18n";
+import { useEffect } from "react";
+import Toast from "react-native-toast-message";
+import { toastConfig } from "./config/toast.config";
+
+const queryClient = new QueryClient();
 
 export default function RootLayout() {
-  const toastConfig = {
-      success: (props: any) => (
-        <BaseToast
-          {...props}
-          style={{ borderLeftColor: 'green' }}
-          contentContainerStyle={{ paddingHorizontal: 15 }}
-          text1Style={{
-            fontSize: 15,
-            fontWeight: '400',
-            flexWrap: "wrap",
-          }}
-          text2Style={{
-            fontSize: 18,
-            fontWeight: '400',
-            flexWrap: "wrap",
 
-          }}
+  // useEffect(() => {
+  //   (async () => {
+  //     await initI18n()
+  //     setReady(true)
+  //   })()
+  // }, [])
+  // if (!ready) return null
 
-          text1NumberOfLines={0}
-          text2NumberOfLines={0}
-        />
-      ),
-      error: (props: any) => (
-        <ErrorToast
-        {...props}
-        style={{ maxWidth: "90%",  borderLeftColor: 'red'}}
-        text1Style={{
-          fontSize: 17,
-          flexWrap: "wrap",
-        }}
-        text2Style={{
-          fontSize: 18,
-          color: "red",
-          flexWrap: "wrap",
-        }}
-        text1NumberOfLines={1}
-        text2NumberOfLines={10}
-      />
-      ),
-      // Add more custom types as needed
+  useEffect(() => {
+    const loadLanguage = async () => {
+      const storedLang = await AsyncStorage.getItem("language");
+      if (storedLang) {
+        await i18n.changeLanguage(storedLang);
+      }
     };
+    loadLanguage();
+  }, []);
   return (
     <Provider store={store}>
-        <LanguageProvider>
-        <GestureHandlerRootView>
-
-      <GluestackUIProvider>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" />
-        </Stack>
-      </GluestackUIProvider>
-        </GestureHandlerRootView>
-
-      </LanguageProvider>
-
-      <Toast config={toastConfig}/>
-      
+      <PersistGate persistor={persistor}>
+        <GluestackUIProvider>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <BottomSheetModalProvider>
+              <QueryClientProvider client={queryClient}>
+                {/* <AppNavigator /> */}
+                <Stack screenOptions={{ headerShown: false }} />
+              </QueryClientProvider>
+            </BottomSheetModalProvider>
+          </GestureHandlerRootView>
+        </GluestackUIProvider>
+      </PersistGate>
+      <Toast config={toastConfig} />
     </Provider>
-  )
-
-// export default function RootLayout(){
-//     return(
-//             <SafeAreaView className="flex-1 bg-gray-50">
-//         <GluestackUIProvider>
-//                 <Stack screenOptions={{ headerShown: false }}>
-//                     <Stack.Screen name="(tabs)" />
-//                 </Stack>
-//         </GluestackUIProvider>
-//         </SafeAreaView>
-//     )
+  );
 }

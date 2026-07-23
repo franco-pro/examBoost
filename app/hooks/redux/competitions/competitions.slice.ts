@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import CompetitionState from "./competitionState";
-import { createCompetition, deleteOne, getCompetitionList, getHomeBase, getMyCompetitions, getOne, update } from "./competitions.thunks";
+import { createCompetition, deleteOne, getCompetitionList, getCompetitionListAdmin, getHomeBase, getMyCompetitions, getOne, searchCompetitions, update } from "./competitions.thunks";
 
 
 const initialState : CompetitionState = {
@@ -8,6 +8,12 @@ const initialState : CompetitionState = {
     competitionList: [],
     myCompetitionList: [],
     searchResults: [],
+    pagination: {
+        currentPage: 1,
+        totalPages: 1,
+        pageSize: 20,
+        totalItems: 0
+    },
     homeBaseData: null,
     loading: false,
     actionDone: false,
@@ -91,17 +97,20 @@ const competitionSlice = createSlice({
             if(action.payload){
                 const index = state.competitionList.findIndex((comp)=> comp.id == action.payload.competitionID)
                 if(index != -1){
-                    state.competitionList[index].statut = action.payload.statut as "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED";;
+                    state.competitionList[index].statut = action.payload.statut as "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED";
                 }
 
                 //my list
                 const myIndex = state.myCompetitionList.findIndex((comp)=> comp.id == action.payload.competitionID)
                 if(myIndex != -1){
-                    state.myCompetitionList[myIndex].statut = action.payload.statut as "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED";;
+                    state.myCompetitionList[myIndex].statut = action.payload.statut as "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED";
                 }
 
                 if(state.selectedCompetition && state.selectedCompetition.id == action.payload.competitionID && action.payload.statut == "ONGOING"){ 
                     state.selectedCompetition.statut = action.payload.statut;
+                    if(action.payload.roomId) {
+                        state.selectedCompetition.roomID = action.payload.roomId;
+                    }
                 }
             }
         },
@@ -163,6 +172,12 @@ const competitionSlice = createSlice({
             state.loading = false;
             state.actionDone = false;
             state.myCompetitionList = [];
+            state.pagination = {
+                currentPage: 1,
+                totalPages: 1,
+                pageSize: 20,
+                totalItems: 0
+            }
         }
     },
     extraReducers: (builder)=>{
@@ -174,7 +189,13 @@ const competitionSlice = createSlice({
             .addCase(getCompetitionList.fulfilled, (state, action)=>{
                 if(!action.payload.error){
                     state.competitionList = action.payload.data;
-
+                    state.pagination = {
+                                       totalItems: action.payload.pagination?.totalItems,
+                                        currentPage: action.payload.pagination?.currentPage,
+                                        totalPages: action.payload.pagination?.totalPages,
+                                        pageSize: action.payload.pagination?.pageSize
+                                    };
+                    
                 }else{
                     state.error = action.payload.error
                 }
@@ -182,6 +203,32 @@ const competitionSlice = createSlice({
                 state.error = null;
             })
             .addCase(getCompetitionList.rejected, (state, action)=>{
+                state.loading = false;
+                state.error = action.payload as string;
+            })
+
+
+            .addCase(getCompetitionListAdmin.pending, (state)=>{
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getCompetitionListAdmin.fulfilled, (state, action)=>{
+                if(!action.payload.error){
+                    state.competitionList = action.payload.data;
+                    state.pagination = {
+                        totalItems: action.payload.pagination?.totalItems,
+                         currentPage: action.payload.pagination?.currentPage,
+                         totalPages: action.payload.pagination?.totalPages,
+                         pageSize: action.payload.pagination?.pageSize
+                     };
+
+                }else{
+                    state.error = action.payload.error
+                }
+                state.loading = false;
+                state.error = null;
+            })
+            .addCase(getCompetitionListAdmin.rejected, (state, action)=>{
                 state.loading = false;
                 state.error = action.payload as string;
             })
@@ -216,7 +263,6 @@ const competitionSlice = createSlice({
             .addCase(getOne.fulfilled, (state, action)=>{
                 if(!action.payload.error){
                     state.selectedCompetition = action.payload.data;
-
                 }else{
                     state.error = action.payload.error
                 }
@@ -297,6 +343,26 @@ const competitionSlice = createSlice({
                 state.error = null;
             })
             .addCase(getHomeBase.rejected, (state, action)=>{
+                state.loading = false;
+                state.error = action.payload as string;
+            })
+
+            .addCase(searchCompetitions.pending, (state)=>{
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(searchCompetitions.fulfilled, (state, action)=>{
+                if(!action.payload.error){
+                    state.searchResults = action.payload.data;
+                   
+                }else{
+                    state.error = action.payload.error
+                }   
+                state.loading = false;
+                state.error = null;
+            })
+
+            .addCase(searchCompetitions.rejected, (state, action)=>{
                 state.loading = false;
                 state.error = action.payload as string;
             })

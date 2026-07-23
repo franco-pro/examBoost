@@ -1,0 +1,323 @@
+import { StyleSheet } from "react-native";
+
+const T = {
+    blue: "#181c5c",
+    blueDark: "#0f1240",
+    blueLight: "#252a7a",
+    blueFade: "#f0f1fa",
+    blueMid: "#e8eaf6",
+    orange: "#ff894f",
+    orangeLight: "#fff1eb",
+    white: "#ffffff",
+    bg: "#FAF9F6",
+    card: "#FFFFFF",
+    border: "#e2e4f0",
+    text: "#0f1240",
+    textMid: "#4a4f8a",
+    textMuted: "#8b90bb",
+    success: "#1a7f4b",
+    successBg: "#e6f7ee",
+  };
+
+export const styles = StyleSheet.create({
+    root: { flex: 1, backgroundColor: T.bg },
+  
+    // Header
+    header: {
+      backgroundColor: T.blue,
+      paddingTop: 15,
+      paddingBottom: 16,
+      paddingHorizontal: 16,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+    },
+    backBtn: {
+      width: 36,
+      height: 36,
+      borderRadius: 10,
+      backgroundColor: "rgba(255,255,255,0.15)",
+      alignItems: "center",
+      justifyContent: "center",
+      borderWidth: 1,
+      borderColor: "rgba(255,255,255,0.2)",
+    },
+    backArrow: { fontSize: 26, color: T.white, lineHeight: 30, marginTop: -2 },
+    headerCenter: { flex: 1 },
+    headerSub: {
+      fontSize: 10,
+      color: T.orange,
+      fontWeight: "700",
+      letterSpacing: 1.5,
+      textTransform: "uppercase",
+      marginBottom: 2,
+    },
+    headerTitle: {
+      fontSize: 16,
+      fontWeight: "700",
+      color: T.white,
+    },
+    dirtyDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: T.orange,
+    },
+  
+    // Scroll
+    scroll: { flex: 1 },
+    scrollContent: { padding: 16 },
+  
+    // Preview card
+    previewCard: {
+      backgroundColor: T.card,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: T.border,
+      padding: 14,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+      marginBottom: 20,
+      shadowColor: T.blue,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.06,
+      shadowRadius: 6,
+      elevation: 2,
+    },
+    previewIconWrap: {
+      width: 48,
+      height: 48,
+      borderRadius: 12,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    previewIcon: { fontSize: 24 },
+    previewInfo: { flex: 1 },
+    previewFormat: {
+      fontSize: 13,
+      fontWeight: "800",
+      color: T.text,
+      letterSpacing: 1,
+    },
+    previewId: { fontSize: 11, color: T.textMuted, marginTop: 2 },
+    validPill: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 5,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      borderRadius: 20,
+    },
+    validDot: { width: 6, height: 6, borderRadius: 3 },
+    validText: { fontSize: 11, fontWeight: "700" },
+  
+    // Section title
+    sectionRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+      marginBottom: 12,
+      marginTop: 4,
+    },
+    sectionLabel: {
+      fontSize: 11,
+      fontWeight: "700",
+      color: T.textMid,
+      letterSpacing: 1,
+      textTransform: "uppercase",
+    },
+    sectionLine: {
+      flex: 1,
+      height: 1,
+      backgroundColor: T.border,
+    },
+  
+    // Fields
+    fieldGroup: { marginBottom: 14 },
+    fieldLabel: {
+      fontSize: 12,
+      fontWeight: "600",
+      color: T.textMid,
+      marginBottom: 6,
+    },
+  
+    // Read-only
+    readonlyBox: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: T.blueFade,
+      borderWidth: 1,
+      borderColor: T.border,
+      borderRadius: 10,
+      paddingHorizontal: 12,
+      paddingVertical: 11,
+      gap: 8,
+    },
+    readonlyIcon: { fontSize: 14 },
+    readonlyText: {
+      flex: 1,
+      fontSize: 13,
+      color: T.textMid,
+      fontWeight: "500",
+    },
+    lockIcon: { opacity: 0.4 },
+  
+    // Editable
+    input: {
+      backgroundColor: T.card,
+      borderWidth: 1.5,
+      borderColor: T.border,
+      borderRadius: 10,
+      paddingHorizontal: 12,
+      paddingVertical: 11,
+      fontSize: 14,
+      color: T.text,
+      fontWeight: "500",
+    },
+  
+    // Type chips
+    typeGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 7,
+    },
+    typeChip: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 5,
+      paddingHorizontal: 10,
+      paddingVertical: 7,
+      borderRadius: 8,
+      borderWidth: 1.5,
+      borderColor: T.border,
+      backgroundColor: T.card,
+    },
+    typeChipIcon: { fontSize: 12 },
+    typeChipText: {
+      fontSize: 11,
+      fontWeight: "500",
+      color: T.textMuted,
+    },
+  
+    // Switch card
+    switchCard: {
+      backgroundColor: T.card,
+      borderWidth: 1.5,
+      borderColor: T.border,
+      borderRadius: 10,
+      padding: 14,
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: 12,
+    },
+    switchLabel: {
+      fontSize: 13,
+      fontWeight: "700",
+      color: T.text,
+      marginBottom: 3,
+    },
+    switchSub: {
+      fontSize: 11,
+      color: T.textMuted,
+      maxWidth: 220,
+    },
+  
+    // Save button
+    saveBtn: {
+      marginTop: 24,
+      backgroundColor: T.blue,
+      borderRadius: 12,
+      paddingVertical: 15,
+      alignItems: "center",
+      shadowColor: T.blue,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 10,
+      elevation: 6,
+    },
+    saveBtnDisabled: {
+      backgroundColor: T.border,
+      shadowOpacity: 0,
+      elevation: 0,
+    },
+    saveBtnText: {
+      fontSize: 14,
+      fontWeight: "800",
+      color: T.white,
+      letterSpacing: 0.3,
+    },
+  
+    // Submitter card
+    submitterCard: {
+      backgroundColor: T.card,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: T.border,
+      padding: 14,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginBottom: 20,
+      shadowColor: T.blue,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.05,
+      shadowRadius: 4,
+      elevation: 1,
+    },
+    submitterLeft: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+      flex: 1,
+    },
+    avatar: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      borderWidth: 2,
+      borderColor: T.blueFade,
+    },
+    avatarFallback: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      backgroundColor: T.blue,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    avatarInitials: {
+      fontSize: 15,
+      fontWeight: "700",
+      color: T.white,
+      letterSpacing: 0.5,
+    },
+    submitterRole: {
+      fontSize: 10,
+      fontWeight: "600",
+      color: T.textMuted,
+      textTransform: "uppercase",
+      letterSpacing: 0.8,
+      marginBottom: 2,
+    },
+    submitterName: {
+      fontSize: 14,
+      fontWeight: "700",
+      color: T.text,
+    },
+    submitterBadge: {
+      backgroundColor: T.blueFade,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: T.blueMid,
+    },
+    submitterBadgeText: {
+      fontSize: 11,
+      fontWeight: "700",
+      color: T.blue,
+      letterSpacing: 0.3,
+    },
+  });

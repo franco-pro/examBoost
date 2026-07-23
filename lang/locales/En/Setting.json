@@ -1,0 +1,29 @@
+{
+  "setting": {
+    "title": "Settings",
+    "wallet": "Balance",
+    "level":"Level",
+    "account": "Account",
+    "profile": "My Profile",
+    "withdraw": "Withdraw",
+    "change_pass": "Change Password",
+    "preference": "Preferences",
+    "language": "Language",
+    "appearance": "Appearance",
+    "support": "Support",
+    "about": "About Examboost",
+    "sensitive_zone": "Sensitive Zone",
+    "logout": "Log Out",
+    "delete_account": "Delete My Account",
+    "change_datas":{
+      "firstname": "Firstname",
+      "surname": "Surname",
+      "email": "Email",
+      "number": "Number Phone",
+      "level": "Level",
+      "editText":"Edith your informations",
+      "save": "Save",
+      "cancel": "Cancel"
+    }
+  }
+}

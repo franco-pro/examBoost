@@ -1,0 +1,9 @@
+{
+  "Pack": {
+    "search": "No pack find",
+    "confirmPurchase": "Confirmed Purchase",
+    "ErrorPurchase": "Error Purchase",
+    "remainingDaysText": "",
+    "packDurationText": ""
+  }
+}

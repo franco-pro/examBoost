@@ -11,6 +11,8 @@ export const soundLibrary = {
   waitingQuestion: require('../../../assets/audio/home_viewer.mp3'),
   beforeSendingQuestion: require('../../../assets/audio/waiting_answer.mp3'),
   QuestionIncoming: require('../../../assets/audio/question_incoming.mp3'),
+  TopUpSuccess: require('../../../assets/audio/success_pay.wav'),
+  WithdrawSuccess: require('../../../assets/audio/withdraw_success.wav'),
 };
 
 async function actionInitialSound(action: 'STOP' | 'PLAY') {
@@ -44,6 +46,8 @@ export async function playSound(
     | 'waitingQuestion'
     | 'QuestionIncoming'
     | 'beforeSendingQuestion'
+    | 'TopUpSuccess'
+    | 'WithdrawSuccess'
 ) {
   try {
     if (sound_type === 'waitingQuestion') {

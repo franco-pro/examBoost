@@ -1,0 +1,10 @@
+{
+    "notification":{
+            "delete_all": "Delete All",
+            "delete": "Delete",
+            "loading_text": "Notifications are loading...",
+            "error_on_loading": "Error while loading notifications.",
+            "try_again": "Try Again",
+            "no_notifications": "No notifications available."
+        }
+}

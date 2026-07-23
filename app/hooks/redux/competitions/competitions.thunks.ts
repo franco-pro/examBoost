@@ -6,9 +6,44 @@ const competitionHttp = CompetitionHttp();
 
 export const  getCompetitionList = createAsyncThunk(
     'competition/getList',
-    async (_, {rejectWithValue}) => {
+    async (pagination: {page: number, limit: number}, {rejectWithValue}) => {
         try {
-            const data = await competitionHttp.getCompetitions();
+            // TODO : pagination and limit
+            const data = await competitionHttp.getCompetitions(pagination.page, pagination.limit);
+            return data;
+        } catch (error: any) {
+            console.log('error on loading:', error.message);
+
+            return rejectWithValue({
+                status: error.response?.status ?? 500,
+                message: error.response.data?.message ?? "Erreur lors du chargement..."
+            })
+        }
+    }
+)
+
+export const searchCompetitions = createAsyncThunk(
+    'competition/search',
+    async (param : {query: string, isAdmin: boolean}, {rejectWithValue}) => {
+        try {
+            const data = await competitionHttp.searchCompetition(param.query, param.isAdmin);
+            return data;
+        } catch (error: any) {
+            console.log('error on searching:', error.message);
+
+            return rejectWithValue({
+                status: error.response?.status ?? 500,
+                message: error.response.data?.message ?? "Erreur lors du chargement..."
+            })
+        }
+    }
+)
+
+export const  getCompetitionListAdmin = createAsyncThunk(
+    'competition/getListAdmin',
+    async (pagination: {page: number, limit: number}, {rejectWithValue}) => {
+        try {
+            const data = await competitionHttp.getCompetitionAdmin(pagination.page, pagination.limit);
             return data;
         } catch (error: any) {
             console.log('error on loading:', error.message);
@@ -40,8 +75,11 @@ export const createCompetition = createAsyncThunk(
     'competition/create',
     async (payload: Competition, {rejectWithValue})=>{
         try {
+            console.log('payload compertio', payload);
+
             const data = await competitionHttp.createCompetition(payload);
             console.log('response', data);
+
             return data;
         } catch (error: any) {
             console.log('error on creating:', error.message);

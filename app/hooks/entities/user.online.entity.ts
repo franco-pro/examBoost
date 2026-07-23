@@ -13,3 +13,7 @@ export interface UserOnline{
         isConnected: boolean;
         totalTimeTaken: number;
 }
+
+export default function UserOnlineEntityRoute() {
+        return null;
+}

@@ -1,3 +1,11 @@
 {
- "no_transaction": "Aucune transaction trouvée"
+ "no_transaction": "Aucune transaction trouvée",
+ "withdrawal": "Retrait vers compte mobile",
+ "deposit": "Recharge du compte.",
+ "purchase_pack": "Achat de pack d'épreuves.",
+ "createCompetition": "Création d'une compétition recompensée.",
+ "competition_fess": "Frais de participatition à une compétition.",
+ "failed": "Échec",
+ "completed": "Succès",
+ "pending": "en cours de traitement..."
 }

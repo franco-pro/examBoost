@@ -1,4 +1,7 @@
+import { toastConfig } from '@/app/config/toast.config';
 import { SearchHttp } from '@/app/hooks/services/search/search';
+import { EmitEventNotif } from '@/app/hooks/services/socket/notifications.gateway';
+import { useAppDispatch, useAppSelector } from '@/app/redux/redux.hooks';
 import { Avatar, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
 import { Box } from '@/components/ui/box';
 import { Button, ButtonIcon, ButtonText } from '@/components/ui/button';
@@ -25,9 +28,11 @@ import Toast from 'react-native-toast-message';
 interface InvitationPromptsProps {
     isOpen: boolean;
     onClose: () => void;
+    competitionDetails: {id: number, name: string};
+    userDetails: {id: number, username: string };
 }
 
- export default function InvitationPrompts({isOpen, onClose}: InvitationPromptsProps) {
+ export default function InvitationPrompts({isOpen, onClose, competitionDetails, userDetails}: InvitationPromptsProps) {
     const [actionType, setActionType] = useState<"Rechercher"|"Send Invitation">("Rechercher");
     const [searchValue, setSearchValue] = useState<string>("");
     const [response, setResponse] = useState<{
@@ -41,6 +46,7 @@ interface InvitationPromptsProps {
     const [waitingResponse, setWaitingResponse] = useState<boolean>(false);
     const searchHttp = SearchHttp();
     const {t} = useTranslation("competition");
+    const dispatch = useAppDispatch();
 
     useFocusEffect(
         useCallback(()=>{
@@ -57,6 +63,16 @@ interface InvitationPromptsProps {
             if(response){
                 try{
                     setWaitingResponse(true);
+                    const eventNotf = EmitEventNotif(dispatch);
+                    eventNotf.sendInvitation(
+                      {
+                        receiverID: response.id,
+                        senderID: userDetails.id, // Remplacez par l'ID réel de l'expéditeur
+                        competitionId: competitionDetails.id, // Remplacez par l'ID réel de la compétition
+                        senderName: userDetails.username, // Remplacez par le nom réel de l'expéditeur
+                        competitionName: competitionDetails.name // Remplacez par le nom réel de la compétition
+                      }
+                    )
                     // Simuler l'envoi de l'invitation
                     await new Promise((resolve) => setTimeout(resolve, 2000));
                     setWaitingResponse(false);
@@ -196,7 +212,10 @@ interface InvitationPromptsProps {
               </Button>
             </ModalFooter>
           </ModalContent>
-        </Modal>
+         </Modal>
+      
+        <Toast config={toastConfig} />
+        
       </>
     );
   }

@@ -20,6 +20,10 @@ module.exports = {
     extend: {
       colors: {
         primary: {
+          "custom-100":"#f7f8fd",
+          "custom-200":"#e8eaf6",
+          "custom-300":"#3f51b5",
+          "custom-400":"#181c5c",
           0: 'rgb(var(--color-primary-0)/<alpha-value>)',
           50: 'rgb(var(--color-primary-50)/<alpha-value>)',
           100: 'rgb(var(--color-primary-100)/<alpha-value>)',
@@ -36,6 +40,10 @@ module.exports = {
           defaultOrange: "#ff894f"
         },
         secondary: {
+          "custom-100":"#fff5f0",
+          "custom-200":"#ffd1b8",
+          "custom-300":"#ff894f",
+          "custom-400":"#e67a47",
           0: 'rgb(var(--color-secondary-0)/<alpha-value>)',
           50: 'rgb(var(--color-secondary-50)/<alpha-value>)',
           100: 'rgb(var(--color-secondary-100)/<alpha-value>)',
@@ -187,6 +195,8 @@ module.exports = {
         code: ['var(--font-source-code-pro)'],
         inter: ['var(--font-inter)'],
         'space-mono': ['var(--font-space-mono)'],
+        montserrat: ['Montserrat', 'sans-serif'],
+        poppins: ['Poppins', 'sans-serif'],
       },
       fontWeight: {
         extrablack: '950',
