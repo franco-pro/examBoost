@@ -3,7 +3,7 @@
 import { getHomeData } from "@/app/hooks/redux/dev-admin/dev-admin.thunks";
 import { getAllNiveaux } from "@/app/hooks/redux/niveaux/niveaux.thunks";
 import { useAppDispatch } from "@/app/hooks/redux/redux.hooks";
-import { useAppSelector } from "@/app/redux/redux.hooks";
+import { useAppSelector } from "@/app/hooks/redux/redux.hooks";
 import { RootState } from "@/app/redux/store";
 import { Spinner } from "@/components/ui/spinner";
 import { VStack } from "@/components/ui/vstack";

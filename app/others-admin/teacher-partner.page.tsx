@@ -12,7 +12,7 @@ import { styles } from "./styles";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
 import { Avatar, AvatarFallbackText, AvatarImage } from "@/components/ui/avatar";
-import { useAppSelector } from "../redux/redux.hooks";
+import { useAppSelector } from "../hooks/redux/redux.hooks";
 import { DocAdminHTTP } from "../hooks/services/document/doc.admin.http";
 
 type GainDetail = {
