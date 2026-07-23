@@ -12,7 +12,7 @@ import { useFocusEffect, useNavigation, useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
-import { useAppSelector } from '../redux/redux.hooks';
+import { useAppSelector } from '../hooks/redux/redux.hooks';
 import { useAppDispatch } from '../hooks/redux/redux.hooks';
 import { deleteAllNotifications, deleteNotification, getNotification, loadAllNotification, setAsRead } from '../hooks/redux/notifications/notification.thunks';
 import FullscreenLoader from '../helper/Dialogs/loaderFullScreen';
