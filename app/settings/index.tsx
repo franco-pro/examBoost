@@ -51,7 +51,6 @@ export default function SettingsScreen() {
   const [isLoaderShow, setShowLoader] = useState(false);
 const logoutHandle = async () => {
   disconnectAllSockets();
-
   dispatch(logout());
   // await persistor.purge();
   setShowLoader(true);

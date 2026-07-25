@@ -41,21 +41,21 @@ export default function SendEmail() {
     try {
       const datas = await authService.forgetPassword({ email })
       console.log("datas password:", datas)
-      if ( datas) {
+      if (datas) {
         setTimeout(() => {
-          setIsLoading(false)
-          navigation.push({
+          setIsLoading(false);
+          navigation.replace({
             pathname: "/(auth)/sendOtp",
             params: { email },
           });
         }, 2000);
       } else {
-        setIsLoading(false)
-        Alert.alert("Erreur", "l'email n'existe pas !")
+        setIsLoading(false);
+        Alert.alert("Erreur", "l'email n'existe pas !");
       }
     } catch (error:any) {
       setIsLoading(false)
-      console.log("error:", error);
+      console.log("error 1:", error);
       Alert.alert("erreur",error?.response || "something wrong !!")
     }
   }

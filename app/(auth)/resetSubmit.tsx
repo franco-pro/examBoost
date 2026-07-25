@@ -32,12 +32,16 @@ export default function ResetSubmit() {
         });
         console.log("datas reset pass:", datas);
         setIsLoading(false);
+        Alert.alert("Succes","Mot de passe changé avec succes !")
         setTimeout(() => {
-          navigation.push("/pages/auth/login");
+          navigation.push("/(auth)/login");
         }, 2000);
       } else {
         setIsLoading(false)
-        Alert.alert("Erreur","Quelque chose ne va pas")
+        Alert.alert(
+          "Erreur",
+          "Vos mots de passe ne correspondent pas, re-vérifier svp!",
+        );
       }
     } catch (e:any) {
       setIsLoading(false)
