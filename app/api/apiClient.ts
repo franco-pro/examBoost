@@ -7,7 +7,7 @@ import { store } from "../hooks/redux/store";
 
 export const BASE_URL = "https://examboost.org/api";
 export const apiClient = axios.create({
-  baseURL:`${BASE_URL}:3000`,
+  baseURL:`${BASE_URL}`,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
