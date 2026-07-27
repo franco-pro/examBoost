@@ -43,10 +43,10 @@ export default function AboutScreen() {
 
         {/* Liens utiles */}
         <View className="px-4 mt-4 gap-2">
-          <AboutItem icon="globe" label="Site web" onPress={() => open('https://examboost.app')} />
-          <AboutItem icon="document-text" label="Conditions d’utilisation" onPress={() => open('https://examboost.app/terms')} />
-          <AboutItem icon="shield-checkmark" label="Politique de confidentialité" onPress={() => open('https://examboost.app/privacy')} />
-          <AboutItem icon="mail" label="Contact support" onPress={() => open('mailto:support@examboost.app')} />
+          <AboutItem icon="globe" label="Site web" onPress={() => open('https://examboost.org')} />
+          <AboutItem icon="document-text" label="Conditions d’utilisation" onPress={() => open('https://examboost.org/fr/terms')} />
+          <AboutItem icon="shield-checkmark" label="Politique de confidentialité" onPress={() => open('https://examboost.org/fr/privacy')} />
+          <AboutItem icon="mail" label="Contact support" onPress={() => open('mailto:info@examboost.org')} />
         </View>
 
         {/* Infos techniques */}

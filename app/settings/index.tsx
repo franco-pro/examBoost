@@ -175,7 +175,7 @@ const logoutHandle = async () => {
               </Text>
 
               <Text className="text-white/80">
-                {user?.email || "email@examboost.com"}
+                {user?.email || "info@examboost.org"}
               </Text>
             </View>
 
