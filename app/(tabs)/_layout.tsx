@@ -17,7 +17,8 @@ export default function RootLayout() {
   const { t } = useTranslation("competition");
   const {user, others} = useSelector((state: RootState) => state.user);
   const [showModal, setShowModal] = useState(false);
-
+  console.log('user', user);
+  console.log('others', others);
   function isCurrentVersionOld(newVersion: string): boolean {
     const currentAppVersion = Config.APP_VERSION;
 
@@ -157,6 +158,21 @@ export default function RootLayout() {
             tabBarIcon: ({ focused, color }) => (
               <Ionicons
                 name={focused ? "notifications" : "notifications-outline"}
+                color={color}
+                size={24}
+              />
+            ),
+          }}
+        />
+
+      <Tabs.Screen
+          name="examen"
+          options={{
+            title: "ExamenOBC",
+            // tabBarBadge: (others && others.notification && Array.isArray(others.notification)) ? (others.notification.length > 0 ? others.notification.length : undefined): undefined,
+            tabBarIcon: ({ focused, color }) => (
+              <Ionicons
+                name={focused ? "school" : "school-outline"}
                 color={color}
                 size={24}
               />

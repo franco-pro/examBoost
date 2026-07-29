@@ -172,7 +172,7 @@ export default function Transactions() {
                   }`}
                 >
                   {game?.type === "DEPOSIT" ? "+" : "-"}
-                  {game?.amount} XAF
+                  {game?.amount} credits
                 </Text>
               </View>
               

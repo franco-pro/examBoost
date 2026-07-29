@@ -56,14 +56,14 @@ export default function DevAdmin() {
       }[] = [
         {
           nom: "Examens créés",
-          chiffre: competitions.total.toString().toLocaleString("fr-FR")+"+",
+          chiffre: competitions.total.toLocaleString("fr-FR")+"+",
           icone: <Ionicons name="trophy-outline" size={28} color="#f97316" />,
           bgColor: "bg-orange-100",
           textColor: "text-orange-600",
         },
         {
           nom: "Users inscrits",
-          chiffre: totalUsers.total.toString().toLocaleString("fr-FR")+"+",
+          chiffre: totalUsers.total.toLocaleString("fr-FR")+"+",
           icone: <FontAwesome5 name="users" size={25} color="#3b82f6" />,
           bgColor: "bg-blue-100",
           textColor: "text-blue-600",
@@ -77,7 +77,7 @@ export default function DevAdmin() {
         },
         {
             nom: "Montant encaissé",
-            chiffre: `+${accountWallet.competition.toLocaleString("fr-FR")} FCFA`,
+            chiffre: `+${accountWallet.competition.toLocaleString("fr-FR")} Credits`,
             icone: (
               // Mets ici ton icône
               <FontAwesome5 name="wallet" size={24} color="#059669" />

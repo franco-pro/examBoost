@@ -64,7 +64,7 @@ const formatDate = (dateStr: string) => {
 };
 
 const formatGain = (n: number) =>
-  n >= 1000 ? `${(n / 1000).toFixed(1)}k FCFA` : `${n} FCFA`;
+  n >= 1000 ? `${(n / 1000).toFixed(1)}k credits` : `${n} credits`;
 
 const formatNextPayment = (isoDate: string) => {
   const d = new Date(isoDate);
@@ -158,7 +158,7 @@ export default function DocAdmin() {
   const validationRate = (dashboard && dashboard.totalValidated && dashboard.totalDocSubmit)  ? Math.round((dashboard.totalValidated / dashboard.totalDocSubmit) * 100): 0;
   const pending = dashboard ? dashboard.totalDocSubmit - dashboard.totalValidated: 0;
 
-  // Gain 30j : format "+N*prix FCFA" par type depuis gainDetail
+  // Gain 30j : format "+N*prix credits" par type depuis gainDetail
   const gainLabel = dashboard?.last30Days?.gainDetail
   ? Object.entries(dashboard.last30Days.gainDetail)
       .map(([, v]) => {
@@ -167,7 +167,7 @@ export default function DocAdmin() {
       })
       .join(" ")
   : "";
-  const gainDisplay = gainLabel ? `${gainLabel} FCFA` : `${dashboard ? dashboard.last30Days.gain: 0} FCFA`;
+  const gainDisplay = gainLabel ? `${gainLabel} credits` : `${dashboard ? dashboard.last30Days.gain: 0} credits`;
 
   const filtered = filter === "TOUS" ? documents : documents.filter((d: any) => d.type === filter);
 
@@ -190,9 +190,9 @@ export default function DocAdmin() {
             <Text style={styles.headerTitle}>Documents</Text>
           </View>
           <Avatar size="md" className="border-2 border-orange-400">
-            <AvatarImage source={{ uri: user?.imgUrl }} alt={user?.name ?? "User"} />
+            <AvatarImage source={{ uri: user?.imgUrl }} alt={user?.surname ?? "User"} />
             <AvatarFallbackText className="text-white font-bold bg-indigo-500">
-              {user?.name ?? "A"}
+              {user?.surname ?? "A"}
             </AvatarFallbackText>
           </Avatar>
         </View>

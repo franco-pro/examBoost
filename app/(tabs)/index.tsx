@@ -19,7 +19,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/fr";
 
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { ArrowRightIcon, Icon } from "@/components/ui/icon";
 import * as pdfImage from "../helper/images/image";
 import { useTranslation } from "react-i18next";
@@ -381,7 +381,7 @@ export default function Index() {
                 </View>
                 <View className="flex-row items-center gap-4">
                   <Text className="text-white text-2xl ">
-                    {user ? wallet : "----"} XAF
+                    {user ? wallet : "----"} credits
                   </Text>
                   <TouchableOpacity
                     onPress={() => refreshWalletHandle()}
@@ -407,6 +407,34 @@ export default function Index() {
               </View>
             </View>
           </Card>
+          {/* Bloc d'introduction avec bouton de réinitialisation/rafraîchissement */}
+            {others && Array.isArray(others.other) && others.other[0].time_of_exam_result && <View 
+              className="p-5 rounded-2xl shadow-sm border border-blue-100"
+              style={{ backgroundColor: '#2E5DA6' }}
+            >
+              <Text className="text-xl font-bold text-white mb-2">
+                Consultation des résultats OBC
+              </Text>
+              <Text className="text-blue-50 text-sm leading-5 mb-4">
+                Accédez instantanément à votre relevé d'examen. Renseignez votre{' '}
+                <Text className="font-bold text-white">matricule</Text> ainsi que l'
+                <Text className="font-bold text-white">année de session</Text>{' '}
+                dans les champs ci-dessous pour lancer la vérification.
+              </Text>
+
+              {/* Bouton pour réinitialiser / recharger la page actuelle */}
+              <TouchableOpacity
+                className="flex-row items-center justify-center space-x-2 py-2.5 px-4 rounded-xl border border-white/30 active:opacity-80 align-self-start"
+                style={{ backgroundColor: 'rgba(255, 255, 255, 0.15)' }}
+                onPress={()=> navigation.push("/settings/examen") }
+              >
+                <Text className="text-white text-xs font-semibold">
+                  Obtenir mon resultat
+                </Text>
+                <Ionicons name="arrow-forward" size={16} color="#ffffff" />
+
+              </TouchableOpacity>
+            </View>}
 
           {/* Ton contenu */}
           <View className="flex-row justify-between items-center mt-10">

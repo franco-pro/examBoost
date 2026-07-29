@@ -194,7 +194,7 @@ const logoutHandle = async () => {
               </Text>
 
               <Text className="text-white font-bold text-lg">
-                {user?.wallet ?? 0} FCFA
+                {user?.wallet ?? 0} credits
               </Text>
             </View>
 
@@ -233,6 +233,13 @@ const logoutHandle = async () => {
             label={t("setting.change_pass")}
             color="#F59E0B"
             onPress={() => router.push("/settings/password" as any)}
+          />
+
+          <SettingsItem
+            icon="school"
+            label={"Resutat d'examen OBC"}
+            color="#F59E0B"
+            onPress={() => router.push("/settings/examen" as any)}
           />
 
            {
