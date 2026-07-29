@@ -236,7 +236,7 @@ export default function CreatePackScreen() {
 
         <View style={styles.row}>
           <View style={styles.rowHalf}>
-            <Field label="Prix (FCFA)" required={false}>
+            <Field label="Prix (credits)" required={false}>
               <StyledInput
                 value={form.price}
                 onChangeText={(v) => set("price", v)}

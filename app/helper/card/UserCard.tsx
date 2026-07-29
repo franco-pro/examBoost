@@ -41,7 +41,7 @@ export function UserCard({ user, onPress }: UserCardProps) {
           )}
 
           <VStack className="items-end">
-            <Text className="font-bold text-green-600">{Number(user.wallet).toLocaleString("fr-FR")} FCFA</Text>
+            <Text className="font-bold text-green-600">{Number(user.wallet).toLocaleString("fr-FR")} credits</Text>
             <Text className="text-xs text-gray-400">Solde</Text>
             <Ionicons name="chevron-forward" size={24} color="black" />
           </VStack>

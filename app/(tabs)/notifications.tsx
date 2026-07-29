@@ -111,7 +111,7 @@ export default function NotificationsScreen() {
         //inscription done and the competition is with entry fee, then we have to update the user wallet in the store before redirection
         const wallet = user ? (user.wallet - selectedCompetition.entryFee) : 0;
         dispatch(updateBalanceUser(wallet));
-        showToast('success', 'Invitation acceptée !', `Vous avez été enregistré à la compétition. Votre nouveau solde est de ${wallet} XAF.`);
+        showToast('success', 'Invitation acceptée !', `Vous avez été enregistré à la compétition. Votre nouveau solde est de ${wallet} credits.`);
       }else{
         showToast('success', 'Invitation acceptée !', 'Vous avez été enregistré à la compétition.');
       }

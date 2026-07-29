@@ -13,7 +13,7 @@ type PackType =
   | "EVALUATION";
 
 const formatPrice = (price: number) =>
-  price === 0 ? "Gratuit" : `${price.toLocaleString()} FCFA`;
+  price === 0 ? "Gratuit" : `${price.toLocaleString()} credits`;
 
 const TYPE_CONFIG: Record<
   PackType,

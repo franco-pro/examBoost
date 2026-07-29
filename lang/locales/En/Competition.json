@@ -214,7 +214,7 @@
 },
 "invitationPrompt": {
   "title": "Registration confirmation",
-  "text": "This competition requires an entry fee... you will be charged {{registrationFees}} XAF",
+  "text": "This competition requires an entry fee... you will be charged {{registrationFees}} credits",
   "subtext": "Are you sure you want to join this competition ?",
   "joinBtn": "Confirm",
   "ignoreBtn": "Cancel"

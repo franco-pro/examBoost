@@ -77,7 +77,7 @@ export default function DevAdmin() {
         },
         {
             nom: "Montant encaissé",
-            chiffre: `+${accountWallet.competition.toLocaleString("fr-FR")} FCFA`,
+            chiffre: `+${accountWallet.competition.toLocaleString("fr-FR")} Credits`,
             icone: (
               // Mets ici ton icône
               <FontAwesome5 name="wallet" size={24} color="#059669" />

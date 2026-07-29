@@ -412,16 +412,16 @@ function userJoinCompetition(){
               selectedCompetition?.type === "FREE_REGISTRATION_WITH_WINNER_PRICE" || selectedCompetition?.type === "PAID_REGISTRATION_WITH_WINNER_PRICE" ? 
               (
                 <Text className="ml-2 text-gray-700 font-medium">
-                  {selectedCompetition?.winnerPrice.toLocaleString("fr-FR")} XAF
+                  {selectedCompetition?.winnerPrice.toLocaleString("fr-FR")} credits
                  </Text>
               ) : selectedCompetition?.type == "PAID_REGISTRATION_AS_WINNER_PRICE" ? 
                 (
                   <Text className="ml-2 text-gray-700 font-medium">
-                    {selectedCompetition?.winnerPrice.toLocaleString("fr-FR") + " x " + selectedCompetition?.suscribers.length} XAF
+                    {selectedCompetition?.winnerPrice.toLocaleString("fr-FR") + " x " + selectedCompetition?.suscribers.length} credits
                   </Text>
                 ): (
                   <Text className="ml-2 text-gray-700 font-medium">
-                      00 XAF
+                      00 credits
                  </Text>
                 )
             }
@@ -578,7 +578,7 @@ function userJoinCompetition(){
               <Text className="font-semibold text-gray-800">
                 {(selectedCompetition?.entryFee === 0 || !selectedCompetition?.entryFee)
                   ? t("mycompetition.information.free")
-                  : `${selectedCompetition?.entryFee.toLocaleString("fr-FR")} XAF`}
+                  : `${selectedCompetition?.entryFee.toLocaleString("fr-FR")} credits`}
               </Text>
             </View>
 
