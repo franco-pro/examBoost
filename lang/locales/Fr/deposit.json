@@ -3,7 +3,7 @@
         "back": "Retour",
         "pay_done":{
             "title": "Recharge",
-            "text": "Votre compte à été crédité d'un montant de {{amount}}  credits."
+            "text": "Votre compte à été crédité d'un montant de {{amount}}  XAF."
         },
         "pay_failed": {
             "title": "Erreur",

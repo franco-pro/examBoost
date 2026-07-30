@@ -408,32 +408,32 @@ export default function Index() {
             </View>
           </Card>
             {
-            // others && Array.isArray(others.other) && others.other[0].time_of_exam_result && <View 
-            //   className="p-5 rounded-2xl shadow-sm border border-blue-100"
-            //   style={{ backgroundColor: '#2E5DA6' }}
-            // >
-            //   <Text className="text-xl font-bold text-white mb-2">
-            //   {t("accueil.exam_info.title")}
-            //   </Text>
-            //   <Text className="text-blue-50 text-sm leading-5 mb-4">
-            //   {t("accueil.exam_info.text.main")}{' '}
-            //     <Text className="font-bold text-white">{t("accueil.exam_info.text.subtext1")}</Text> {t("accueil.exam_info.text.text_link")}
-            //     <Text className="font-bold text-white">{t("accueil.exam_info.text.subtext2")}</Text>{' '}
-            //   </Text>
+            others && Array.isArray(others.other) && others.other[0].time_of_exam_result && <View 
+              className="p-5 rounded-2xl shadow-sm border border-blue-100"
+              style={{ backgroundColor: '#2E5DA6' }}
+            >
+              <Text className="text-xl font-bold text-white mb-2">
+              {t("accueil.exam_info.title")}
+              </Text>
+              <Text className="text-blue-50 text-sm leading-5 mb-4">
+              {t("accueil.exam_info.text.main")}{' '}
+                <Text className="font-bold text-white">{t("accueil.exam_info.text.subtext1")}</Text> {t("accueil.exam_info.text.text_link")}
+                <Text className="font-bold text-white">{t("accueil.exam_info.text.subtext2")}</Text>{' '}
+              </Text>
 
-            //   {/* Bouton pour réinitialiser / recharger la page actuelle */}
-            //   <TouchableOpacity
-            //     className="flex-row items-center justify-center space-x-2 py-2.5 px-4 rounded-xl border border-white/30 active:opacity-80 align-self-start"
-            //     style={{ backgroundColor: 'rgba(255, 255, 255, 0.15)' }}
-            //     onPress={()=> navigation.push("/settings/examen") }
-            //   >
-            //     <Text className="text-white text-xs font-semibold">
-            //       {t("accueil.exam_info.btnText")}
-            //     </Text>
-            //     <Ionicons name="arrow-forward" size={16} color="#ffffff" />
+              {/* Bouton pour réinitialiser / recharger la page actuelle */}
+              <TouchableOpacity
+                className="flex-row items-center justify-center space-x-2 py-2.5 px-4 rounded-xl border border-white/30 active:opacity-80 align-self-start"
+                style={{ backgroundColor: 'rgba(255, 255, 255, 0.15)' }}
+                onPress={()=> navigation.push("/settings/examen") }
+              >
+                <Text className="text-white text-xs font-semibold">
+                  {t("accueil.exam_info.btnText")}
+                </Text>
+                <Ionicons name="arrow-forward" size={16} color="#ffffff" />
 
-            //   </TouchableOpacity>
-            // </View>
+              </TouchableOpacity>
+            </View>
             }
 
           {/* Ton contenu */}

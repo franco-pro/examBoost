@@ -161,7 +161,8 @@ useFocusEffect(
                                 instrunctions: text as any,
                                 isIA: room ? (room.isManagedByIA ? true: false) : false,
                                 totalMinutes: room ? room.totalTimes: null,
-                                endTime: room ? room.finalHour : null
+                                endTime: room ? room.finalHour : null,
+                                serverNow: room ? room.serverNow : null
                       }}          
       />
 

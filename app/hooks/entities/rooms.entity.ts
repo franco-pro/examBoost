@@ -16,7 +16,9 @@ export interface Room {
     isActive: boolean;
     role: string,
     totalTimes: number | null;
+    endTimes: Date | null;
     finalHour: Date | null;
+    serverNow: any;
     instructions: {participant: string, owner: string, viewer: string} | null;
     creatorInfo: {username: string, surname: string, imgUrl: string};
     competitionInfo: {winnerPrice: number, maxUsers: number, questionsNbr: number, isExamBoostCompetition: boolean};

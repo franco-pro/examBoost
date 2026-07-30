@@ -3,7 +3,7 @@
       "back": "Back",
       "pay_done": {
         "title": "Top Up",
-        "text": "Your account has been credited with {{amount}} credits."
+        "text": "Your account has been credited with {{amount}} XAF."
       },
       "pay_failed": {
         "title": "Error",
@@ -18,7 +18,7 @@
         "tel_error": "The phone number must start with 6 and contain exactly 9 digits.",
         "tel_valid": "✓ Valid phone number",
         "operator": "Select your mobile operator",
-        "amount": "Amount (credits)",
+        "amount": "Amount (XAF)",
         "btnText": "Proceed to Top Up"
       },
       "loading": {
@@ -55,7 +55,7 @@
           "title": "Error",
           "text": "An error occurred during your transaction!",
           "insufficient_balence": "Insufficient balance to complete the transaction.",
-          "invalid_amount": "The minimum withdrawal amount is 1000 credits."
+          "invalid_amount": "The minimum withdrawal amount is 1000 XAF."
         }
       }
   }

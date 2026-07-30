@@ -1,45 +1,56 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
 
 type CountdownProps = {
-  targetDateUTC: string; // ex: "2025-10-30T14:30:00Z"
-  onFinish: () => void; // fonction à déclencher quand le timer atteint 0
+  serverNowUTC: string;  // ex: "2026-07-30T11:45:29.975Z"
+  targetDateUTC: string; // ex: "2026-07-30T11:47:29.975Z"
+  onFinish: () => void;
 };
 
-export default function Countdown({ targetDateUTC, onFinish }: CountdownProps) {
-  const [timeLeft, setTimeLeft] = useState<number>(0); // temps restant en secondes
-  const [hasStart, setStarting] = useState(false);
+export default function Countdown({ serverNowUTC, targetDateUTC, onFinish }: CountdownProps) {
+  const [timeLeft, setTimeLeft] = useState<number>(0);
+  const onFinishRef = useRef(onFinish);
 
   useEffect(() => {
+    onFinishRef.current = onFinish;
+  }, [onFinish]);
+
+  useEffect(() => {
+    const serverTime = new Date(serverNowUTC).getTime();
     const targetTime = new Date(targetDateUTC).getTime();
-    const now = Date.now();
-    const diffSeconds = Math.max(Math.floor((targetTime - now) / 1000), 0);
-    setTimeLeft(diffSeconds);
-    setStarting(true);
+    const localNowAtFetch = Date.now();
+
+    // ⚡ Calcul du décalage d'horloge entre le téléphone et le serveur
+    // Si clockOffset > 0, l'horloge du téléphone est en avance sur le serveur
+    const clockOffset = localNowAtFetch - serverTime;
+
+    const updateTimer = () => {
+      // On corrige l'heure du téléphone avec le décalage serveur
+      const correctedLocalNow = Date.now() - clockOffset;
+      
+      // Temps restant basé sur le temps réel du serveur
+      const diffSeconds = Math.max(Math.ceil((targetTime - correctedLocalNow) / 1000), 0);
+      
+      setTimeLeft(diffSeconds);
+
+      if (diffSeconds <= 0) {
+        onFinishRef.current();
+        return true;
+      }
+      return false;
+    };
+
+    const isFinished = updateTimer();
+    if (isFinished) return;
 
     const interval = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          return 0; // ✅ juste maj du state ici
-        }
-        return prev - 1;
-      });
+      const finished = updateTimer();
+      if (finished) clearInterval(interval);
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [targetDateUTC]);
+  }, [serverNowUTC, targetDateUTC]);
 
-  // ⚡ déclenche le callback une fois timeLeft = 0 (après le rendu)
-  useEffect(() => {
-    if (timeLeft === 0 && hasStart) {
-      console.log('timer off')
-      setStarting(false)
-      onFinish();
-    }
-  }, [timeLeft]);
-
-  // Calcul minutes et secondes pour affichage
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
 

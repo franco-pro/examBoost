@@ -668,7 +668,6 @@ function userJoinCompetition(){
             contentContainerClassName="flex-row items-center gap-4 pr-8 pl-4"
           >
 
-          {/* Bouton Supprimer (Superadmin) - Inchangé */}
           {(user?.role.toLowerCase() === "superadmin") &&
             (selectedCompetition?.statut === "UPCOMING" || selectedCompetition?.statut === "CANCELLED") && (
               <TouchableOpacity
@@ -680,7 +679,6 @@ function userJoinCompetition(){
               </TouchableOpacity>
             )}
 
-          {/* 1. S'INSCRIRE : Unifié pour le créateur ET les simples utilisateurs */}
           {canStillRegister && !isSubscribed && (selectedCompetition.isPublic || isCreator) && (
             <TouchableOpacity 
               className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto" 
@@ -693,7 +691,6 @@ function userJoinCompetition(){
             </TouchableOpacity>
           )}
 
-          {/* 2. REJOINDRE EN TANT QUE JOUEUR : Ouvert à tout inscrit, MÊME le créateur */}
           {isSubscribed && !errorType && selectedCompetition?.statut === "ONGOING" && (
             <TouchableOpacity 
               className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto"
@@ -706,7 +703,6 @@ function userJoinCompetition(){
             </TouchableOpacity>
           )}
 
-          {/* 3. REJOINDRE EN TANT QU'ADMIN : Réservé au créateur pour gérer la session */}
           {isCreator && room && !waitingLaunching && !selectedCompetition.isManagedByIA && selectedCompetition?.statut === "ONGOING" && (
             <TouchableOpacity 
               className="flex-row items-center bg-green-600 self-start px-4 py-2 rounded-full ml-auto" // J'ai mis une couleur différente (vert) pour le différencier du bouton Jouer
@@ -719,7 +715,6 @@ function userJoinCompetition(){
             </TouchableOpacity>
           )}
 
-          {/* 4. DÉMARRER LA COMPÉTITION (Créateur) */}
           {isCreator && !waitingLaunching && !room && selectedCompetition?.statut === "UPCOMING" && (
             <TouchableOpacity 
               className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto"
@@ -732,7 +727,6 @@ function userJoinCompetition(){
             </TouchableOpacity>
           )}
 
-          {/* 5. OBSERVER LA COMPÉTITION (Non-inscrits ou IA gérée) */}
           {(!isSubscribed || errorType === "USER_HAS_LEAVED_ROOM") && 
           (room || selectedCompetition?.roomID) && 
           selectedCompetition?.statut === "ONGOING" && (

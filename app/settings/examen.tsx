@@ -8,11 +8,13 @@ import {
   ScrollView,
   SafeAreaView,
   Pressable,
+  Image
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import apiClient from '../api/apiClient';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import LogoHeaderComponent from '@/components/personalizedComponents/logoApplication';
 
 interface CandidateData {
   id: number;
@@ -95,16 +97,17 @@ export default function ExamResultScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background-light dark:bg-background-dark dark:text-white">
-      <ScrollView contentContainerStyle={{ padding: 20 }}>
-        <View className="px-4 pt-5 pb-4 flex-row items-center justify-between">
+           <View className="px-4 pt-5 pb-4 flex-row items-center justify-between">
                 <Pressable onPress={() => router.back()} accessibilityLabel="Retour">
                   <Ionicons name="arrow-back" size={22} color="#181c5c" />
                 </Pressable>
                 <Text className="text-lg font-extrabold text-typography-default dark:text-typography-white">
-                  ExamBoost: {t("form.pageTitle")}
+                   <LogoHeaderComponent /> {t("form.pageTitle")}
                 </Text>
                 <View style={{ width: 22 }} />
-              </View>
+          </View>
+      <ScrollView contentContainerStyle={{ padding: 20 }}>
+       
         
         {!result && (
           <View className="space-y-6 mt-[10px]">
@@ -213,8 +216,16 @@ export default function ExamResultScreen() {
                 {result.décision}
               </Text>
             </View>
+          
+          <View className='flex-row justify-center items-center mt-[5px]'>
+            <Image 
+              source={require("@/assets/images/app_sec.png")} 
+              style={{ width: 160, height: 150 }}
+              resizeMode='contain' 
+            />
+          </View>
 
-            <View className="bg-white rounded-2xl mt-[6px] p-5 border border-slate-100 shadow-sm space-y-4">
+            <View className="bg-white rounded-2xl mt-[2px] p-5 border border-slate-100 shadow-sm space-y-4">
               <Text 
                 className="text-base font-bold border-b border-slate-100 pb-3"
                 style={{ color: '#2E5DA6' }}
