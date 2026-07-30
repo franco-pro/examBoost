@@ -5,9 +5,9 @@ import { updateTokens } from "../hooks/redux/users/users.slice";
 import { useDispatch } from "react-redux";
 import { store } from "../hooks/redux/store";
 
-export const BASE_URL = "https://examboost.org/api";
+export const BASE_URL = "http://172.20.10.4";
 export const apiClient = axios.create({
-  baseURL:`${BASE_URL}`,
+  baseURL:`${BASE_URL}:3000`,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",

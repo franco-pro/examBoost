@@ -416,7 +416,7 @@ export default function Index() {
               {t("accueil.exam_info.title")}
               </Text>
               <Text className="text-blue-50 text-sm leading-5 mb-4">
-              {t("accueil.exam_info.text")}{' '}
+              {t("accueil.exam_info.text.main")}{' '}
                 <Text className="font-bold text-white">{t("accueil.exam_info.text.subtext1")}</Text> {t("accueil.exam_info.text.text_link")}
                 <Text className="font-bold text-white">{t("accueil.exam_info.text.subtext2")}</Text>{' '}
               </Text>
