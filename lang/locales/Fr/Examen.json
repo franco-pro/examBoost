@@ -1,0 +1,29 @@
+{
+    "form": {
+        "pageTitle": "OBC result",
+        "title": "Candidat aux examens de l'OBC ?",
+        "text": {
+            "main": "Accédez instantanément à votre resultat ou à celui de vos proches. Saisissez votre/leurs ",
+            "subtext1": "matricule.",
+            "subtext2": "année de session",
+            "text_link": "ainsi qu l'",
+            "end": "dans les champs suivant pour obtenir le resultat definitif."
+        },
+        "warning": "En raison d'une forte affluence, des instabilités du réseau peuvent survenir. Si la requête échoue, veuillez réessayer dans quelques instants.",
+        "searchBtn": "Rechercher le résultat",
+        "result": {
+            "finalDecision": "Décision finale",
+            "details": {
+                "text": "Details du candidat",
+                "decision": "Décision",
+                "name": "Nom du candidat",
+                "sex": "Sexe",
+                "bornDate": "Date & lieu de naissance",
+                "exam": "Examen",
+                "serie": "Série",
+                "mention": "Mention"
+            },
+            "btnText": "Obtenir un autre résultat"
+        }
+    }
+}

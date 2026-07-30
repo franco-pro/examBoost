@@ -413,13 +413,12 @@ export default function Index() {
               style={{ backgroundColor: '#2E5DA6' }}
             >
               <Text className="text-xl font-bold text-white mb-2">
-                Consultation des résultats OBC
+              {t("accueil.exam_info.title")}
               </Text>
               <Text className="text-blue-50 text-sm leading-5 mb-4">
-                Accédez instantanément à votre relevé d'examen. Renseignez votre{' '}
-                <Text className="font-bold text-white">matricule</Text> ainsi que l'
-                <Text className="font-bold text-white">année de session</Text>{' '}
-                dans les champs ci-dessous pour lancer la vérification.
+              {t("accueil.exam_info.text")}{' '}
+                <Text className="font-bold text-white">{t("accueil.exam_info.text.subtext1")}</Text> {t("accueil.exam_info.text.text_link")}
+                <Text className="font-bold text-white">{t("accueil.exam_info.text.subtext2")}</Text>{' '}
               </Text>
 
               {/* Bouton pour réinitialiser / recharger la page actuelle */}
@@ -429,7 +428,7 @@ export default function Index() {
                 onPress={()=> navigation.push("/settings/examen") }
               >
                 <Text className="text-white text-xs font-semibold">
-                  Obtenir mon resultat
+                  {t("accueil.exam_info.btnText")}
                 </Text>
                 <Ionicons name="arrow-forward" size={16} color="#ffffff" />
 

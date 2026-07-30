@@ -12,6 +12,8 @@ import settingFR from "./locales/Fr/Setting.json"
 import settingEN from "./locales/En/Setting.json"
 import depositEN from "./locales/En/deposit.json"
 import depositFR from "./locales/Fr/deposit.json"
+import examenFR from "./locales/Fr/Examen.json"
+import examenEN from "./locales/En/Examen.json"
 
 const resources = {
   en: {
@@ -20,7 +22,8 @@ const resources = {
     home: homeEN,
     setting: settingEN,
     notification: notificationEN,
-    deposit: depositEN
+    deposit: depositEN,
+    examen: examenEN
   },
   fr: {
     transaction: transactionFR,
@@ -28,7 +31,8 @@ const resources = {
     home: homeFr,
     setting: settingFR,
     notification: notificationFR,
-    deposit: depositFR
+    deposit: depositFR,
+    examen: examenFR
 
   },
 };

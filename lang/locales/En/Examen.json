@@ -1,0 +1,32 @@
+{
+    "form": {
+    "pageTitle": "OBC result",
+    "title": "OBC Exam Candidate?",
+    "text": {    
+        "main": "Instantly access your result or that of your loved ones. Enter your/their ",    
+        "subtext1": "student ID number.",    
+        "subtext2": "session year",
+        "text_link": "as well as the", 
+        "end": "in the following fields to obtain the final result."
+    },
+    "warning": "Due to high traffic, network instability may occur. If the request fails, please try again in a few moments.",
+    "searchBtn": "Search for result",
+    "result": {
+            "finalDecision": "Final Decision",
+            
+            "details": {
+                "text": "Candidate Details",
+                "decision": "Decision",
+                "name": "Candidate Name", 
+                "sex": "Sex", 
+                "bornDate": "Date & Place of Birth",
+                "exam": "Exam",
+                "serie": "Serie",
+                "mention": "Mention"
+                },
+                    
+            "btnText": "Get Another Result"
+    
+            }
+        }
+    }

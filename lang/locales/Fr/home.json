@@ -8,6 +8,17 @@
     "other_subjets": "Autres Sujets",
     "recent_documents": "Documents Recemment ouverts",
     "open": "Ouvrir",
-    "load": "Recharger"
+    "load": "Recharger",
+    "exam_info": {
+      "btnText": "Obtenir mon resultat",
+      "title": "Consulter les resultats d'examen OBC",
+      "text": {
+        "main": "Accédez instantanément à votre resultat ou à celui de vos proches. Saisissez votre/leurs ",
+        "subtext1": "matricule.",
+        "subtext2": "année de session",
+        "text_link": "ainsi qu l'",
+        "end": "dans les champs suivant pour obtenir le resultat definitif."
+      }
+    }
   }
 }

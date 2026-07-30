@@ -12,6 +12,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import apiClient from '../api/apiClient';
 import { router } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
 interface CandidateData {
   id: number;
@@ -43,6 +44,7 @@ export default function ExamResultScreen() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [result, setResult] = useState<CandidateData | null>(null);
+  const {t} = useTranslation("examen");
 
   const handleFetchResult = async () => {
     if (!matricule.trim() || !year.trim()) {
@@ -99,7 +101,7 @@ export default function ExamResultScreen() {
                   <Ionicons name="arrow-back" size={22} color="#181c5c" />
                 </Pressable>
                 <Text className="text-lg font-extrabold text-typography-default dark:text-typography-white">
-                  ExamBoost: Resultat OBC
+                  ExamBoost: {t("form.pageTitle")}
                 </Text>
                 <View style={{ width: 22 }} />
               </View>
@@ -112,13 +114,13 @@ export default function ExamResultScreen() {
               style={{ backgroundColor: '#2E5DA6' }}
             >
               <Text className="text-xl font-bold text-white mb-2">
-                Candidat aux examens de l'OBC ?
+              {t("form.title")}
               </Text>
               <Text className="text-blue-50 text-sm leading-5">
-                Consultez rapidement vos résultats. Saisissez simplement votre{' '}
-                <Text className="font-bold text-white">matricule</Text> et l'
-                <Text className="font-bold text-white">année de session</Text>{' '}
-                dans le formulaire ci-dessous pour lancer la recherche.
+              {t("form.text.main")}{' '}
+                <Text className="font-bold text-white">{t("form.text.subtext1")}</Text>{t("form.text.text_link")}
+                <Text className="font-bold text-white">{t("form.text.subtext2")}</Text>{' '}
+                {t("form.text.end")}
               </Text>
             </View>
 
@@ -128,7 +130,7 @@ export default function ExamResultScreen() {
             >
               <Ionicons name="warning-outline" size={24} color="#E8720C" />
               <Text className="text-xs flex-1 leading-4" style={{ color: '#9A3412' }}>
-                En raison d'une forte affluence, des instabilités du réseau peuvent survenir. Si la requête échoue, veuillez réessayer dans quelques instants.
+              {t("form.warning")}
               </Text>
             </View>
 
@@ -136,7 +138,7 @@ export default function ExamResultScreen() {
             <View className="bg-white mt-[7px] p-5 rounded-2xl shadow-sm border border-slate-100 space-y-4">
               <View className='mb-2'>
                 <Text className="text-xs font-semibold text-slate-500 uppercase mb-1">
-                  Matricule
+                {t("form.text.subtext1")}
                 </Text>
                 <View className="flex-row items-center border border-slate-200 rounded-xl px-3 bg-slate-50">
                   <Ionicons name="card-outline" size={20} color="#2E5DA6" />
@@ -152,7 +154,7 @@ export default function ExamResultScreen() {
 
               <View className='mb-2'>
                 <Text className="text-xs font-semibold text-slate-500 uppercase mb-1">
-                  Année de session
+                {t("form.text.subtext2")}
                 </Text>
                 <View className="flex-row items-center border border-slate-200 rounded-xl px-3 bg-slate-50">
                   <Ionicons name="calendar-outline" size={20} color="#2E5DA6" />
@@ -166,7 +168,6 @@ export default function ExamResultScreen() {
                 </View>
               </View>
 
-              {/* Message d'erreur HTTP / Validation */}
               {errorMessage && (
                 <View className="flex-row items-center bg-red-50 border border-red-200 p-3 rounded-xl space-x-2">
                   <Ionicons name="alert-circle-outline" size={20} color="#dc2626" />
@@ -174,7 +175,6 @@ export default function ExamResultScreen() {
                 </View>
               )}
 
-              {/* Bouton d'action avec la couleur Secondaire (#E8720C) */}
               <TouchableOpacity
                 className="py-4 mt-[7px] rounded-xl items-center flex-row justify-center space-x-2 shadow-sm active:opacity-90"
                 style={{ backgroundColor: '#E8720C' }}
@@ -187,7 +187,7 @@ export default function ExamResultScreen() {
                   <>
                     <Ionicons name="search-outline" size={20} color="#ffffff" />
                     <Text className="text-white font-bold text-base">
-                      Rechercher le résultat
+                    {t("form.searchBtn")}
                     </Text>
                   </>
                 )}
@@ -207,7 +207,7 @@ export default function ExamResultScreen() {
                 color={isAdmis ? '#059669' : '#dc2626'}
               />
               <Text className="text-xs font-semibold uppercase tracking-widest text-slate-500 mt-2">
-                Décision finale
+              {t("form.result.finalDecision")}
               </Text>
               <Text className={`text-3xl font-extrabold mt-1 uppercase ${decisionColorClass}`}>
                 {result.décision}
@@ -219,29 +219,29 @@ export default function ExamResultScreen() {
                 className="text-base font-bold border-b border-slate-100 pb-3"
                 style={{ color: '#2E5DA6' }}
               >
-                Détails du candidat
+                {t("form.result.details.text")}
               </Text>
 
-              <DetailRow label="Nom du candidat" value={result.nom_du_candidat} />
-              <DetailRow label="Matricule" value={result.matricule} />
-              <DetailRow label="Sexe" value={result.sexe} />
+              <DetailRow label={t("form.result.details..name")} value={result.nom_du_candidat} />
+              <DetailRow label={t("form.text.subtext1")} value={result.matricule} />
+              <DetailRow label={t("form.result.details.sex")} value={result.sexe} />
               <DetailRow
-                label="Date & Lieu de naissance"
+                label={t("form.result.details.bornDate")}
                 value={`${result.date_de_naissance} à ${result.lieu_de_naissance}`}
               />
-              <DetailRow label="Examen" value={result.abreviation_examen} />
-              <DetailRow label="Série" value={result.abreviation_serie} />
+              <DetailRow label={t("form.result.details.exam")} value={result.abreviation_examen} />
+              <DetailRow label={t("form.result.details.serie")} value={result.abreviation_serie} />
               
               {/* Décision en taille normale */}
               <View className="flex-row justify-between items-center py-2 border-b border-slate-50">
-                <Text className="text-xs text-slate-500 font-medium">Décision</Text>
+                <Text className="text-xs text-slate-500 font-medium">{t("form.result.details.decision")}</Text>
                 <Text className={`text-sm font-bold uppercase ${decisionColorClass}`}>
                   {result.décision}
                 </Text>
               </View>
 
-              <DetailRow label="Mention" value={result.mention} />
-              <DetailRow label="Année" value={result.annee.toString()} isLast />
+              <DetailRow label={t("form.result.details.mention")} value={result.mention} />
+              <DetailRow label={t("form.text.subtext2")} value={result.annee.toString()} isLast />
             </View>
 
             {/* Bouton "Obtenir un autre résultat" avec la couleur Primaire (#2E5DA6) */}
@@ -252,7 +252,7 @@ export default function ExamResultScreen() {
             >
               <Ionicons name="refresh-outline" size={20} color="#ffffff" />
               <Text className="text-white font-bold text-base">
-                Obtenir un autre résultat
+              {t("form.result.btnText")}
               </Text>
             </TouchableOpacity>
 
