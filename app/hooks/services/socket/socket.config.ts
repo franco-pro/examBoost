@@ -1,9 +1,9 @@
-import { BASE_URL } from "@/app/api/apiClient";
+import { socketUrl } from "@/app/api/apiClient";
 
 // 🎯 Configuration centralisée pour les URLs WebSocket
 export const WEBSOCKET_CONFIG = {
   // URL de base du backend WebSocket
-  BASE_URL:`${BASE_URL}:3000`,
+  BASE_URL:`${socketUrl}`,
 
   // Namespaces disponibles
   NAMESPACES: {
