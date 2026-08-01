@@ -146,8 +146,8 @@ export default function Submit() {
       setNiveauId(null);
       setFileType("");
     } catch (error) {
-      console.log(error);
-      alert(`Erreur lors de l'envoi : ${error}`);
+      console.log("l'erreur:", error);
+      alert(`Erreur lors de l'envoi , veuillez reesayer plus tard.`);
     } finally {
       setLoading(false);
     }
