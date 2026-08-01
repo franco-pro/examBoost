@@ -11,6 +11,7 @@ import { setTotalActiveUser } from "../../redux/dev-admin/dev-admin.slice";
 import { addNotif, updateBalanceUser } from "../../redux/users/users.slice";
 import { Transaction } from "../../entities/transaction";
 import { addTransaction } from "../../redux/transactions/transactions.slice";
+import { router } from "expo-router";
 
 // Interface pour les notifications
 export interface NotificationPayload {
@@ -61,11 +62,16 @@ export function initializeNotificationsGateway(dispatch: any, userId: number) {
   socket.off("payment-ended");
   socket.off("connect");
   socket.off("disconnect");
+  socket.off('token-error');
 
   socket.on("connect", () => {
     console.log("Connected to notifications gateway with ID:", socket.id);
     dispatch(setNotificationsConnectionStatus(true));
   });
+   socket.on("token-error", (info: string) => {
+      console.log("Error on connection with this token please login :");
+      router.replace("/auth/login")
+    });
 
   socket.on("reconnect_attempt", () => {
     console.log("RECONNECT ATTEMPT");

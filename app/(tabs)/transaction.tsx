@@ -42,7 +42,7 @@ export default function Transactions() {
     useCallback(()=>{
       if(transactionList && transactionList.length == 0 && !loadDone){
         dispatch(getAllTransations(userId ?? 1));
-        console.log("transaction load", transactionList)
+        // console.log("transaction load", transactionList)
         setLoadDone(true);
       }
       if (error) {

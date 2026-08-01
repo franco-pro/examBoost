@@ -17,8 +17,6 @@ export default function RootLayout() {
   const { t } = useTranslation("competition");
   const {user, others} = useSelector((state: RootState) => state.user);
   const [showModal, setShowModal] = useState(false);
-  console.log('user', user);
-  console.log('others', others);
   function isCurrentVersionOld(newVersion: string): boolean {
     const currentAppVersion = Config.APP_VERSION;
 

@@ -108,7 +108,6 @@ export default function Index() {
   );
   useEffect(() => {
     if (isAuthenticated) {
-      console.log("userDatas dispatch");
       dispatch(userDatas()); //to work
       setTimeout(() => {
         initializeNotificationsGateway(dispatch, currentUserId ?? 0);
@@ -207,7 +206,6 @@ export default function Index() {
       // console.log("type de mapped:", mapped.slice(0, 2));
       return sliceMapped;
     } catch (error) {
-      console.log("others datas:", others, "user datas", user);
       console.log("error:", error);
     }
   }, [others, bgColors, colors, images, sombreColors, user]);
@@ -249,7 +247,6 @@ export default function Index() {
 
       return mapped;
     } catch (error) {
-      console.log("others datas:", others, "user datas", user);
       console.log("error:", error);
     }
   }, [
@@ -421,7 +418,6 @@ export default function Index() {
                 <Text className="font-bold text-white">{t("accueil.exam_info.text.subtext2")}</Text>{' '}
               </Text>
 
-              {/* Bouton pour réinitialiser / recharger la page actuelle */}
               <TouchableOpacity
                 className="flex-row items-center justify-center space-x-2 py-2.5 px-4 rounded-xl border border-white/30 active:opacity-80 align-self-start"
                 style={{ backgroundColor: 'rgba(255, 255, 255, 0.15)' }}
