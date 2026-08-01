@@ -1,5 +1,6 @@
 import { io, Socket } from "socket.io-client";
 import { WEBSOCKET_CONFIG } from "./socket.config";
+import { getItem } from "@/app/utils/asyncStorage";
 
 let roomsSocket: Socket | null = null;
 let notificationsSocket: Socket | null = null;
@@ -9,7 +10,7 @@ export function connectRoomsSocket(userId: number) {
   if (!roomsSocket) {
     roomsSocket = io(WEBSOCKET_CONFIG.getNamespaceUrl(WEBSOCKET_CONFIG.NAMESPACES.ROOMS), {
       ...WEBSOCKET_CONFIG.DEFAULT_OPTIONS,
-      auth: { userId },
+      auth: { userId: userId, userToken: getItem("accessToken") },
       transports: ["websocket"],
     });
   }
@@ -23,6 +24,9 @@ export function connectNotificationsSocket(userId: number) {
     notificationsSocket = io(WEBSOCKET_CONFIG.getNamespaceUrl(WEBSOCKET_CONFIG.NAMESPACES.NOTIFICATIONS), {
       ...WEBSOCKET_CONFIG.DEFAULT_OPTIONS,
       query: { userId: userId },
+      auth: {
+        token: getItem("accessToken")
+      },
       transports: ["websocket"],
     });
 
