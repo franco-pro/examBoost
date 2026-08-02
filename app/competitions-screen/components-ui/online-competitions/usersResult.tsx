@@ -70,12 +70,14 @@ export default function UsersResult({ room }: UsersAnswersProps) {
                                       
                                     <Box key={`${q.id ?? 'no-answer_id'}-${index}`} className="flex-row mb-4 items-center">
                                       <Avatar className="mr-3">
-                                        <AvatarFallbackText>
-                                          {u.username.split(" ").map((n) => n[0]).join("")}
-                                        </AvatarFallbackText>
-                                        {u.userID ? (
+                                        
+                                        {u.userID && room.users.find(user => user.userID === u.userID)?.imgUrl ? (
                                           <AvatarImage source={{ uri: room.users.find(user => user.userID === u.userID)?.imgUrl }} alt="image" />
-                                        ) : null}
+                                        ) :
+                                         <AvatarFallbackText>
+                                        {u.username.split(" ").map((n) => n[0]).join("")}
+                                        </AvatarFallbackText>
+                                        }
                                         
                                       </Avatar>
                                       

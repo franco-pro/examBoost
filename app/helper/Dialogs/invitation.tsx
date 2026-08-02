@@ -170,12 +170,13 @@ interface InvitationPromptsProps {
                   !waitingResponse && response && actionType == "Send Invitation" && (
                     <Box key={response.id} className="flex-row mb-4 items-center mt-4">
                     <Avatar className="mr-3">
+                      {response.imgUrl ? (
+                        <AvatarImage source={{ uri: response.imgUrl }} alt="image" />
+                      ) :
                       <AvatarFallbackText>
                         {response.username.split(" ").map((n) => n[0]).join("")}
                       </AvatarFallbackText>
-                      {response.imgUrl ? (
-                        <AvatarImage source={{ uri: response.imgUrl }} alt="image" />
-                      ) : null}
+                      }
                       
                     </Avatar>
                     

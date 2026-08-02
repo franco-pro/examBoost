@@ -387,7 +387,6 @@ export default function DocumentView() {
               {ownerAvatar ? (
                 <Avatar size="md">
                 <AvatarImage source={{ uri: ownerAvatar }} />
-                <AvatarFallbackText>{(ownerName ?? "") + (ownerSurname ?? "")}</AvatarFallbackText>
               </Avatar>
               ) : (
                 <View style={styles.avatarFallback}>
