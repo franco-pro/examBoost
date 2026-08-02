@@ -295,7 +295,8 @@ export default function Creation() {
                       }`}
                     >
                       <Text className="text-xs font-semibold text-black">
-                        {comp.statut}
+                      {comp.statut ? t(`participation.labels.status.${comp.statut}`): '...'}
+                        
                       </Text>
                     </View>
                   </View>

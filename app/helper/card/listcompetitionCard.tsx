@@ -181,7 +181,7 @@ function InfoItem({
 
 function formatCFA(amount: number) {
   if (amount === 0) return "Gratuit";
-  return amount.toLocaleString("fr-FR") + " credits";
+  return amount.toLocaleString("fr-FR") + " U";
 }
 
 export function formatDate(iso: string) {

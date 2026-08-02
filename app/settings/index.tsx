@@ -193,7 +193,7 @@ const logoutHandle = async () => {
               </Text>
 
               <Text className="text-white font-bold text-lg">
-                {user?.wallet ?? 0} credits
+                {user?.wallet ?? 0} U
               </Text>
             </View>
 

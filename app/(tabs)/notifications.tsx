@@ -41,6 +41,7 @@ export default function NotificationsScreen() {
   const {error:errorRoom, room, waitingJoining} = useAppSelector((state)=> state.rooms);
   const {loading: suscriptionLoading, error:suscriptionError} = useAppSelector((state)=> state.subscriptions);
   const [isPageActive, setIsPageActive] = useState(true);
+  const [joinFromNotifPage, setJoinFromNotifPage] = useState(false);
 
    const {language} = useContext(LanguageContext);
 
@@ -55,7 +56,7 @@ export default function NotificationsScreen() {
           setLoadDone(true);
         }
         if (error) {
-          showToast(error, "Error", "error");
+          showToast("error", "Error", error);
           setLoadDone(true);
         }
       }, [data, error])
@@ -63,7 +64,7 @@ export default function NotificationsScreen() {
   
     useEffect(()=>{
       if (error) {
-        showToast(error, "Error", "error");
+        showToast("error", "Error", error);
         console.log('error', error)
       }
     }, [error, errorCompetition])
@@ -88,7 +89,7 @@ export default function NotificationsScreen() {
       dispatch(setCompetitioErrorNull());
       return ()=>{
        setIsPageActive(false)
-
+       setJoinFromNotifPage(false)
       }
     }, [])
   )
@@ -100,7 +101,7 @@ export default function NotificationsScreen() {
   },[errorRoom])
 
   useEffect(()=>{
-    if(!waitingJoining && room && !errorRoom){
+    if(!waitingJoining && room && !errorRoom && joinFromNotifPage){
       router.push("/competitions-screen/online.users")
     }  
   }, [waitingJoining])
@@ -111,7 +112,7 @@ export default function NotificationsScreen() {
         //inscription done and the competition is with entry fee, then we have to update the user wallet in the store before redirection
         const wallet = user ? (user.wallet - selectedCompetition.entryFee) : 0;
         dispatch(updateBalanceUser(wallet));
-        showToast('success', 'Invitation acceptée !', `Vous avez été enregistré à la compétition. Votre nouveau solde est de ${wallet} credits.`);
+        showToast('success', 'Invitation acceptée !', `Vous avez été enregistré à la compétition. Votre nouveau solde est de ${wallet} U.`);
       }else{
         showToast('success', 'Invitation acceptée !', 'Vous avez été enregistré à la compétition.');
       }
@@ -140,7 +141,7 @@ export default function NotificationsScreen() {
 
   const checkCompetition = ()=>{
     if(selectedCompetition && selectedCompetition.suscribers && selectedCompetition.suscribers.length > 0){
-        const finded = selectedCompetition.suscribers.find((sub: {id: number, email:string})=> sub.id == userID);
+        const finded = selectedCompetition.suscribers.find((sub: {id: number, name: string}) => sub.id === userID);
         if(!finded){
           if( selectedCompetition.statut === "UPCOMING"){
             //handle inscription   
@@ -161,7 +162,7 @@ export default function NotificationsScreen() {
         }
     }else{
       //handle inscription   
-        if((selectedCompetition.type === "PAID_REGISTRATION_AS_WINNER_PRICE" || selectedCompetition.type === "PAID_REGISTRATION_WITH_WINNER_PRICE") && isPageActive){
+        if((selectedCompetition?.type === "PAID_REGISTRATION_AS_WINNER_PRICE" || selectedCompetition?.type === "PAID_REGISTRATION_WITH_WINNER_PRICE") && isPageActive){
           setIsOpen(true);    
         }else{
           doInscription();
@@ -170,7 +171,8 @@ export default function NotificationsScreen() {
   }
 
   const joiningRoom = ()=>{
-    initializeRoomsGateway(dispatch, null, userID)
+    initializeRoomsGateway(dispatch, null, userID);
+    setJoinFromNotifPage(true);
       const eventManager = EmitEvent(dispatch, {isManagedByIA: selectedCompetition?.isManagedByIA as any, roomId: selectedCompetition?.roomID as any});
       eventManager.joinRoom({
         roomId: selectedCompetition?.roomID as any,
@@ -214,7 +216,7 @@ export default function NotificationsScreen() {
         }else if(actionType === "openDetails"){
           router.push('/competitions-screen/information');
         }else{
-          if(selectedCompetition.roomID && selectedCompetition.statut === "ONGOING"){
+          if(selectedCompetition?.roomID && selectedCompetition?.statut === "ONGOING"){
             joiningRoom();
           }else{
             showToast('error', 'Impossible de rejoindre', 'La compétition n\'est pas encore commencée ou est déjà terminée.');
@@ -376,7 +378,7 @@ export default function NotificationsScreen() {
             <View className="mt-6 flex-row items-center gap-3">
               {selected?.link && (
                 <Pressable
-                  onPress={() => (selected?.type === "COMPETITION_START" ? loadCompetitionDetails(selectedCompetition, "joinRoom") : loadCompetitionDetails(selected.competionID, "openDetails"))}
+                  onPress={() => (selected?.type === "COMPETITION_START" ? loadCompetitionDetails(selected.competionID, "joinRoom") : loadCompetitionDetails(selected.competionID, "openDetails"))}
                   className="px-3 py-2 rounded-md bg-primary-500 active:opacity-90"
                   accessibilityRole="button"
                   accessibilityLabel={selected?.type === 'COMPETITION_START' ? 'Rejoindre la compétition' : 'Ouvrir le lien associé'}
@@ -428,7 +430,7 @@ export default function NotificationsScreen() {
             onConfirm={() => doInscription(true)}
             onClose={() => setIsOpen(false)}
             isOpen={isOpenConfirmation}
-            inscriptionFees={selectedCompetition.entryFee}
+            inscriptionFees={selectedCompetition ? selectedCompetition.entryFee: 0}
           />
         )}
 

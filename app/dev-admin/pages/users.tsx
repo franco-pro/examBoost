@@ -123,7 +123,7 @@ export default function Users() {
             <Text className="text-xs font-semibold text-slate-500 ml-2 uppercase">Solde Total</Text>
           </View>
           <Text className="text-xl font-bold text-slate-800">
-            {totalWallet} <Text className="text-xs font-normal text-slate-500">credits</Text>
+            {totalWallet} <Text className="text-xs font-normal text-slate-500">U</Text>
           </Text>
         </View>
       </View>

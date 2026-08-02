@@ -165,7 +165,7 @@ export default function TransactionsScreen() {
             </View>
           </View>
           <Text className="text-lg font-bold text-gray-900">
-            {item.amount.toLocaleString('fr-FR')} credits
+            {item.amount.toLocaleString('fr-FR')} U
           </Text>
         </View>
 

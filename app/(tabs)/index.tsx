@@ -378,7 +378,7 @@ export default function Index() {
                 </View>
                 <View className="flex-row items-center gap-4">
                   <Text className="text-white text-2xl ">
-                    {user ? wallet : "----"} credits
+                    {user ? wallet : "----"} U
                   </Text>
                   <TouchableOpacity
                     onPress={() => refreshWalletHandle()}
