@@ -73,7 +73,7 @@ interface InvitationPromptsProps {
                         competitionName: competitionDetails.name // Remplacez par le nom réel de la compétition
                       }
                     )
-                    // Simuler l'envoi de l'invitation
+                    
                     await new Promise((resolve) => setTimeout(resolve, 2000));
                     setWaitingResponse(false);
                     showToast(t("mycompetition.information.invite.modal.success.send", {name: response.username }), "Succès");
@@ -103,8 +103,9 @@ interface InvitationPromptsProps {
               const responseHttp = await searchHttp.searchUsers(searchValue.toLowerCase().trim());
               if(responseHttp){
                 setResponse(responseHttp);
-                setWaitingResponse(false);
               }
+              setWaitingResponse(false);
+
             }catch(e: any){
                 console.log('error on searching user:', e.message);
                 setWaitingResponse(false);

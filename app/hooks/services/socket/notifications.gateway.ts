@@ -25,7 +25,7 @@ export interface NotificationPayload {
   created_at: Date;
   roomId?: string;
   statut?: string;
-  competitionID?: number;
+  competionID?: number;
 }
 
 interface InvitationPaylod {
@@ -90,16 +90,15 @@ export function initializeNotificationsGateway(dispatch: any, userId: number) {
   })
   socket.on("competition-started", (data: NotificationPayload) => {
     console.log("Notification competition started:", data);
-    const {roomId, statut, competitionID} = data;
+    const {roomId, statut, competionID} = data;
     dispatch(addNotification({
       ...data,
-      competionID: data.competitionID
     }));
 
     dispatch(addNotif(data))
     
-    if(roomId && statut && competitionID){
-      dispatch(updateStatut({roomId: roomId, competitionId: competitionID, statut: statut}))
+    if(roomId && statut && competionID){
+      dispatch(updateStatut({roomId: roomId, competitionId: competionID, statut: statut}))
     }
     
   });
@@ -147,7 +146,7 @@ export function EmitEventNotif(dispatch: any) {
   return {
     // Marquer une notification comme lue
     sendInvitation: (notification: InvitationPaylod) => {
-      console.log('notif send')
+      console.log('notif send', notification)
       socket.emit("send-invitation", notification);
     },
 

@@ -3,7 +3,7 @@
         "back": "Retour",
         "pay_done":{
             "title": "Recharge",
-            "text": "Votre compte à été crédité d'un montant de {{amount}}  XAF."
+            "text": "Votre compte à été crédité d'un montant de {{amount}}  U."
         },
         "pay_failed": {
             "title": "Erreur",
@@ -18,7 +18,7 @@
             "tel_error": "Le numéro doit commencer par 6 et conténir exavtement 9 chiffres.",
             "tel_valid": "✓ Numéro valide",
             "operator": "Choisissez votre opérateur",
-            "amount": "Montant (FCFA)",
+            "amount": "Montant (U)",
             "btnText": "Procéder à la recharge"
         },
         "loading": {
@@ -48,7 +48,7 @@
             "tel_error": "Le numéro doit commencer par 6 et conténir exavtement 9 chiffres.",
             "tel_valid": "✓ Numéro valide",
             "operator": "Choisissez votre opérateur",
-            "amount": "Montant (FCFA)",
+            "amount": "Montant (U)",
             "btnText": "Procéder à la Demade de Retrait"
         },
         "error" : {

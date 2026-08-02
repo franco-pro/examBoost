@@ -403,7 +403,7 @@ export default function DocumentView() {
                   {ownerSurname} {ownerName}
                 </Text>
                 <Text style={styles.submitterName}>
-                   {ownerSolde ? `Solde: ${String(ownerSolde)} creditsF` : "—"}
+                   {ownerSolde ? `Solde: ${String(ownerSolde)} UF` : "—"}
                 </Text>
               </View>
             </View>

@@ -40,7 +40,7 @@ export default memo(function PackCard({
 
   // Fonctions de formatage locales (Remplacez par vos fonctions globales si nécessaire)
   const formatDays = (days: number) => `${days} Jours`;
-  const formatPriceXOF = (amount: number) => `${amount.toLocaleString()} credits`;
+  const formatPriceXOF = (amount: number) => `${amount.toLocaleString()} U`;
 
   return (
     <Pressable

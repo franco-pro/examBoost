@@ -649,7 +649,7 @@ export default function CreateCompetitionForm() {
               {
                 type != "TOTAL_FREE_NO_PRICE_TO_WIN" && type != "FREE_REGISTRATION_WITH_WINNER_PRICE" && (
                   <View>
-                    <Text className="mb-1 font-semibold">{t('mycompetition.competition.creations_screen.model.entryFee')} (credits)</Text>
+                    <Text className="mb-1 font-semibold">{t('mycompetition.competition.creations_screen.model.entryFee')} (U)</Text>
                     <TextInput
                       keyboardType="numeric"
                       placeholder="Montant"
@@ -664,7 +664,7 @@ export default function CreateCompetitionForm() {
               {
                 type === "PAID_REGISTRATION_AS_WINNER_PRICE" && (
                     <View>
-                        <Text className="mb-1 font-semibold">{t('mycompetition.competition.creations_screen.model.winnerPrice')} (credits) ({percentage + '%'}) </Text>
+                        <Text className="mb-1 font-semibold">{t('mycompetition.competition.creations_screen.model.winnerPrice')} (U) ({percentage + '%'}) </Text>
                         <TextInput
                           keyboardType="numeric"
                           placeholder={t(`mycompetition.competition.creations_screen.model.montant_min`, {amount: minWinnerPrice})}
@@ -683,7 +683,7 @@ export default function CreateCompetitionForm() {
               {
                 type != "TOTAL_FREE_NO_PRICE_TO_WIN" &&  type != "PAID_REGISTRATION_AS_WINNER_PRICE" && (
                     <View>
-                        <Text className="mb-1 font-semibold">{t('mycompetition.competition.creations_screen.model.winnerPrice')} (credits) ({percentage + '%'}) </Text>
+                        <Text className="mb-1 font-semibold">{t('mycompetition.competition.creations_screen.model.winnerPrice')} (U) ({percentage + '%'}) </Text>
                         <TextInput
                           keyboardType="numeric"
                           placeholder={t(`mycompetition.competition.creations_screen.model.montant_min`, {amount: minWinnerPrice})}
@@ -702,7 +702,7 @@ export default function CreateCompetitionForm() {
               {/* {
                  type != "TOTAL_FREE_NO_PRICE_TO_WIN" && (
                  <View>
-                    <Text className="mb-1 font-semibold">{t('mycompetition.competition.creations_screen.model.finalPrice')} (credits) </Text>
+                    <Text className="mb-1 font-semibold">{t('mycompetition.competition.creations_screen.model.finalPrice')} (U) </Text>
                     <TextInput
                       keyboardType="numeric"
                       placeholder={t(`mycompetition.competition.creations_screen.model.montant_min.${minWinnerPrice}`)}

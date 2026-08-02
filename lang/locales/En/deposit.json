@@ -48,14 +48,14 @@
           "tel_error": "The number must start with 6 and contain exactly 9 digits.",
           "tel_valid": "✓ Valid Number",
           "operator": "Choose your operator",
-          "amount": "Amount (FCFA)",
+          "amount": "Amount (U)",
           "btnText": "Proceed With Withdrawal Request"
         },
         "error" : {
           "title": "Error",
           "text": "An error occurred during your transaction!",
           "insufficient_balence": "Insufficient balance to complete the transaction.",
-          "invalid_amount": "The minimum withdrawal amount is 1000 XAF."
+          "invalid_amount": "The minimum withdrawal amount is 1000 Unity(U)."
         }
       }
   }

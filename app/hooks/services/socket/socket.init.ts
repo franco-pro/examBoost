@@ -10,11 +10,10 @@ export function connectRoomsSocket(userId: number) {
   if (!roomsSocket) {
     roomsSocket = io(WEBSOCKET_CONFIG.getNamespaceUrl(WEBSOCKET_CONFIG.NAMESPACES.ROOMS), {
       ...WEBSOCKET_CONFIG.DEFAULT_OPTIONS,
-      auth: { userId: userId, userToken: getItem("accessToken") },
+      auth: { userId: userId},
       transports: ["websocket"],
     });
   }
-  console.log("Connecting to rooms socket with token:", userId);
   return roomsSocket;
 }
 
@@ -31,6 +30,7 @@ export function connectNotificationsSocket(userId: number) {
     });
 
   }
+
   return notificationsSocket;
 }
 
@@ -76,7 +76,7 @@ export function isNotificationsConnected(): boolean {
 }
 
 // Reconnexion automatique
-export function reconnectAllSockets(userId: number) {
+export function reconnectAllSockets(userId: number, accessToken: string) {
   disconnectAllSockets();
   connectRoomsSocket(userId);
   connectNotificationsSocket(userId);

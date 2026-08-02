@@ -159,7 +159,7 @@
       "connected_user": "Participants en ligne",
       "no_connected_user": "Aucun participant",
       "question_answered": "Questions répondues",
-      "question_manager": "Emétteur de questions",
+      "question_manager": "Gérant du déroulement",
       "owner": "Organisateur"
    },
    "form_question": {
@@ -216,7 +216,7 @@
   },
   "invitationPrompt": {
     "title": "Confirmation d'inscription",
-    "text": "Cette compétition exige des frais de participation... vous serez debité d'un montant de {{inscriptionFees}} XAF",
+    "text": "Cette compétition exige des frais de participation... vous serez debité d'un montant de {{inscriptionFees}} U",
     "subtext": "Voulez vous confirmer votre participation ?",
     "joinBtn": "Je confirme",
     "ignoreBtn": "Ignorer l'invitation"
@@ -227,6 +227,7 @@
       "head": "Supprimer cette Competition ?",
       "text": "La competition sera supprimé de la liste des competitions et ne sera plus accéssible au public, cette action est irréversible."
     },
+  "manage_competition": "Gérer la competition",
     "invite": {
       "btnText": "Envoyer l'invitaion",
       "label": "Invité des pariticipants",

@@ -120,7 +120,7 @@ export default function Information() {
   useEffect(()=>{
     if(!waitingLaunching && room && competitionLaunch){
       dispatch(updateSelectedCompetition({statut: "ONGOING", roomId: room.roomId}));
-      dispatch(updateStatut("ONGOING"))
+      dispatch(updateStatut({statut: "ONGOING", competitionID: selectedCompetition ? selectedCompetition.id: 0, roomId: room.roomId}));
       
       showToast(t("mycompetition.information.success.competition_launched"), "Succès", "success");
     }
@@ -412,16 +412,16 @@ function userJoinCompetition(){
               selectedCompetition?.type === "FREE_REGISTRATION_WITH_WINNER_PRICE" || selectedCompetition?.type === "PAID_REGISTRATION_WITH_WINNER_PRICE" ? 
               (
                 <Text className="ml-2 text-gray-700 font-medium">
-                  {selectedCompetition?.winnerPrice.toLocaleString("fr-FR")} credits
+                  {selectedCompetition?.winnerPrice.toLocaleString("fr-FR")} U
                  </Text>
               ) : selectedCompetition?.type == "PAID_REGISTRATION_AS_WINNER_PRICE" ? 
                 (
                   <Text className="ml-2 text-gray-700 font-medium">
-                    {selectedCompetition?.winnerPrice.toLocaleString("fr-FR") + " x " + selectedCompetition?.suscribers.length} credits
+                    {selectedCompetition?.winnerPrice.toLocaleString("fr-FR") + " x " + selectedCompetition?.suscribers.length} U
                   </Text>
                 ): (
                   <Text className="ml-2 text-gray-700 font-medium">
-                      00 credits
+                      00 U
                  </Text>
                 )
             }
@@ -537,7 +537,7 @@ function userJoinCompetition(){
                   </ButtonText>
                 </Button>
 
-                <Button action="negative" className="ml-2 rounded-2xl" onPress={()=> setDeleteIsOpen(true)}>
+                <Button action="negative" className="ml-2 rounded-2xl " disabled={selectedCompetition.statut !== "UPCOMING"}  onPress={()=> setDeleteIsOpen(true)}>
                   <ButtonText size="sm" className='text-typography-white'>
                         <Ionicons
                             name="trash"
@@ -576,9 +576,9 @@ function userJoinCompetition(){
                 </Text>
               </View>
               <Text className="font-semibold text-gray-800">
-                {(selectedCompetition?.entryFee === 0 || !selectedCompetition?.entryFee)
+                {(Number(selectedCompetition?.entryFee === 0) || !selectedCompetition?.entryFee)
                   ? t("mycompetition.information.free")
-                  : `${selectedCompetition?.entryFee.toLocaleString("fr-FR")} credits`}
+                  : `${selectedCompetition?.entryFee.toLocaleString("fr-FR")} U`}
               </Text>
             </View>
 
@@ -697,7 +697,7 @@ function userJoinCompetition(){
               onPress={() => userJoinCompetition()}
             >
               <Text className="text-white text-xs font-semibold mr-2">
-                {t("mycompetition.information.join_comp")} {/* Vous pouvez préciser "Jouer" ici si vous voulez */}
+                {t("mycompetition.information.join_comp")}
               </Text>
               <Ionicons name="chevron-forward" size={22} color="#ffffff" />
             </TouchableOpacity>
@@ -705,11 +705,11 @@ function userJoinCompetition(){
 
           {isCreator && room && !waitingLaunching && !selectedCompetition.isManagedByIA && selectedCompetition?.statut === "ONGOING" && (
             <TouchableOpacity 
-              className="flex-row items-center bg-green-600 self-start px-4 py-2 rounded-full ml-auto" // J'ai mis une couleur différente (vert) pour le différencier du bouton Jouer
+              className="flex-row items-center bg-green-600 self-start px-4 py-2 rounded-full ml-auto"
               onPress={() => adminJoinCompetition()}
             >
               <Text className="text-white text-xs font-semibold mr-2">
-                Gérer la compétition {/* Texte explicite pour l'admin */}
+              {t("mycompetition.information.manage_competition")}
               </Text>
               <Ionicons name="settings-outline" size={22} color="#ffffff" />
             </TouchableOpacity>
