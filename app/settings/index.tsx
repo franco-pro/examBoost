@@ -55,6 +55,9 @@ const logoutHandle = async () => {
   // await persistor.purge();
   setShowLoader(true);
   setTimeout(() => {
+    if (router.canDismiss()) {
+      router.dismissAll();
+    }
     navigation.replace("/(auth)/login");
     setShowLoader(false);    
   }, 3000);
