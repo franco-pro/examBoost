@@ -156,9 +156,12 @@ export default function RootLayout() {
 
         {/* Bloc de branding en bas */}
         <View style={styles.bottomContainer}>
-          <Text style={[styles.brandingText, { color: textColor }]}>
-            From Genesys In
+          <Text style={[styles.smallText, { color: textColor }]}>
+            from 
           </Text>
+          {/* <Text style={[styles.brandingText, { color: textColor }]}>
+            Genesys In
+          </Text> */}
           <Image
             source={require("../assets/images/genesys.png")}
             style={styles.smallLogo}
@@ -194,7 +197,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 60, // Ajuste la distance du logo par rapport au bord inférieur de l'écran
+    paddingBottom: 20, // Ajuste la distance du logo par rapport au bord inférieur de l'écran
   },
   centerContainer: {
     flex: 1,
@@ -205,16 +208,21 @@ const styles = StyleSheet.create({
     height: 300,
   },
   bottomContainer: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
-    gap: 8, // Espace entre le texte "Genesys In" et le logo
+    // gap: 4, // Espace entre le texte "Genesys In" et le logo
   },
   brandingText: {
     fontSize: 18,
     fontWeight: "600",
   },
+  smallText: {
+    fontSize: 12,
+    fontWeight: "300",
+    // paddingTop: -500
+  },
   smallLogo: {
-    width: 24,
-    height: 24,
+    width: 48,
+    height: 48,
   },
 });
