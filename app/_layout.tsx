@@ -107,7 +107,7 @@ export default function RootLayout() {
         }
 
         // 2. Ajoutez ici d'autres chargements nécessaires (fausses secondes d'attente si besoin)
-        await new Promise(resolve => setTimeout(resolve, 5000));
+        await new Promise(resolve => setTimeout(resolve, 3000));
       } catch (e) {
         console.warn(e);
       } finally {
@@ -157,7 +157,10 @@ export default function RootLayout() {
         {/* Bloc de branding en bas */}
         <View style={styles.bottomContainer}>
           <Text style={[styles.brandingText, { color: textColor }]}>
-            From Genesys In
+            from {"\n"}
+          </Text>
+          <Text style={[styles.brandingText, { color: textColor }]}>
+            Genesys-In
           </Text>
           <Image
             source={require("../assets/images/genesys.png")}
@@ -205,16 +208,18 @@ const styles = StyleSheet.create({
     height: 300,
   },
   bottomContainer: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
-    gap: 8, // Espace entre le texte "Genesys In" et le logo
+    //gap: 2,
+    //  // Espace entre le texte "Genesys In" et le logo
   },
   brandingText: {
-    fontSize: 18,
-    fontWeight: "600",
+    fontSize: 15,
+    fontWeight: "200",
+    fontStyle: "italic"
   },
   smallLogo: {
-    width: 24,
-    height: 24,
+    width: 18,
+    height: 18,
   },
 });
