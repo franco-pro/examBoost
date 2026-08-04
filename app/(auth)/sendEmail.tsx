@@ -39,11 +39,14 @@ export default function SendEmail() {
       return;
     }
     try {
-      const datas = await authService.forgetPassword({ email })
+      const datas = await authService.forgetPassword({ email:emailTrim });
       console.log("datas password:", datas)
       if (datas) {
         setTimeout(() => {
           setIsLoading(false);
+          if (navigation.canDismiss()) {
+            navigation.dismissAll();
+          }
           navigation.replace({
             pathname: "/(auth)/sendOtp",
             params: { email },
@@ -56,7 +59,12 @@ export default function SendEmail() {
     } catch (error:any) {
       setIsLoading(false)
       console.log("error 1:", error);
-      Alert.alert("erreur",error?.response || "something wrong !!")
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Une erreur est survenue. Veuillez réessayer.";
+
+      Alert.alert("Erreur", errorMessage);
     }
   }
   return (

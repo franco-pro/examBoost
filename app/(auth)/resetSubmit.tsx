@@ -32,9 +32,12 @@ export default function ResetSubmit() {
         });
         console.log("datas reset pass:", datas);
         setIsLoading(false);
-        Alert.alert("Succes","Mot de passe changé avec succes !")
+        if (navigation.canDismiss()) {
+          navigation.dismissAll();
+        }
         setTimeout(() => {
-          navigation.push("/(auth)/login");
+          navigation.replace("/(auth)/login");
+          Alert.alert("Success", "Mot de passe changé avec succes !");
         }, 2000);
       } else {
         setIsLoading(false)

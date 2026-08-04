@@ -37,7 +37,7 @@ export default function SendOtp() {
         console.log("code otp:", code)
     if (otp.every((val)=> val !=="")) {
         setIsLoading(false)
-          setTimeout(() => {
+      setTimeout(() => {
             navigation.navigate({
               pathname: "/(auth)/resetSubmit",
               params: { code },
@@ -45,7 +45,7 @@ export default function SendOtp() {
           }, 2000);
     } else {
       setIsLoading(false)
-      Alert.alert("Erreur","Completez l'opt a 4 chiffres !")
+      Alert.alert("Erreur","Completez l'opt a 5 chiffres !")
         }
     }
   return (
@@ -108,7 +108,7 @@ export default function SendOtp() {
           <Text className="text-center font-poppins">
             Vous n&rsquo;avez pas reçu le code?
           </Text>
-          <Button variant="link" onPress={handleSubmit}>
+          <Button variant="link" onPress={()=>{}}>
             <ButtonText className="text-primary-custom-300 font-semibold">
               Renvoyer
             </ButtonText>

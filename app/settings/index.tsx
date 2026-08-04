@@ -54,12 +54,13 @@ const logoutHandle = async () => {
   dispatch(logout());
   // await persistor.purge();
   setShowLoader(true);
-  setTimeout(() => {
-    navigation.replace("/(auth)/login");
-    setShowLoader(false);    
-  }, 3000);
+
+  // Supprime tous les écrans empilés dans l'historique
+  if (router.canDismiss()) {
+    router.dismissAll();
+  }
   navigation.replace("/(auth)/login");
-  };
+};;
 
   const handleDelete = async () => {
     try {
