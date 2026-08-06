@@ -291,15 +291,6 @@ export default function Deposit() {
         </View>
 
 
-        <View className="mb-6">
-
-          <Text className="font-medium text-gray-700 mb-3">
-            
-            {t("deposit.form.operator")}
-
-          </Text>
-        </View>
-
         <View className="mb-8">
 
           <Text className="font-medium text-gray-700 mb-2">
