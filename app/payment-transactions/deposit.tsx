@@ -30,16 +30,17 @@ export default function Deposit() {
   const {type} = useLocalSearchParams<{ type: string }>();
   const [phone, setPhone] = useState("");
   const [amount, setAmount] = useState("");
-  const [operator, setOperator] = useState<"MTN" | "ORANGE" | null>(null);
+  const [operator, setOperator] = useState<"MTN" | "ORANGE" | null>('ORANGE');
   const [loading, setLoading] = useState(false);
   const  {user} = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
   const isPhoneValid = /^6\d{8}$/.test(phone);
-
+  const isAmountValid = (type === "WITHDRAWAL" && Number(amount) >= 1000) || (type === "DEPOSIT" && Number(amount) >= 100);
   const isFormValid =
     isPhoneValid &&
     Number(amount) > 0 &&
-    operator !== null;
+    isAmountValid
+    ;
 
     function showToast(message: string, title: string, type: "success"|"error"){
       Toast.show({
@@ -76,8 +77,26 @@ export default function Deposit() {
 
     }
 
+
+  function checkOperator(){
+    const phone_number = phone.trim();
+
+    if (/^6(9\d|5[5-9]|4[0-4]|8[6-9])\d{6}$/.test(phone_number)) {
+      setOperator("ORANGE")
+    }
+    if (/^6(7\d|5[0-4]|8[0-4])\d{6}$/.test(phone_number)) {
+      setOperator('MTN')
+    }else{
+      setOperator('ORANGE')
+    }
+
+    return;
+  }
+
   const handleDeposit = async () => {
     if (!isFormValid) return;
+
+    checkOperator();
 
     if(type === "DEPOSIT"){
       setLoading(true);
@@ -89,7 +108,7 @@ export default function Deposit() {
           customerName: user?.username + " " + user?.surname,
           userID: user && user.id,
           customerEmail: user && user.email,
-          operator: operator === "MTN" ? "mtn_momo":"orange_money",
+          operator: operator,
           customerPhone: phone
         }
   
@@ -279,77 +298,6 @@ export default function Deposit() {
             {t("deposit.form.operator")}
 
           </Text>
-
-          <View className="flex-row">
-
-
-            <TouchableOpacity
-              onPress={() => setOperator("MTN")}
-              className={`flex-1 mr-2 rounded-2xl p-4 border-2 items-center relative
-              ${
-                operator === "MTN"
-                  ? "border-yellow-400 bg-yellow-50"
-                  : "border-gray-200 bg-white"
-              }`}
-            >
-
-              {operator === "MTN" && (
-                <View className="absolute top-2 right-2 bg-green-500 rounded-full p-1">
-                  <Ionicons
-                    name="checkmark"
-                    size={14}
-                    color="white"
-                  />
-                </View>
-              )}
-
-              <Image
-                source={require("../../assets/images/momo_mtna.png")}
-                className="w-30 h-20 mb-3"
-                resizeMode="contain"
-              />
-
-              <Text className="font-semibold">
-                MTN
-              </Text>
-
-            </TouchableOpacity>
-
-
-            <TouchableOpacity
-              onPress={() => setOperator("ORANGE")}
-              className={`flex-1 ml-2 rounded-2xl p-4 border-2 items-center relative
-              ${
-                operator === "ORANGE"
-                  ? "border-orange-500 bg-orange-50"
-                  : "border-gray-200 bg-white"
-              }`}
-            >
-
-              {operator === "ORANGE" && (
-                <View className="absolute top-2 right-2 bg-green-500 rounded-full p-1">
-                  <Ionicons
-                    name="checkmark"
-                    size={14}
-                    color="white"
-                  />
-                </View>
-              )}
-
-              <Image
-                source={require("../../assets/images/orange.jpeg")}
-                className="w-30 h-24 mb-3"
-                resizeMode="contain"
-              />
-
-              <Text className="font-semibold">
-                Orange
-              </Text>
-
-            </TouchableOpacity>
-
-          </View>
-
         </View>
 
         <View className="mb-8">
@@ -380,7 +328,7 @@ export default function Deposit() {
 
 
         <TouchableOpacity
-          disabled={!isFormValid || loading || ((type === "WITHDRAWAL" && Number(amount) < 1000) || (type === "DEPOSIT" && Number(amount) <= 100))}
+          disabled={!isFormValid || loading }
           onPress={handleDeposit}
           className={`h-14 rounded-xl items-center justify-center
           ${

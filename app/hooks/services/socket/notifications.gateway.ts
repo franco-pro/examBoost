@@ -70,7 +70,7 @@ export function initializeNotificationsGateway(dispatch: any, userId: number) {
   });
    socket.on("token-error", (info: string) => {
       console.log("Error on connection with this token please login :");
-      router.replace("/(auth)/login")
+      // router.replace("/(auth)/login")
     });
 
   socket.on("reconnect_attempt", () => {

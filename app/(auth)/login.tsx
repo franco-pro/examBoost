@@ -146,7 +146,7 @@ export default function Login() {
                 {/* header form */}
                 <View className="header items-center justify-center mb-6">
                   <Heading className="font-montserrat text-3xl text-primary-custom-300 capitalize">
-                    Se Connecter
+                    Se connecter
                   </Heading>
                   <Text className="font-poppins text-lg text-secondary-custom-300 text-center">
                     Bon retour parmi nous !
@@ -178,7 +178,7 @@ export default function Login() {
                         className="text-red-500"
                       />
                       <FormControlErrorText className="text-red-500">
-                        Email , numero ou mot de passe incorrect
+                        Email, numéro ou mot de passe incorrect
                       </FormControlErrorText>
                     </FormControlError>
                   </View>
@@ -223,7 +223,7 @@ export default function Login() {
                         className="text-red-500"
                       />
                       <FormControlErrorText className="text-red-500">
-                        Le mot de passe doit avoir aumoins 8 caracteres
+                        Le mot de passe doit avoir aumoins 8 caractères
                       </FormControlErrorText>
                     </FormControlError>
                   </View>
@@ -241,7 +241,7 @@ export default function Login() {
                     </Checkbox>
                     <Button variant={"link"} onPress={handleForgotPassword}>
                       <ButtonText className="text-primary-custom-300 font-bold">
-                        Mot de passe oublie?
+                        Mot de passe oublié ?
                       </ButtonText>
                     </Button>
                   </View>
@@ -255,7 +255,7 @@ export default function Login() {
                       {isLoading ? (
                         <Spinner size={"large"} color={"white"} />
                       ) : (
-                        <Text className="capitalize">se connecter</Text>
+                        <Text className="capitalize">Se connecter</Text>
                       )}
                     </ButtonText>
                   </Button>

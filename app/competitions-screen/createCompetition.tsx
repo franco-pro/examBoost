@@ -139,6 +139,12 @@ export default function CreateCompetitionForm() {
     setType(typeChoose);
   }
  
+  const getValidDate = (dateValue: any) => {
+    if (!dateValue) return new Date();
+    const parsedDate = new Date(dateValue);
+    // Si la conversion échoue (Invalid Date), on renvoie la date du jour
+    return isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
+  };
 
   // Validation min
   const minWinnerPrice = !isPublic ? 8000 : 15000;
@@ -549,12 +555,14 @@ export default function CreateCompetitionForm() {
 
               {showDatePicker && isFirstCalendarOpen && (
                   <DateTimePicker
-                    value={formData[currentField] || new Date()}
+                    value={getValidDate(formData[currentField])  || new Date()}
                     mode="datetime"
                     display="default"
                     onChange={handleDateChange}
                   />
                 )}
+              <Text className="mb-1 font-semibold">date de fin: d'enregistrement</Text>
+
 
               <Text className="mb-1 font-semibold mt-[10px]">
               {t('mycompetition.competition.creations_screen.model.deadlineDate')} (GMT +1)

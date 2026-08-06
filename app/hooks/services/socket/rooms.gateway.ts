@@ -39,7 +39,7 @@ export function initializeRoomsGateway(dispatch: any, room: Room|null, userID: n
 
   socket.on("token-error", () => {
     console.log("Error on connection with this token please login :");
-    router.replace("/auth/login")
+    // router.replace("/auth/login")
   });
 
   socket.on("room-joined", (RoomInfo: Room) => {

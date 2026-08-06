@@ -177,7 +177,7 @@ export default function Register() {
                   <View className="names w-full">
                     <FormControlLabel>
                       <FormControlLabelText>
-                        votre Nom <Text className="text-red-500">*</Text>
+                        Nom <Text className="text-red-500">*</Text>
                       </FormControlLabelText>
                     </FormControlLabel>
                     <Input size={"lg"} className="my-1" isRequired={true}>
@@ -204,7 +204,7 @@ export default function Register() {
                   <View className="username w-full">
                     <FormControlLabel>
                       <FormControlLabelText>
-                        Votre Prenom{" "}
+                        Prenom{" "}
                         <Text className="text-gray-400">(optionel)</Text>
                       </FormControlLabelText>
                     </FormControlLabel>
@@ -251,7 +251,7 @@ export default function Register() {
                   <View className="phone w-full">
                     <FormControlLabel>
                       <FormControlLabelText>
-                        Numero de telephone{" "}
+                        Numéro de téléphone{" "}
                         <Text className="text-red-500">*</Text>
                       </FormControlLabelText>
                     </FormControlLabel>
@@ -273,7 +273,7 @@ export default function Register() {
                         className="text-red-500"
                       />
                       <FormControlErrorText className="text-red-500">
-                        Le numero de telephone est incorrect
+                        Le numéro de téléphone est incorrect
                       </FormControlErrorText>
                     </FormControlError>
                   </View>
@@ -351,7 +351,7 @@ export default function Register() {
                         className="text-red-500"
                       />
                       <FormControlErrorText className="text-red-500">
-                        Le mot de passe doit avoir aumoins 8 caracteres
+                        Le mot de passe doit avoir au moins 8 caractères
                       </FormControlErrorText>
                     </FormControlError>
                   </View>
@@ -400,7 +400,7 @@ export default function Register() {
                 </Center>
                 <Center className="sign in mt-3 flex-row">
                   <Text className="text-gray-400">
-                    Vous avez deja un compte?{" "}
+                    Vous avez déja un compte?{" "}
                   </Text>
                   <Button onPress={switchSignIn} variant={"link"}>
                     <ButtonText className="text-primary-custom-300 font-bold">
