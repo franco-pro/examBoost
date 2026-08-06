@@ -177,10 +177,6 @@ const handleDelete = () => {
           onPress: () => DoUpdate("ADMIN"), // await updateRole(user.id, "ADMIN")
         },
         {
-          text: "PARTNER",
-          onPress: () => DoUpdate("PARTNER"), // await updateRole(user.id, "ADMIN")
-        },
-        {
           text: "SUPERADMIN",
           onPress: () => DoUpdate("SUPERADMIN"), // await updateRole(user.id, "ADMIN")
         },
