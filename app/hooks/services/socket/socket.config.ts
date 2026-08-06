@@ -13,13 +13,13 @@ export const WEBSOCKET_CONFIG = {
 
   // Options de connexion par défaut
   DEFAULT_OPTIONS: {
-    transports: ["websocket"],
+    transports: ["polling", "websocket"],
     timeout: 20000,
     autoConnect: true,
     reconnection: true,
+    reconnectionAttempts: Infinity,
     reconnectionDelay: 1000,
-    reconnectionAttempts: 5,
-    maxReconnectionAttempts: 5,
+    reconnectionDelayMax: 5000
   },
 
   // Événements disponibles

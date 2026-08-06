@@ -27,9 +27,24 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import {
+  Select,
+  SelectTrigger,
+  SelectInput,
+  SelectIcon,
+  SelectPortal,
+  SelectBackdrop,
+  SelectContent,
+  SelectDragIndicatorWrapper,
+  SelectDragIndicator,
+  SelectItem,
+} from "@/components/ui/select";
+import { ChevronDownIcon } from "@/components/ui/icon";
 import FullscreenLoader from "@/app/helper/Dialogs/loaderFullScreen";
 import { useSelector } from "react-redux";
 import { RootState } from "../hooks/redux/store";
+import { getItem } from "../utils/asyncStorage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width } = Dimensions.get("window");
 
@@ -39,7 +54,9 @@ export default function CreateCompetitionForm() {
   const { user } = useSelector((state: RootState) => state.user);
 
   const { data } = useLocalSearchParams() as any;
+  
   const { language } = useContext(LanguageContext);
+  console.log('language from context', getItem("lang"))
   
   const [actionType, setActionType] = useState<"UPDATE"|"CREATE">("CREATE")
   const TextEnum = DialogText;
@@ -65,7 +82,7 @@ export default function CreateCompetitionForm() {
   const [lang, setLang] = useState<"FRANCAIS"|"ANGLAIS">("FRANCAIS");
   const [questionNbr, setQuestionNbr] = useState(0);
   const [useIA, setUseIA] = useState(false);
-  const [isPublic, setCompetitionType] = useState<Boolean>(
+  const [isPublic, setCompetitionType] = useState<boolean>(
     false
   );
   const [isExamBoostCompetition, setIsExamBoostCompetition] = useState(false);
@@ -580,62 +597,109 @@ export default function CreateCompetitionForm() {
           )}
 
           {/* === ÉTAPE 2 === */}
-          {step === 2 && (
-            <View>
-              {/* Select type competition */}
-              <Text className="mb-1 font-semibold">
-              {t('mycompetition.competition.creations_screen.model.porte.label')}  
-              </Text>
-              <Picker
-                selectedValue={isPublic}
-                onValueChange={(itemValue) => setCompetitionType(itemValue)}
-                className="border border-gray-300 p-2 rounded mb-4"
-              >
-                <Picker.Item label={t('mycompetition.competition.creations_screen.model.porte.private')} value={false} />
-                <Picker.Item label={t('mycompetition.competition.creations_screen.model.porte.public')} value={true} />
-              </Picker>
+         {step === 2 && (
+  <View>
+    {/* Type de compétition (public/privé) */}
+    <Text className="mb-1 font-semibold">
+      {t('mycompetition.competition.creations_screen.model.porte.label')}
+    </Text>
+    <Select
+      selectedValue={isPublic ? "true" : "false"}
+      onValueChange={(value) => setCompetitionType(value === "true")}
+    >
+      <SelectTrigger variant="outline" size="lg" className="justify-between mb-4">
+        <SelectInput
+          placeholder={t('mycompetition.competition.creations_screen.model.porte.label')}
+          value={
+            isPublic
+              ? t('mycompetition.competition.creations_screen.model.porte.public')
+              : t('mycompetition.competition.creations_screen.model.porte.private')
+          }
+        />
+        <SelectIcon className="mr-3" as={ChevronDownIcon} />
+      </SelectTrigger>
+      <SelectPortal>
+        <SelectBackdrop />
+        <SelectContent>
+          <SelectDragIndicatorWrapper>
+            <SelectDragIndicator />
+          </SelectDragIndicatorWrapper>
+          <SelectItem
+            label={t('mycompetition.competition.creations_screen.model.porte.private')}
+            value="false"
+          />
+          <SelectItem
+            label={t('mycompetition.competition.creations_screen.model.porte.public')}
+            value="true"
+          />
+        </SelectContent>
+      </SelectPortal>
+    </Select>
 
-            {
-              (actionType !== "UPDATE") && (
-                <View>
-                  <Text className="mb-1 font-semibold">
-                    Type 
-                  </Text>
-                  <PopoverInstructionsCreation data={
-                                                 {
-                                                  instructions: concatInstructions()
-                                                 }
-                                              }
-                    />
-                  <Picker
-                    selectedValue={type}
-                    onValueChange={(itemValue: any) => changeType(itemValue)}
-                    enabled={false}
-                    className="border border-gray-300 p-2 rounded mb-4"
-                  >
-                    <Picker.Item label="Golden A" value="PAID_REGISTRATION_WITH_WINNER_PRICE" />
-                    <Picker.Item label="Golden B" value="FREE_REGISTRATION_WITH_WINNER_PRICE"/>
-                    <Picker.Item label="Golden C" value="PAID_REGISTRATION_AS_WINNER_PRICE"/>
-                    <Picker.Item label="Golden D" value="TOTAL_FREE_NO_PRICE_TO_WIN"/>
-                  </Picker>
-                </View>
-              )
-            }
+    {(actionType !== "UPDATE") && (
+      <View>
+        <Text className="mb-1 font-semibold">Type</Text>
+        <PopoverInstructionsCreation
+          data={{ instructions: concatInstructions() }}
+        />
+        <Select
+          selectedValue={type}
+          onValueChange={(value: any) => changeType(value)}
+        >
+          <SelectTrigger variant="outline" size="lg" className="justify-between mb-4">
+            <SelectInput
+              placeholder="Type"
+              value={
+                type === "PAID_REGISTRATION_WITH_WINNER_PRICE" ? "Golden A" :
+                type === "FREE_REGISTRATION_WITH_WINNER_PRICE" ? "Golden B" :
+                type === "PAID_REGISTRATION_AS_WINNER_PRICE" ? "Golden C" :
+                type === "TOTAL_FREE_NO_PRICE_TO_WIN" ? "Golden D" : ""
+              }
+            />
+            <SelectIcon className="mr-3" as={ChevronDownIcon} />
+          </SelectTrigger>
+          <SelectPortal>
+            <SelectBackdrop />
+            <SelectContent>
+              <SelectDragIndicatorWrapper>
+                <SelectDragIndicator />
+              </SelectDragIndicatorWrapper>
+              <SelectItem label="Golden A" value="PAID_REGISTRATION_WITH_WINNER_PRICE" />
+              <SelectItem label="Golden B" value="FREE_REGISTRATION_WITH_WINNER_PRICE" />
+              <SelectItem label="Golden C" value="PAID_REGISTRATION_AS_WINNER_PRICE" />
+              <SelectItem label="Golden D" value="TOTAL_FREE_NO_PRICE_TO_WIN" />
+            </SelectContent>
+          </SelectPortal>
+        </Select>
+      </View>
+    )}
 
-            
-
-              <Text className="mb-1 font-semibold">Lang</Text>
-              <Picker
-                selectedValue={lang}
-                onValueChange={(itemValue) => setLang(itemValue)}
-                className="border border-gray-300 p-2 rounded mb-4"
-              >
-                <Picker.Item label="ENGLISH" value="ANGLAIS" />
-                <Picker.Item label="FRANCAIS" value="FRANCAIS" />
-              </Picker>
-              
-            </View>
-          )}
+    {/* Langue */}
+    <Text className="mb-1 font-semibold">Lang</Text>
+    <Select
+      selectedValue={lang}
+      onValueChange={(value) => setLang(value as "FRANCAIS" | "ANGLAIS")}
+    >
+      <SelectTrigger variant="outline" size="lg" className="justify-between mb-4">
+        <SelectInput
+          placeholder="Lang"
+          value={lang === "ANGLAIS" ? "ENGLISH" : "FRANCAIS"}
+        />
+        <SelectIcon className="mr-3" as={ChevronDownIcon} />
+      </SelectTrigger>
+      <SelectPortal>
+        <SelectBackdrop />
+        <SelectContent>
+          <SelectDragIndicatorWrapper>
+            <SelectDragIndicator />
+          </SelectDragIndicatorWrapper>
+          <SelectItem label="ENGLISH" value="ANGLAIS" />
+          <SelectItem label="FRANCAIS" value="FRANCAIS" />
+        </SelectContent>
+      </SelectPortal>
+    </Select>
+  </View>
+)}
 
         
 

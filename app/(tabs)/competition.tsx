@@ -106,7 +106,7 @@ export default function Competition() {
   ];
 
   return (
-    <View className="flex-1 bg-gray-50 p-4">
+    <ScrollView className="flex-1 bg-gray-50 p-4">
       {/* ===== Header ===== */}
       <View className="bg-white p-4 rounded-2xl mb-4">
         <Text className="text-lg font-semibold">{t("accueil.greeting", {name: username})}</Text>
@@ -161,6 +161,6 @@ export default function Competition() {
           )}
         </View>
       </ScrollView>
-    </View>
+    </ScrollView>
   );
 }

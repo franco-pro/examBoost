@@ -380,7 +380,7 @@ export default function Deposit() {
 
 
         <TouchableOpacity
-          disabled={!isFormValid || loading}
+          disabled={!isFormValid || loading || ((type === "WITHDRAWAL" && Number(amount) < 1000) || (type === "DEPOSIT" && Number(amount) <= 100))}
           onPress={handleDeposit}
           className={`h-14 rounded-xl items-center justify-center
           ${
@@ -391,7 +391,7 @@ export default function Deposit() {
         >
 
           <Text className="text-white text-lg font-bold">
-          {type === "DEPOSTI" ? t("deposit.form.btnText"):t("withdrawal.form.btnText")}
+          {type === "DEPOSIT" ? t("deposit.form.btnText"):t("withdrawal.form.btnText")}
           </Text>
 
         </TouchableOpacity>

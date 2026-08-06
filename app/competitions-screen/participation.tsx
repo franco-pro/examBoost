@@ -124,7 +124,7 @@ export default function Participation() {
   }
   
   return (
-    <View className="flex-1 w-full max-w-full  bg-gray-50 pt-[40px] pb-[50px] px-4">
+    <ScrollView className="flex-1 w-full max-w-full  bg-gray-50 pt-[40px] pb-[50px] px-4">
       
       {/* Back Button */}
       <TouchableOpacity
@@ -408,6 +408,6 @@ export default function Participation() {
           </View>
           }
       </ScrollView>
-    </View>
+    </ScrollView>
   );
 }

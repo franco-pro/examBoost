@@ -159,7 +159,7 @@ export default function Creation() {
 
   return (
     
-    <View className="flex-1 bg-gray-50 pt-[40px] pb-[50px] px-4">
+    <ScrollView className="flex-1 bg-gray-50 pt-[40px] pb-[50px] px-4">
       {/* Back Button */}
       <TouchableOpacity
         className="flex-row items-center mb-4"
@@ -399,6 +399,6 @@ export default function Creation() {
         </View>
         }
       </ScrollView>
-    </View>
+    </ScrollView>
   );
 }

@@ -63,7 +63,7 @@ export default function DevAdmin() {
         },
         {
           nom: "Users inscrits",
-          chiffre: totalUsers.total.toLocaleString("fr-FR")+"+",
+          chiffre: "+"+totalUsers.total.toLocaleString("fr-FR"),
           icone: <FontAwesome5 name="users" size={25} color="#3b82f6" />,
           bgColor: "bg-blue-100",
           textColor: "text-blue-600",
@@ -76,10 +76,9 @@ export default function DevAdmin() {
           textColor: "text-blue-600", 
         },
         {
-            nom: "Montant encaissé",
+            nom: "Montant encaissé, comp",
             chiffre: `+${accountWallet.competition.toLocaleString("fr-FR")} U`,
             icone: (
-              // Mets ici ton icône
               <FontAwesome5 name="wallet" size={24} color="#059669" />
             ),
             bgColor: "bg-orange-100",

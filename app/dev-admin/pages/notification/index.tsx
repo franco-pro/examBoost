@@ -47,11 +47,17 @@ export default function NotificationList() {
 
   const {notificationsAdmin: notifications} = useAppSelector(state => state.notifications);
   const dispatch = useAppDispatch();
+  const [loaded, setLoaded] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
-        if(notifications.length == 0){
+        if(notifications.length == 0 && !loaded){
             dispatch(getAdminNotification());
+            setLoaded(true)
+        }
+
+        return () => {
+          setLoaded(false)
         }
         
     }, [notifications])
