@@ -126,7 +126,7 @@ export default function Deposit() {
             });
         }
       } catch(error: any) {
-        showToast('Une erreur est survenue: ' + error, "Error", "error");
+        showToast("Impossible d'effectuer une recharge pour le moment.", "Error", "error");
         console.log('error', error);
       } 
     }else{
@@ -179,8 +179,8 @@ export default function Deposit() {
 
           // dispatch(updateBalanceUser((user?.wallet ?  (Number(user?.wallet) + Number(amount)): 0))); // if the transaction failed, we add back the amount to the user wallet 
           
-          showToast('Une erreur est survenue: ' + error, "Error", "error");
-          
+          showToast("Impossible d'effecter un retrait pour le moment", "Error", "error");
+          console.log('Payement error :', error)
         } 
         
 
