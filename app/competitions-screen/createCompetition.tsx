@@ -412,19 +412,18 @@ export default function CreateCompetitionForm() {
   };
 
   return (
-    
-    <KeyboardAvoidingView 
-          className="flex-1 bg-gray-50 pt-[40px] w-full max-w-full  pb-[50px] px-4"
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={0}       
+    <KeyboardAvoidingView
+      className="flex-1 bg-gray-50 pt-[40px] w-full max-w-full  pb-[50px] px-4"
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={0}
     >
       <TouchableOpacity
-        className="flex-row items-center mb-4"
+        className="flex-row items-center mb-4 mt-5 "
         onPress={() => router.back()}
       >
         <Ionicons name="arrow-back" size={24} color="#181c5c" />
         <Text className="ml-2 text-lg font-semibold text-gray-800">
-          {t('mycompetition.back')}
+          {t("mycompetition.back")}
         </Text>
       </TouchableOpacity>
 
@@ -432,25 +431,22 @@ export default function CreateCompetitionForm() {
       <View className="bg-[#181c5c] py-10 px-6 rounded-3xl items-center shadow-lg">
         <Ionicons name="trophy" size={50} color="#ffb347" />
         <Text className="text-white text-3xl font-bold mt-2">
-          {
-            actionType == "CREATE" ?  t(TextEnum.competition_create_head) : t(TextEnum.competition_update_head) 
-          }
+          {actionType == "CREATE"
+            ? t(TextEnum.competition_create_head)
+            : t(TextEnum.competition_update_head)}
         </Text>
         <Text className="text-gray-200 text-sm mt-1 ">
-        {
-            actionType == "CREATE" ?   t(TextEnum.competititon_create_body) : t(TextEnum.competition_update_body) 
-          }
+          {actionType == "CREATE"
+            ? t(TextEnum.competititon_create_body)
+            : t(TextEnum.competition_update_body)}
         </Text>
-        {
-          formError && (
-            <View>
-              <Text className="text-error-600 text-lg mt-1 ">
-                  Error: {formError}
-              </Text>
-            </View>
-          )
-        }
-
+        {formError && (
+          <View>
+            <Text className="text-error-600 text-lg mt-1 ">
+              Error: {formError}
+            </Text>
+          </View>
+        )}
       </View>
 
       {/* 🧾 Conteneur du formulaire */}
@@ -463,7 +459,8 @@ export default function CreateCompetitionForm() {
       >
         <View className="bg-white mt-6 p-6 rounded-2xl shadow-lg">
           <Text className="text-2xl font-bold mb-4 text-[#181c5c] text-center">
-          {t('mycompetition.competition.creations_screen.step')} {step} / {totalSteps}
+            {t("mycompetition.competition.creations_screen.step")} {step} /{" "}
+            {totalSteps}
           </Text>
 
           {/* Barre de progression */}
@@ -485,7 +482,7 @@ export default function CreateCompetitionForm() {
           {step === 1 && (
             <View>
               <Text className="mb-1 font-semibold">
-              {t('mycompetition.competition.creations_screen.model.nom')}
+                {t("mycompetition.competition.creations_screen.model.nom")}
               </Text>
               <TextInput
                 className="border border-gray-300 p-2 rounded mb-4"
@@ -497,19 +494,27 @@ export default function CreateCompetitionForm() {
               />
 
               <Text className="mb-1 font-semibold">
-              {t('mycompetition.competition.creations_screen.model.description.label')}
+                {t(
+                  "mycompetition.competition.creations_screen.model.description.label",
+                )}
               </Text>
               <TextInput
                 className="border border-gray-300 p-2 rounded mb-4"
                 multiline
-                placeholder={t('mycompetition.competition.creations_screen.model.description.placeholder')}
+                placeholder={t(
+                  "mycompetition.competition.creations_screen.model.description.placeholder",
+                )}
                 value={formData.description}
                 onChangeText={(text) =>
                   setFormData({ ...formData, description: text })
                 }
               />
 
-              <Text className="mb-1 font-semibold">{t("mycompetition.competition.creations_screen.model.theme")} </Text>
+              <Text className="mb-1 font-semibold">
+                {t(
+                  "mycompetition.competition.creations_screen.model.theme",
+                )}{" "}
+              </Text>
               <TextInput
                 className="border border-gray-300 p-2 rounded mb-4"
                 placeholder="Ex: Intelligence Artificielle"
@@ -519,28 +524,34 @@ export default function CreateCompetitionForm() {
                 }
               />
 
-              <Text className="mb-1 font-semibold">{t('mycompetition.competition.creations_screen.model.date')} (GMT +1)</Text>
+              <Text className="mb-1 font-semibold">
+                {t("mycompetition.competition.creations_screen.model.date")}{" "}
+                (GMT +1)
+              </Text>
               <TouchableOpacity
                 className="border border-gray-300 p-3 rounded mb-4 flex-row items-center"
                 onPress={() => openCalendar("date")}
               >
                 <Ionicons name="calendar" size={20} color="#181c5c" />
                 <Text className="ml-2 text-gray-700">
-                  { formData.date && formatCameroonDate(formData.date)}
+                  {formData.date && formatCameroonDate(formData.date)}
                 </Text>
               </TouchableOpacity>
 
               {showDatePicker && isFirstCalendarOpen && (
-                  <DateTimePicker
-                    value={formData[currentField] || new Date()}
-                    mode="datetime"
-                    display="default"
-                    onChange={handleDateChange}
-                  />
-                )}
+                <DateTimePicker
+                  value={formData[currentField] || new Date()}
+                  mode="datetime"
+                  display="default"
+                  onChange={handleDateChange}
+                />
+              )}
 
               <Text className="mb-1 font-semibold mt-[10px]">
-              {t('mycompetition.competition.creations_screen.model.deadlineDate')} (GMT +1)
+                {t(
+                  "mycompetition.competition.creations_screen.model.deadlineDate",
+                )}{" "}
+                (GMT +1)
               </Text>
               <TouchableOpacity
                 className="border border-gray-300 p-3 rounded mb-4 flex-row items-center"
@@ -548,34 +559,39 @@ export default function CreateCompetitionForm() {
               >
                 <Ionicons name="calendar-outline" size={20} color="#181c5c" />
                 <Text className="ml-2 text-gray-700">
-                  {formData.registration_deadline && formatCameroonDate(formData.registration_deadline)}
+                  {formData.registration_deadline &&
+                    formatCameroonDate(formData.registration_deadline)}
                 </Text>
               </TouchableOpacity>
-                {/* Affichage du calendrier */}
-                {showDatePicker && !isFirstCalendarOpen && (
-                  <DateTimePicker
-                    value={formData[currentField] || new Date()}
-                    mode="datetime"
-                    display="default"
-                    onChange={handleDateChange}
-                  />
-                )}
+              {/* Affichage du calendrier */}
+              {showDatePicker && !isFirstCalendarOpen && (
+                <DateTimePicker
+                  value={formData[currentField] || new Date()}
+                  mode="datetime"
+                  display="default"
+                  onChange={handleDateChange}
+                />
+              )}
 
               {/* Nombre max d'utilisateurs */}
-            
-                          <Text className="mb-1 font-semibold mt-[10px]">
-                          {t('mycompetition.competition.creations_screen.model.maxUsers')} (max: {MAX_PARTICIPANTS}, min: {MIN_PARTICIPANTS})
-                          </Text>
-                          <TextInput
-                            keyboardType="numeric"
-                            placeholder="Max participants"
-                            value={maxUsers.toString()}
-                            onChangeText={(text) => setMaxUsers(Number(text))}
-                            editable = {actionType == "CREATE" ||( actionType == "UPDATE") && !useIA && type != "PAID_REGISTRATION_AS_WINNER_PRICE"}
-                            className="border border-gray-300 p-2 rounded mb-4"
-                          />
 
-                
+              <Text className="mb-1 font-semibold mt-[10px]">
+                {t("mycompetition.competition.creations_screen.model.maxUsers")}{" "}
+                (max: {MAX_PARTICIPANTS}, min: {MIN_PARTICIPANTS})
+              </Text>
+              <TextInput
+                keyboardType="numeric"
+                placeholder="Max participants"
+                value={maxUsers.toString()}
+                onChangeText={(text) => setMaxUsers(Number(text))}
+                editable={
+                  actionType == "CREATE" ||
+                  (actionType == "UPDATE" &&
+                    !useIA &&
+                    type != "PAID_REGISTRATION_AS_WINNER_PRICE")
+                }
+                className="border border-gray-300 p-2 rounded mb-4"
+              />
             </View>
           )}
 
@@ -584,45 +600,62 @@ export default function CreateCompetitionForm() {
             <View>
               {/* Select type competition */}
               <Text className="mb-1 font-semibold">
-              {t('mycompetition.competition.creations_screen.model.porte.label')}  
+                {t(
+                  "mycompetition.competition.creations_screen.model.porte.label",
+                )}
               </Text>
               <Picker
                 selectedValue={isPublic}
                 onValueChange={(itemValue) => setCompetitionType(itemValue)}
                 className="border border-gray-300 p-2 rounded mb-4"
               >
-                <Picker.Item label={t('mycompetition.competition.creations_screen.model.porte.private')} value={false} />
-                <Picker.Item label={t('mycompetition.competition.creations_screen.model.porte.public')} value={true} />
+                <Picker.Item
+                  label={t(
+                    "mycompetition.competition.creations_screen.model.porte.private",
+                  )}
+                  value={false}
+                />
+                <Picker.Item
+                  label={t(
+                    "mycompetition.competition.creations_screen.model.porte.public",
+                  )}
+                  value={true}
+                />
               </Picker>
 
-            {
-              (actionType !== "UPDATE") && (
+              {actionType !== "UPDATE" && (
                 <View>
-                  <Text className="mb-1 font-semibold">
-                    Type 
-                  </Text>
-                  <PopoverInstructionsCreation data={
-                                                 {
-                                                  instructions: concatInstructions()
-                                                 }
-                                              }
-                    />
+                  <Text className="mb-1 font-semibold">Type</Text>
+                  <PopoverInstructionsCreation
+                    data={{
+                      instructions: concatInstructions(),
+                    }}
+                  />
                   <Picker
                     selectedValue={type}
                     onValueChange={(itemValue: any) => changeType(itemValue)}
                     enabled={false}
                     className="border border-gray-300 p-2 rounded mb-4"
                   >
-                    <Picker.Item label="Golden A" value="PAID_REGISTRATION_WITH_WINNER_PRICE" />
-                    <Picker.Item label="Golden B" value="FREE_REGISTRATION_WITH_WINNER_PRICE"/>
-                    <Picker.Item label="Golden C" value="PAID_REGISTRATION_AS_WINNER_PRICE"/>
-                    <Picker.Item label="Golden D" value="TOTAL_FREE_NO_PRICE_TO_WIN"/>
+                    <Picker.Item
+                      label="Golden A"
+                      value="PAID_REGISTRATION_WITH_WINNER_PRICE"
+                    />
+                    <Picker.Item
+                      label="Golden B"
+                      value="FREE_REGISTRATION_WITH_WINNER_PRICE"
+                    />
+                    <Picker.Item
+                      label="Golden C"
+                      value="PAID_REGISTRATION_AS_WINNER_PRICE"
+                    />
+                    <Picker.Item
+                      label="Golden D"
+                      value="TOTAL_FREE_NO_PRICE_TO_WIN"
+                    />
                   </Picker>
                 </View>
-              )
-            }
-
-            
+              )}
 
               <Text className="mb-1 font-semibold">Lang</Text>
               <Picker
@@ -633,23 +666,22 @@ export default function CreateCompetitionForm() {
                 <Picker.Item label="ENGLISH" value="ANGLAIS" />
                 <Picker.Item label="FRANCAIS" value="FRANCAIS" />
               </Picker>
-              
             </View>
           )}
 
-        
-
-
-           {/*Etape 3*/}
-           {
-            step === 3 && (
-              <View>
-
-                 {/* Montant d'inscription */}
-              {
-                type != "TOTAL_FREE_NO_PRICE_TO_WIN" && type != "FREE_REGISTRATION_WITH_WINNER_PRICE" && (
+          {/*Etape 3*/}
+          {step === 3 && (
+            <View>
+              {/* Montant d'inscription */}
+              {type != "TOTAL_FREE_NO_PRICE_TO_WIN" &&
+                type != "FREE_REGISTRATION_WITH_WINNER_PRICE" && (
                   <View>
-                    <Text className="mb-1 font-semibold">{t('mycompetition.competition.creations_screen.model.entryFee')} (U)</Text>
+                    <Text className="mb-1 font-semibold">
+                      {t(
+                        "mycompetition.competition.creations_screen.model.entryFee",
+                      )}{" "}
+                      (U)
+                    </Text>
                     <TextInput
                       keyboardType="numeric"
                       placeholder="Montant"
@@ -658,46 +690,70 @@ export default function CreateCompetitionForm() {
                       className="border border-gray-300 p-2 rounded mb-4"
                     />
                   </View>
-                )
-              }
+                )}
 
-              {
-                type === "PAID_REGISTRATION_AS_WINNER_PRICE" && (
-                    <View>
-                        <Text className="mb-1 font-semibold">{t('mycompetition.competition.creations_screen.model.winnerPrice')} (U) ({percentage + '%'}) </Text>
-                        <TextInput
-                          keyboardType="numeric"
-                          placeholder={t(`mycompetition.competition.creations_screen.model.montant_min`, {amount: minWinnerPrice})}
-                          value={"(("+ entryFee.toString() + " x " + maxUsers.toString() + ") x " + percentage + ")/ 100"  + " = " + displayedWinnerPrice.toString()}
-                          onChangeText={(text) =>
-                            !usePercentage && setWinnerPrice(Number(text))
-                          }
-                          className="border border-gray-300 p-2 rounded mb-4"
-                          editable={!usePercentage || actionType=="CREATE"} // readonly si on utilise le pourcentage
-                        />
-                    </View>
-                    
-                ) 
-              }
+              {type === "PAID_REGISTRATION_AS_WINNER_PRICE" && (
+                <View>
+                  <Text className="mb-1 font-semibold">
+                    {t(
+                      "mycompetition.competition.creations_screen.model.winnerPrice",
+                    )}{" "}
+                    (U) ({percentage + "%"}){" "}
+                  </Text>
+                  <TextInput
+                    keyboardType="numeric"
+                    placeholder={t(
+                      `mycompetition.competition.creations_screen.model.montant_min`,
+                      { amount: minWinnerPrice },
+                    )}
+                    value={
+                      "((" +
+                      entryFee.toString() +
+                      " x " +
+                      maxUsers.toString() +
+                      ") x " +
+                      percentage +
+                      ")/ 100" +
+                      " = " +
+                      displayedWinnerPrice.toString()
+                    }
+                    onChangeText={(text) =>
+                      !usePercentage && setWinnerPrice(Number(text))
+                    }
+                    className="border border-gray-300 p-2 rounded mb-4"
+                    editable={!usePercentage || actionType == "CREATE"} // readonly si on utilise le pourcentage
+                  />
+                </View>
+              )}
 
-              {
-                type != "TOTAL_FREE_NO_PRICE_TO_WIN" &&  type != "PAID_REGISTRATION_AS_WINNER_PRICE" && (
-                    <View>
-                        <Text className="mb-1 font-semibold">{t('mycompetition.competition.creations_screen.model.winnerPrice')} (U) ({percentage + '%'}) </Text>
-                        <TextInput
-                          keyboardType="numeric"
-                          placeholder={t(`mycompetition.competition.creations_screen.model.montant_min`, {amount: minWinnerPrice})}
-                          // value={winnerPrice.toString()}
-                          onChangeText={(text) =>
-                            !usePercentage && setWinnerPrice(Number(text)) && canUseIA() ? setUseIA(true) : setUseIA(false)
-                          }
-                          className="border border-gray-300 p-2 rounded mb-4"
-                          editable={!usePercentage || actionType=="CREATE"} // readonly si on utilise le pourcentage
-                        />
-                    </View>
-                    
-                ) 
-              }
+              {type != "TOTAL_FREE_NO_PRICE_TO_WIN" &&
+                type != "PAID_REGISTRATION_AS_WINNER_PRICE" && (
+                  <View>
+                    <Text className="mb-1 font-semibold">
+                      {t(
+                        "mycompetition.competition.creations_screen.model.winnerPrice",
+                      )}{" "}
+                      (U) ({percentage + "%"}){" "}
+                    </Text>
+                    <TextInput
+                      keyboardType="numeric"
+                      placeholder={t(
+                        `mycompetition.competition.creations_screen.model.montant_min`,
+                        { amount: minWinnerPrice },
+                      )}
+                      // value={winnerPrice.toString()}
+                      onChangeText={(text) =>
+                        !usePercentage &&
+                        setWinnerPrice(Number(text)) &&
+                        canUseIA()
+                          ? setUseIA(true)
+                          : setUseIA(false)
+                      }
+                      className="border border-gray-300 p-2 rounded mb-4"
+                      editable={!usePercentage || actionType == "CREATE"} // readonly si on utilise le pourcentage
+                    />
+                  </View>
+                )}
 
               {/* {
                  type != "TOTAL_FREE_NO_PRICE_TO_WIN" && (
@@ -718,41 +774,51 @@ export default function CreateCompetitionForm() {
               )
               } */}
 
-              
+              <Text className="mb-1 font-semibold">
+                {t(
+                  "mycompetition.competition.creations_screen.model.nombreMaxQts",
+                )}{" "}
+                (max: {MAX_QUESTION_NUMBER}, min: {MIN_QUESTION_NUMBER}){" "}
+              </Text>
+              <TextInput
+                keyboardType="numeric"
+                placeholder={`ex: 20`}
+                value={questionNbr.toString()}
+                onChangeText={(text) => setQuestionNbr(Number(text))}
+                className="border border-gray-300 p-2 rounded mb-4"
+              />
 
-                <Text className="mb-1 font-semibold">{t('mycompetition.competition.creations_screen.model.nombreMaxQts')} (max: {MAX_QUESTION_NUMBER}, min: {MIN_QUESTION_NUMBER}) </Text>
-                <TextInput
-                  keyboardType="numeric"
-                  placeholder={`ex: 20`}
-                  value={questionNbr.toString()}
-                  onChangeText={(text) =>
-                    setQuestionNbr(Number(text))
-                  }
-                  className="border border-gray-300 p-2 rounded mb-4"
-                />
+              {/* Checkbox IA */}
+              {canUseIA() && (
+                <View className="flex-row items-center mb-4">
+                  <Switch
+                    value={useIA}
+                    onValueChange={setUseIA}
+                    disabled={actionType == "UPDATE"}
+                  />
+                  <Text className="ml-2">
+                    {t(
+                      "mycompetition.competition.creations_screen.model.isManagedByIA",
+                    )}
+                  </Text>
+                </View>
+              )}
 
-                {/* Checkbox IA */}
-                {canUseIA() && (
-                  <View className="flex-row items-center mb-4">
-                    <Switch value={useIA} onValueChange={setUseIA} disabled={actionType == "UPDATE"} />
-                    <Text className="ml-2">{t('mycompetition.competition.creations_screen.model.isManagedByIA')}</Text>
-                  </View>
-                )}
-
-                {
-                  isSuperAdmin && (
-                    
-                    <View className="flex-row items-center mb-4">
-                      <Switch value={isExamBoostCompetition} onValueChange={()=> setIsExamBoostCompetition(true)} />
-                      <Text className="ml-2">{t('mycompetition.competition.creations_screen.model.isExamBoostCompetition')}</Text>
-                    </View>
-                  )
-                }
-              </View>
-
-            )
-
-          }
+              {isSuperAdmin && (
+                <View className="flex-row items-center mb-4">
+                  <Switch
+                    value={isExamBoostCompetition}
+                    onValueChange={() => setIsExamBoostCompetition(true)}
+                  />
+                  <Text className="ml-2">
+                    {t(
+                      "mycompetition.competition.creations_screen.model.isExamBoostCompetition",
+                    )}
+                  </Text>
+                </View>
+              )}
+            </View>
+          )}
 
           {/* Navigation */}
           <View className="flex-row justify-between mt-6">
@@ -761,7 +827,9 @@ export default function CreateCompetitionForm() {
                 className="bg-gray-400 px-4 py-2 rounded w-[40%]"
                 onPress={handleBack}
               >
-                <Text className="text-white text-center ">{t('mycompetition.competition.creations_screen.previous')}</Text>
+                <Text className="text-white text-center ">
+                  {t("mycompetition.competition.creations_screen.previous")}
+                </Text>
               </TouchableOpacity>
             )}
 
@@ -770,7 +838,9 @@ export default function CreateCompetitionForm() {
                 className="bg-[#181c5c] px-4 py-2 rounded w-[40%]"
                 onPress={handleNext}
               >
-                <Text className="text-white text-center">{t('mycompetition.competition.creations_screen.next')}</Text>
+                <Text className="text-white text-center">
+                  {t("mycompetition.competition.creations_screen.next")}
+                </Text>
               </TouchableOpacity>
             ) : (
               <TouchableOpacity
@@ -778,18 +848,16 @@ export default function CreateCompetitionForm() {
                 onPress={handleSubmit}
               >
                 <Text className="text-white font-semibold">
-                    {
-                      actionType == "CREATE" ? t(TextEnum.competition_create_btn_text ) : t(TextEnum.competition_update_btn_text) 
-                    }
+                  {actionType == "CREATE"
+                    ? t(TextEnum.competition_create_btn_text)
+                    : t(TextEnum.competition_update_btn_text)}
                 </Text>
               </TouchableOpacity>
             )}
           </View>
-         
         </View>
 
-          <FullscreenLoader visible={loading} />
-        
+        <FullscreenLoader visible={loading} />
       </ScrollView>
     </KeyboardAvoidingView>
   );

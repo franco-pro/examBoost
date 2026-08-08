@@ -326,7 +326,7 @@ const logoutHandle = async () => {
         </View>
       </ScrollView>
       <FullscreenLoader visible={isLoaderShow} />
-      <Toast />
+      {/* <Toast /> */}
     </SafeAreaView>
   );
 }

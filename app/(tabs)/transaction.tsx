@@ -19,28 +19,29 @@ import { RefreshControl } from "react-native";
 export default function Transactions() {
   const [loadDone, setLoadDone] = useState(false);
   const { user, accessToken, others } = useSelector(
-    (state: RootState) => state.user
+    (state: RootState) => state.user,
   );
   const dispatch = useAppDispatch();
   const userId = user?.id;
-  const {transactionList, loading, error} = useAppSelector((state)=> state.transactions)
-  const {t} = useTranslation("transaction");
+  const { transactionList, loading, error } = useAppSelector(
+    (state) => state.transactions,
+  );
+  const { t } = useTranslation("transaction");
   const transType = {
     WITHDRAWAL: <Text>{t("withdrawal")}</Text>,
     DEPOSIT: <Text>{t("deposit")}</Text>,
     PURCHASE_PACK: <Text>{t("purchase_pack")}</Text>,
-    CREATE_COMPETITION:  <Text>{t("createCompetition")}</Text>,
+    CREATE_COMPETITION: <Text>{t("createCompetition")}</Text>,
     COMPETITION_FEES: <Text>{t("competition_fess")}</Text>,
-  }
+  };
 
   const onRefresh = async () => {
     dispatch(getAllTransations(userId ?? 0));
-    
   };
 
   useFocusEffect(
-    useCallback(()=>{
-      if(transactionList && transactionList.length == 0 && !loadDone){
+    useCallback(() => {
+      if (transactionList && transactionList.length == 0 && !loadDone) {
         dispatch(getAllTransations(userId ?? 1));
         // console.log("transaction load", transactionList)
         setLoadDone(true);
@@ -49,8 +50,8 @@ export default function Transactions() {
         showToast(error, "Error", "error");
         setLoadDone(true);
       }
-    }, [transactionList, error])
-  )
+    }, [transactionList, error]),
+  );
   const [filter, setFilter] = useState<
     | "ALL"
     | "DEPOSIT"
@@ -58,23 +59,30 @@ export default function Transactions() {
     | "PURCHASE_PACK"
     | "CREATE_COMPETITION"
     | "COMPETITION_FEES"
-    |"COMPETITION_FEES_RECEIVED"
+    | "COMPETITION_FEES_RECEIVED"
   >("ALL");
 
-  const filteredTransactions = (transactionList && transactionList.length >= 0) ? transactionList.filter((tx) =>
-    filter === "ALL" ? true : tx.type === filter
-    ).reverse():[];
+  const filteredTransactions =
+    transactionList && transactionList.length >= 0
+      ? transactionList
+          .filter((tx) => (filter === "ALL" ? true : tx.type === filter))
+          .reverse()
+      : [];
 
-  function showToast(message: string, title: string, type: "success"|"error"){
-            Toast.show({
-              type: type,
-              text2: message,
-              text1: title,
-              position: 'top',
-              visibilityTime: 3500,
-            }) 
-    }
-  
+  function showToast(
+    message: string,
+    title: string,
+    type: "success" | "error",
+  ) {
+    Toast.show({
+      type: type,
+      text2: message,
+      text1: title,
+      position: "top",
+      visibilityTime: 3500,
+    });
+  }
+
   return (
     <View style={{ flex: 1, padding: 16 }} className="bg-gray ">
       <SegmentedFilter
@@ -96,116 +104,122 @@ export default function Transactions() {
               | "PURCHASE_PACK"
               | "CREATE_COMPETITION"
               | "COMPETITION_FEES"
-              |"COMPETITION_FEES_RECEIVED"
+              | "COMPETITION_FEES_RECEIVED",
           )
         }
       />
 
-      <ScrollView className="mt-5"
+      <ScrollView
+        className="mt-5"
         refreshControl={
-          <RefreshControl
-            refreshing={loading}
-            onRefresh={onRefresh}
-          />
+          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
         }
       >
-        {filteredTransactions && filteredTransactions.length !=0 && filteredTransactions.map((game, index) => {
-          return (
-            <TouchableOpacity
-              key={index}
-              className="flex-row  mb-2 p-4 bg-white rounded-full"
-            >
-              <MaterialCommunityIcons
-                name={
-                  game?.type === "DEPOSIT"
-                    ? "arrow-up-circle"
-                    : "arrow-down-circle"
-                }
-                size={40}
-                color={game?.type === "DEPOSIT" ? "green" : "red"}
-                style={{ marginRight: 10 }}
-              />
-              <View className="space-y-3">
-                <Text className="text-xs text-gray-400">
-                  {new Date(game?.created_at).toLocaleDateString("fr-FR", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </Text>
-                {transType[game?.type as keyof typeof transType]}
-                  
-                <Text className="text-xs mt-[7px] text-gray-400">PID: {game?.PID}</Text>
-                {
-                game?.method && <Text
-                  className={`${
-                    (game?.method === "mtn_momo")
-                      ? "text-yellow-500 "
-                      : "text-orange-500"
-                  }`}
-                >
-                  {game?.method === "mtn_momo" ? "MTN MoMo" : "Orange Money"}
-                </Text>
-                }
-                <Text className={"text-xs mt-[7px] "+ (game?.status === "COMPLETED" 
-                                                                                  ? "text-green-500":
-                                                                                 game.status === "PENDING" ? "text-yellow-500" :
-                                                                                  "text-error-500") } >{ game.status === "COMPLETED" ? t('completed') : 
-                                                                                                                                                          game.type === 'WITHDRAWAL' && game.status === "PENDING" ? t('pending') :
-                                                                                                                                                          "Failed" }</Text>
-
-               
-              </View>
-
-              <View
-                style={{ marginLeft: "auto" }}
-                className="flex justify-center "
+        {filteredTransactions &&
+          filteredTransactions.length != 0 &&
+          filteredTransactions.map((game, index) => {
+            return (
+              <TouchableOpacity
+                key={index}
+                className="flex-row  mb-2 p-4 bg-white rounded-full"
               >
-               
-                <Text
-                  className={`${
-                    (game?.type !== "DEPOSIT")
-                      ? "text-error-500 "
-                      : "text-success-500"
-                  }`}
+                <MaterialCommunityIcons
+                  name={
+                    game?.type === "DEPOSIT"
+                      ? "arrow-up-circle"
+                      : "arrow-down-circle"
+                  }
+                  size={40}
+                  color={game?.type === "DEPOSIT" ? "green" : "red"}
+                  style={{ marginRight: 10 }}
+                />
+                <View className="space-y-3">
+                  <Text className="text-xs text-gray-400">
+                    {new Date(game?.created_at).toLocaleDateString("fr-FR", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </Text>
+                  {transType[game?.type as keyof typeof transType]}
+
+                  <Text className="text-xs mt-[7px] text-gray-400">
+                    PID: {game?.PID}
+                  </Text>
+                  {game?.method && (
+                    <Text
+                      className={`${
+                        game?.method === "mtn_momo"
+                          ? "text-yellow-500 "
+                          : "text-orange-500"
+                      }`}
+                    >
+                      {game?.method === "mtn_momo"
+                        ? "MTN MoMo"
+                        : "Orange Money"}
+                    </Text>
+                  )}
+                  <Text
+                    className={
+                      "text-xs mt-[7px] " +
+                      (game?.status === "COMPLETED"
+                        ? "text-green-500"
+                        : game.status === "PENDING"
+                          ? "text-yellow-500"
+                          : "text-error-500")
+                    }
+                  >
+                    {game.status === "COMPLETED"
+                      ? t("completed")
+                      : game.type === "WITHDRAWAL" && game.status === "PENDING"
+                        ? t("pending")
+                        : "Failed"}
+                  </Text>
+                </View>
+
+                <View
+                  style={{ marginLeft: "auto" }}
+                  className="flex justify-center "
                 >
-                  {game?.type === "DEPOSIT" ? "+" : "-"}
-                  {game?.amount} U
-                </Text>
-              </View>
-              
-            </TouchableOpacity>
-          );
-        })}
+                  <Text
+                    className={`${
+                      game?.type !== "DEPOSIT"
+                        ? "text-error-500 "
+                        : "text-success-500"
+                    }`}
+                  >
+                    {game?.type === "DEPOSIT" ? "+" : "-"}
+                    {game?.amount} U
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
 
-        {
-          filteredTransactions.length == 0 && !loadDone && loading &&
-            <View className="justify-center items-center">
-                <VStack>
-                    <Spinner size="large" color="blue" />
-                </VStack>
-
-          </View>
-        }
-
-        {
-          filteredTransactions.length == 0 && loadDone &&
-          <View className="justify-center items-center mt-[30%]">
-          <VStack className="justify-center items-center">
-            <Image
-              size="2xl"
-              source={require('../../assets/images/no_404.jpg')}
-              alt="image"
-            />
-            <Text>{t("no_transaction")} </Text>
+        {filteredTransactions.length == 0 && !loadDone && loading && (
+          <View className="justify-center items-center">
+            <VStack>
+              <Spinner size="large" color="blue" />
             </VStack>
           </View>
-        }
+        )}
 
+        {filteredTransactions.length == 0 && loadDone && (
+          <View className="justify-center items-center mt-[30%]">
+            <VStack className="justify-center items-center">
+              <Image
+                size="2xl"
+                source={require("../../assets/images/no_404.jpg")}
+                alt="image"
+              />
+              <Text>{t("no_transaction")} </Text>
+            </VStack>
+          </View>
+        )}
       </ScrollView>
-      <Toast config={toastConfig} />  
+      <Toast config={toastConfig} />
     </View>
   );
 }

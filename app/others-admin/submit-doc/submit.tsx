@@ -35,10 +35,15 @@ import { Ionicons } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/hooks/redux/store";
 import apiClient from "@/app/api/apiClient";
+import { useRouter } from "expo-router";
 
 export default function Submit() {
-  const [docFile, setDocFile] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
-  const [correctionFile, setCorrectionFile] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
+  const navigation = useRouter()
+
+  const [docFile, setDocFile] =
+    useState<DocumentPicker.DocumentPickerAsset | null>(null);
+  const [correctionFile, setCorrectionFile] =
+    useState<DocumentPicker.DocumentPickerAsset | null>(null);
 
   const [subject, setSubject] = useState("");
   const [niveauID, setNiveauId] = useState<number | null>(null);
@@ -49,9 +54,9 @@ export default function Submit() {
 
   const [fileType, setFileType] = useState("EXAMEN");
 
-  const user = useSelector((state: RootState) => state.user.user)
-    const userID = user?.id
-    // console.log("users:", user)
+  const user = useSelector((state: RootState) => state.user.user);
+  const userID = user?.id;
+  // console.log("users:", user)
 
   const allType = [
     "CONTROLE CONTINU",
@@ -103,15 +108,15 @@ export default function Submit() {
       if (!docFile) {
         alert("Veuillez sélectionner une épreuve");
         return;
-        }
-        
-        if (user && !user.canSubmitDoc) {
-            Alert.alert(
-              "Vous ne pouvez plus envoyer de documents pour le moment. Veuillez reessayer plus tard.",
-            );
-            return
-        }
-        setLoading(true);
+      }
+
+      if (user && !user.canSubmitDoc) {
+        Alert.alert(
+          "Vous ne pouvez plus envoyer de documents pour le moment. Veuillez reessayer plus tard.",
+        );
+        return;
+      }
+      setLoading(true);
 
       const docBase64 = await fileToBase64(docFile.uri);
 
@@ -122,7 +127,7 @@ export default function Submit() {
       }
 
       if (!userID) {
-        console.log("une ereur avec l'ID du user: ", userID)
+        console.log("une ereur avec l'ID du user: ", userID);
       }
 
       const payload = {
@@ -131,7 +136,7 @@ export default function Submit() {
         subject,
         niveauID,
         fileType,
-        userID
+        userID,
       };
 
       console.log("URL:", apiClient.defaults.baseURL + "/document");
@@ -160,7 +165,19 @@ export default function Submit() {
       showsVerticalScrollIndicator={false}
     >
       {/* HEADER */}
-      <View className="px-5 pt-10 pb-8 bg-primary-defaultBlue rounded-b-[32px] items-center">
+
+      <View className="px-5 pt-24 pb-8 bg-primary-defaultBlue rounded-b-[32px] items-center relative">
+        <View className="bouton retour absolute top-[90px] left-5">
+          <TouchableOpacity
+            className="flex-row items-center mb-6"
+            onPress={() => navigation.back()}
+          >
+            <Ionicons name="arrow-back" size={24} color={"white"} />
+            {/* <Text className="ml-2 text-lg font-semibold text-gray-800">
+              Retour
+            </Text> */}
+          </TouchableOpacity>
+        </View>
         <Text className="text-white text-3xl font-extrabold">
           Portail Enseignant
         </Text>

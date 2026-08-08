@@ -725,11 +725,11 @@ export default function CompetitionListScreen() {
     <View className='flex-1 bg-gray-50 pt-[40px]' style={{ flex: 1, backgroundColor: C.blueDark }}>
       <StatusBar barStyle="light-content" backgroundColor={C.blueDark} />
         <TouchableOpacity
-             className="flex-row items-center mb-4"
+             className="flex-row items-center mb-4 mt-8 ml-5"
             onPress={() => router.back()}
           >
             <Ionicons name="arrow-back" size={24} color="#ff894f" />
-            <Text className="ml-2 text-lg font-semibold text-white">Retour</Text>
+            {/* <Text className="ml-2 text-lg font-semibold text-white">Retour</Text> */}
         </TouchableOpacity>
 
       {StickyHeader}

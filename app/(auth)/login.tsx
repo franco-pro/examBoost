@@ -46,7 +46,7 @@ import GoogleAuth from "./googleAuth";
 import { setItem } from "../utils/asyncStorage";
 
 export default function Login() {
-  const {height } = Dimensions.get("window");
+  const { height } = Dimensions.get("window");
   const [inputValue, setInputValue] = useState<string>("");
   const [passwordValue, setPasswordValue] = useState<string>("");
   const [passType, setPassType] = useState<"password" | "text">("password");
@@ -76,25 +76,25 @@ export default function Login() {
 
   const navigation = useRouter();
   const dispatch = useDispatch<any>();
-  const { loading, error } = useSelector(
-    (state: RootState) => state.user
-  );
+  const { loading, error } = useSelector((state: RootState) => state.user);
   const [isLoading, setIsLoading] = useState(loading);
   const [err, setErr] = useState(error);
   const handleSubmit = async () => {
     setIsLoading(true);
     const result = await dispatch(
-      loginUser({ identifier: inputValue, password: passwordValue })
+      loginUser({ identifier: inputValue, password: passwordValue }),
     );
-    
+
     if (loginUser.fulfilled.match(result)) {
-      await setItem('accessToken', result.payload.accessToken)
-      await setItem('refreshToken', result.payload.refreshToken)
-      dispatch(loginSuccess({
-        user: result.payload.user,
-        accessToken: result.payload.accessToken,
-        refreshToken: result.payload.refreshToken
-      }))
+      await setItem("accessToken", result.payload.accessToken);
+      await setItem("refreshToken", result.payload.refreshToken);
+      dispatch(
+        loginSuccess({
+          user: result.payload.user,
+          accessToken: result.payload.accessToken,
+          refreshToken: result.payload.refreshToken,
+        }),
+      );
       setTimeout(() => {
         navigation.replace("/(tabs)");
       }, 2000);
@@ -166,7 +166,7 @@ export default function Login() {
                         type="text"
                         keyboardType="email-address"
                         value={inputValue.toLowerCase()}
-                        placeholder="Entrer votre email ou numero de telephone"
+                        // placeholder="Entrer votre email ou numero de telephone"
                         onChangeText={(text) => {
                           setInputValue(text);
                         }}
@@ -193,7 +193,7 @@ export default function Login() {
                         className="placeholder:text-gray-300"
                         type={passType}
                         value={passwordValue}
-                        placeholder="Entrer votre mot de passe"
+                        // placeholder="Entrer votre mot de passe"
                         onChangeText={(text) => {
                           setPasswordValue(text);
                         }}
@@ -206,10 +206,10 @@ export default function Login() {
                       >
                         <ButtonText>
                           {passType === "password" ? (
-                            <Icon className="border" as={EyeIcon} size={"lg"} />
+                            <Icon className="" as={EyeIcon} size={"lg"} />
                           ) : (
                             <Icon
-                              className="border"
+                              className=""
                               as={EyeOffIcon}
                               size={"lg"}
                             />
