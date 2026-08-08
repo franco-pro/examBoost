@@ -10,5 +10,7 @@ export interface Transaction{
     amount: number,
     created_at: any,
     PID: any,
-    status: any
+    status: any,
+    method: any,
+    user?: any
 } 

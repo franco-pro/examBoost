@@ -11,7 +11,7 @@ import { PackCard } from "@/app/helper/card/packCard";
 import { router, useFocusEffect, useRouter } from "expo-router";
 import { useAppDispatch } from "@/app/hooks/redux/redux.hooks";
 import { Ionicons } from "@expo/vector-icons";
-import { useAppSelector } from "@/app/redux/redux.hooks";
+import { useAppSelector } from "@/app/hooks/redux/redux.hooks";
 import { getPacks } from "@/app/hooks/redux/packs/pack.thunks";
 
 type CategoryType = "SECONDARY" | "SUP";

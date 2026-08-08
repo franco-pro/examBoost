@@ -79,7 +79,7 @@ function goToResult(){
           <Text className="text-gray-300 mb-1 text-sm">{t("mycompetition.competition.result_screen.yr_score")}</Text>
           <Text className="text-green-400 text-3xl font-bold">{user?.score}/{competition_totalPoint} </Text>
 
-          <Text className="text-gray-300 mt-4 mb-1 text-sm">{t("mycompetition.competition.result_screen.gain")} (XAF)</Text>
+          <Text className="text-gray-300 mt-4 mb-1 text-sm">{t("mycompetition.competition.result_screen.gain")} (U)</Text>
           <HStack className="items-center">
             <Text className="text-yellow-400 text-2xl mr-2">🪙</Text>
             <Text className="text-white text-2xl font-semibold">{roomResult ? roomResult.competitionInfo.winnerPrice : 0} </Text>

@@ -54,13 +54,14 @@ const logoutHandle = async () => {
   dispatch(logout());
   // await persistor.purge();
   setShowLoader(true);
-
-  // Supprime tous les écrans empilés dans l'historique
-  if (router.canDismiss()) {
-    router.dismissAll();
-  }
-  navigation.replace("/(auth)/login");
-};;
+  setTimeout(() => {
+    if (router.canDismiss()) {
+      router.dismissAll();
+    }
+    navigation.replace("/(auth)/login");
+    setShowLoader(false);    
+  }, 3000);
+  };
 
   const handleDelete = async () => {
     try {
@@ -176,7 +177,7 @@ const logoutHandle = async () => {
               </Text>
 
               <Text className="text-white/80">
-                {user?.email || "email@examboost.com"}
+                {user?.email || "info@examboost.org"}
               </Text>
             </View>
 
@@ -195,7 +196,7 @@ const logoutHandle = async () => {
               </Text>
 
               <Text className="text-white font-bold text-lg">
-                {user?.wallet ?? 0} FCFA
+                {user?.wallet ?? 0} U
               </Text>
             </View>
 
@@ -226,7 +227,7 @@ const logoutHandle = async () => {
             icon="wallet"
             label={t("setting.withdraw")}
             color="#16A34A"
-            onPress={() => router.push("/settings/withdraw" as any)}
+            onPress={() => router.push({ pathname: "/payment-transactions/deposit", params: {type: "WITHDRAWAL"}})}
           />
 
           <SettingsItem
@@ -234,6 +235,13 @@ const logoutHandle = async () => {
             label={t("setting.change_pass")}
             color="#F59E0B"
             onPress={() => router.push("/settings/password" as any)}
+          />
+
+          <SettingsItem
+            icon="school"
+            label={"Resutat d'examen OBC"}
+            color="#F59E0B"
+            onPress={() => router.push("/settings/examen" as any)}
           />
 
            {

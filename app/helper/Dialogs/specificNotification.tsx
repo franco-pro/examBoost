@@ -1,7 +1,7 @@
 import { toastConfig } from '@/app/config/toast.config';
 import { SearchHttp } from '@/app/hooks/services/search/search';
 import { EmitEventNotif } from '@/app/hooks/services/socket/notifications.gateway';
-import { useAppDispatch, useAppSelector } from '@/app/redux/redux.hooks';
+import { useAppDispatch, useAppSelector } from '@/app/hooks/redux/redux.hooks';
 import { Avatar, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
 import { Box } from '@/components/ui/box';
 import { Button, ButtonIcon, ButtonText } from '@/components/ui/button';

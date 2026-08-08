@@ -19,7 +19,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/fr";
 
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { ArrowRightIcon, Icon } from "@/components/ui/icon";
 import * as pdfImage from "../helper/images/image";
 import { useTranslation } from "react-i18next";
@@ -108,7 +108,6 @@ export default function Index() {
   );
   useEffect(() => {
     if (isAuthenticated) {
-      console.log("userDatas dispatch");
       dispatch(userDatas()); //to work
       setTimeout(() => {
         initializeNotificationsGateway(dispatch, currentUserId ?? 0);
@@ -207,7 +206,6 @@ export default function Index() {
       // console.log("type de mapped:", mapped.slice(0, 2));
       return sliceMapped;
     } catch (error) {
-      console.log("others datas:", others, "user datas", user);
       console.log("error:", error);
     }
   }, [others, bgColors, colors, images, sombreColors, user]);
@@ -249,7 +247,6 @@ export default function Index() {
 
       return mapped;
     } catch (error) {
-      console.log("others datas:", others, "user datas", user);
       console.log("error:", error);
     }
   }, [
@@ -331,27 +328,22 @@ export default function Index() {
         className="flex-1 bg-gray-50"
       >
         <View className="p-5 bg-[#E8F5A80] flex-1">
-          <TouchableOpacity
-            onPress={() => navigation.push("/others-admin/submit-doc/submit")}
-          >
-            <Text>teacher</Text>
-          </TouchableOpacity>
           <View className="flex-row items-center justify-between">
             <Text className="flex-1 text-2xl font-bold mr-4">
               {t("accueil.welcome")},{" "}
               {user?.username || user?.surname || "Unknown"} 👋
             </Text>
 
-            <TouchableOpacity
-              onPress={() => navigation.push("/payment-transactions/deposit")}
-              className="bg-orange-500 px-4 h-12 rounded-lg flex-row items-center justify-center"
-            >
-              <Icon as={PlusCircle} className="text-white mr-2" />
-              <Text className="text-white font-semibold">
-                {t("accueil.load")}
-              </Text>
-            </TouchableOpacity>
-          </View>
+              <TouchableOpacity
+                onPress={() => navigation.push({ pathname: "/payment-transactions/deposit", params: {type: "DEPOSIT"}})}
+                className="bg-orange-500 px-4 h-12 rounded-lg flex-row items-center justify-center"
+              >
+                <Icon as={PlusCircle} className="text-white mr-2" />
+                <Text className="text-white font-semibold">
+                  {t("accueil.load")}
+                </Text>
+              </TouchableOpacity>
+            </View>
           <Card
             size={"lg"}
             variant={"filled"}
@@ -386,7 +378,7 @@ export default function Index() {
                 </View>
                 <View className="flex-row items-center gap-4">
                   <Text className="text-white text-2xl ">
-                    {user ? wallet : "----"} XAF
+                    {user ? wallet : "----"} U
                   </Text>
                   <TouchableOpacity
                     onPress={() => refreshWalletHandle()}
@@ -412,6 +404,33 @@ export default function Index() {
               </View>
             </View>
           </Card>
+            {
+            others && Array.isArray(others.other) && others.other[0].time_of_exam_result && <View 
+              className="p-5 rounded-2xl shadow-sm border border-blue-100"
+              style={{ backgroundColor: '#2E5DA6' }}
+            >
+              <Text className="text-xl font-bold text-white mb-2">
+              {t("accueil.exam_info.title")}
+              </Text>
+              <Text className="text-blue-50 text-sm leading-5 mb-4">
+              {t("accueil.exam_info.text.main")}{' '}
+                <Text className="font-bold text-white">{t("accueil.exam_info.text.subtext1")}</Text> {t("accueil.exam_info.text.text_link")}
+                <Text className="font-bold text-white">{t("accueil.exam_info.text.subtext2")}</Text>{' '}
+              </Text>
+
+              <TouchableOpacity
+                className="flex-row items-center justify-center space-x-2 py-2.5 px-4 rounded-xl border border-white/30 active:opacity-80 align-self-start"
+                style={{ backgroundColor: 'rgba(255, 255, 255, 0.15)' }}
+                onPress={()=> navigation.push("/settings/examen") }
+              >
+                <Text className="text-white text-xs font-semibold">
+                  {t("accueil.exam_info.btnText")}
+                </Text>
+                <Ionicons name="arrow-forward" size={16} color="#ffffff" />
+
+              </TouchableOpacity>
+            </View>
+            }
 
           {/* Ton contenu */}
           <View className="flex-row justify-between items-center mt-10">

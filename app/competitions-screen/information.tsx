@@ -51,6 +51,16 @@ export default function Information() {
   const dispatch = useAppDispatch();
   const [isDeleteOpen, setDeleteIsOpen] = useState(false)
   const {stop}= useSoundAud();
+  
+  const isCreator = userId === selectedCompetition?.creatorID;
+
+  // Esce que l'utilisateur est inscrit ? (retourne true ou false)
+  const isSubscribed = selectedCompetition?.suscribers?.some(user => user.id === userId);
+  
+  // La compétition est elle ouverte aux inscriptions ?
+  const canStillRegister = selectedCompetition?.registration_deadline && 
+                           new Date(selectedCompetition.registration_deadline) >= new Date() &&
+                           selectedCompetition?.statut !== "ONGOING";
 
   const DialogDeleteText = DialogText;
 
@@ -69,7 +79,6 @@ export default function Information() {
     dispatch(setSelectedCompetitionNull())
     dispatch(setWaitingJoinin(false));
   }, [
-    error,
     errorCompetition,
     errorSuscription,
     errorType
@@ -111,16 +120,18 @@ export default function Information() {
   useEffect(()=>{
     if(!waitingLaunching && room && competitionLaunch){
       dispatch(updateSelectedCompetition({statut: "ONGOING", roomId: room.roomId}));
-      dispatch(updateStatut("ONGOING"))
+      dispatch(updateStatut({statut: "ONGOING", competitionID: selectedCompetition ? selectedCompetition.id: 0, roomId: room.roomId}));
       
       showToast(t("mycompetition.information.success.competition_launched"), "Succès", "success");
     }
 
     if(error){
-      showToast(error, "Error", "error")
+      showToast(error, "Error", "error");
     }
     
-    if(errorCompetition) showToast(errorCompetition, "Error", "error");
+    if(errorCompetition){
+      showToast(errorCompetition, "Error", "error");
+    }  
 
     if(errorSuscription) showToast(errorSuscription, "Error", "error");
 
@@ -264,6 +275,7 @@ function userJoinCompetition(){
      } as any;
 
      dispatch(createSubscription(data));
+     router.back();
   }
   
 
@@ -381,8 +393,13 @@ function userJoinCompetition(){
               color={colors.defaultBlue}
             />
             <Text className="ml-2 text-gray-700 font-medium">
-              {selectedCompetition?.creatorData.surname + " " + selectedCompetition?.creatorData.username}
+              {
+                selectedCompetition?.isExamBoostCompetition ? "ExamBoost":selectedCompetition?.creatorData.surname + " " + selectedCompetition?.creatorData.username
+              }
             </Text>
+            {
+                selectedCompetition?.isExamBoostCompetition && <Text><Ionicons name="checkmark-circle" size={16} color="blue" /></Text>
+            }
           </View>
 
           <View className="flex-row items-center">
@@ -395,16 +412,16 @@ function userJoinCompetition(){
               selectedCompetition?.type === "FREE_REGISTRATION_WITH_WINNER_PRICE" || selectedCompetition?.type === "PAID_REGISTRATION_WITH_WINNER_PRICE" ? 
               (
                 <Text className="ml-2 text-gray-700 font-medium">
-                  {selectedCompetition?.winnerPrice.toLocaleString("fr-FR")} XAF
+                  {selectedCompetition?.winnerPrice.toLocaleString("fr-FR")} U
                  </Text>
               ) : selectedCompetition?.type == "PAID_REGISTRATION_AS_WINNER_PRICE" ? 
                 (
                   <Text className="ml-2 text-gray-700 font-medium">
-                    {selectedCompetition?.winnerPrice.toLocaleString("fr-FR") + " x " + selectedCompetition?.suscribers.length} XAF
+                    {selectedCompetition?.winnerPrice.toLocaleString("fr-FR") + " x " + selectedCompetition?.suscribers.length} U
                   </Text>
                 ): (
                   <Text className="ml-2 text-gray-700 font-medium">
-                      00 XAF
+                      00 U
                  </Text>
                 )
             }
@@ -520,7 +537,7 @@ function userJoinCompetition(){
                   </ButtonText>
                 </Button>
 
-                <Button action="negative" className="ml-2 rounded-2xl" onPress={()=> setDeleteIsOpen(true)}>
+                <Button action="negative" className="ml-2 rounded-2xl " disabled={selectedCompetition.statut !== "UPCOMING"}  onPress={()=> setDeleteIsOpen(true)}>
                   <ButtonText size="sm" className='text-typography-white'>
                         <Ionicons
                             name="trash"
@@ -559,9 +576,9 @@ function userJoinCompetition(){
                 </Text>
               </View>
               <Text className="font-semibold text-gray-800">
-                {(selectedCompetition?.entryFee === 0 || !selectedCompetition?.entryFee)
-                  ? "Gratuit"
-                  : `${selectedCompetition?.entryFee.toLocaleString("fr-FR")} XAF`}
+                {(Number(selectedCompetition?.entryFee === 0) || !selectedCompetition?.entryFee)
+                  ? t("mycompetition.information.free")
+                  : `${selectedCompetition?.entryFee.toLocaleString("fr-FR")} U`}
               </Text>
             </View>
 
@@ -645,47 +662,39 @@ function userJoinCompetition(){
         </View>
 
               {/* Bouton Supprimer - à gauche */}
-      <View className="flex-row items-center justify-between">
+         <ScrollView 
+            horizontal={true} 
+            showsHorizontalScrollIndicator={false}
+            contentContainerClassName="flex-row items-center gap-4 pr-8 pl-4"
+          >
 
-        {(user?.role.toLowerCase() == "superadmin" ) &&
-          (selectedCompetition?.statut === "UPCOMING" || selectedCompetition?.statut === "CANCELLED") && (
-            <TouchableOpacity
-              className="flex-row items-center bg-red-500 self-start px-4 py-2 rounded-full"
-              onPress={() => setDeleteIsOpen(true)}
+          {(user?.role.toLowerCase() === "superadmin") &&
+            (selectedCompetition?.statut === "UPCOMING" || selectedCompetition?.statut === "CANCELLED") && (
+              <TouchableOpacity
+                className="flex-row items-center bg-red-500 self-start px-4 py-2 rounded-full"
+                onPress={() => setDeleteIsOpen(true)}
+              >
+                <Ionicons name="trash-outline" size={16} color="#ffffff" />
+                <Text className="text-white text-xs font-semibold ml-2">Suppression Admin</Text>
+              </TouchableOpacity>
+            )}
+
+          {canStillRegister && !isSubscribed && (selectedCompetition.isPublic || isCreator) && (
+            <TouchableOpacity 
+              className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto" 
+              onPress={() => registerToCompetition()}
             >
-              <Ionicons name="trash-outline" size={16} color="#ffffff" />
-              <Text className="text-white text-xs font-semibold ml-2">
-                Suppression Admin
-              </Text>
-            </TouchableOpacity>
-          )}
-
-        {/* boutton pour rejoindre la competition pour un user n'etant pas son createur et si la date limite n'est pas atteinte */}
-        {selectedCompetition?.registration_deadline && 
-        new Date(selectedCompetition.registration_deadline) >= new Date() &&
-        selectedCompetition.isPublic &&
-          userId !== selectedCompetition?.creatorID &&
-          selectedCompetition?.suscribers.filter((user, index) => {
-            return user.id === userId;
-          }).length === 0 && selectedCompetition?.statut !== "ONGOING" && (
-            <TouchableOpacity className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto" onPress={()=>registerToCompetition()}>
               <Text className="text-white text-xs font-semibold mr-2">
-              {t("mycompetition.information.register_comp")}
+                {t("mycompetition.information.register_comp")}
               </Text>
               <Ionicons name="chevron-forward" size={22} color="#ffffff" />
             </TouchableOpacity>
           )}
 
-
-      { selectedCompetition && userId === selectedCompetition?.creatorID &&
-        room &&
-        !waitingLaunching &&
-        !selectedCompetition.isManagedByIA &&
-        selectedCompetition?.statut === "ONGOING" &&
-           (
+          {isSubscribed && !errorType && selectedCompetition?.statut === "ONGOING" && (
             <TouchableOpacity 
               className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto"
-              onPress={()=> adminJoinCompetition()}
+              onPress={() => userJoinCompetition()}
             >
               <Text className="text-white text-xs font-semibold mr-2">
                 {t("mycompetition.information.join_comp")}
@@ -694,102 +703,22 @@ function userJoinCompetition(){
             </TouchableOpacity>
           )}
 
-        {/* boutton pour rejoindre la competition pour un user n'etant pas son createur et si le room est creee NB:j'ai pas mis la condition sur le room */}
-        {userId !== selectedCompetition?.creatorID &&
-        !errorType &&
-        selectedCompetition?.statut === "ONGOING" &&
-          selectedCompetition?.suscribers.filter((user, index) => {
-            return user.id === userId;
-          }).length === 1 && (
+          {isCreator && room && !waitingLaunching && !selectedCompetition.isManagedByIA && selectedCompetition?.statut === "ONGOING" && (
             <TouchableOpacity 
-              className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto"
-              onPress={()=> userJoinCompetition()}
+              className="flex-row items-center bg-green-600 self-start px-4 py-2 rounded-full ml-auto"
+              onPress={() => adminJoinCompetition()}
             >
               <Text className="text-white text-xs font-semibold mr-2">
-                {t("mycompetition.information.join_comp")}
+              {t("mycompetition.information.manage_competition")}
               </Text>
-              <Ionicons name="chevron-forward" size={22} color="#ffffff" />
+              <Ionicons name="settings-outline" size={22} color="#ffffff" />
             </TouchableOpacity>
           )}
 
-        {/* {userId !== selectedCompetition?.creatorID && selectedCompetition?.statut === "UPCOMING" &&
-          selectedCompetition?.suscribers.filter((user, index) => {
-            return user.id == userId;
-          }).length === 1 && (
-            <TouchableOpacity className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto">
-              <Text className="text-white text-xs font-semibold mr-2">
-                Annuler mon inscription
-              </Text>
-              <Ionicons name="chevron-forward" size={22} color="#ffffff" />
-            </TouchableOpacity>
-          )} */}
-
-        {/* btn for user to observe the competition when he is not register */}
-        {userId !== selectedCompetition?.creatorID 
-         &&
-         (room || selectedCompetition?.roomID) &&
-        selectedCompetition?.statut === "ONGOING" &&
-          selectedCompetition?.suscribers.filter((user, index) => {
-            return user.id === userId;
-          }).length === 0 && (
-            <TouchableOpacity
-             className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto"
-             onPress={()=> observeCompetition()}
-             
-             >
-              <Text className="text-white text-xs font-semibold mr-2">
-              {t("mycompetition.information.look_comp")}
-              </Text>
-              <Ionicons name="chevron-forward" size={22} color="#ffffff" />
-            </TouchableOpacity>
-          )}
-
-          {/* Join the competition as spectator for user after leaved it */}
-           {userId !== selectedCompetition?.creatorID && 
-            errorType === "USER_HAS_LEAVED_ROOM" &&
-            selectedCompetition?.statut === "ONGOING" &&
-              selectedCompetition?.suscribers.filter((user, index) => {
-                return user.id === userId;
-              }).length === 1 && (
-                <TouchableOpacity
-                className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto"
-                onPress={()=> observeCompetition()}
-                
-                >
-                  <Text className="text-white text-xs font-semibold mr-2">
-                  {t("mycompetition.information.look_comp")}
-                  </Text>
-                  <Ionicons name="chevron-forward" size={22} color="#ffffff" />
-                </TouchableOpacity>
-          )}
-
-        {/* btn for admin to observe the competition when it managed by IA*/}
-        {selectedCompetition && userId === selectedCompetition?.creatorID && 
-        room &&
-        !waitingLaunching &&
-        selectedCompetition.isManagedByIA &&
-        selectedCompetition?.statut === "ONGOING" &&
-          selectedCompetition?.suscribers.filter((user, index) => {
-            return user.id === userId;
-          }).length === 0 && selectedCompetition?.isManagedByIA && (
-            <TouchableOpacity 
-            className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto"
-            onPress={()=> observeCompetition()}
-            >
-              <Text className="text-white text-xs font-semibold mr-2">
-                {t("mycompetition.information.look_comp")}
-              </Text>
-              <Ionicons name="chevron-forward" size={22} color="#ffffff" />
-            </TouchableOpacity>
-          )}
-
-        {userId === selectedCompetition?.creatorID && 
-        !waitingLaunching && 
-        !room &&
-        selectedCompetition?.statut === "UPCOMING"  && (
+          {isCreator && !waitingLaunching && !room && selectedCompetition?.statut === "UPCOMING" && (
             <TouchableOpacity 
               className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto"
-              onPress={()=> startCompetition()}
+              onPress={() => startCompetition()}
             >
               <Text className="text-white text-xs font-semibold mr-2">
                 {t("mycompetition.information.start_comp")}
@@ -798,20 +727,36 @@ function userJoinCompetition(){
             </TouchableOpacity>
           )}
 
-            {/* btn to look the result of competition */}
-        {selectedCompetition?.statut == "COMPLETED" && (
+          {(!isSubscribed || errorType === "USER_HAS_LEAVED_ROOM") && 
+          (room || selectedCompetition?.roomID) && 
+          selectedCompetition?.statut === "ONGOING" && (
+            <TouchableOpacity
+              className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto"
+              onPress={() => observeCompetition()}
+            >
+              <Text className="text-white text-xs font-semibold mr-2">
+                {t("mycompetition.information.look_comp")}
+              </Text>
+              <Ionicons name="eye-outline" size={22} color="#ffffff" />
+            </TouchableOpacity>
+          )}
+
+          {/* 6. VOIR LES RÉSULTATS */}
+          {selectedCompetition?.statut === "COMPLETED" && (
             <TouchableOpacity 
-            onPress={()=> seeResult()}
-            className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto">
+              onPress={() => seeResult()}
+              className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto"
+            >
               <Text className="text-white text-xs font-semibold mr-2">
                 {t("mycompetition.information.see_result")}
               </Text>
               <Ionicons name="chevron-forward" size={22} color="#ffffff" />
             </TouchableOpacity>
           )}
-      </View>
 
-      <FullscreenLoader visible={waitingLaunching || loading || waitingJoining || suscriptionLoading} />
+       </ScrollView>
+
+       <FullscreenLoader visible={waitingLaunching || loading || waitingJoining || suscriptionLoading} />
       </ScrollView>
       <Toast config={toastConfig} />
      

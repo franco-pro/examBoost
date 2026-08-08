@@ -11,6 +11,7 @@ import { setTotalActiveUser } from "../../redux/dev-admin/dev-admin.slice";
 import { addNotif, updateBalanceUser } from "../../redux/users/users.slice";
 import { Transaction } from "../../entities/transaction";
 import { addTransaction } from "../../redux/transactions/transactions.slice";
+import { router } from "expo-router";
 
 // Interface pour les notifications
 export interface NotificationPayload {
@@ -24,7 +25,7 @@ export interface NotificationPayload {
   created_at: Date;
   roomId?: string;
   statut?: string;
-  competitionID?: number;
+  competionID?: number;
 }
 
 interface InvitationPaylod {
@@ -61,11 +62,16 @@ export function initializeNotificationsGateway(dispatch: any, userId: number) {
   socket.off("payment-ended");
   socket.off("connect");
   socket.off("disconnect");
+  socket.off('token-error');
 
   socket.on("connect", () => {
     console.log("Connected to notifications gateway with ID:", socket.id);
     dispatch(setNotificationsConnectionStatus(true));
   });
+   socket.on("token-error", (info: string) => {
+      console.log("Error on connection with this token please login :");
+      router.replace("/(auth)/login")
+    });
 
   socket.on("reconnect_attempt", () => {
     console.log("RECONNECT ATTEMPT");
@@ -84,16 +90,15 @@ export function initializeNotificationsGateway(dispatch: any, userId: number) {
   })
   socket.on("competition-started", (data: NotificationPayload) => {
     console.log("Notification competition started:", data);
-    const {roomId, statut, competitionID} = data;
+    const {roomId, statut, competionID} = data;
     dispatch(addNotification({
       ...data,
-      competionID: data.competitionID
     }));
 
     dispatch(addNotif(data))
     
-    if(roomId && statut && competitionID){
-      dispatch(updateStatut({roomId: roomId, competitionId: competitionID, statut: statut}))
+    if(roomId && statut && competionID){
+      dispatch(updateStatut({roomId: roomId, competitionId: competionID, statut: statut}))
     }
     
   });
@@ -141,7 +146,7 @@ export function EmitEventNotif(dispatch: any) {
   return {
     // Marquer une notification comme lue
     sendInvitation: (notification: InvitationPaylod) => {
-      console.log('notif send')
+      console.log('notif send', notification)
       socket.emit("send-invitation", notification);
     },
 

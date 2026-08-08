@@ -8,6 +8,17 @@
     "other_subjets": "Others Subjets",
     "recent_documents": "Recently Opened Documents",
     "open": "Open",
-    "load": "Deposit"
+    "load": "Deposit",
+    "exam_info": {
+      "btnText": "Get my result",
+      "title": "Consulting OBC results",
+      "text": {
+        "main": "Instantly access your exam transcript or that of your loved ones. Enter your/their ",
+        "subtext1": "candidate ID number.",
+        "subtext2": "session year",
+        "text_link": "and",
+        "end": "in the fields below to start the verification."
+      }
+    }
   }
 }

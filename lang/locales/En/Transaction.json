@@ -4,5 +4,8 @@
   "deposit": "Top-up account",
   "purchase_pack": "Purchase of exam pack",
   "createCompetition": "Create a prize competition",
-  "competition_fess": "Entry fee for a competition" 
+  "competition_fess": "Entry fee for a competition" ,
+  "failed": "Failed",
+  "completed": "Success",
+  "pending": "Processing..."
 }

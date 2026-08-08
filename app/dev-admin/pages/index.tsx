@@ -3,7 +3,7 @@
 import { getHomeData } from "@/app/hooks/redux/dev-admin/dev-admin.thunks";
 import { getAllNiveaux } from "@/app/hooks/redux/niveaux/niveaux.thunks";
 import { useAppDispatch } from "@/app/hooks/redux/redux.hooks";
-import { useAppSelector } from "@/app/redux/redux.hooks";
+import { useAppSelector } from "@/app/hooks/redux/redux.hooks";
 import { RootState } from "@/app/redux/store";
 import { Spinner } from "@/components/ui/spinner";
 import { VStack } from "@/components/ui/vstack";
@@ -20,6 +20,7 @@ enum AdminActions {
     FINANCES = "finances",
     DOCUMENTS = "documents",
     NOTIF = "notif",
+    TRANSACTIONS = "transactions",
     MAJ= "maj"
 }
 export default function DevAdmin() {
@@ -55,14 +56,14 @@ export default function DevAdmin() {
       }[] = [
         {
           nom: "Examens créés",
-          chiffre: "+"+competitions.total.toString().toLocaleString("fr-FR"),
+          chiffre: competitions.total.toLocaleString("fr-FR")+"+",
           icone: <Ionicons name="trophy-outline" size={28} color="#f97316" />,
           bgColor: "bg-orange-100",
           textColor: "text-orange-600",
         },
         {
           nom: "Users inscrits",
-          chiffre: "+"+totalUsers.total.toString().toLocaleString("fr-FR"),
+          chiffre: totalUsers.total.toLocaleString("fr-FR")+"+",
           icone: <FontAwesome5 name="users" size={25} color="#3b82f6" />,
           bgColor: "bg-blue-100",
           textColor: "text-blue-600",
@@ -76,7 +77,7 @@ export default function DevAdmin() {
         },
         {
             nom: "Montant encaissé",
-            chiffre: `+${accountWallet.competition.toLocaleString("fr-FR")} FCFA`,
+            chiffre: `+${accountWallet.competition.toLocaleString("fr-FR")} U`,
             icone: (
               // Mets ici ton icône
               <FontAwesome5 name="wallet" size={24} color="#059669" />
@@ -115,10 +116,18 @@ export default function DevAdmin() {
       {
         icone: <Ionicons name="cash" size={28} color="#f97316" />,
         text: "Finances & comptabilité",
-        other: "Gérer les paiements et les transactions",
+        other: "Gérer les paiements",
         link: "/dev-admin/pages/finances" as const,
         docToApprove: false,
         navigationAction: AdminActions.FINANCES
+      },
+      {
+        icone: <Ionicons name="analytics-sharp" size={28} color="#f97316" />,
+        text: "Transactions",
+        other: "Gérer les transactions",
+        link: "/dev-admin/pages/transactions" as const,
+        docToApprove: false,
+        navigationAction: AdminActions.TRANSACTIONS
       },
 
       {

@@ -22,7 +22,7 @@
   "navigationBottom": {
     "home": "Accueil",
     "transactions": "Mes transactions",
-    "packs": "Packs",
+    "packs": "Sujets",
     "teacher": "Enseignant"
   }
 },
@@ -108,7 +108,8 @@
            "nombreMaxQts": "Nombre Total de Questions",
            "isManagedByIA": "Questions générées par l'IA",
            "help": "AIDE",
-           "agree": "Ok, compris !"
+           "agree": "Ok, compris !",
+           "isExamBoostCompetition": "Compétition ExamBoost"
         },
         "errors" : {
           "name": "Le nom de la compétition n'est pas défini",
@@ -158,7 +159,7 @@
       "connected_user": "Participants en ligne",
       "no_connected_user": "Aucun participant",
       "question_answered": "Questions répondues",
-      "question_manager": "Emétteur de questions",
+      "question_manager": "Gérant du déroulement",
       "owner": "Organisateur"
    },
    "form_question": {
@@ -215,7 +216,7 @@
   },
   "invitationPrompt": {
     "title": "Confirmation d'inscription",
-    "text": "Cette compétition exige des frais de participation... vous serez debité d'un montant de {{inscriptionFees}} XAF",
+    "text": "Cette compétition exige des frais de participation... vous serez debité d'un montant de {{inscriptionFees}} U",
     "subtext": "Voulez vous confirmer votre participation ?",
     "joinBtn": "Je confirme",
     "ignoreBtn": "Ignorer l'invitation"
@@ -226,6 +227,7 @@
       "head": "Supprimer cette Competition ?",
       "text": "La competition sera supprimé de la liste des competitions et ne sera plus accéssible au public, cette action est irréversible."
     },
+  "manage_competition": "Gérer la competition",
     "invite": {
       "btnText": "Envoyer l'invitaion",
       "label": "Invité des pariticipants",
@@ -254,6 +256,7 @@
     "max_participants": "Participants maximum",
     "min_participants": "Participants minimum",
     "participationFee": "Frais de participation",
+    "free": "Gratuit",
     "errors": {
       "participantNbr_not_reached": "Le nombre minimum de participants n'est pas atteint pour démarrer la compétition."
     },

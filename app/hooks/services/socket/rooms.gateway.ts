@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import { Answer } from "../../entities/answer";
 import { CompetitionStartEnd } from "../../entities/competitionStartEnd";
 import { IncomingAnswer } from "../../entities/incoming-answer";
@@ -30,10 +31,15 @@ export function initializeRoomsGateway(dispatch: any, room: Room|null, userID: n
   socket.off("spectator-leaved");
   socket.off("connect");
   socket.off("disconnect");
-
+  socket.off("token-error");
 
   socket.on("connect", () => {
     console.log("Connected to rooms gateway with ID:", socket.id);
+  });
+
+  socket.on("token-error", () => {
+    console.log("Error on connection with this token please login :");
+    router.replace("/auth/login")
   });
 
   socket.on("room-joined", (RoomInfo: Room) => {

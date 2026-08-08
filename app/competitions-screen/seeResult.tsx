@@ -188,12 +188,14 @@ function showToast(message: string){
                 <HStack className="items-center m-[5px] space-x-2">
                   <Text className="text-white">{index + 4}</Text>
                   <Avatar size="md" className="ml-[5px]">
-                        <AvatarFallbackText>
-                            {item.username.split(" ").map((n) => n[0]).join("")}
-                         </AvatarFallbackText>
+                      
                     {item.imgUrl ? (
                       <AvatarImage source={{ uri: item.imgUrl }} />
-                    ) : null}
+                    ) : 
+                      <AvatarFallbackText>
+                      {item.username.split(" ").map((n) => n[0]).join("")}
+                     </AvatarFallbackText>
+                    }
                   </Avatar>
                   <Text className="text-white ml-[4px]">{item.username}</Text>
                 </HStack>

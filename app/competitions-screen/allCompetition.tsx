@@ -38,8 +38,8 @@ const STATUTS: Competition["statut"][] = [
 ];
 
 const TYPE_LABELS: Record<Competition["type"], string> = {
-  PAID_REGISTRATION_AS_WINNER_PRICE: "Payant / Prix",
-  FREE_REGISTRATION_WITH_WINNER_PRICE: "Gratuit / Prix",
+  PAID_REGISTRATION_AS_WINNER_PRICE: "Paye = Prix",
+  FREE_REGISTRATION_WITH_WINNER_PRICE: "Gratuit + Prix",
   PAID_REGISTRATION_WITH_WINNER_PRICE: "Payant + Prix",
   TOTAL_FREE_NO_PRICE_TO_WIN: "100% Gratuit",
 };

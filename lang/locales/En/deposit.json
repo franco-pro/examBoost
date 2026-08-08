@@ -3,7 +3,7 @@
       "back": "Back",
       "pay_done": {
         "title": "Top Up",
-        "text": "Your account has been credited with {{amount}} XAF."
+        "text": "Your account has been credited with {{amount}} U."
       },
       "pay_failed": {
         "title": "Error",
@@ -18,7 +18,7 @@
         "tel_error": "The phone number must start with 6 and contain exactly 9 digits.",
         "tel_valid": "✓ Valid phone number",
         "operator": "Select your mobile operator",
-        "amount": "Amount (XAF)",
+        "amount": "Amount (U)",
         "btnText": "Proceed to Top Up"
       },
       "loading": {
@@ -26,5 +26,36 @@
         "second_title": "Waiting for payment confirmation. Please do not close this page!",
         "third_title": "Please confirm the Mobile Money transaction after the confirmation page is displayed."
       }
-    }
+    },
+    "withdrawal": {
+        "back": "Return",
+        "pay_done":{
+        "title": "Withdrawal",
+        "text": "Your request is being processed..."
+        },
+
+        "pay_failed": {
+        "title": "Error",
+        "text": "An error occurred during your transaction!"
+        },
+        "first_title": "Mobile Money Withdrawal",
+        "sub_text": "Make your withdrawal request quickly and securely.",
+        "other_text1": "100% Secure Transaction",
+        "other_text2": "Your transactions are protected and encrypted",
+        
+        "form": {
+          "tel": "Phone Number",
+          "tel_error": "The number must start with 6 and contain exactly 9 digits.",
+          "tel_valid": "✓ Valid Number",
+          "operator": "Choose your operator",
+          "amount": "Amount (U)",
+          "btnText": "Proceed With Withdrawal Request"
+        },
+        "error" : {
+          "title": "Error",
+          "text": "An error occurred during your transaction!",
+          "insufficient_balence": "Insufficient balance to complete the transaction.",
+          "invalid_amount": "The minimum withdrawal amount is 1000 Unity(U)."
+        }
+      }
   }

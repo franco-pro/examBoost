@@ -67,7 +67,7 @@ export default function Participation() {
 
   useEffect(()=>{
     if(mySubscriptionList.length == 0 && !refreshing){
-        dispatch(getMyParticipations(userId))
+        dispatch(getMyParticipations(userId ?? 0))
     }
   }, [])
 
@@ -96,7 +96,7 @@ export default function Participation() {
       dispatch(clearSuscriptionState())
       setRefreshing(true);
   
-        dispatch(getMyParticipations(userId))
+        dispatch(getMyParticipations(userId ?? 0))
         console.log("Page actualisée !");
   
         setRefreshing(false);

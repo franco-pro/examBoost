@@ -75,7 +75,7 @@ export default function Competition() {
       },
       {
         nom: t("accueil.statistics.total_deposits"),
-        chiffre: homeBaseData?.totalPriceWin.toLocaleString("fr-FR") + " XAF",
+        chiffre: homeBaseData?.totalPriceWin.toLocaleString("fr-FR") + " U",
         icone: (
           <Ionicons
             name="checkmark-done-circle-outline"

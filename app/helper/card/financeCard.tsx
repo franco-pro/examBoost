@@ -27,7 +27,7 @@ export interface CardItem {
 export const formatCurrency = (value: number): string => {
   return new Intl.NumberFormat("fr-FR", {
     style: "currency",
-    currency: "XAF",
+    currency: "U",
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(value);

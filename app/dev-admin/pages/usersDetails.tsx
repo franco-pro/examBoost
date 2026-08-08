@@ -235,7 +235,7 @@ const handleDelete = () => {
           <View style={styles.walletInfo}>
             <Text style={styles.walletLabel}>Solde du portefeuille</Text>
             <Text style={styles.walletAmount}>
-              {user.wallet.toLocaleString("fr-FR")} FCFA
+              {user.wallet.toLocaleString("fr-FR")} U
             </Text>
           </View>
         </View>

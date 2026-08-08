@@ -40,7 +40,8 @@ export default function OwnerCompetitionsScreen() {
                                                    creatorSurname: room ? (room.creatorInfo ? room.creatorInfo.surname: ''):'',
                                                    imgUrl : room ? (room.creatorInfo ? room.creatorInfo.imgUrl: ''):'',
                                                    roomName: room ? (room.roomName ? room.roomName : ''):'',
-                                                   viewers: room ? (room.spectators ? room.spectators : 0):0
+                                                   viewers: room ? (room.spectators ? room.spectators : 0):0,
+                                                   isExamBoostCompetition : room ? (room.competitionInfo && room.competitionInfo.isExamBoostCompetition ? room.competitionInfo.isExamBoostCompetition : false):false
                                                    }}
                                 competitionInfo={{
                                                     questionNbr: room ? (room.competitionInfo ? room.competitionInfo.questionsNbr : 0):0,
@@ -49,8 +50,8 @@ export default function OwnerCompetitionsScreen() {
                                                     instrunctions: text as any,
                                                     isIA: room ? room.isManagedByIA: false,
                                                     totalMinutes: room ? room.totalTimes: null,
-                                                    endTime: room ? room.finalHour : null
-
+                                                    endTime: room ? room.finalHour : null,
+                                                    serverNow: room ? room.serverNow : null
                                          }}                    
               />
         

@@ -1,7 +1,7 @@
 import { toastConfig } from '@/app/config/toast.config';
 import { SearchHttp } from '@/app/hooks/services/search/search';
 import { EmitEventNotif } from '@/app/hooks/services/socket/notifications.gateway';
-import { useAppDispatch, useAppSelector } from '@/app/redux/redux.hooks';
+import { useAppDispatch, useAppSelector } from '@/app/hooks/redux/redux.hooks';
 import { Avatar, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
 import { Box } from '@/components/ui/box';
 import { Button, ButtonIcon, ButtonText } from '@/components/ui/button';
@@ -73,7 +73,7 @@ interface InvitationPromptsProps {
                         competitionName: competitionDetails.name // Remplacez par le nom réel de la compétition
                       }
                     )
-                    // Simuler l'envoi de l'invitation
+                    
                     await new Promise((resolve) => setTimeout(resolve, 2000));
                     setWaitingResponse(false);
                     showToast(t("mycompetition.information.invite.modal.success.send", {name: response.username }), "Succès");
@@ -103,8 +103,9 @@ interface InvitationPromptsProps {
               const responseHttp = await searchHttp.searchUsers(searchValue.toLowerCase().trim());
               if(responseHttp){
                 setResponse(responseHttp);
-                setWaitingResponse(false);
               }
+              setWaitingResponse(false);
+
             }catch(e: any){
                 console.log('error on searching user:', e.message);
                 setWaitingResponse(false);
@@ -169,12 +170,13 @@ interface InvitationPromptsProps {
                   !waitingResponse && response && actionType == "Send Invitation" && (
                     <Box key={response.id} className="flex-row mb-4 items-center mt-4">
                     <Avatar className="mr-3">
+                      {response.imgUrl ? (
+                        <AvatarImage source={{ uri: response.imgUrl }} alt="image" />
+                      ) :
                       <AvatarFallbackText>
                         {response.username.split(" ").map((n) => n[0]).join("")}
                       </AvatarFallbackText>
-                      {response.imgUrl ? (
-                        <AvatarImage source={{ uri: response.imgUrl }} alt="image" />
-                      ) : null}
+                      }
                       
                     </Avatar>
                     

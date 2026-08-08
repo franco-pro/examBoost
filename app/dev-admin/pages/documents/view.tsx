@@ -387,7 +387,6 @@ export default function DocumentView() {
               {ownerAvatar ? (
                 <Avatar size="md">
                 <AvatarImage source={{ uri: ownerAvatar }} />
-                <AvatarFallbackText>{(ownerName ?? "") + (ownerSurname ?? "")}</AvatarFallbackText>
               </Avatar>
               ) : (
                 <View style={styles.avatarFallback}>
@@ -403,7 +402,7 @@ export default function DocumentView() {
                   {ownerSurname} {ownerName}
                 </Text>
                 <Text style={styles.submitterName}>
-                   {ownerSolde ? `Solde: ${String(ownerSolde)} XAFF` : "—"}
+                   {ownerSolde ? `Solde: ${String(ownerSolde)} UF` : "—"}
                 </Text>
               </View>
             </View>

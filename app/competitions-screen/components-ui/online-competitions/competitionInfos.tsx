@@ -10,11 +10,12 @@ import { HStack } from "@/components/ui/hstack";
 import { EyeIcon, Icon } from '@/components/ui/icon';
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
+import { Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 
 interface CompetitionInfosProps{
-    data : {viewers: number, roomName: string, creatorName: string, creatorSurname: string, imgUrl: string}
-    competitionInfo: {questionNbr: number, CreatorName: string, CreatorSurname: string, instrunctions: string|null, isIA: boolean, totalMinutes: number|null, endTime: any|null}
+    data : {viewers: number, roomName: string, creatorName: string, creatorSurname: string, imgUrl: string, isExamBoostCompetition: boolean}
+    competitionInfo: {questionNbr: number, CreatorName: string, CreatorSurname: string, instrunctions: string|null, isIA: boolean, totalMinutes: number|null, serverNow: any, endTime: any|null}
 }
 
 export default function CompetitionInfos({data, competitionInfo}: CompetitionInfosProps) {
@@ -35,7 +36,7 @@ export default function CompetitionInfos({data, competitionInfo}: CompetitionInf
                 <Heading size="lg" className="text-primary-defaultOrange">
                     {/* {heure}:{minute}:{seconde} */}
                     {
-                        !competitionInfo.isIA ? (<Timer />):(<Countdown targetDateUTC={competitionInfo.endTime ? competitionInfo.endTime : null } onFinish={onFinish}/>)
+                        !competitionInfo.isIA ? (<Timer />):(<Countdown serverNowUTC={competitionInfo.serverNow ? competitionInfo.serverNow:null} targetDateUTC={competitionInfo.endTime ? competitionInfo.endTime : null } onFinish={onFinish}/>)
                     } 
                 </Heading>
                 <Box>
@@ -56,7 +57,16 @@ export default function CompetitionInfos({data, competitionInfo}: CompetitionInf
                     <Avatar size="sm" className="mr-3">
 
                     {data.imgUrl ? (
-                        <AvatarImage source={{ uri: data.imgUrl }} alt="image" />
+                       <AvatarImage 
+                       source={
+                         data.isExamBoostCompetition 
+                           ? require("@/assets/images/app.png") 
+                           : { uri: data.imgUrl }               
+                       } 
+                       style={{ width: 60, height: 60, borderRadius: 30 }} 
+                       resizeMode="contain"
+                       alt="image" 
+                     />
                     ) : 
                         <AvatarFallbackText>
                                 {data.creatorName ? data.creatorName.split(" ").map((n) => n[0]).join(""): 'O'}
@@ -65,9 +75,16 @@ export default function CompetitionInfos({data, competitionInfo}: CompetitionInf
                 
                     </Avatar>
                     <VStack>
-                    <Heading size="sm" className="mb-1 text-typography-white">
-                    {data.creatorSurname} {data.creatorName} 
-                    </Heading>
+                        <HStack>
+                            <Heading size="sm" className="mb-1 text-typography-white">
+                            { 
+                                data.isExamBoostCompetition ? "ExamBoost":
+                                data.creatorSurname + " " + data.creatorName
+                            } 
+                            </Heading>
+                            <Text><Ionicons name="checkmark-circle" size={16} color="blue" /> </Text>
+                        </HStack>
+
                     <Text size="xs" className="text-primary-defaultOrange">{t("mycompetition.competition.online_game.owner")} </Text>
                     </VStack>
                 </Box>
