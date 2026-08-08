@@ -38,6 +38,8 @@ import LottieView from "lottie-react-native";
 import { setSelectedCompetitionNull } from "../hooks/redux/competitions/competitions.slice";
 import { PlusCircle, RefreshCcwIcon } from "lucide-react-native";
 import { useUserQuery } from "../features/user/hooks.rq";
+import { isNotificationsConnected } from "../hooks/services/socket/socket.init";
+import { getItem } from "../utils/asyncStorage";
 
 interface subjectType {
   id: number;
@@ -106,16 +108,29 @@ export default function Index() {
       };
     }, []),
   );
+  
   useEffect(() => {
-    if (isAuthenticated) {
-      dispatch(userDatas()); //to work
-      setTimeout(() => {
-        initializeNotificationsGateway(dispatch, currentUserId ?? 0);
-      }, 1000);
-
-      loadRecent();
-    }
-  }, [isAuthenticated, dispatch, currentUserId]);
+    if (!isAuthenticated || !currentUserId) return;
+    dispatch(userDatas()); //to work
+    
+    let timerId: any = null ;
+  
+    const connectWithRetry = async () => {
+      // console.log('connection status', isNotificationsConnected())
+      if (!isNotificationsConnected()) {
+        initializeNotificationsGateway(dispatch, currentUserId);
+        // console.log('connection executed try', isNotificationsConnected())
+        // console.log('access toke', await getItem("accessToken"))
+     
+        timerId = setTimeout(connectWithRetry, 3000); 
+      }
+    };
+  
+    connectWithRetry();
+    loadRecent();
+  
+    return () => clearTimeout(timerId); 
+  }, [isAuthenticated, currentUserId, dispatch]);
 
   // console.log("useFocus after:", recentDocument);
   // console.log("user:", user);
