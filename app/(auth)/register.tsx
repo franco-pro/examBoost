@@ -6,6 +6,7 @@ import {
   Keyboard,
   useWindowDimensions,
   Alert,
+  ScrollView,
 } from "react-native";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -65,11 +66,9 @@ export default function Register() {
   const [emailValue, setEmailValue] = useState<string>("");
   const [username, setUsernameValue] = useState<string>(surname);
   const [passwordValue, setPasswordValue] = useState<string>("");
-  const [allLevels, setAllLevels] = useState<any[]>([])
-
+  const [allLevels, setAllLevels] = useState<any[]>([]);
 
   const dispatch = useAppDispatch();
-
 
   const changeTypePassword = () => {
     if (passType === "password") {
@@ -79,24 +78,26 @@ export default function Register() {
     }
   };
 
-  const getLevels = async ()=>{
+  const getLevels = async () => {
     try {
       const response = await apiClient.get("/niveaux");
-      dispatch(setNiveauxList(
-        Array.isArray(response.data) && response.data.length != 0 ?
-        response.data : []
-      ));
-      setAllLevels(response.data)
+      dispatch(
+        setNiveauxList(
+          Array.isArray(response.data) && response.data.length != 0
+            ? response.data
+            : [],
+        ),
+      );
+      setAllLevels(response.data);
     } catch (error) {
-      console.log("Quelque chose n'a pas marcher:", error)
+      console.log("Quelque chose n'a pas marcher:", error);
     }
-  }
-  
+  };
+
   useEffect(() => {
-    getLevels()
+    getLevels();
   }, []);
 
-  
   const socialsBtns = [
     { name: "Google", icon: require("../assets/icons/google.png") },
     { name: "Facebook", icon: require("../assets/icons/facebook.png") },
@@ -104,7 +105,7 @@ export default function Register() {
   ];
   const navigation = useRouter();
   const { user, loading, error } = useSelector(
-    (state: RootState) => state.user
+    (state: RootState) => state.user,
   );
   const [isLoading, setIsLoading] = useState(loading);
   const [err, setErr] = useState(error);
@@ -119,7 +120,7 @@ export default function Register() {
         email: emailValue,
         niveauID: Number(niveau),
         password: passwordValue,
-      })
+      }),
     );
 
     if (registerUser.fulfilled.match(result)) {
@@ -137,16 +138,16 @@ export default function Register() {
   };
   return (
     <GestureHandlerRootView>
-      <SafeAreaView className="flex-1 relative bg-white border-4">
+      <SafeAreaView className="flex-1 relative bg-white ">
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View className="flex-1 bg-white">
+          <View className="flex-1 bg-white h-full ">
             <View className="images w-full  relative">
               <Image
                 source={require("../assets/images/student.jpg")}
                 className="w-full absolute"
                 style={{
                   width: "100%",
-                  height: height * 0.4,
+                  height: height * 0.45,
                   position: "absolute",
                 }}
                 contentFit="cover"
@@ -161,8 +162,8 @@ export default function Register() {
               showsVerticalScrollIndicator={false}
             >
               <View
-                className="bg-white p-3 rounded-t-[40px] shadow-2xl "
-                style={{ marginTop: height * 0.08 }}
+                className="bg-white  p-3 rounded-[40px] shadow-xl"
+                style={{ marginTop: height * 0.15 }}
               >
                 {/* header form */}
                 <View className="header items-center justify-center mb-6">
@@ -294,17 +295,27 @@ export default function Register() {
                       </SelectTrigger>
                       <SelectPortal>
                         <SelectBackdrop />
-                        <SelectContent>
+                        <SelectContent
+                          style={{ maxHeight: 300, width: "100%" }}
+                        >
                           <SelectDragIndicatorWrapper>
                             <SelectDragIndicator />
                           </SelectDragIndicatorWrapper>
-                          {allLevels.map((level, index) => (
-                            <SelectItem
-                              key={index}
-                              value={level.id}
-                              label={level.name}
-                            />
-                          ))}
+                          <ScrollView
+                            style={{ width: "100%" }}
+                            showsVerticalScrollIndicator={true}
+                          >
+                            {allLevels
+                              .slice()
+                              .sort((a, b) => a.name.localeCompare(b.name))
+                              .map((level, index) => (
+                                <SelectItem
+                                  key={index}
+                                  value={level.id}
+                                  label={level.name}
+                                />
+                              ))}
+                          </ScrollView>
                         </SelectContent>
                       </SelectPortal>
                     </Select>
@@ -333,13 +344,9 @@ export default function Register() {
                       >
                         <ButtonText>
                           {passType === "password" ? (
-                            <Icon className="border" as={EyeIcon} size={"lg"} />
+                            <Icon className="" as={EyeIcon} size={"lg"} />
                           ) : (
-                            <Icon
-                              className="border"
-                              as={EyeOffIcon}
-                              size={"lg"}
-                            />
+                            <Icon className="" as={EyeOffIcon} size={"lg"} />
                           )}
                         </ButtonText>
                       </Button>
@@ -377,14 +384,14 @@ export default function Register() {
                     </Text>
                   )}
                 </FormControl>
-                <Center className="mt-10 flex-row items-center justify-center gap-2">
+                {/* <Center className="mt-10 flex-row items-center justify-center gap-2">
                   <Divider />
                   <Text className="text-gray-400">
                     S&rsquo;inregistrer avec
                   </Text>
                   <Divider />
-                </Center>
-                <Center className="social-btns flex-row gap-2 ">
+                </Center> */}
+                {/* <Center className="social-btns flex-row gap-2 ">
                   {socialsBtns.map((btn, index) => (
                     <Button
                       key={index}
@@ -397,7 +404,7 @@ export default function Register() {
                       />
                     </Button>
                   ))}
-                </Center>
+                </Center> */}
                 <Center className="sign in mt-3 flex-row">
                   <Text className="text-gray-400">
                     Vous avez deja un compte?{" "}
