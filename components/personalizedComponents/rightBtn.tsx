@@ -29,7 +29,7 @@ const RightBtn = () => {
         activeOpacity={0.8}
         onPress={() => handleClick()}
       >
-        <Icon as={SettingsIcon} />
+        <Icon as={SettingsIcon} size='xl'/>
       </TouchableOpacity>
     </View>
   );

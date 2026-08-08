@@ -43,8 +43,6 @@ import { ChevronDownIcon } from "@/components/ui/icon";
 import FullscreenLoader from "@/app/helper/Dialogs/loaderFullScreen";
 import { useSelector } from "react-redux";
 import { RootState } from "../hooks/redux/store";
-import { getItem } from "../utils/asyncStorage";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width } = Dimensions.get("window");
 
@@ -55,13 +53,13 @@ export default function CreateCompetitionForm() {
 
   const { data } = useLocalSearchParams() as any;
   
-  const { language } = useContext(LanguageContext);
-  console.log('language from context', getItem("lang"))
   
   const [actionType, setActionType] = useState<"UPDATE"|"CREATE">("CREATE")
   const TextEnum = DialogText;
   const competitionText = CompetitionTypeDescription; 
-  const {t } = useTranslation("competition")
+  const {t, i18n } = useTranslation("competition")
+  const language  = i18n.language;
+
   // const competitionToUpdate = JSON.parse(data);
   
   const MAX_PARTICIPANTS = homeBaseData ? homeBaseData.MAX_PARTICIPANTS: 15;
@@ -105,6 +103,7 @@ export default function CreateCompetitionForm() {
 
   useFocusEffect(
     useCallback(()=> {
+      console.log('current lang', i18n.language)
         if(data){
           setActionType("UPDATE")
 
@@ -373,10 +372,12 @@ export default function CreateCompetitionForm() {
     if(actionType==="CREATE"){
       updatedData.username = user?.surname + " " + user?.username;
       updatedData.isExamBoostCompetition = isExamBoostCompetition;
-      dispatch(createCompetition(updatedData))
+      console.log('updatedData', updatedData);
+      //dispatch(createCompetition(updatedData))
     }else{
       updatedData.isExamBoostCompetition = isExamBoostCompetition;
-      dispatch(update(updatedData))
+      // dispatch(update(updatedData))
+      console.log('updatedData', updatedData)
     }
   };
 
@@ -549,19 +550,43 @@ export default function CreateCompetitionForm() {
               >
                 <Ionicons name="calendar" size={20} color="#181c5c" />
                 <Text className="ml-2 text-gray-700">
-                  { formData.date && formatCameroonDate(formData.date)}
+                  { formData.date && formatCameroonDate (formData.date)}
                 </Text>
               </TouchableOpacity>
 
-              {showDatePicker && isFirstCalendarOpen && (
-                  <DateTimePicker
-                    value={getValidDate(formData[currentField])  || new Date()}
-                    mode="datetime"
-                    display="default"
-                    onChange={handleDateChange}
-                  />
-                )}
-              <Text className="mb-1 font-semibold">date de fin: d'enregistrement</Text>
+              {
+                Platform.OS === "ios" && showDatePicker && isFirstCalendarOpen && (
+                  
+                    <DateTimePicker
+                      value={getValidDate(formData[currentField])  || new Date()}
+                      mode="datetime"
+                      display="default"
+                      onChange={handleDateChange}
+                    />
+                  
+                )
+              }
+              {
+                Platform.OS === "android" && showDatePicker && isFirstCalendarOpen && (
+                  <View className="flex-row justify-between">
+                    <DateTimePicker
+                      value={getValidDate(formData[currentField])  || new Date()}
+                      mode="date"
+                      display="default"
+                      onChange={handleDateChange}
+                    />
+
+                    <DateTimePicker
+                      value={getValidDate(formData[currentField])  || new Date()}
+                      mode="time"
+                      display="default"
+                      onChange={handleDateChange}
+                    />
+                  </View>
+                )
+              }
+             
+              {/* <Text className="mb-1 font-semibold">date de fin: d'enregistrement</Text> */}
 
 
               <Text className="mb-1 font-semibold mt-[10px]">
@@ -577,14 +602,37 @@ export default function CreateCompetitionForm() {
                 </Text>
               </TouchableOpacity>
                 {/* Affichage du calendrier */}
-                {showDatePicker && !isFirstCalendarOpen && (
-                  <DateTimePicker
-                    value={formData[currentField] || new Date()}
-                    mode="datetime"
-                    display="default"
-                    onChange={handleDateChange}
-                  />
-                )}
+                {
+                Platform.OS === "ios" && showDatePicker && isFirstCalendarOpen && (
+                  
+                    <DateTimePicker
+                      value={getValidDate(formData[currentField])  || new Date()}
+                      mode="datetime"
+                      display="default"
+                      onChange={handleDateChange}
+                    />
+                  
+                )
+              }
+              {
+                Platform.OS === "android" && showDatePicker && !isFirstCalendarOpen && (
+                  <View className="flex-row">
+                    <DateTimePicker
+                      value={getValidDate(formData[currentField])  || new Date()}
+                      mode="date"
+                      display="default"
+                      onChange={handleDateChange}
+                    />
+
+                    <DateTimePicker
+                      value={getValidDate(formData[currentField])  || new Date()}
+                      mode="time"
+                      display="default"
+                      onChange={handleDateChange}
+                    />
+                  </View>
+                )
+              }
 
               {/* Nombre max d'utilisateurs */}
             
