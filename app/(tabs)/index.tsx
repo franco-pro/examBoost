@@ -118,8 +118,8 @@ export default function Index() {
     const connectWithRetry = async () => {
       // console.log('connection status', isNotificationsConnected())
       if (!isNotificationsConnected()) {
-        initializeNotificationsGateway(dispatch, currentUserId);
-        // console.log('connection executed try', isNotificationsConnected())
+        await initializeNotificationsGateway(dispatch, currentUserId);
+         console.log('connection executed try', isNotificationsConnected())
         // console.log('access toke', await getItem("accessToken"))
      
         timerId = setTimeout(connectWithRetry, 3000); 

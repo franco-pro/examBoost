@@ -46,9 +46,9 @@ interface NotifiationAdmin {
 }
 
 // Initialisation du gateway de notifications
-export function initializeNotificationsGateway(dispatch: any, userId: number) {
-  const socket = connectNotificationsSocket(userId);
-  
+export async function initializeNotificationsGateway(dispatch: any, userId: number) {
+  const socket = await connectNotificationsSocket(userId);
+  if(!socket) return;
   // Écouteurs d'événements
   socket.off("new-invitation");
   socket.off("competition-started");

@@ -8,6 +8,7 @@ export interface UserOnline{
         score: number;
         isWinner: boolean;
         clientId: string;
+        role: "participant" | "owner" | "spectator";
         totalUsers: number;
         timestamp: number;
         isConnected: boolean;

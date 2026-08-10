@@ -194,7 +194,7 @@ export default function FormQuestion({competitionInfo}: { competitionInfo: Comep
                behavior={Platform.OS === "ios" ? "padding" : "height"}
                keyboardVerticalOffset={0}       
          >
-      <Card size="lg" variant="elevated" className="p-5 shadow-xl rounded-lg w-[90%]">
+      <Card size="lg" variant="elevated" className="p-5 shadow-xl rounded-lg max-w-[500px] w-full self-center">
         <Text className="text-sm font-normal mb-2 text-typography-700">
           {t("mycompetition.competition.online_game.created_at")}: {competitionInfo.createdAt}
         </Text>

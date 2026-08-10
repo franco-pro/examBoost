@@ -98,7 +98,9 @@ const competitionSlice = createSlice({
                 const index = state.competitionList.findIndex((comp)=> comp.id == action.payload.competitionID)
                 if(index != -1){
                     state.competitionList[index].statut = action.payload.statut as "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED";
+                    state.competitionList[index].roomID = action.payload.roomId;
                     state.myCompetitionList[index].roomID = action.payload.roomId;
+                    state.myCompetitionList[index].statut = action.payload.statut as "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED";
                 }
 
                 //my list
@@ -108,7 +110,7 @@ const competitionSlice = createSlice({
                     state.myCompetitionList[myIndex].roomID = action.payload.roomId;
                 }
 
-                if(state.selectedCompetition && state.selectedCompetition.id == action.payload.competitionID && action.payload.statut == "ONGOING"){ 
+                if(state.selectedCompetition && state.selectedCompetition.id === action.payload.competitionID && action.payload.statut === "ONGOING"){ 
                     state.selectedCompetition.statut = action.payload.statut;
                     if(action.payload.roomId) {
                         state.selectedCompetition.roomID = action.payload.roomId;

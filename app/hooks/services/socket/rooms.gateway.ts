@@ -87,7 +87,7 @@ export function initializeRoomsGateway(dispatch: any, room: Room|null, userID: n
 
 
   socket.on("competition-ended", (data: CompetitionStartEnd) => {
-    RoomsQuestionManager.competitionEnded(data.competitionID, data.statut);
+    RoomsQuestionManager.competitionEnded(data.competitionID, data.statut, data.roomId);
   })
 
   socket.on("competition-started", (data: CompetitionStartEnd) => {

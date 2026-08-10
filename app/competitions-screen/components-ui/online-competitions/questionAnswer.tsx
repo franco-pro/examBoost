@@ -196,7 +196,7 @@ async function onClosingConfirm() {
   function onCompetitionEndAlertConfirm(){
 
       let am_winner = roomResult && roomResult.users ? roomResult.users.find((user)=>user.userID == userData.id)?.isWinner: null;
-      
+      console.log('roomRsult', roomResult)
       if(am_winner){
         dispatch(updateHomeBase(
             {

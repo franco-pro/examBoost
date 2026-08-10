@@ -52,8 +52,9 @@ export default function Deposit() {
       }) 
   }
 
-    const socketPay = () => {
-      const socket = connectNotificationsSocket(user?.id ?? 0);
+    const socketPay = async () => {
+      const socket = await connectNotificationsSocket(user?.id ?? 0);
+      if(!socket) return;
       socket.off("payment-ended");
 
       socket.on("payment-ended", (data: {status: string, amout: number, transaction: Transaction})=> {

@@ -4,5 +4,6 @@ export interface JoinRoomDto{
     surname: string;
     userID: number;
     imgUrl: string;
+    role: string;
     appLang: "fr"|"en"
 }

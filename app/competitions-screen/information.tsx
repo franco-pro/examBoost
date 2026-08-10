@@ -35,8 +35,8 @@ export default function Information() {
   const email= user?.email;
   const phone= user?.phone;
   const username = user?.username;
-  const { t } = useTranslation("competition"); // <- hook i18n
-  const {language} = useContext(LanguageContext);
+  const { t, i18n } = useTranslation("competition"); // <- hook i18n
+  const language = i18n.language;
 
   const {selectedCompetition, loading, error: errorCompetition} = useAppSelector((state)=>state.competitions);
   const {waitingLaunching, room, error, waitingJoining, errorType} = useAppSelector((state)=> state.rooms);
@@ -200,7 +200,7 @@ export default function Information() {
           username: username ? username:"Dems",
           imgUrl: user ? user.imgUrl: "https://i.ibb.co/7R4DyhQ/Avatar-1.jpg",
           surname: user ? user.surname : "",
-          
+          role: "manager"
         })
      }
 
@@ -221,7 +221,7 @@ function userJoinCompetition(){
       username: username ? username:"Dems",
       imgUrl: user ? user.imgUrl: "https://i.ibb.co/7R4DyhQ/Avatar-1.jpg",
       surname: user ? user.surname : "",
-      
+      role: "participant"
     })
 
   }
@@ -258,10 +258,13 @@ function userJoinCompetition(){
   }
 
   function seeResult(){
+    console.log('see result competition', selectedCompetition?.roomID)
+    console.log('see result room', room?.roomId)
+
     router.replace({
       pathname: "./seeResult",
       params: {
-        roomID: selectedCompetition ? selectedCompetition.roomID : 0
+        roomID: selectedCompetition ? selectedCompetition?.roomID : room?.roomId
       }
     })
   }
@@ -691,7 +694,19 @@ function userJoinCompetition(){
             </TouchableOpacity>
           )}
 
-          {isSubscribed && !errorType && selectedCompetition?.statut === "ONGOING" && (
+          {isSubscribed && !errorType && selectedCompetition?.statut === "ONGOING" && !isCreator && (
+            <TouchableOpacity 
+              className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto"
+              onPress={() => userJoinCompetition()}
+            >
+              <Text className="text-white text-xs font-semibold mr-2">
+                {t("mycompetition.information.join_comp")}
+              </Text>
+              <Ionicons name="chevron-forward" size={22} color="#ffffff" />
+            </TouchableOpacity>
+          )}
+
+        {isSubscribed && !errorType && selectedCompetition?.statut === "ONGOING" && isCreator && selectedCompetition.isManagedByIA  && (
             <TouchableOpacity 
               className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto"
               onPress={() => userJoinCompetition()}

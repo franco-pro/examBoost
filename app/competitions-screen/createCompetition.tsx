@@ -372,12 +372,12 @@ export default function CreateCompetitionForm() {
     if(actionType==="CREATE"){
       updatedData.username = user?.surname + " " + user?.username;
       updatedData.isExamBoostCompetition = isExamBoostCompetition;
-      console.log('updatedData', updatedData);
-      //dispatch(createCompetition(updatedData))
+      // console.log('updatedData', updatedData);
+      dispatch(createCompetition(updatedData))
     }else{
       updatedData.isExamBoostCompetition = isExamBoostCompetition;
-      // dispatch(update(updatedData))
-      console.log('updatedData', updatedData)
+      dispatch(update(updatedData))
+     
     }
   };
 
@@ -603,7 +603,7 @@ export default function CreateCompetitionForm() {
               </TouchableOpacity>
                 {/* Affichage du calendrier */}
                 {
-                Platform.OS === "ios" && showDatePicker && isFirstCalendarOpen && (
+                Platform.OS === "ios" && showDatePicker && !isFirstCalendarOpen && (
                   
                     <DateTimePicker
                       value={getValidDate(formData[currentField])  || new Date()}

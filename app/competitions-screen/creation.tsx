@@ -159,7 +159,7 @@ export default function Creation() {
 
   return (
     
-    <ScrollView className="flex-1 bg-gray-50 pt-[40px] pb-[50px] px-4">
+    <View className="flex-1 bg-gray-50 pt-[40px] pb-[50px] px-4">
       {/* Back Button */}
       <TouchableOpacity
         className="flex-row items-center mb-4"
@@ -174,6 +174,8 @@ export default function Creation() {
           {t(`mycompetition.competition.subtitle`)}
         </Text>
       </View>
+
+     
 
       {/* Barre de recherche */}
       <View className="my-4 flex-row items-center bg-gray-100 rounded-full px-4 py-2">
@@ -190,6 +192,19 @@ export default function Creation() {
           onChangeText={(val: string)=> doSearch(val)}
         />
       </View>
+      
+      <ScrollView className="mt-2"
+        contentContainerStyle={{ flexGrow: 1 }}
+        refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                    colors={["#2196F3"]} // couleur Android
+                    tintColor="#2196F3" // couleur iOS
+                  />
+                }
+      
+      >
 
       {
         !hasSearchFocus && (
@@ -226,18 +241,7 @@ export default function Creation() {
         )
       }
     
-      <ScrollView className="mt-2"
-        contentContainerStyle={{ flexGrow: 1 }}
-        refreshControl={
-                  <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={onRefresh}
-                    colors={["#2196F3"]} // couleur Android
-                    tintColor="#2196F3" // couleur iOS
-                  />
-                }
-      
-      >
+    
         {
            searchList && searchList.length != 0 && searchValue.length != 0 && searchList.map((comp, index) => {
             return (
@@ -360,6 +364,8 @@ export default function Creation() {
                         ? "bg-green-200"
                         : comp.statut === "ONGOING"
                         ? "bg-yellow-200"
+                        : comp.statut === "CANCELLED"
+                        ? "bg-error-300"
                         : "bg-gray-300"
                     }`}
                   >
@@ -399,6 +405,6 @@ export default function Creation() {
         </View>
         }
       </ScrollView>
-    </ScrollView>
+    </View>
   );
 }

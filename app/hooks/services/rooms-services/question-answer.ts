@@ -94,11 +94,11 @@ export default class QuestionAnswerManager{
 
     }
 
-    competitionEnded(competitionID?: number, statut?: string){
+    competitionEnded(competitionID?: number, statut?: string, roomId?: string){
         this.clear()
         this.dispatch(setEndOfCompetition());
         if(competitionID && statut){
-            this.dispatch(updateStatut({competitionID, statut}));
+            this.dispatch(updateStatut({competitionID, statut, roomId}));
             this.dispatch(updateStatutSuscription({competitionID, statut}))
         }
     }
@@ -113,7 +113,7 @@ export default class QuestionAnswerManager{
 
         let isCurrentUser = false;
         if(this.room){
-            if(this.room.creatorID == user.userID) return;
+            if((this.room.creatorID === user.userID && user.role === "participant")) return;
 
             //check if user already exists
             for(let existingUser of this.room.users){
