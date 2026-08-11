@@ -12,6 +12,7 @@ import { addNotif, updateBalanceUser } from "../../redux/users/users.slice";
 import { Transaction } from "../../entities/transaction";
 import { addTransaction } from "../../redux/transactions/transactions.slice";
 import { router } from "expo-router";
+import { updateStatutSuscription } from "../../redux/competitions-suscriptions/subscription.slice";
 
 // Interface pour les notifications
 export interface NotificationPayload {
@@ -110,10 +111,17 @@ export async function initializeNotificationsGateway(dispatch: any, userId: numb
   });
 
  
-  socket.on("competition-started-change-statut", (data: {roomId: string, competitionId: number, statut: "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED"}) => {
+  socket.on("competition-started-change-statut", (data: {roomId: string, competitionID: number, statut: "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED"}) => {
       console.log("Notification competition started change statut:", data);
-      dispatch(updateStatut({roomId: data.roomId, competitionId: data?.competitionId, statut: data?.statut}));
+      dispatch(updateStatut({roomId: data?.roomId, competitionId: data?.competitionID, statut: data?.statut}));
+      dispatch(updateStatutSuscription({roomId: data?.roomId, competitionId: data?.competitionID, statut: data?.statut}))
   });
+
+  socket.on("competition-ended-change-statut", (data: {roomId: string, competitionID: number, statut: "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED"}) => {
+    console.log("Notification competition ended change statut:", data);
+    dispatch(updateStatut({roomId: data?.roomId, competitionId: data?.competitionID, statut: data?.statut}));
+    dispatch(updateStatutSuscription({roomId: data?.roomId, competitionId: data?.competitionID, statut: data?.statut}))
+});
 
 
   socket.on("invitation-response", (data: NotificationPayload) => {
