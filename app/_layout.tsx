@@ -114,7 +114,7 @@ export default function RootLayout() {
         // Indique que l'application est prête
         setAppIsReady(true);
         // Masque immédiatement le splash screen natif d'Expo
-        await SplashScreen.hideAsync().catch(() => {});
+        // await SplashScreen.hideAsync().catch(() => {});
       }
     };
 
@@ -132,45 +132,45 @@ export default function RootLayout() {
     : require("../app/assets/icons/splash-icon-dark.png");
 
   // Rendu de l'écran Splash personnalisé tant que l'application n'est pas prête
-  if (!appIsReady) {
-    return (
-      <Animated.View
-        entering={FadeIn.duration(400)} // Apparition douce du contenu personnalisé
-        exiting={FadeOut.duration(500)} // Disparition en fondu vers l'application
-        style={[styles.container, { backgroundColor }]}
-        // Déclenche l'affichage de l'application principale une fois le fondu de sortie terminé
-        onLayout={() => {
-          if (appIsReady) {
-            setTimeout(() => setAnimationFinished(true), 500);
-          }
-        }}
-      >
-        {/* Conteneur logo principal */}
-        <View style={styles.centerContainer}>
-          <Image
-            source={mainLogoSource}
-            style={styles.mainLogo}
-            resizeMode="contain"
-          />
-        </View>
+  // if (!appIsReady) {
+  //   return (
+  //     <Animated.View
+  //       entering={FadeIn.duration(400)} // Apparition douce du contenu personnalisé
+  //       exiting={FadeOut.duration(500)} // Disparition en fondu vers l'application
+  //       style={[styles.container, { backgroundColor }]}
+  //       // Déclenche l'affichage de l'application principale une fois le fondu de sortie terminé
+  //       onLayout={() => {
+  //         if (appIsReady) {
+  //           setTimeout(() => setAnimationFinished(true), 500);
+  //         }
+  //       }}
+  //     >
+  //       {/* Conteneur logo principal */}
+  //       <View style={styles.centerContainer}>
+  //         <Image
+  //           source={mainLogoSource}
+  //           style={styles.mainLogo}
+  //           resizeMode="contain"
+  //         />
+  //       </View>
 
-        {/* Bloc de branding en bas */}
-        <View style={styles.bottomContainer}>
-          <Text style={[styles.smallText, { color: textColor }]}>
-            from 
-          </Text>
-          {/* <Text style={[styles.brandingText, { color: textColor }]}>
-            Genesys In
-          </Text> */}
-          <Image
-            source={require("../assets/images/genesys.png")}
-            style={styles.smallLogo}
-            resizeMode="contain"
-          />
-        </View>
-      </Animated.View>
-    );
-  }
+  //       {/* Bloc de branding en bas */}
+  //       <View style={styles.bottomContainer}>
+  //         <Text style={[styles.smallText, { color: textColor }]}>
+  //           from 
+  //         </Text>
+  //         {/* <Text style={[styles.brandingText, { color: textColor }]}>
+  //           Genesys In
+  //         </Text> */}
+  //         <Image
+  //           source={require("../assets/images/genesys.png")}
+  //           style={styles.smallLogo}
+  //           resizeMode="contain"
+  //         />
+  //       </View>
+  //     </Animated.View>
+  //   );
+  // }
 
   // Rendu normal de l'application une fois le chargement terminé
   return (

@@ -30,6 +30,7 @@ import { Input, InputField } from "@/components/ui/input";
 import {
   AlertCircleIcon,
   ChevronDownIcon,
+  CircleIcon,
   EyeIcon,
   EyeOffIcon,
   Icon,
@@ -47,6 +48,13 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 import { Button, ButtonText } from "@/components/ui/button";
+import {
+  Radio,
+  RadioGroup,
+  RadioIndicator,
+  RadioIcon,
+  RadioLabel,
+} from "@/components/ui/radio";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Divider } from "@/components/ui/divider";
 import { Center } from "@/components/ui/center";
@@ -89,8 +97,9 @@ export default function Register() {
         ),
       );
       setAllLevels(response.data);
+        // console.log("niveau scolaire:", niveauScolaire, "levels", allLevels);
     } catch (error) {
-      console.log("Quelque chose n'a pas marcher:", error);
+      console.log("Quelque chose n'a pas marcher sur la recuperation des levels:", error);
     }
   };
 
@@ -109,6 +118,8 @@ export default function Register() {
   );
   const [isLoading, setIsLoading] = useState(loading);
   const [err, setErr] = useState(error);
+  const [niveauScolaire, setNiveauScolaire] = useState<string>("SECONDARY");
+
   const handleSubmit = async () => {
     setIsLoading(true);
     const phoneWithoutSpace = phone.replace(/\s/g, "");
@@ -284,6 +295,32 @@ export default function Register() {
                         Niveau scolaire <Text className="text-red-500">*</Text>
                       </FormControlLabelText>
                     </FormControlLabel>
+                    
+                      <RadioGroup
+                        value={niveauScolaire}
+                      onChange={setNiveauScolaire}
+                      className="flex-1 justify-center items-center flex-row gap-36"
+                      >
+                        <Radio
+                          value={"SECONDARY"}
+                          isInvalid={false}
+                          isDisabled={false}>
+                          <RadioIndicator>
+                            <RadioIcon as={CircleIcon} />
+                          </RadioIndicator>
+                          <RadioLabel>Secondaire</RadioLabel>
+                        </Radio>
+                        
+                        <Radio
+                          value={"SUP"}
+                          isInvalid={false}
+                          isDisabled={false}>
+                          <RadioIndicator>
+                            <RadioIcon as={CircleIcon} />
+                          </RadioIndicator>
+                          <RadioLabel>Superieur</RadioLabel>
+                        </Radio>
+                      </RadioGroup>
                     <Select onValueChange={(value) => setNiveau(value)}>
                       <SelectTrigger
                         variant="outline"
@@ -306,6 +343,7 @@ export default function Register() {
                             showsVerticalScrollIndicator={true}
                           >
                             {allLevels
+                              .filter((level)=> level.categorie === niveauScolaire)
                               .slice()
                               .sort((a, b) => a.name.localeCompare(b.name))
                               .map((level, index) => (
