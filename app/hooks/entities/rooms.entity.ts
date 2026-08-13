@@ -21,7 +21,7 @@ export interface Room {
     serverNow: any;
     instructions: {participant: string, owner: string, viewer: string} | null;
     creatorInfo: {username: string, surname: string, imgUrl: string};
-    competitionInfo: {winnerPrice: number, maxUsers: number, questionsNbr: number, isExamBoostCompetition: boolean};
+    competitionInfo: {winnerPrice: number, maxUsers: number, questionsNbr: number, isExamBoostCompetition: boolean, type: string};
     oldParticipantsID: number[]
   }
   

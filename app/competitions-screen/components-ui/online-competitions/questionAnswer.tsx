@@ -36,11 +36,12 @@ interface ComepetitionInfo{
   creatorName: string;
   creatorAvatarUrl: string;
   totalQuestions: number; 
+  questionAnswered: number
 }
 export default function QuestionAnswer({question, competitionInfo, loading, userData, onAnswer}: {question: Question | null, competitionInfo: ComepetitionInfo, loading: boolean, userData: UsersTest, onAnswer: any}) {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { room, roomResult, competitionFinished, competitionStop, message, timerOff} = useAppSelector(state => state.rooms);
+  const { room, roomResult, competitionFinished, competitionStop, message, timerOff, waitingAnswerConfirmation} = useAppSelector(state => state.rooms);
   const {homeBaseData} = useAppSelector((state)=> state.competitions);
   const  {t} = useTranslation("competition");
 
@@ -196,8 +197,10 @@ async function onClosingConfirm() {
   function onCompetitionEndAlertConfirm(){
 
       let am_winner = roomResult && roomResult.users ? roomResult.users.find((user)=>user.userID == userData.id)?.isWinner: null;
-      console.log('roomRsult', roomResult)
-      if(am_winner){
+      const score = roomResult && roomResult.users ? roomResult.users.find((user)=>user.userID == userData.id)?.score: 0;
+
+      console.log('roomRsult QA', roomResult)
+      if(am_winner && (score && score > 0)){
         dispatch(updateHomeBase(
             {
               ...homeBaseData,
@@ -234,7 +237,7 @@ async function onClosingConfirm() {
                     <Spinner size="large" color="blue" />
                     <Text size="xl">{t("mycompetition.competition.online_game.waiting_qts")}</Text>
             </VStack>
-          ) : (question !== null && !loading) ? (
+          ) : (question !== null && !loading) && !waitingAnswerConfirmation ? (
 
             <>
                 <VStack className="mb-6 flex items-center justify-center">
@@ -267,32 +270,37 @@ async function onClosingConfirm() {
                   </Button>
                 ))}
               </Box>
-            </>) : competitionStop ? (
-              <CompetitionStopedAlert
-              isOpen={isAlertOpen}
-              message={message ?? null }
-              onClose={() => onClosingConfirm()}
-              
-            />
-            ) : (
-
-                (timeToAnswer == 0 && competitionInfo?.totalQuestions == 0) ? (
-                 <CompetitionEndedAlert isOpen={isAlertCompetOpen} onClose={onCompetitionEndAlertConfirm} />
-
-                ):  <VStack className="justify-center items-center">
+            </>) : (question !== null && !loading) && waitingAnswerConfirmation ? (   // <-- corrigé
+                    <VStack className="justify-center items-center">
+                      <Spinner size="large" color="blue" />
+                      <Text size="xl">{ 'test' + t("mycompetition.competition.online_game.waiting_qts")}</Text>
+                    </VStack>
+                  ) : competitionStop ? (
+                    <CompetitionStopedAlert
+                      isOpen={isAlertOpen}
+                      message={message ?? null}
+                      onClose={() => onClosingConfirm()}
+                    />
+                  ) : (competitionInfo.questionAnswered-competitionInfo.totalQuestions) === 0 ? (
+                    <VStack className="justify-center items-center">
+                      <Spinner size="large" color="blue" />
+                      <Text size="xl">{ t("mycompetition.competition.online_game.competition_end")}</Text>
+                    </VStack>
+                  ): (
+                    <VStack className="justify-center items-center">
 
                       <Spinner size="large" color="blue" />
-                      <Text size="xl">{t("mycompetition.competition.online_game.competition_end")}</Text>
+                       <Text size="xl">{t("mycompetition.competition.online_game.waiting_qts")}</Text>
                     </VStack>
-
-
-             )
+                  )
             }
 
         <Button onPress={() => setIsOpen(true)} action="negative" className="py-2 px-4 mt-4 border-0 w-[90%] max-w-[500px] self-center" >
          <ButtonText size="xl" className='text-typography-white'>{t("mycompetition.competition.online_game.left_comp")}</ButtonText>
        </Button>
        <DialogConfirm isOpen={isOpen} onClose={() => setIsOpen(false)} onConfirm={handleLeavingCompetition} />
+       <CompetitionEndedAlert isOpen={isAlertCompetOpen} onClose={onCompetitionEndAlertConfirm} />
+
       </Card>
     );
   }  

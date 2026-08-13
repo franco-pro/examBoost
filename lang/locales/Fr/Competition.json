@@ -164,6 +164,8 @@
    },
    "form_question": {
       "choice_mistake_error": "Formulaire invalide Aucun choix ne correspond à la reponse correct.",
+      "all_questions_sent": "Toutes les questions ont été envoyées, veuillez attendre la fin de la compétition.",
+      "pleas_wait": "Veuillez patienter...",
       "send": "Envoyer",
       "invalid": {
         "question": "Question invalide",

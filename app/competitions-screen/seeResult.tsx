@@ -14,7 +14,7 @@ import { VStack } from "@/components/ui/vstack";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FlatList, ImageBackground, View } from "react-native";
+import { FlatList, ImageBackground, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import UsersResult from "./components-ui/online-competitions/usersResult";
@@ -102,7 +102,11 @@ function showToast(message: string){
       return name ? name.split(" ").map((n: any) => n[0]).join("").toUpperCase() : "";
     };
     return (
-      <SafeAreaView style={{ flex: 1 }} className="bg-[#0F172A]">
+      <ScrollView 
+          className="flex-1 bg-[#2E5DA6]/85"
+          contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 24, paddingBottom: 40 }}
+          showsVerticalScrollIndicator={false}
+        >
         <ImageBackground
           source={require('../../assets/others/congrat.jpeg')}
           style={{ flex: 1 }}
@@ -219,7 +223,7 @@ function showToast(message: string){
               </HStack>
   
               <HStack className="items-center space-x-2">
-                  <Text className="text-white/60 text-xs">Voir détails</Text>
+                  <Text className="text-white/60 text-xs">{t("mycompetition.competition.result_screen.othersResult")} </Text>
                   <Switch
                     defaultValue={showResult}
                     onValueChange={onValueChange}
@@ -231,15 +235,8 @@ function showToast(message: string){
             </HStack>
   
             {/* Liste des autres participants */}
-            {!showResult && (
-              others.length > 0 ? (
-                <FlatList
-                  data={others}
-                  keyExtractor={(item) => item.id.toString()}
-                  contentContainerStyle={{ paddingBottom: 20 }}
-                  showsVerticalScrollIndicator={false}
-                  renderItem={({ item, index }) => (
-                    <HStack className="bg-white/5 backdrop-blur-sm rounded-xl p-3.5 items-center justify-between mb-2.5 border border-white/10">
+            {!showResult && others.length > 0 && others.map((item, index) => (
+              <HStack key={item.id.toString()} className="bg-white/5 backdrop-blur-sm rounded-xl p-3.5 items-center justify-between mb-2.5 border border-white/10">
                       <HStack className="items-center space-x-3">
                         {/* Rang */}
                         <View className="w-8 h-8 rounded-full bg-[#1A2F52] items-center justify-center border border-white/10">
@@ -265,30 +262,28 @@ function showToast(message: string){
                           <Text className="text-white/50 text-[10px]">points</Text>
                       </View>
                     </HStack>
-                  )}
-                />
-              ) : (
+            ))}
+
+            {!showResult && others.length === 0 && (
                 <View className="mt-6">
-                  <Alert action="info" variant="solid" className="bg-[#1A2F52] border border-cyan-500/30 rounded-xl">
-                    <AlertIcon as={InfoIcon} className="text-cyan-400" />
-                    <AlertText className="text-white ml-2">
-                      {t("mycompetition.competition.result_screen.no_more_users")}
-                    </AlertText>
-                  </Alert>
+                <Alert action="info" variant="solid" className="bg-[#1A2F52] border border-cyan-500/30 rounded-xl">
+                  <AlertIcon as={InfoIcon} className="text-cyan-400" />
+                  <AlertText className="text-white ml-2">
+                    {t("mycompetition.competition.result_screen.no_more_users")}
+                  </AlertText>
+                </Alert>
                 </View>
-              )
-            )} 
+            )}
   
             {/* Vue alternative */}
             {showResult && (
               <View className="justify-center items-center flex-1 bg-white/5 rounded-2xl p-4 border border-white/10 mb-6">
-                  <Ionicons name="analytics-outline" size={32} color="#38BDF8" />
-                  <Text className="text-white/70 italic mt-2">Affichage détaillé des résultats...</Text>
+                    <UsersResult room={roomResult} />
               </View>
             )}
   
           </View>
         </ImageBackground>
-      </SafeAreaView>
+      </ScrollView>
     );
 }

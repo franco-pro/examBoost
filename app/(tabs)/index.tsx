@@ -119,7 +119,7 @@ export default function Index() {
       // console.log('connection status', isNotificationsConnected())
       if (!isNotificationsConnected()) {
         await initializeNotificationsGateway(dispatch, currentUserId);
-         console.log('connection executed try', isNotificationsConnected())
+        //  console.log('connection executed try', isNotificationsConnected())
         // console.log('access toke', await getItem("accessToken"))
      
         timerId = setTimeout(connectWithRetry, 3000); 

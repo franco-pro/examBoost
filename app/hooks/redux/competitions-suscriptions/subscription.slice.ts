@@ -52,8 +52,11 @@ const subscriptionSlice = createSlice({
 
                 if(state.selectedSubscription && state.selectedSubscription.id === action.payload.competitionId && action.payload.statut){ 
                     state.selectedSubscription.statut = action.payload.statut;
-                    state.selectedSubscription = action.payload.roomId;
+                    state.selectedSubscription.roomID = action.payload.roomId;
                 }
+                console.log('update done:', state.selectedSubscription, state.mySubscriptionList)
+            }else{
+                console.log("console.log", action.payload)
             }
         },
         setSearchResults(state, action){

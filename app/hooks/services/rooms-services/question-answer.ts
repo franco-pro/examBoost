@@ -4,7 +4,7 @@ import { Room } from "../../entities/rooms.entity";
 import { UserOnline } from "../../entities/user.online.entity";
 import { updateStatutSuscription } from "../../redux/competitions-suscriptions/subscription.slice";
 import { updateStatut } from "../../redux/competitions/competitions.slice";
-import { addAnswer, addConnectedUsers, addConnetedUser, addQuestion, addViewerr, clearRoom, passToNextQuestion, rangking, removeViewer, setEndOfCompetition, setRomm, setRoomNull, setRoomQuestion, setSocketWaiting, setUserDeconnected, userLeaveRoom } from "../../redux/rooms/rooms.slice";
+import { addAnswer, addConnectedUsers, addConnetedUser, addQuestion, addViewerr, clearRoom, passToNextQuestion, rangking, removeViewer, setEndOfCompetition, setRomm, setRoomNull, setRoomQuestion, setSocketWaiting, setUserDeconnected, setWaitingAnswerConfirmation, userLeaveRoom } from "../../redux/rooms/rooms.slice";
 import { playSound } from "../../../helper/audio/audio.manager";
 import Rangking from "./room.helper";
 
@@ -90,22 +90,22 @@ export default class QuestionAnswerManager{
         this.room = null;
         this.current_userID = null;
         this.dispatch(clearRoom(message))
-        this.dispatch(updateStatut({competitionID: competitionId, statut:"CANCELED"}))
+        this.dispatch(updateStatut({competitionId: competitionId, statut:"CANCELED"}))
 
     }
 
-    competitionEnded(competitionID?: number, statut?: string, roomId?: string){
+    competitionEnded(competitionId?: number, statut?: string, roomId?: string){
         this.clear()
         this.dispatch(setEndOfCompetition());
-        if(competitionID && statut){
-            this.dispatch(updateStatut({competitionID, statut, roomId}));
-            this.dispatch(updateStatutSuscription({competitionID, statut}))
+        if(competitionId && statut && roomId){
+            this.dispatch(updateStatut({competitionId, statut, roomId}));
+            this.dispatch(updateStatutSuscription({competitionId, statut, roomId}))
         }
     }
 
-    competitionStart(competitionID: number, statut: string){
-        console.log('competition start  aaa', competitionID);
-        this.dispatch(updateStatut({competitionID, statut}));
+    competitionStart(competitionId: number, statut: string){
+        console.log('competition start  aaa', competitionId);
+        this.dispatch(updateStatut({competitionId, statut}));
     }
 
    async addConnectedUser(roomId: string, user: UserOnline){
@@ -113,7 +113,7 @@ export default class QuestionAnswerManager{
 
         let isCurrentUser = false;
         if(this.room){
-            if((this.room.creatorID === user.userID && user.role === "participant")) return;
+            if(this.room.creatorID == user.userID) return;
 
             //check if user already exists
             for(let existingUser of this.room.users){
@@ -162,14 +162,17 @@ export default class QuestionAnswerManager{
         
     }
 
-    addViewer(roomId: string){
+    addViewer(roomId: string, totalViewer: number){
         // const local_room = this.rooms.get(roomId);
 
         // if(local_room){
         //     local_room.viewers += 1;
         // }
+        console.log('finale executoion 1');
+
         if(this.room && this.room.roomId === roomId){
-            this.dispatch(addViewerr());
+            console.log('finale executoion');
+            this.dispatch(addViewerr(totalViewer));
         }
     }
     removeViewer(roomId: string){
@@ -186,7 +189,7 @@ export default class QuestionAnswerManager{
         }
         if(this.room && this.room.roomId === roomId){
             this.dispatch(removeViewer());
-            this.dispatch(setRoomNull());
+            // this.dispatch(setRoomNull());
 
         }
     }
@@ -309,6 +312,7 @@ export default class QuestionAnswerManager{
 
                         if(this.current_userID && this.current_userID === answer.userID){
                             console.log("execute newt questions")
+                             this.dispatch(setWaitingAnswerConfirmation(false));
                              this.dispatch(passToNextQuestion())                  
                         }
                     }

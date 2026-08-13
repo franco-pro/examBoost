@@ -75,6 +75,17 @@ const niveauxSlice = createSlice({
                 state.loading = true;
                 state.error = null
              })
+             .addCase(deleteNiveau.fulfilled, (state, action)=>{
+                if(!action.payload.error){
+                    const deletedNiveauId = action.payload.data.id;
+                    state.niveauxList = state.niveauxList.filter(niveau => niveau.id !== deletedNiveauId);
+                }else{
+                    state.error = action.payload.error
+                }
+        
+                state.loading = false;
+                state.error = null;
+             })
 
              .addCase(createNiveau.pending, (state)=>{
                 state.loading = true;

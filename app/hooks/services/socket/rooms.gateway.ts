@@ -8,7 +8,7 @@ import { Question } from "../../entities/question";
 import RoomClosedDto from "../../entities/room-closed.dto";
 import { Room } from "../../entities/rooms.entity";
 import { UserOnline } from "../../entities/user.online.entity";
-import { setErrorType, setRoomsError, setRoomsErrorNull, setSocketWaiting, setWaitingJoinin } from "../../redux/rooms/rooms.slice";
+import { setErrorType, setRoomsError, setRoomsErrorNull, setSocketWaiting, setWaitingAnswerConfirmation, setWaitingJoinin } from "../../redux/rooms/rooms.slice";
 import QuestionAnswerManager from "../rooms-services/question-answer";
 import { connectRoomsSocket, getRoomsSocket } from "./socket.init";
 
@@ -55,14 +55,18 @@ export function initializeRoomsGateway(dispatch: any, room: Room|null, userID: n
     RoomsQuestionManager.addConnectedUser(userInfo.roomId, userInfo);
   });
 
-  socket.on("spectator-joined", (data: {roomId: string, totalSpectator: number, userID: number}) => {
+  socket.on("spectator-joined", (data: {roomId: string, totalSpectators: number, userID: number, username: string}) => {
+    console.log('execute viewer 1', data.userID);
+    
     if(userID != data.userID){
-        RoomsQuestionManager.addViewer(data.roomId);
+      console.log('execute viewer', data);
+        RoomsQuestionManager.addViewer(data.roomId, data.totalSpectators);
     }
   })
 
   socket.on("spectator-room-joined", (data: Room) => {
     dispatch(setRoomsErrorNull())
+    console.log('je suis connecté en spectator')
     RoomsQuestionManager.addRoom(data, userID);
     dispatch(setWaitingJoinin(false))
     RoomsQuestionManager.addConnectedUsers(data.roomId, data.users);
@@ -82,11 +86,13 @@ export function initializeRoomsGateway(dispatch: any, room: Room|null, userID: n
   })
 
   socket.on("spectator-leaved", (data: {spectatot: number, roomId: string}) => {
+    console.log('spectator leaved', data);
       RoomsQuestionManager.removeViewer(data.roomId);
   })
 
 
   socket.on("competition-ended", (data: CompetitionStartEnd) => {
+    console.log('competition ended', data);
     RoomsQuestionManager.competitionEnded(data.competitionID, data.statut, data.roomId);
   })
 
@@ -140,6 +146,8 @@ export function EmitEvent(dispatch: any, room: {isManagedByIA: boolean, roomId: 
             setTimeout(() => {
               dispatch(setSocketWaiting(true));
             }, 50);
+          }else{
+            dispatch(setWaitingAnswerConfirmation(true));
           }
             socket.emit("question-answered", answer);
             
@@ -161,7 +169,7 @@ export function EmitEvent(dispatch: any, room: {isManagedByIA: boolean, roomId: 
         },
 
         ViewerLeave: (roomId: string)=>{
-          socket.emit('leave-as-spectator')
+          socket.emit('leave-as-spectator', {roomId: roomId})
           RoomsQuestionManager.removeViewer(roomId);
         },
 
@@ -169,6 +177,7 @@ export function EmitEvent(dispatch: any, room: {isManagedByIA: boolean, roomId: 
           RoomsQuestionManager.clear()
         },
         closeCompetition: () => {
+
             socket.emit("close-Room");
             RoomsQuestionManager.quitRoom();
         }

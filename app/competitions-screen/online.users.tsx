@@ -180,6 +180,7 @@ useFocusEffect(
                     creatorName: room ? (room.creatorInfo ? room.creatorInfo.username: ''):'',
                     competitionName: room ? (room.roomName ? room.roomName : ''):'',
                     createdAt: room && room.createdAt ? (new Date(room.createdAt)) : null,
+                    questionAnswered: questionAnswered,
                     totalQuestions: room && room.competitionInfo ? room.competitionInfo.questionsNbr: 0,
                   }
                 } 

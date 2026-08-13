@@ -362,7 +362,7 @@ function userJoinCompetition(){
           <Text className="font-semibold">Lang :</Text> {selectedCompetition?.language}
         </Text>
         <Text className="text-center text-white">
-          <Text className="font-semibold">Questions total:</Text> {selectedCompetition?.questionsNbr}
+          <Text className="font-semibold">{t("mycompetition.information.totalQuestion")} :</Text> {selectedCompetition?.questionsNbr}
         </Text>
         <Text className="text-center text-white mt-2 mb-3">
           <Text className="font-semibold">Date :</Text>{" "}

@@ -151,7 +151,7 @@ export default function Index() {
             ),
             title: "Défie et progresse",
             subtitle:
-              "articipe à des compétitions contre d'autres élèves, crée tes propres défis et mesure ton niveau en temps réel. L'apprentissage n'a jamais été aussi stimulant !",
+              "participe à des compétitions contre d'autres élèves, crée tes propres défis et mesure ton niveau en temps réel. L'apprentissage n'a jamais été aussi stimulant !",
           },
           {
             backgroundColor: "#FFF",

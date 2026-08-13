@@ -167,6 +167,8 @@
       "question": "Invalid Question",
       "form": "Invalid form "
     },
+    "all_questions_sent": "All questions have been sent. Please wait for the results.",
+    "pleas_wait": "Please wait...",
     "model": {
       "timeToAnswer": {
           "label": "Response time (in s)",

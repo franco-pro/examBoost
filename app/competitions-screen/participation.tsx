@@ -79,6 +79,7 @@ export default function Participation() {
 
   function goToCompetitionInfoScreen(id: number){
         const competitionSelected = mySubscriptionList.find((comp) => comp.id == id);
+        console.log('Competition selected participation:', competitionSelected);
         if(competitionSelected){
           dispatch(setSelectedCompetition(competitionSelected));
   

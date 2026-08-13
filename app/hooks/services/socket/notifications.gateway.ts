@@ -88,7 +88,13 @@ export async function initializeNotificationsGateway(dispatch: any, userId: numb
   socket.on('new-connection', (notificaiton: {size: number})=>{
     console.log('size of connection status', notificaiton)
     dispatch(setTotalActiveUser(notificaiton.size))
-  })
+  });
+
+  socket.on('new-deconnection', (notificaiton: {size: number})=>{
+    console.log('size of connection status', notificaiton)
+    dispatch(setTotalActiveUser(notificaiton.size))
+  });
+  
   socket.on("competition-started", (data: NotificationPayload) => {
     console.log("Notification competition started:", data);
     const {roomId, statut, competionID} = data;

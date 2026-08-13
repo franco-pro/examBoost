@@ -12,6 +12,7 @@ import { fetchRoomCreate } from './rooms.thunks';
         errorType: null,
         socketWaiting: true,// ui loader... = waiting question
         waitingLaunching: false,
+        waitingAnswerConfirmation: false,
         waitingJoining: false,
         competitionFinished: false,
         competitionStop : false,
@@ -69,6 +70,10 @@ import { fetchRoomCreate } from './rooms.thunks';
             setSocketWaiting(state, action){
                 state.socketWaiting = action.payload;
             },
+
+            setWaitingAnswerConfirmation(state, action){
+                state.waitingAnswerConfirmation = action.payload;
+            },
             addConnetedUser(state, action){
                 if(state.room){
                     const currentUserIndex = state.room.users.findIndex(user => user.userID == action.payload.userID);
@@ -102,9 +107,9 @@ import { fetchRoomCreate } from './rooms.thunks';
                 }
             },
 
-            addViewerr(state){
+            addViewerr(state, action){
                 if(state.room){
-                    state.room.spectators += 1;
+                    state.room.spectators = action.payload;
                 }
             },
 
@@ -263,6 +268,7 @@ import { fetchRoomCreate } from './rooms.thunks';
         removeViewer,
         addAnswer,
         setTimeOff,
+        setWaitingAnswerConfirmation,
         addQuestion,
         setSocketWaiting,
         setEndOfCompetition,

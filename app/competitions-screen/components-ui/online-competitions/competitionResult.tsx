@@ -42,7 +42,7 @@ const Leaderboard = () => {
     }, [dispatch])
   );
 
-  // 🧠 Surveille la mise à jour de roomResult (affichera null après reset)
+  // Surveille la mise à jour de roomResult (affichera null après reset)
   useEffect(() => {
     // console.log("roomResult mis à jour :", roomResult);
   }, [roomResult])
@@ -183,7 +183,7 @@ const Leaderboard = () => {
               </HStack>
   
               <HStack className="items-center space-x-2">
-                  <Text className="text-white/60 text-xs">Voir détails</Text>
+                  <Text className="text-white/60 text-xs">{t("mycompetition.competition.result_screen.othersResult")} </Text>
                   <Switch
                     defaultValue={showResult}
                     onValueChange={onValueChange}
@@ -246,8 +246,7 @@ const Leaderboard = () => {
             {/* Vue alternative */}
             {showResult && (
               <View className="justify-center items-center flex-1 bg-white/5 rounded-2xl p-4 border border-white/10 mb-6">
-                  <Ionicons name="analytics-outline" size={32} color="#38BDF8" />
-                  <Text className="text-white/70 italic mt-2">Affichage détaillé des résultats...</Text>
+                    <UsersResult room={roomResult} />
               </View>
             )}
   

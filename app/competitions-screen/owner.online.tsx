@@ -73,6 +73,7 @@ export default function OwnerCompetitionsScreen() {
                                   hour: "2-digit",
                                   minute: "2-digit",
                                 }) : null,
+                                type: room && room.competitionInfo ? room.competitionInfo.type: null,
                                 isAI: room ? room.isManagedByIA: false,
                                 totalQuestions: room && room.competitionInfo ? room.competitionInfo.questionsNbr: 0,
                               }
