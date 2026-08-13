@@ -1,0 +1,34 @@
+{
+  "register": {
+    "error": {
+      "password": "The password must contain at least one number",
+      "errorLevel": "Select your level",
+      "errorEmail": "This email address already exists.",
+      "errorName": "The name must contain at least 3 characters",
+      "errorEmailValid": "The email must be a valid email address",
+      "errorPhone": "The phone number must contain at least 9 characters",
+      "errorPasswordLength": "The password must contain at least 4 characters",
+      "errorFirstName": "The first name must contain at least 3 characters",
+      "fillInput": "Please try to Fill in all fields",
+      "errorExistPhone": "This phone number is already exist !",
+      "errorPhoneFormat": "The phone number must have a least 9 caracters",
+      "login": "Login",
+      "loginPhrase": "Already have an account? "
+    },
+    "label": {
+      "name": "Your Name",
+      "lastName": "Your First Name",
+      "email": "Your Email",
+      "phone": "Phone Number",
+      "cycle": "Your current Cycle",
+      "secondary": "Secondary",
+      "higher": "Higher",
+      "password": "Password",
+      "button": "Sign Up",
+      "title": "Create an Account",
+      "subtitle": "Join the EXAMBOOST community!",
+      "option":"Select Option",
+      "level": "Your Level"
+    }
+  }
+}

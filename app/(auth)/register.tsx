@@ -8,6 +8,7 @@ import {
   Alert,
   ScrollView,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/app/hooks/redux/store";
@@ -64,8 +65,10 @@ import { Spinner } from "@/components/ui/spinner";
 import apiClient from "../api/apiClient";
 import { useAppDispatch } from "../hooks/redux/redux.hooks";
 import { setNiveauxList } from "../hooks/redux/niveaux/niveaux.slice";
+import { Toast, ToastDescription, ToastTitle, useToast } from "@/components/ui/toast";
 
 export default function Register() {
+  const { t } = useTranslation("register");
   const { width, height } = useWindowDimensions();
   const [surname, setSurname] = useState<string>("");
   const [passType, setPassType] = useState<"password" | "text">("password");
@@ -75,6 +78,7 @@ export default function Register() {
   const [username, setUsernameValue] = useState<string>(surname);
   const [passwordValue, setPasswordValue] = useState<string>("");
   const [allLevels, setAllLevels] = useState<any[]>([]);
+  const toast = useToast()
 
   const dispatch = useAppDispatch();
 
@@ -97,9 +101,12 @@ export default function Register() {
         ),
       );
       setAllLevels(response.data);
-        // console.log("niveau scolaire:", niveauScolaire, "levels", allLevels);
+      // console.log("niveau scolaire:", niveauScolaire, "levels", allLevels);
     } catch (error) {
-      console.log("Quelque chose n'a pas marcher sur la recuperation des levels:", error);
+      console.log(
+        "Quelque chose n'a pas marcher sur la recuperation des levels:",
+        error,
+      );
     }
   };
 
@@ -136,12 +143,54 @@ export default function Register() {
 
     if (registerUser.fulfilled.match(result)) {
       console.log("enregistrement reussie", result.payload);
+       toast.show({
+         placement: "top", // Options : "top", "bottom", "top right", etc.
+         render: ({ id }) => {
+           const toastId = "toast-" + id;
+           return (
+             <Toast
+               nativeID={toastId}
+               action="success"
+               variant="solid"
+               className="rounded-xl"
+             >
+               <ToastTitle className="font-semibold">Succès !</ToastTitle>
+               <ToastDescription>
+                 Votre compte a été créé avec succès.
+               </ToastDescription>
+             </Toast>
+           );
+         },
+       });
       setTimeout(() => {
         navigation.replace("/(auth)/login");
       }, 2000);
     } else {
       setIsLoading(false);
       setErr(result);
+
+       toast.show({
+         placement: "top",
+         render: ({ id }) => {
+           const toastId = "toast-" + id;
+           return (
+             <Toast
+               nativeID={toastId}
+               action="error"
+               variant="solid"
+               className="rounded-xl"
+             >
+               <ToastTitle className="font-semibold">
+                 Erreur d`inscription
+               </ToastTitle>
+               {/* Optionnel : On réutilise la logique de traduction d'erreur vue ensemble avant */}
+               <ToastDescription>
+                 Veuillez vérifier vos informations.
+               </ToastDescription>
+             </Toast>
+           );
+         },
+       });
     }
   };
   const switchSignIn = () => {
@@ -179,17 +228,18 @@ export default function Register() {
                 {/* header form */}
                 <View className="header items-center justify-center mb-6">
                   <Heading className="font-montserrat text-3xl text-primary-custom-300">
-                    Creer un compte
+                    {t("register.label.title")}
                   </Heading>
                   <Text className="font-poppins text-lg text-secondary-custom-300 text-center">
-                    Rejoignez la communauté ExamBoost
+                    {t("register.label.subtitle")}
                   </Text>
                 </View>
                 <FormControl className="flex-1 gap-2">
                   <View className="names w-full">
                     <FormControlLabel>
                       <FormControlLabelText>
-                        votre Nom <Text className="text-red-500">*</Text>
+                        {t("register.label.name")}{" "}
+                        <Text className="text-red-500">*</Text>
                       </FormControlLabelText>
                     </FormControlLabel>
                     <Input size={"lg"} className="my-1" isRequired={true}>
@@ -197,27 +247,18 @@ export default function Register() {
                         className="placeholder:text-gray-300"
                         type="text"
                         value={surname}
-                        placeholder="Entrer votre nom(s) "
+                        // placeholder="Entrer votre nom(s) "
                         onChangeText={(text) => {
                           setSurname(text);
                         }}
                       ></InputField>
                     </Input>
-                    <FormControlError>
-                      <FormControlErrorIcon
-                        as={AlertCircleIcon}
-                        className="text-red-500"
-                      />
-                      <FormControlErrorText className="text-red-500">
-                        Le mot de passe doit etre aumoins 8
-                      </FormControlErrorText>
-                    </FormControlError>
                   </View>
                   <View className="username w-full">
                     <FormControlLabel>
                       <FormControlLabelText>
-                        Votre Prenom{" "}
-                        <Text className="text-gray-400">(optionel)</Text>
+                        {t("register.label.lastName")}
+                        <Text className="text-red-500">*</Text>
                       </FormControlLabelText>
                     </FormControlLabel>
                     <Input size={"lg"} className="my-1" isRequired={false}>
@@ -225,7 +266,7 @@ export default function Register() {
                         className="placeholder:text-gray-300"
                         type="text"
                         value={username}
-                        placeholder="Entrer votre prenom"
+                        // placeholder="Entrer votre prenom"
                         onChangeText={(text) => {
                           setUsernameValue(text);
                         }}
@@ -235,7 +276,8 @@ export default function Register() {
                   <View className="email w-full">
                     <FormControlLabel>
                       <FormControlLabelText>
-                        Email <Text className="text-red-500">*</Text>
+                        {t("register.label.email")}{" "}
+                        <Text className="text-red-500">*</Text>
                       </FormControlLabelText>
                     </FormControlLabel>
                     <Input size={"lg"} className="my-1" isRequired={true}>
@@ -244,26 +286,17 @@ export default function Register() {
                         type="text"
                         keyboardType="email-address"
                         value={emailValue.toLowerCase()}
-                        placeholder="Entrer votre email"
+                        // placeholder="Entrer votre email"
                         onChangeText={(text) => {
                           setEmailValue(text);
                         }}
                       ></InputField>
                     </Input>
-                    <FormControlError>
-                      <FormControlErrorIcon
-                        as={AlertCircleIcon}
-                        className="text-red-500"
-                      />
-                      <FormControlErrorText className="text-red-500">
-                        L`adresse email est incorret
-                      </FormControlErrorText>
-                    </FormControlError>
                   </View>
                   <View className="phone w-full">
                     <FormControlLabel>
                       <FormControlLabelText>
-                        Numero de telephone{" "}
+                        {t("register.label.phone")}
                         <Text className="text-red-500">*</Text>
                       </FormControlLabelText>
                     </FormControlLabel>
@@ -273,61 +306,60 @@ export default function Register() {
                         type="text"
                         keyboardType="phone-pad"
                         value={phone}
-                        placeholder="Entrer votre numero de telephone"
+                        maxLength={9}
+                        // placeholder="Entrer votre numero de telephone"
                         onChangeText={(text) => {
                           setPhone(text.replace(/[^0-9]/g, ""));
                         }}
                       ></InputField>
                     </Input>
-                    <FormControlError>
-                      <FormControlErrorIcon
-                        as={AlertCircleIcon}
-                        className="text-red-500"
-                      />
-                      <FormControlErrorText className="text-red-500">
-                        Le numero de telephone est incorrect
-                      </FormControlErrorText>
-                    </FormControlError>
+                  </View>
+                  <View className="flex flex-row justify-center items-center py-5">
+                    <FormControlLabel>
+                      <FormControlLabelText>
+                        {t("register.label.cycle")}{" "}
+                        <Text className="text-red-500">*</Text>
+                      </FormControlLabelText>
+                    </FormControlLabel>
+                    <RadioGroup
+                      value={niveauScolaire}
+                      onChange={setNiveauScolaire}
+                      className="flex-1 justify-center items-center flex-row gap-20"
+                    >
+                      <Radio
+                        value={"SECONDARY"}
+                        isInvalid={false}
+                        isDisabled={false}
+                      >
+                        <RadioIndicator>
+                          <RadioIcon as={CircleIcon} />
+                        </RadioIndicator>
+                        <RadioLabel>{t("register.label.secondary")}</RadioLabel>
+                      </Radio>
+
+                      <Radio value={"SUP"} isInvalid={false} isDisabled={false}>
+                        <RadioIndicator>
+                          <RadioIcon as={CircleIcon} />
+                        </RadioIndicator>
+                        <RadioLabel>{t("register.label.higher")}</RadioLabel>
+                      </Radio>
+                    </RadioGroup>
                   </View>
                   <View className="niveau">
                     <FormControlLabel>
                       <FormControlLabelText>
-                        Niveau scolaire <Text className="text-red-500">*</Text>
+                        {t("register.label.level")}{" "}
+                        <Text className="text-red-500">*</Text>
                       </FormControlLabelText>
                     </FormControlLabel>
-                    
-                      <RadioGroup
-                        value={niveauScolaire}
-                      onChange={setNiveauScolaire}
-                      className="flex-1 justify-center items-center flex-row gap-36"
-                      >
-                        <Radio
-                          value={"SECONDARY"}
-                          isInvalid={false}
-                          isDisabled={false}>
-                          <RadioIndicator>
-                            <RadioIcon as={CircleIcon} />
-                          </RadioIndicator>
-                          <RadioLabel>Secondaire</RadioLabel>
-                        </Radio>
-                        
-                        <Radio
-                          value={"SUP"}
-                          isInvalid={false}
-                          isDisabled={false}>
-                          <RadioIndicator>
-                            <RadioIcon as={CircleIcon} />
-                          </RadioIndicator>
-                          <RadioLabel>Superieur</RadioLabel>
-                        </Radio>
-                      </RadioGroup>
+
                     <Select onValueChange={(value) => setNiveau(value)}>
                       <SelectTrigger
                         variant="outline"
                         size="lg"
                         className="flex-1 justify-between"
                       >
-                        <SelectInput placeholder="Select option" />
+                        <SelectInput placeholder={t("register.label.option")} />
                         <SelectIcon className="mr-3" as={ChevronDownIcon} />
                       </SelectTrigger>
                       <SelectPortal>
@@ -343,7 +375,9 @@ export default function Register() {
                             showsVerticalScrollIndicator={true}
                           >
                             {allLevels
-                              .filter((level)=> level.categorie === niveauScolaire)
+                              .filter(
+                                (level) => level.categorie === niveauScolaire,
+                              )
                               .slice()
                               .sort((a, b) => a.name.localeCompare(b.name))
                               .map((level, index) => (
@@ -361,7 +395,8 @@ export default function Register() {
                   <View className="password w-full">
                     <FormControlLabel>
                       <FormControlLabelText>
-                        Mot de passe <Text className="text-red-500">*</Text>
+                        {t("register.label.password")}
+                        <Text className="text-red-500">*</Text>
                       </FormControlLabelText>
                     </FormControlLabel>
                     <Input size={"lg"} className="my-1" isRequired={true}>
@@ -369,7 +404,7 @@ export default function Register() {
                         className="placeholder:text-gray-300"
                         type={passType}
                         value={passwordValue}
-                        placeholder="Entrer votre mot de passe"
+                        // placeholder="Entrer votre mot de passe"
                         onChangeText={(text) => {
                           setPasswordValue(text);
                         }}
@@ -389,16 +424,6 @@ export default function Register() {
                         </ButtonText>
                       </Button>
                     </Input>
-
-                    <FormControlError>
-                      <FormControlErrorIcon
-                        as={AlertCircleIcon}
-                        className="text-red-500"
-                      />
-                      <FormControlErrorText className="text-red-500">
-                        Le mot de passe doit avoir aumoins 8 caracteres
-                      </FormControlErrorText>
-                    </FormControlError>
                   </View>
                   <Button
                     className="w-full  mt-4 bg-primary-custom-300"
@@ -410,17 +435,87 @@ export default function Register() {
                       {isLoading ? (
                         <Spinner size={"large"} color={"white"} />
                       ) : (
-                        "S'inscrire"
+                        t("register.label.button")
                       )}
                     </ButtonText>
                   </Button>
-                  {err?.error?.message && (
-                    <Text style={{ color: "red" }}>
-                      {Array.isArray(err.payload)
-                        ? err.payload[0]
-                        : err.payload}
-                    </Text>
-                  )}
+                  <Text style={{ color: "red" }}>
+                    {(() => {
+                      console.log("load payload 1:", err?.payload);
+                      if (!err || !err?.payload) {
+                        console.log("load payload 1:", err?.payload);
+                        return "";
+                      }
+                      if (
+                        Array.isArray(err?.payload) &&
+                        err.payload[0] !==
+                          "Le mot de passe doit contenir au moins un chiffre" &&
+                        err.payload[0] !==
+                          "Le numéro de téléphone doit contenir au moins 9 caractères" &&
+                        err.payload[0] !==
+                          "Le prenom doit contenir au moins 3 caractères"
+                      ) {
+                        return t("register.error.fillInput");
+                      }
+                      console.log("log payload:", err.payload);
+                      if (Array.isArray(err.payload)) {
+                        if (
+                          err.payload.includes(
+                            "Le mot de passe doit contenir au moins un chiffre",
+                          )
+                        ) {
+                          return t("register.error.password");
+                        }
+                        if (
+                          err.payload.includes(
+                            "Le numéro de téléphone doit contenir au moins 9 caractères",
+                          )
+                        ) {
+                          return t("register.error.errorPhoneFormat");
+                        }
+                        if (
+                          err.payload.includes(
+                            "Le prenom  doit contenir au moins 3 caractères",
+                          )
+                        ) {
+                          return t("register.error.errorPrenom");
+                        }
+
+                        // Si aucune traduction ne correspond, on affiche le premier message brut du tableau
+                        return (
+                          err.payload.message[0] ||
+                          `Une erreur est survenue: ${err.payload}`
+                        );
+                      }
+
+                      if (err.payload === "Email already exist !") {
+                        return t("register.error.errorEmail");
+                      }
+
+                      if (err.payload === "phone already exist !") {
+                        return t("register.error.errorExistPhone");
+                      }
+
+                      if (
+                        err.payload.message ===
+                        "L'email doit être une adresse email valide"
+                      ) {
+                        return t("register.error.errorLevel");
+                      }
+
+                      if (
+                        err.payload.message ===
+                        "L'email doit être une adresse email valide"
+                      ) {
+                        return t("register.error.errorEmail");
+                      }
+
+                      return (
+                        err.payload.message ||
+                        `Une erreur est survenue f: ${err.payload}`
+                      );
+                    })()}
+                  </Text>
                 </FormControl>
                 {/* <Center className="mt-10 flex-row items-center justify-center gap-2">
                   <Divider />
@@ -445,11 +540,11 @@ export default function Register() {
                 </Center> */}
                 <Center className="sign in mt-3 flex-row">
                   <Text className="text-gray-400">
-                    Vous avez deja un compte?{" "}
+                    {t("register.error.loginPhrase")}
                   </Text>
                   <Button onPress={switchSignIn} variant={"link"}>
                     <ButtonText className="text-primary-custom-300 font-bold">
-                      Se connecter
+                      {t("register.error.login")}
                     </ButtonText>
                   </Button>
                 </Center>

@@ -1,0 +1,35 @@
+{
+  "register": {
+    "error": {
+      "password": "Le mot de passe doit contenir au moins un chiffre",
+      "errorLevel": "Chosissez votre niveau",
+      "errorEmail": "Cet Email existe deja.",
+      "errorName": "Le nom  doit contenir au moins 3 caractères",
+      "errorEmailValid": "L'email doit être une adresse email valide",
+      "erroPhone": "Le numéro de téléphone doit contenir au moins 9 caractères",
+      "errorPasswordTaille": "Le mot de passe doit contenir au moins 4 caractères",
+      "errorPrenom": "Le prenom doit contenir au moins 3 caractères",
+      "fillInput": "Remplir tous les champs",
+      "errorExistPhone": "Ce numero de téléphone existe déja Veuillez changer !",
+      "errorPhoneFormat": "Le numéro de téléphone doit contenir au moins 9 caractères",
+      "login": "Se Connecter",
+      "loginPhrase": "Vous avez déja un compte ?"
+    },
+    "label":{
+      "name": "Votre Nom",
+      "lastName": "Votre Prenom",
+      "email": "Votre Email",
+      "phone": "Numero de téléphone",
+      "cycle": "Votre Cycle",
+      "secondary": "Secondaire",
+      "higher": "Superieur",
+      "password": "Mot de passe",
+      "button": "S'inscrire",
+      "title": "Creer un Compte",
+      "subtitle": "Rejoignez la communauté EXAMBOOST !",
+      "option": "Selectionner une option",
+      "level": "Votre Niveau"
+      
+    }
+  }
+}

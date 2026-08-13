@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text } from "react-native";
 import { useTranslation } from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
@@ -7,96 +7,82 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import {
   Radio,
   RadioGroup,
-  RadioIcon,
   RadioIndicator,
+  RadioIcon,
   RadioLabel,
 } from "@/components/ui/radio";
 import { ArrowRightIcon, CircleIcon } from "@/components/ui/icon";
 import { BASE_URL } from "../api/apiClient";
+import { useState } from "react";
 
 export default function Index() {
   const navigation = useRouter();
   const { t, i18n } = useTranslation();
+
+  // On s'assure d'avoir une valeur par défaut propre ("fr" ou "en")
+  const [selected, setSelected] = useState<"fr" | "en">(
+    (i18n.language?.split("-")[0] as "fr" | "en") || "fr",
+  );
+
   const changeLanguage = async (lang: "fr" | "en") => {
-    await i18n.changeLanguage(lang);
-  };
-
-  const languages = [
-    { code: "en", name: "English", flag: "us" },
-    { code: "fr", name: "Français", flag: "🇫🇷" },
-  ];
-
-  const handleNext = async() => {
-    if (i18n.language) {
-      await AsyncStorage.setItem("language", i18n.language);
-      console.log("langue dans choisenlang: ", await AsyncStorage.getItem("language"))
-      navigation.navigate("/(onboarding)");
-    } else {
-      console.log("something wrong");
-    }
-  };
-  const testBackend = async () => {
-    const cles = await AsyncStorage.getAllKeys();
     try {
-      const url = `${BASE_URL}:3000`;
-      console.log("TEST URL:", url);
-      console.log("Toutes les clés :", cles);
-
-      const res = await fetch(url);
-      const text = await res.text();
-
-      console.log("STATUS:", res.status);
-      console.log("BODY:", text);
+      await AsyncStorage.setItem("language", lang);
+      await i18n.changeLanguage(lang);
+      setSelected(lang); // Met à jour le bouton radio sélectionné
     } catch (error) {
-      console.log("FETCH TEST ERROR:", error);
+      console.log("erreur changement de langue: ", error);
     }
   };
+
+  const handleNext = async () => {
+    // Remplacement de .navigate() par .replace() pour l'onboarding
+    navigation.replace("/(onboarding)");
+  };
+
   return (
     <SafeAreaView className="flex-1 relative">
-      <View className="flex-1 justify-between items-center  bg-gray-200">
+      <View className="flex-1 justify-between items-center bg-gray-200">
         <View className="header mt-10">
-          <Text className=" font-semibold text-2xl">
+          <Text className="font-semibold text-2xl text-center">
             Bienvenue sur{" "}
-            <Text className=" text-secondary-custom-400">Examboost.</Text>
+            <Text className="text-secondary-custom-400">Examboost.</Text>
           </Text>
-          <Text className=" font-medium text-xl">
+          <Text className="font-medium text-xl text-center mt-2">
             Choisissez votre langue favorite
           </Text>
         </View>
-        <View className="btns gap-2">
-          <RadioGroup>
-            <Radio
-              value="en"
-              onChange={(isSelected) => isSelected && changeLanguage("en")}
-              size="md"
-            >
+
+        <View className="btns gap-4 w-full px-10 items-center justify-center">
+          {/* CORRECTIF : Les propriétés Value et OnChange vont ICI sur le groupe parent */}
+          <RadioGroup
+            value={selected}
+            onChange={(lang) => changeLanguage(lang as "fr" | "en")}
+          >
+            {/* Option Anglais */}
+            <Radio value="en" size="md">
+              {/* CORRECTIF : L'indicateur est placé AVANT le label */}
+              <RadioIndicator >
+                <RadioIcon as={CircleIcon} />
+              </RadioIndicator>
               <RadioLabel>Anglais</RadioLabel>
-              <RadioIndicator>
-                <RadioIcon as={CircleIcon} />
-              </RadioIndicator>
             </Radio>
-            <Radio
-              value="fr"
-              size="md"
-              onChange={(isSelected) => isSelected && changeLanguage("fr")}
-            >
-              <RadioLabel>Français</RadioLabel>
+
+            {/* Option Français */}
+            <Radio value="fr" size="md">
               <RadioIndicator>
                 <RadioIcon as={CircleIcon} />
               </RadioIndicator>
+              <RadioLabel>Français</RadioLabel>
             </Radio>
           </RadioGroup>
         </View>
 
-        {/* <View>
-          <Button onPress={() => testBackend()}>test</Button>
-        </View> */}
-
         <View className="footer gap-10">
-          <Text className=" text-center font-light text-base  mx-5  ">
-            Votre langue favorite peut etre modifiée a n`importe quel moment
-            dans parametre
+          <Text className="text-center font-light text-base mx-5">
+            Votre langue favorite peut être modifiée à n`importe quel moment
+            dans les paramètres
           </Text>
+
           <Button
             onPress={handleNext}
             variant="solid"

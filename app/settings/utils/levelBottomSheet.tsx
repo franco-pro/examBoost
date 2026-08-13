@@ -40,9 +40,9 @@ const LevelBottomSheet = forwardRef<BottomSheet, Props>(
         snapPoints={snapPoints}
         enablePanDownToClose
       >
-        <View className="px-6 pb-3">
+        {/* <View className="px-6 pb-3">
           <Text className="text-xl font-bold">Choisir un niveau</Text>
-        </View>
+        </View> */}
 
         <BottomSheetFlatList
           data={data}

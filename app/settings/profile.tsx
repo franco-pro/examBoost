@@ -110,11 +110,11 @@ const levelChanged = initialLevel !== form.niveauID
             </Text>
             <TextInput
               editable={isEditing}
-              value={form.username}
+              value={form.surname}
               onChangeText={(text) =>
                 setForm({
                   ...form,
-                  username: text,
+                  surname: text,
                 })
               }
               className="text-lg font-semibold"
@@ -130,11 +130,11 @@ const levelChanged = initialLevel !== form.niveauID
 
             <TextInput
               editable={isEditing}
-              value={form.surname}
+              value={form.username}
               onChangeText={(text) =>
                 setForm({
                   ...form,
-                  surname: text,
+                  username: text,
                 })
               }
               className="text-lg font-semibold"
@@ -196,7 +196,7 @@ const levelChanged = initialLevel !== form.niveauID
                 isEditing ? "bg-white" : "bg-gray-100"
               }`}
             >
-              <View className="flex-row justify-between items-center">
+              <View className="flex-row justify-between items-center ">
                 <Text className="text-lg font-semibold">
                   {selectedLevel?.name ?? "Choisir un niveau"}
                 </Text>

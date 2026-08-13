@@ -44,8 +44,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess, loginUser } from "@/app/hooks/redux/users/users.slice";
 import GoogleAuth from "./googleAuth";
 import { setItem } from "../utils/asyncStorage";
+import { useTranslation } from "react-i18next";
 
 export default function Login() {
+  const {t}=useTranslation("login")
   const { height } = Dimensions.get("window");
   const [inputValue, setInputValue] = useState<string>("");
   const [passwordValue, setPasswordValue] = useState<string>("");
@@ -146,17 +148,18 @@ export default function Login() {
                 {/* header form */}
                 <View className="header items-center justify-center mb-6">
                   <Heading className="font-montserrat text-3xl text-primary-custom-300 capitalize">
-                    Se Connecter
+                    {t("login.title")}
                   </Heading>
                   <Text className="font-poppins text-lg text-secondary-custom-300 text-center">
-                    Bon retour parmi nous !
+                    {t("login.subtitle")}
                   </Text>
                 </View>
                 <FormControl className="flex-1 gap-2">
                   <View className="names w-full">
                     <FormControlLabel>
                       <FormControlLabelText>
-                        Email ou Telephone{" "}
+                        {t("login.email_phone")}
+                        {"  "}
                         <Text className="text-red-500">*</Text>
                       </FormControlLabelText>
                     </FormControlLabel>
@@ -172,20 +175,12 @@ export default function Login() {
                         }}
                       ></InputField>
                     </Input>
-                    <FormControlError>
-                      <FormControlErrorIcon
-                        as={AlertCircleIcon}
-                        className="text-red-500"
-                      />
-                      <FormControlErrorText className="text-red-500">
-                        Email , numero ou mot de passe incorrect
-                      </FormControlErrorText>
-                    </FormControlError>
                   </View>
                   <View className="password w-full">
                     <FormControlLabel>
                       <FormControlLabelText>
-                        Mot de passe <Text className="text-red-500">*</Text>
+                        {t("login.password")}
+                        {"  "} <Text className="text-red-500">*</Text>
                       </FormControlLabelText>
                     </FormControlLabel>
                     <Input size={"lg"} className="my-1" isRequired={true}>
@@ -208,40 +203,27 @@ export default function Login() {
                           {passType === "password" ? (
                             <Icon className="" as={EyeIcon} size={"lg"} />
                           ) : (
-                            <Icon
-                              className=""
-                              as={EyeOffIcon}
-                              size={"lg"}
-                            />
+                            <Icon className="" as={EyeOffIcon} size={"lg"} />
                           )}
                         </ButtonText>
                       </Button>
                     </Input>
-                    <FormControlError>
-                      <FormControlErrorIcon
-                        as={AlertCircleIcon}
-                        className="text-red-500"
-                      />
-                      <FormControlErrorText className="text-red-500">
-                        Le mot de passe doit avoir aumoins 8 caracteres
-                      </FormControlErrorText>
-                    </FormControlError>
                   </View>
                   <View className="forgotPassword flex-row justify-between items-center mt-2">
                     <Checkbox
                       size={"md"}
                       isDisabled={false}
                       isInvalid={false}
-                      value="Se Souvenir de moi"
+                      value={t("login.remember")}
                     >
                       <CheckboxIndicator>
                         <CheckboxIcon as={CheckIcon} />
                       </CheckboxIndicator>
-                      <CheckboxLabel>Se souvenir de moi</CheckboxLabel>
+                      <CheckboxLabel>{t("login.remember")}</CheckboxLabel>
                     </Checkbox>
                     <Button variant={"link"} onPress={handleForgotPassword}>
                       <ButtonText className="text-primary-custom-300 font-bold">
-                        Mot de passe oublie?
+                        {t("login.forgotPassword")}
                       </ButtonText>
                     </Button>
                   </View>
@@ -255,17 +237,73 @@ export default function Login() {
                       {isLoading ? (
                         <Spinner size={"large"} color={"white"} />
                       ) : (
-                        <Text className="capitalize">se connecter</Text>
+                        <Text className="capitalize">{t("login.button")}</Text>
                       )}
                     </ButtonText>
                   </Button>
-                  {err && (
-                    <Text style={{ color: "red" }}>
-                      {Array.isArray(err?.payload)
-                        ? err?.payload[0]
-                        : err?.payload?.message || err?.payload}
-                    </Text>
-                  )}
+                  <Text style={{ color: "red" }}>
+                    {(() => {
+                      console.log("load payload 1:", err?.payload);
+                      if (!err || !err?.payload) {
+                        console.log("load payload 1:", err?.payload);
+                        return "";
+                      }
+                      if (
+                        Array.isArray(err?.payload) &&
+                        err.payload[0] !==
+                          "Le mot de passe doit contenir au moins un chiffre" &&
+                        err.payload[0] !==
+                          "Le numéro de téléphone doit contenir au moins 9 caractères" &&
+                        err.payload[0] !==
+                          "Le mot de passe doit contenir au moins 4 caractères"
+                      ) {
+                        return t("register.error.fillInput");
+                      }
+                      console.log("log payload:", err.payload);
+                      if (Array.isArray(err.payload)) {
+                        if (
+                          err.payload.includes(
+                            "Le mot de passe doit contenir au moins un chiffre",
+                          )
+                        ) {
+                          return t("login.error.password");
+                        }
+                        if (
+                          err.payload.includes(
+                            "Le mot de passe doit contenir au moins 4 caractères",
+                          )
+                        ) {
+                          return t("login.error.password");
+                        }
+                        if (
+                          err.payload.includes(
+                            "Le prenom  doit contenir au moins 3 caractères",
+                          )
+                        ) {
+                          return t("register.error.errorPrenom");
+                        }
+
+                        // Si aucune traduction ne correspond, on affiche le premier message brut du tableau
+                        return (
+                          err.payload.message[0] ||
+                          `Une erreur est survenue: ${err.payload}`
+                        );
+                      }
+
+                      if (err.payload === "Wrong credentials !") {
+                        return t("login.error.credentials");
+                      }
+
+                      if (err.payload === "Check your password !!") {
+                        return t("login.error.password");
+                      }
+
+                      return (
+                        err.payload.message ||
+                        `Une erreur est survenue f: ${err.payload}`
+                      );
+                    })()}
+                  </Text>
                 </FormControl>
                 <View className="social">
                   {/* <Center className="mt-10 flex-row items-center justify-center gap-2 w-2/3 mx-auto">
@@ -291,11 +329,11 @@ export default function Login() {
                   </Center> */}
                   <Center className="sign in mt-3 flex-row">
                     <Text className="text-gray-400">
-                      Vous n&rsquo;avez pas un compte?{" "}
+                      {t("login.no_account")}{" "}
                     </Text>
                     <Button onPress={switchSignUp} variant={"link"}>
                       <ButtonText className="text-primary-custom-300 font-bold">
-                        S&rsquo;inscrire
+                        {t("login.register")}
                       </ButtonText>
                     </Button>
                   </Center>
