@@ -393,8 +393,8 @@ export default function Creation() {
                   </View>
                 </View>
 
-                <Ionicons name="chevron-forward" size={22} color="#9ca3af" />
-               </View>
+                 <Ionicons name="chevron-forward" size={22} color="#9ca3af" />
+                </View>
 
               </TouchableOpacity>
             );

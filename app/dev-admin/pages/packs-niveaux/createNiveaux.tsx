@@ -24,7 +24,7 @@ interface NiveauForm {
 }
 
 
-const CATEGORIES = ["SUP", "SECOND"];
+const CATEGORIES = ["SUP", "SECONDARY"];
 
 export default function NiveauFormPage() {
     const { id, name, categorie, isExamClass } = useLocalSearchParams<{
