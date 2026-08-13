@@ -1,0 +1,20 @@
+{
+  "onboarding": {
+    "lottie1": {
+      "title": "Votre succès commence ici !",
+      "subtitle": "La plateforme qui transforme vos révisions en véritable expérience d'apprentissage. Préparez-vous à exceller dans tous vos examens officiels !"
+    },
+    "lottie2": {
+      "title": "Maîtrisez tous les types d'épreuves",
+      "subtitle": "Accédez à des centaines d'examens blancs, évaluations et exercices types avec corrections détaillées. Entraînez-vous comme jamais !"
+    },
+    "lottie3": {
+      "title": "Défie et progresse",
+      "subtitle": "Participe à des compétitions contre d'autres élèves, crée tes propres défis et mesure ton niveau en temps réel. L'apprentissage n'a jamais été aussi stimulant !"
+    },
+    "lottie4": {
+      "title": "Apprendre ensemble",
+      "subtitle": "Propose des épreuves, obtiens des corrections personnalisées des professeurs et évolue dans une communauté qui te motive à donner le meilleur de toi-même !"
+    }
+  }
+}

@@ -18,19 +18,25 @@ export function connectRoomsSocket(userId: number) {
 }
 
 // Connexion au namespace /notifications
-export function connectNotificationsSocket(userId: number) {
+export async function connectNotificationsSocket(userId: number) {
+  console.log('try connection entry', notificationsSocket)
+  
   if (!notificationsSocket) {
+    console.log('try connection')
     notificationsSocket = io(WEBSOCKET_CONFIG.getNamespaceUrl(WEBSOCKET_CONFIG.NAMESPACES.NOTIFICATIONS), {
       ...WEBSOCKET_CONFIG.DEFAULT_OPTIONS,
       query: { userId: userId },
       auth: {
-        token: getItem("accessToken")
+        token: await getItem("accessToken")
       },
       transports: ["websocket"],
     });
-
+    
+  }else if(notificationsSocket && !notificationsSocket.connected){
+    console.log('try connection reconnect')
+    notificationsSocket = null;
   }
-
+ 
   return notificationsSocket;
 }
 

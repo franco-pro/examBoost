@@ -95,21 +95,23 @@ const competitionSlice = createSlice({
 
         updateStatut(state, action){
             if(action.payload){
-                const index = state.competitionList.findIndex((comp)=> comp.id == action.payload.competitionID)
+                const index = state.competitionList.findIndex((comp)=> comp.id == action.payload.competitionId)
                 if(index != -1){
                     state.competitionList[index].statut = action.payload.statut as "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED";
-                    state.myCompetitionList[index].roomID = action.payload.roomId;
+                    state.competitionList[index].roomID = action.payload.roomId;
                 }
 
                 //my list
-                const myIndex = state.myCompetitionList.findIndex((comp)=> comp.id == action.payload.competitionID)
+                const myIndex = state.myCompetitionList.findIndex((comp)=> comp.id === action.payload.competitionId)
                 if(myIndex != -1){
                     state.myCompetitionList[myIndex].statut = action.payload.statut as "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED";
                     state.myCompetitionList[myIndex].roomID = action.payload.roomId;
                 }
+                console.log("execute set ongoing before", state.selectedCompetition, action.payload)
 
-                if(state.selectedCompetition && state.selectedCompetition.id == action.payload.competitionID && action.payload.statut == "ONGOING"){ 
+                if(state.selectedCompetition && state.selectedCompetition.id === action.payload.competitionId && action.payload.statut){ 
                     state.selectedCompetition.statut = action.payload.statut;
+                    console.log("execute set ongoing")
                     if(action.payload.roomId) {
                         state.selectedCompetition.roomID = action.payload.roomId;
                     }

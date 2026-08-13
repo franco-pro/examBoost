@@ -15,8 +15,8 @@ export default function OwnerCompetitionsScreen() {
       const [switchQA, setSwitchQA] =  useState(false);
       const {room, socketWaiting, error} = useAppSelector(state => state.rooms);
       const competitionName = room?.roomName ?? "";
-      const text = room?.instructions?.participant
-            .replaceAll("{data.competitionName}", competitionName)
+      const text = room?.instructions?.owner
+            .replaceAll("{data.competitionName}", competitionName);
 
       const dispatch = useAppDispatch();
       const {play} = useSoundAud()
@@ -59,7 +59,7 @@ export default function OwnerCompetitionsScreen() {
              <View className="mt-[65%] mb-[10px] justify-center items-center"> 
             
              <SwitchQuestionAnswer value={switchQA} onValueChange={setSwitchQA}/>
-              <View className="w-full justify-center items-center" style={{ display: !switchQA ? 'flex' : 'none' }}>
+              <View className="w-full" style={{ display: !switchQA ? 'flex' : 'none' }}>
                  <FormQuestion competitionInfo={
                               {
                                 creatorAvatarUrl: room ? (room.creatorInfo ? room.creatorInfo.imgUrl: ''):'',
@@ -73,6 +73,7 @@ export default function OwnerCompetitionsScreen() {
                                   hour: "2-digit",
                                   minute: "2-digit",
                                 }) : null,
+                                type: room && room.competitionInfo ? room.competitionInfo.type: null,
                                 isAI: room ? room.isManagedByIA: false,
                                 totalQuestions: room && room.competitionInfo ? room.competitionInfo.questionsNbr: 0,
                               }

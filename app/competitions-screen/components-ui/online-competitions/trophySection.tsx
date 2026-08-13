@@ -4,10 +4,11 @@ import { HStack } from "@/components/ui/hstack";
 import { Image } from '@/components/ui/image';
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
+import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useNavigation, useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ImageBackground } from "react-native";
+import { ImageBackground, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function QuizResultScreen() {
@@ -43,63 +44,108 @@ export default function QuizResultScreen() {
 function goToResult(){
     router.replace('/competitions-screen/components-ui/online-competitions/competitionResult')
 }
-  return (
-  <SafeAreaView style={{ flex: 1 }}>
-    
+return (
+  <SafeAreaView className="flex-1 bg-[#0F172A]">
     <ImageBackground
       source={require('../../../../assets/others/congrat.jpeg')}
       style={{ flex: 1 }}
       resizeMode="cover"
     >
-      <VStack
-        className="flex-1 justify-center items-center bg-[#0B042D]/80 px-6"
-      >
-        {/* Header */}
-        <Text className="text-white text-2xl font-semibold mb-3">
-          {roomResult?.roomName}
-        </Text>
-        <Image
-            size="xl"
-            source={
-                require('../../../../assets/others/trophy2.png')
-            }
-            alt="image"
-            className="h-[40%] w-[400px]"
+      {/* Overlay sombre basé sur la couleur principale (#2E5DA6) */}
+      <View className="flex-1 bg-[#2E5DA6]/85 px-5 justify-between py-6">
+        
+        {/* Header & Nom du salon */}
+        <View className="items-center mt-4">
+          <View className="bg-white/10 px-4 py-1.5 rounded-full border border-white/20 mb-2 flex-row items-center space-x-1.5">
+            <Ionicons name="ribbon-outline" size={14} color="#38BDF8" />
+            <Text className="text-white font-medium text-xs tracking-wider uppercase ml-1">
+              {roomResult?.roomName || "Résultat"}
+            </Text>
+          </View>
+          <Text className="text-white text-2xl font-black text-center tracking-tight">
+            {t("mycompetition.competition.result_screen.congratulation")}
+          </Text>
+        </View>
+
+        {/* Section Centrale : Trophée + Nom du Vainqueur */}
+        <View className="items-center my-auto">
+          {/* Aura lumineuse sous le trophée avec la couleur secondaire (#E8720C) */}
+          <View className="relative items-center justify-center">
+            <View className="absolute w-48 h-48 bg-[#E8720C]/30 rounded-full blur-2xl" />
+            <Image
+              source={require('../../../../assets/others/trophy2.png')}
+              alt="Trophée"
+              className="w-56 h-56 resize-mode-contain"
             />
+          </View>
 
+          {/* Carte Utilisateur */}
+          <View className="bg-white/10 backdrop-blur-md px-6 py-4 rounded-2xl border border-white/15 items-center w-full mt-2 shadow-lg">
+            <View className="flex-row items-center justify-center mb-1">
+              <Ionicons name="sparkles" size={18} color="#FFD700" />
+              <Text className="text-white text-xl font-bold text-center ml-1.5">
+                {user?.username} {user?.surname}
+              </Text>
+            </View>
+            <Text className="text-blue-100/80 text-xs text-center">
+              {t("mycompetition.competition.result_screen.congratulation")}
+            </Text>
+          </View>
+        </View>
 
-        <Text className="text-white text-xl font-bold mb-2 mt-4">
-           {t("mycompetition.competition.result_screen.congratulation")}  {user?.username} {user?.surname} !
-        </Text>
-        <Text className="text-gray-300 text-center mb-6 px-4">
-          {t("mycompetition.competition.result_screen.congratulation")}
-        </Text>
+        {/* Section Statistiques (Score & Gain) */}
+        <View className="flex-row justify-between mb-6 gap-3">
+          
+          {/* Carte Score */}
+          <View className="flex-1 bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10 items-center">
+            <View className="flex-row items-center mb-1.5">
+              <Ionicons name="checkmark-circle-outline" size={16} color="#34D399" />
+              <Text className="text-blue-200 text-xs font-medium ml-1">
+                {t("mycompetition.competition.result_screen.yr_score")}
+              </Text>
+            </View>
+            <View className="flex-row items-baseline">
+              <Text className="text-emerald-400 text-2xl font-black">
+                {user?.score ?? 0}
+              </Text>
+              <Text className="text-white/60 text-sm font-semibold">
+                /{competition_totalPoint}
+              </Text>
+            </View>
+          </View>
 
-        <VStack className="items-center mb-6">
-          <Text className="text-gray-300 mb-1 text-sm">{t("mycompetition.competition.result_screen.yr_score")}</Text>
-          <Text className="text-green-400 text-3xl font-bold">{user?.score}/{competition_totalPoint} </Text>
+          {/* Carte Gain */}
+          <View className="flex-1 bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10 items-center">
+            <View className="flex-row items-center mb-1.5">
+              <Ionicons name="wallet-outline" size={16} color="#E8720C" />
+              <Text className="text-blue-200 text-xs font-medium ml-1">
+                {t("mycompetition.competition.result_screen.gain")}
+              </Text>
+            </View>
+            <View className="flex-row items-center">
+              <Ionicons name="cash" size={22} color="#FFD700" />
+              <Text className="text-[#E8720C] text-2xl font-black ml-1.5">
+                {roomResult ? roomResult.competitionInfo.winnerPrice : 0}
+              </Text>
+            </View>
+          </View>
 
-          <Text className="text-gray-300 mt-4 mb-1 text-sm">{t("mycompetition.competition.result_screen.gain")} (U)</Text>
-          <HStack className="items-center">
-            <Text className="text-yellow-400 text-2xl mr-2">🪙</Text>
-            <Text className="text-white text-2xl font-semibold">{roomResult ? roomResult.competitionInfo.winnerPrice : 0} </Text>
-          </HStack>
-        </VStack>
+        </View>
 
-        {/* Buttons */}
-        <HStack className="w-full justify-between mt-4">
+        {/* Bouton d'action principal */}
+        <TouchableOpacity
+          className="w-full bg-[#E8720C] active:bg-[#d6650a] py-4 rounded-2xl shadow-lg flex-row justify-center items-center"
+          onPress={goToResult}
+          activeOpacity={0.8}
+        >
+          <Text className="text-white text-base font-bold mr-2">
+            {t("mycompetition.competition.result_screen.othersResult")}
+          </Text>
+          <Ionicons name="flame" size={20} color="#FFFFFF" />
+        </TouchableOpacity>
 
-          <Button
-            className="flex-1 ml-2 bg-primary-defaultOrange w-[30%]"
-            onPress={goToResult}
-          >
-            <Text className="text-white font-semibold">{t("mycompetition.competition.result_screen.othersResult")} 🔥</Text>
-          </Button>
-        </HStack>
-
-      </VStack>
-     </ImageBackground>
-    </SafeAreaView>
-    
-  );
+      </View>
+    </ImageBackground>
+  </SafeAreaView>
+);
 }

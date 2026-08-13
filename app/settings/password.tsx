@@ -97,20 +97,20 @@ export default function PasswordScreen() {
         <View className="px-4 mt-2 gap-5">
           {/* Mot de passe actuel */}
           <View className="gap-3">
-            <Text className="text-xs text-typography-gray">
+            <Text className="text-base text-typography-default">
               Mot de passe actuel
             </Text>
             <View
               className={`flex-row items-center  px-3 py-4 rounded-md border border-outline-100 dark:border-outline-800 bg-white dark:bg-outline-900 ${currentPwd.length > 0 && "border-blue-600"}`}
             >
-              <Ionicons name="lock-closed" size={18} color="#6B7280" />
+              <Ionicons name="lock-closed" size={18} color="#181c5c" />
               <TextInput
                 value={currentPwd}
                 onChangeText={setCurrentPwd}
                 placeholder="••••••"
                 secureTextEntry={!showPwd}
                 style={{ outlineStyle: "none", outlineWidth: 0 } as any}
-                className={`flex-1 ml-2 text-typography-default dark:text-typography-white`}
+                className={`flex-1 ml-2 pb-2 text-typography-default dark:text-typography-white`}
               />
               <Pressable
                 onPress={() => setShowPwd((s) => !s)}
@@ -119,7 +119,7 @@ export default function PasswordScreen() {
                 <Ionicons
                   name={showPwd ? "eye-off" : "eye"}
                   size={18}
-                  color="#6B7280"
+                  color="#181c5c"
                 />
               </Pressable>
             </View>
@@ -129,20 +129,20 @@ export default function PasswordScreen() {
           </View>
           {/* Nouveau mot de passe */}
           <View className="gap-3">
-            <Text className="text-xs text-typography-gray">
+            <Text className="text-md text-typography-default">
               Nouveau mot de passe
             </Text>
             <View
               className={`flex-row items-center px-3 py-4 rounded-md border ${newPwd.length === 0 && "border-outline-200"} ${newPwd.length >= 6 ? "border-outline-200 dark:border-outline-800" : "border-error-500"}  bg-white dark:bg-outline-900`}
             >
-              <Ionicons name="key" size={18} color="#6B7280" />
+              <Ionicons name="key" size={18} color="#181c5c" />
               <TextInput
                 value={newPwd}
                 onChangeText={setNewPwd}
                 placeholder="Au moins 6 caractères"
                 secureTextEntry={!showPwd}
                 style={{ outlineStyle: "none", outlineWidth: 0 } as any}
-                className={`flex-1 ml-2 text-typography-default dark:text-typography-white`}
+                className={`flex-1 ml-2 pb-2 text-typography-default dark:text-typography-white`}
               />
               <Pressable
                 onPress={() => setShowPwd((s) => !s)}
@@ -151,7 +151,7 @@ export default function PasswordScreen() {
                 <Ionicons
                   name={showPwd ? "eye-off" : "eye"}
                   size={18}
-                  color="#6B7280"
+                  color="#181c5c"
                 />
               </Pressable>
             </View>
@@ -163,20 +163,20 @@ export default function PasswordScreen() {
           </View>
           {/* confirmer mot de passe  */}
           <View className="gap-3">
-            <Text className="text-xs text-typography-gray">
+            <Text className="text-md text-typography-default">
               Confirmer le mot de passe
             </Text>
             <View
               className={`flex-row items-center px-3 py-4 rounded-md border ${confirmPwd.length === 0 && "border-outline-200"} ${confirmPwd && confirmPwd === newPwd ? "border-outline-200 dark:border-outline-800" : "border-error-500"}   bg-white dark:bg-outline-900`}
             >
-              <Ionicons name="checkmark-circle" size={18} color="#6B7280" />
+              <Ionicons name="checkmark-circle" size={18} color="#181c5c" />
               <TextInput
                 value={confirmPwd}
                 onChangeText={setConfirmPwd}
                 placeholder="Répétez le nouveau mot de passe"
                 secureTextEntry={!showPwd}
-                style={{ outlineStyle: "none", outlineWidth: 0 } as any}
-                className={`flex-1 ml-2 text-typography-default dark:text-typography-white`}
+                // style={{ outlineStyle: "none", outlineWidth: 0 } as any}
+                className={`flex-1 pb-2  ml-2 text-typography-default dark:text-typography-white`}
               />
               <Pressable
                 onPress={() => setShowPwd((s) => !s)}
@@ -185,7 +185,7 @@ export default function PasswordScreen() {
                 <Ionicons
                   name={showPwd ? "eye-off" : "eye"}
                   size={18}
-                  color="#6B7280"
+                  color="#181c5c"
                 />
               </Pressable>
             </View>
@@ -205,7 +205,8 @@ export default function PasswordScreen() {
               {changingPassword ? (
                 <ActivityIndicator size="small" color="#181c5c" />
               ) : (
-                <Ionicons name="save" size={16} color="#181c5c" />
+                // <Ionicons name="save" size={16} color="#181c5c" />
+                ""
               )}
               <Text className="text-primary-defaultBlue font-extrabold">
                 {changingPassword ? "Enregistrement..." : "Enregistrer"}

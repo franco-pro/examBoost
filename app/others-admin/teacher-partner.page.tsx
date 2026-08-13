@@ -183,14 +183,19 @@ export default function DocAdmin() {
             onPress={() => router.back()}
           >
             <Ionicons name="arrow-back" size={24} color={"white"} />
-            <Text className="ml-2 text-lg font-semibold text-gray-800">Retour</Text>
+            <Text className="ml-2 text-lg font-semibold text-gray-400">
+              Retour
+            </Text>
           </TouchableOpacity>
           <View>
             <Text style={styles.headerSub}>Administration</Text>
             <Text style={styles.headerTitle}>Documents</Text>
           </View>
           <Avatar size="md" className="border-2 border-orange-400">
-            <AvatarImage source={{ uri: user?.imgUrl }} alt={user?.surname ?? "User"} />
+            <AvatarImage
+              source={{ uri: user?.imgUrl }}
+              alt={user?.surname ?? "User"}
+            />
             <AvatarFallbackText className="text-white font-bold bg-indigo-500">
               {user?.surname ?? "A"}
             </AvatarFallbackText>
@@ -198,7 +203,6 @@ export default function DocAdmin() {
         </View>
 
         <View style={styles.dashboard}>
-
           <View style={styles.statsRow}>
             <StatCard
               label="Soumis"
@@ -235,7 +239,9 @@ export default function DocAdmin() {
             />
             <InfoCard
               label="Prochain paiement"
-              value={formatNextPayment(dashboard ? dashboard.nextPaymentDate: "")}
+              value={formatNextPayment(
+                dashboard ? dashboard.nextPaymentDate : "",
+              )}
               accent="#F97316"
               legend="Date de virement"
               iconName="time-outline"
@@ -244,26 +250,44 @@ export default function DocAdmin() {
 
           {isPartner && (
             <View style={[styles.statsRow, { marginTop: 10 }]}>
-              <StatCard label="Étudiants" value={dashboard?.totalStudent} accent="#0EA5E9" />
-              <StatCard label="Commission" value={formatGain(dashboard?.totalCommission ?? 0)} accent="#EC4899" />
+              <StatCard
+                label="Étudiants"
+                value={dashboard?.totalStudent}
+                accent="#0EA5E9"
+              />
+              <StatCard
+                label="Commission"
+                value={formatGain(dashboard?.totalCommission ?? 0)}
+                accent="#EC4899"
+              />
             </View>
           )}
 
           <View style={styles.progressCard}>
             <View style={styles.progressHeader}>
               <Text style={styles.progressLabel}>Taux de validation</Text>
-              <Text style={styles.progressPct}>{isNaN(validationRate) ? 0: validationRate}%</Text>
+              <Text style={styles.progressPct}>
+                {isNaN(validationRate) ? 0 : validationRate}%
+              </Text>
             </View>
             <View style={styles.progressTrack}>
-              <View style={[styles.progressFill, { width: `${validationRate}%` }]} />
+              <View
+                style={[styles.progressFill, { width: `${validationRate}%` }]}
+              />
             </View>
             <View style={styles.progressFooter}>
               <View style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: "#10B981" }]} />
-                <Text style={styles.legendText}>{dashboard?.totalValidated} validés</Text>
+                <View
+                  style={[styles.legendDot, { backgroundColor: "#10B981" }]}
+                />
+                <Text style={styles.legendText}>
+                  {dashboard?.totalValidated} validés
+                </Text>
               </View>
               <View style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: "#F59E0B" }]} />
+                <View
+                  style={[styles.legendDot, { backgroundColor: "#F59E0B" }]}
+                />
                 <Text style={styles.legendText}>{pending} en attente</Text>
               </View>
             </View>
@@ -272,7 +296,6 @@ export default function DocAdmin() {
       </View>
 
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-
         <View style={styles.listSection}>
           <View style={styles.listHeader}>
             <Text style={styles.listTitle}>Liste des documents</Text>
@@ -294,7 +317,10 @@ export default function DocAdmin() {
                   onPress={() => setFilter(t)}
                   style={[
                     styles.filterChip,
-                    active && { backgroundColor: cfg ? cfg.color : "#0F172A", borderColor: cfg ? cfg.color : "#0F172A" },
+                    active && {
+                      backgroundColor: cfg ? cfg.color : "#0F172A",
+                      borderColor: cfg ? cfg.color : "#0F172A",
+                    },
                   ]}
                 >
                   {cfg && (
@@ -305,8 +331,13 @@ export default function DocAdmin() {
                       style={{ marginRight: 4 }}
                     />
                   )}
-                  <Text style={[styles.filterText, active && styles.filterTextActive]}>
-                    {t === "TOUS" ? "Tous" : cfg?.short ?? t}
+                  <Text
+                    style={[
+                      styles.filterText,
+                      active && styles.filterTextActive,
+                    ]}
+                  >
+                    {t === "TOUS" ? "Tous" : (cfg?.short ?? t)}
                   </Text>
                 </TouchableOpacity>
               );
@@ -321,7 +352,13 @@ export default function DocAdmin() {
           <View style={{ height: 32 }} />
         </View>
       </ScrollView>
-      <TouchableOpacity style={styles.fab} activeOpacity={0.85} onPress={() => {router.push("/others-admin/submit-doc/submit")}}>
+      <TouchableOpacity
+        style={styles.fab}
+        activeOpacity={0.85}
+        onPress={() => {
+          router.push("/others-admin/submit-doc/submit");
+        }}
+      >
         <Ionicons name="add" size={30} color="#fff" />
       </TouchableOpacity>
     </View>

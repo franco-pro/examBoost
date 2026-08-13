@@ -44,14 +44,19 @@ const subscriptionSlice = createSlice({
         updateStatutSuscription(state, action){
             if(action.payload){
                 //my  suscription list
-                const myIndex = state.mySubscriptionList.findIndex((comp)=> comp.id == action.payload.competitionID)
+                const myIndex = state.mySubscriptionList.findIndex((comp)=> comp.id === action.payload.competitionId)
                 if(myIndex != -1){
-                    state.mySubscriptionList[myIndex].statut = action.payload.statut as "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED";;
+                    state.mySubscriptionList[myIndex].statut = action.payload.statut as "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED";
+                    state.mySubscriptionList[myIndex].roomID = action.payload.roomId;
                 }
 
-                if(state.selectedSubscription && state.selectedSubscription.id == action.payload.competitionID && action.payload.statut == "ONGOING"){ 
+                if(state.selectedSubscription && state.selectedSubscription.id === action.payload.competitionId && action.payload.statut){ 
                     state.selectedSubscription.statut = action.payload.statut;
+                    state.selectedSubscription.roomID = action.payload.roomId;
                 }
+                console.log('update done:', state.selectedSubscription, state.mySubscriptionList)
+            }else{
+                console.log("console.log", action.payload)
             }
         },
         setSearchResults(state, action){

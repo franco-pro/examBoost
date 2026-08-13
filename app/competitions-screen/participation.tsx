@@ -79,6 +79,7 @@ export default function Participation() {
 
   function goToCompetitionInfoScreen(id: number){
         const competitionSelected = mySubscriptionList.find((comp) => comp.id == id);
+        console.log('Competition selected participation:', competitionSelected);
         if(competitionSelected){
           dispatch(setSelectedCompetition(competitionSelected));
   
@@ -124,11 +125,11 @@ export default function Participation() {
   }
   
   return (
-    <ScrollView className="flex-1 w-full max-w-full  bg-gray-50 pt-[40px] pb-[50px] px-4">
+    <View className="flex-1 w-full max-w-full  bg-gray-50 pt-[40px] pb-[50px] px-4">
       
       {/* Back Button */}
       <TouchableOpacity
-        className="flex-row items-center mb-4"
+        className="flex-row items-center mb-4 mt-5"
         onPress={() => router.back()}
       >
         <Ionicons name="arrow-back" size={24} color="#181c5c" />
@@ -146,12 +147,28 @@ export default function Participation() {
         </Text>
       </View>
 
+     
+
       {/* Barre de recherche */}
       <View 
       //  onTouchStart={() => console.log('press')}
       >
         <Filter list={mySubscriptionList} foundIn={"subscriptions"} />
       </View>
+      <ScrollView
+        className="mt-2"
+        contentContainerStyle={{ flexGrow: 1 }}
+        horizontal={false}
+        showsHorizontalScrollIndicator={false}
+         refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                    colors={["#2196F3"]} // couleur Android
+                    tintColor="#2196F3" // couleur iOS
+                  />
+                }
+      >
 
       {/* Statistiques */}
       <View className="flex-row flex-wrap justify-between">
@@ -190,20 +207,7 @@ export default function Participation() {
         {t("participation.section_title")}
       </Text>
 
-      <ScrollView
-        className="mt-2"
-        contentContainerStyle={{ flexGrow: 1 }}
-        horizontal={false}
-        showsHorizontalScrollIndicator={false}
-         refreshControl={
-                  <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={onRefresh}
-                    colors={["#2196F3"]} // couleur Android
-                    tintColor="#2196F3" // couleur iOS
-                  />
-                }
-      >
+     
         {
             searchResults && searchResults.length != 0 && !loading && searchResults.map((comp, index) => {
             return (
@@ -408,6 +412,6 @@ export default function Participation() {
           </View>
           }
       </ScrollView>
-    </ScrollView>
+    </View>
   );
 }

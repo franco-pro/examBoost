@@ -1,5 +1,5 @@
 import { toastConfig } from "@/app/config/toast.config";
-import { createNiveau, updateNiveau } from "@/app/hooks/redux/niveaux/niveaux.thunks";
+import { createNiveau, deleteNiveau, updateNiveau } from "@/app/hooks/redux/niveaux/niveaux.thunks";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
 import { config } from "@/components/ui/gluestack-ui-provider/config";
 import { Ionicons } from "@expo/vector-icons";
@@ -69,6 +69,19 @@ export default function NiveauFormPage() {
        
           dispatch(createNiveau(data));
         }
+      router.back();
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!id) return;
+    setLoading(true);
+    try {
+      dispatch(deleteNiveau(Number.parseInt(id)));
       router.back();
     } catch (e) {
       console.error(e);
@@ -179,6 +192,18 @@ export default function NiveauFormPage() {
             </>
           )}
         </TouchableOpacity>
+
+        {isEdit && (
+          <TouchableOpacity
+            style={[styles.deleteBtn, loading && { opacity: 0.7 }]}
+            onPress={handleDelete}
+            disabled={loading}
+            activeOpacity={0.85}
+          >
+            <Ionicons name="trash-outline" size={20} color="#EF4444" />
+            <Text style={styles.deleteText}>Supprimer le niveau</Text>
+          </TouchableOpacity>
+        )}
       </ScrollView>
       
       <Toast config={toastConfig} />
@@ -324,6 +349,24 @@ const styles = StyleSheet.create({
   },
   submitText: {
     color: "#fff",
+    fontSize: 16,
+    fontWeight: "700",
+    letterSpacing: 0.3,
+  },
+  deleteBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    backgroundColor: "#FEF2F2",
+    paddingVertical: 16,
+    borderRadius: 16,
+    marginTop: 12,
+    borderWidth: 1.5,
+    borderColor: "#FCA5A5",
+  },
+  deleteText: {
+    color: "#EF4444",
     fontSize: 16,
     fontWeight: "700",
     letterSpacing: 0.3,

@@ -1,0 +1,17 @@
+{
+  "login": {
+    "title": "Log In",
+    "subtitle": "Welcome back!",
+    "email_phone": "Email or Phone",
+    "password": "Password",
+    "remember": "Remember Me",
+    "forgotPassword": "Forgot your password?",
+    "button": "Log In",
+    "no_account": "Don't have an account?",
+    "register": "Sign Up",
+    "error":{
+      "credentials":"Verify your credentials !",
+      "password":"Verify your password !"
+    }
+  }
+}

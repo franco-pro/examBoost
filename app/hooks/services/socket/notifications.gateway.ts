@@ -12,6 +12,7 @@ import { addNotif, updateBalanceUser } from "../../redux/users/users.slice";
 import { Transaction } from "../../entities/transaction";
 import { addTransaction } from "../../redux/transactions/transactions.slice";
 import { router } from "expo-router";
+import { updateStatutSuscription } from "../../redux/competitions-suscriptions/subscription.slice";
 
 // Interface pour les notifications
 export interface NotificationPayload {
@@ -46,9 +47,9 @@ interface NotifiationAdmin {
 }
 
 // Initialisation du gateway de notifications
-export function initializeNotificationsGateway(dispatch: any, userId: number) {
-  const socket = connectNotificationsSocket(userId);
-  
+export async function initializeNotificationsGateway(dispatch: any, userId: number) {
+  const socket = await connectNotificationsSocket(userId);
+  if(!socket) return;
   // Écouteurs d'événements
   socket.off("new-invitation");
   socket.off("competition-started");
@@ -87,7 +88,13 @@ export function initializeNotificationsGateway(dispatch: any, userId: number) {
   socket.on('new-connection', (notificaiton: {size: number})=>{
     console.log('size of connection status', notificaiton)
     dispatch(setTotalActiveUser(notificaiton.size))
-  })
+  });
+
+  socket.on('new-deconnection', (notificaiton: {size: number})=>{
+    console.log('size of connection status', notificaiton)
+    dispatch(setTotalActiveUser(notificaiton.size))
+  });
+  
   socket.on("competition-started", (data: NotificationPayload) => {
     console.log("Notification competition started:", data);
     const {roomId, statut, competionID} = data;
@@ -110,10 +117,17 @@ export function initializeNotificationsGateway(dispatch: any, userId: number) {
   });
 
  
-  socket.on("competition-started-change-statut", (data: {roomId: string, competitionId: number, statut: "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED"}) => {
+  socket.on("competition-started-change-statut", (data: {roomId: string, competitionID: number, statut: "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED"}) => {
       console.log("Notification competition started change statut:", data);
-      dispatch(updateStatut({roomId: data.roomId, competitionId: data?.competitionId, statut: data?.statut}));
+      dispatch(updateStatut({roomId: data?.roomId, competitionId: data?.competitionID, statut: data?.statut}));
+      dispatch(updateStatutSuscription({roomId: data?.roomId, competitionId: data?.competitionID, statut: data?.statut}))
   });
+
+  socket.on("competition-ended-change-statut", (data: {roomId: string, competitionID: number, statut: "UPCOMING" | "ONGOING" | "COMPLETED" | "CANCELLED"}) => {
+    console.log("Notification competition ended change statut:", data);
+    dispatch(updateStatut({roomId: data?.roomId, competitionId: data?.competitionID, statut: data?.statut}));
+    dispatch(updateStatutSuscription({roomId: data?.roomId, competitionId: data?.competitionID, statut: data?.statut}))
+});
 
 
   socket.on("invitation-response", (data: NotificationPayload) => {

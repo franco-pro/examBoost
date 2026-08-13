@@ -118,8 +118,8 @@ export default function Index() {
     const connectWithRetry = async () => {
       // console.log('connection status', isNotificationsConnected())
       if (!isNotificationsConnected()) {
-        initializeNotificationsGateway(dispatch, currentUserId);
-        // console.log('connection executed try', isNotificationsConnected())
+        await initializeNotificationsGateway(dispatch, currentUserId);
+        //  console.log('connection executed try', isNotificationsConnected())
         // console.log('access toke', await getItem("accessToken"))
      
         timerId = setTimeout(connectWithRetry, 3000); 
@@ -503,7 +503,7 @@ export default function Index() {
                         } else {
                           Alert.alert(
                             "Erreur",
-                            "Ce document ne fait pas partie de votre pack !",
+                            "Aucun packs disponible !",
                           );
                           router.push("/pack"); // S'exécutera juste après l'apparition de l'alerte
                         }

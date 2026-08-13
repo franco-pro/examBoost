@@ -68,7 +68,7 @@ export default function StopCompetition({isOpen, onClose, onConfirm, isAI}: Dial
             <Button size="sm" onPress={onConfirm} action="negative">
               <ButtonText>
                     {
-                        isAI ? t("mycompetition.competition.actions.quit") : t("mycompetition.competition.model.stop")
+                        isAI ? t("mycompetition.competition.actions.quit") : t("mycompetition.confirmModal.textBtn")
                     }
               </ButtonText>
             </Button>

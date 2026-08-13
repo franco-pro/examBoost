@@ -1,0 +1,17 @@
+{
+    "login":{
+      "title": "Se Connecter",
+      "subtitle": "Bon retour parmi nous !",
+      "email_phone": "Email ou Téléphone",
+      "password": "Mot de passe",
+      "remember": "Se Souvenir de moi",
+      "forgotPassword": "Mot de passe oublié ?",
+      "buton": "Se Connecter",
+      "no_account": "Vous n'avez pas un compte ?",
+      "register": "S'inscrire",
+      "error": {
+        "credentials": "Vérifiez vos informations !",
+        "password": "Mot de passe érroné."
+      }
+    }
+}
