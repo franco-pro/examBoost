@@ -129,7 +129,7 @@ export default function Participation() {
       
       {/* Back Button */}
       <TouchableOpacity
-        className="flex-row items-center mb-4"
+        className="flex-row items-center mb-4 mt-5"
         onPress={() => router.back()}
       >
         <Ionicons name="arrow-back" size={24} color="#181c5c" />

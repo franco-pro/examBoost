@@ -199,6 +199,7 @@ export default function Deposit() {
           className="flex-1"
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
+          contentContainerStyle={{paddingTop:30}}
         >
 
         <TouchableOpacity

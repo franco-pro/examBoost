@@ -158,18 +158,21 @@ export default function Creation() {
     }
 
   return (
-    
-    <View className="flex-1 bg-gray-50 pt-[40px] pb-[50px] px-4">
+    <View className="flex-1 bg-gray-50 pt-[40px] pb-[50px] px-4 ">
       {/* Back Button */}
       <TouchableOpacity
-        className="flex-row items-center mb-4"
+        className="flex-row items-center mb-4 mt-5 "
         onPress={() => router.back()}
       >
         <Ionicons name="arrow-back" size={24} color="#181c5c" />
-        <Text className="ml-2 text-lg font-semibold text-gray-800">{t(`mycompetition.back`)}</Text>
+        <Text className="ml-2 text-lg font-semibold text-gray-800">
+          {t(`mycompetition.back`)}
+        </Text>
       </TouchableOpacity>
       <View className="bg-white p-4 rounded-2xl mb-4 ">
-        <Text className="text-lg font-semibold">{t('mycompetition.competition.greeting',{name: username})} </Text>
+        <Text className="text-lg font-semibold">
+          {t("mycompetition.competition.greeting", { name: username })}{" "}
+        </Text>
         <Text className="text-gray-500 mt-1">
           {t(`mycompetition.competition.subtitle`)}
         </Text>
@@ -189,7 +192,7 @@ export default function Creation() {
           }}
           onFocus={onfocus}
           onEndEditing={onLoss}
-          onChangeText={(val: string)=> doSearch(val)}
+          onChangeText={(val: string) => doSearch(val)}
         />
       </View>
       
@@ -206,9 +209,8 @@ export default function Creation() {
       
       >
 
-      {
-        !hasSearchFocus && (
-          <View className="flex-row flex-wrap justify-between">
+      {!hasSearchFocus && (
+        <View className="flex-row flex-wrap justify-between">
           {statistique.map((stat, index) => (
             <TouchableOpacity
               key={index}
@@ -224,8 +226,7 @@ export default function Creation() {
             </TouchableOpacity>
           ))}
         </View>
-        )
-      }
+      )}
 
       {
         !hasSearchFocus && (
@@ -249,9 +250,7 @@ export default function Creation() {
                 key={index}
                 className="bg-white rounded-2xl flex-row p-4 mb-3 shadow-sm items-center"
                 // onPress={() => router.push(act.link)}
-                 onPress={() =>
-                  goToCompetitionInfoScreen(comp.id)
-                }
+                onPress={() => goToCompetitionInfoScreen(comp.id)}
               >
                 <View className="ml-3 pr-2 flex-1">
                   {/* Nom de la compétition et deadline */}
@@ -259,11 +258,15 @@ export default function Creation() {
                     <Text className="text-lg font-semibold">{comp.name}</Text>
                     <Text className="text-xs text-gray-400">
                       {/* {timePassed(comp.registration_deadline, comp.date)} */}
-                      Deadline:  {new Date(comp.registration_deadline).toLocaleDateString("fr-FR", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                    })}
+                      Deadline:{" "}
+                      {new Date(comp.registration_deadline).toLocaleDateString(
+                        "fr-FR",
+                        {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        },
+                      )}
                     </Text>
                   </View>
 
@@ -294,13 +297,14 @@ export default function Creation() {
                         comp.statut === "UPCOMING"
                           ? "bg-green-200"
                           : comp.statut === "ONGOING"
-                          ? "bg-yellow-200"
-                          : "bg-gray-300"
+                            ? "bg-yellow-200"
+                            : "bg-gray-300"
                       }`}
                     >
                       <Text className="text-xs font-semibold text-black">
-                      {comp.statut ? t(`participation.labels.status.${comp.statut}`): '...'}
-                        
+                        {comp.statut
+                          ? t(`participation.labels.status.${comp.statut}`)
+                          : "..."}
                       </Text>
                     </View>
                   </View>
@@ -309,32 +313,46 @@ export default function Creation() {
                 <Ionicons name="chevron-forward" size={22} color="#9ca3af" />
               </TouchableOpacity>
             );
-          })
-        }
-        
-        {(myCompetitionList && Array.isArray(myCompetitionList)) && myCompetitionList.length != 0 && searchValue.length == 0 && myCompetitionList.map((comp, index) => {
-          return (
-            <TouchableOpacity
-              key={index}
-              className="bg-white rounded-2xl flex-row p-4 mb-3 shadow-sm items-center"
-              // onPress={() => router.push(act.link)}
-               onPress={() =>
-                goToCompetitionInfoScreen(comp.id)
-              }
-            >
-              <View className="ml-3 pr-2 flex-1">
-                {/* Nom de la compétition et deadline */}
-                <View className="flex-row items-center justify-between">
-                  <Text className="text-lg font-semibold">{comp.name}</Text>
-                  <Text className="text-xs text-gray-400">
-                    {/* {timePassed(comp.registration_deadline, comp.date)} */}
-                    Deadline:  {new Date(comp.registration_deadline).toLocaleDateString("fr-FR", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                  })}
+          })}
+
+        {myCompetitionList &&
+          Array.isArray(myCompetitionList) &&
+          myCompetitionList.length != 0 &&
+          searchValue.length == 0 &&
+          myCompetitionList.map((comp, index) => {
+            return (
+              <TouchableOpacity
+                key={index}
+                className="bg-white rounded-2xl flex-row p-4 mb-3 shadow-sm items-center"
+                // onPress={() => router.push(act.link)}
+                onPress={() => goToCompetitionInfoScreen(comp.id)}
+              >
+                <View className="ml-3 pr-2 flex-1">
+                  {/* Nom de la compétition et deadline */}
+                  <View className="flex-row items-center justify-between">
+                    <Text className="text-lg font-semibold">{comp.name}</Text>
+                    <Text className="text-xs text-gray-400">
+                      {/* {timePassed(comp.registration_deadline, comp.date)} */}
+                      Deadline:{" "}
+                      {new Date(comp.registration_deadline).toLocaleDateString(
+                        "fr-FR",
+                        {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        },
+                      )}
+                    </Text>
+                  </View>
+
+                  {/* Sujet / date */}
+                  <Text className="text-gray-500 text-sm mt-1">
+                    {new Date(comp.date).toLocaleDateString("fr-FR", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
                   </Text>
-                </View>
 
                 {/* Sujet / date */}
                 <Text className="text-gray-500 text-sm mt-1">
@@ -374,36 +392,33 @@ export default function Creation() {
                     </Text>
                   </View>
                 </View>
-              </View>
 
-              <Ionicons name="chevron-forward" size={22} color="#9ca3af" />
-            </TouchableOpacity>
-          );
-        })}
+                <Ionicons name="chevron-forward" size={22} color="#9ca3af" />
+              </TouchableOpacity>
+            );
+          })}
 
-        {
-          myCompetitionList.length == 0 && loading && !refreshing &&
-           <VStack className="justify-center items-center">
-            <Spinner  size="large" color="blue"/> 
+        {myCompetitionList.length == 0 && loading && !refreshing && (
+          <VStack className="justify-center items-center">
+            <Spinner size="large" color="blue" />
             <Text>Loading...</Text>
-
           </VStack>
-        }
+        )}
 
-        {
-          myCompetitionList.length == 0 && !loading && !refreshing &&
+        {myCompetitionList.length == 0 && !loading && !refreshing && (
           <View className="justify-center items-center">
             <VStack className="justify-center items-center">
               <Image
                 size="2xl"
-                source={require('../../assets/images/no_404.jpg')}
+                source={require("../../assets/images/no_404.jpg")}
                 alt="image"
               />
-              <Text>{t(`mycompetition.competition.creations_screen.creation_null`)}</Text>
-
-              </VStack>
-        </View>
-        }
+              <Text>
+                {t(`mycompetition.competition.creations_screen.creation_null`)}
+              </Text>
+            </VStack>
+          </View>
+        )}
       </ScrollView>
     </View>
   );

@@ -1,25 +1,27 @@
-import { Dimensions, TouchableOpacity, View } from 'react-native'
-import React from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import Onboarding from 'react-native-onboarding-swiper';
-import { Text } from '@/components/ui/text';
-import { useRouter } from 'expo-router';
-import {setItem } from '@/app/utils/asyncStorage';
+import { Dimensions, TouchableOpacity, View } from "react-native";
+import React from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Onboarding from "react-native-onboarding-swiper";
+import { Text } from "@/components/ui/text";
+import { useRouter } from "expo-router";
+import { setItem } from "@/app/utils/asyncStorage";
 import LottieView from "lottie-react-native";
-import { ArrowRightIcon, Icon } from '@/components/ui/icon';
+import { ArrowRightIcon, Icon } from "@/components/ui/icon";
+import { useTranslation } from "react-i18next";
 
 export default function Index() {
+  const { t } = useTranslation("onboarding");
   const handleDone = async () => {
     try {
-  await setItem("onboarded", "true");
-    navigation.replace("/(auth)/login");
-} catch (error) {
-  console.log("error :", error)
-}
+      await setItem("onboarded", "true");
+      navigation.replace("/(auth)/login");
+    } catch (error) {
+      console.log("error :", error);
+    }
   };
-  const {width, height} = Dimensions.get("window");
+  const { width, height } = Dimensions.get("window");
   const navigation = useRouter();
-  const SkipButtonComponent = ({...props})=>{
+  const SkipButtonComponent = ({ ...props }) => {
     return (
       <TouchableOpacity
         className="rounded-full border border-primary-custom-300 flex py-2 px-10 bg-primary-custom-100 ml-5 mb-5"
@@ -30,36 +32,41 @@ export default function Index() {
         </Text>
       </TouchableOpacity>
     );
-  }
+  };
 
-  const NextButtonComponent = ({...props})=>{
+  const NextButtonComponent = ({ ...props }) => {
     return (
       <TouchableOpacity
         {...props}
         className="rounded-full border bg-primary-custom-300 flex py-2 px-8 gap-2 flex-row justify-center  items-center border-primary-custom-100 mr-5 mb-5"
       >
         <Text className="text-white font-semibold text-lg ">Next</Text>
-        <Icon className=' pt-2' as={ArrowRightIcon} size={"xl"} color="#fff" />
+        <Icon className=" pt-2" as={ArrowRightIcon} size={"xl"} color="#fff" />
       </TouchableOpacity>
     );
-    }
-  
-    const DoneButtonComponent = ({...props})=>{
-      return(
-        <View className='rounded-full border bg-primary-custom-300 flex py-2 px-8 gap-2 flex-row justify-center  items-center border-primary-custom-100 mr-5 mb-5 w-full'>
-          <Text className='text-white font-semibold text-lg' {...props}>Continue</Text>
-        </View>
-      )
-    }
+  };
 
-  const Dotcomponent = ({selected}:any)=>{
-        let backgroundColor;
-        backgroundColor = selected ? '#3f51b5' : '#ccc';
-        return(
-          <View className='mx-1 mb-40' style={{width:10, height:10, borderRadius:5, backgroundColor}}/>
-        )
-      }
-  
+  const DoneButtonComponent = ({ ...props }) => {
+    return (
+      <View className="rounded-full border bg-primary-custom-300 flex py-2 px-8 gap-2 flex-row justify-center  items-center border-primary-custom-100 mr-5 mb-5 w-full">
+        <Text className="text-white font-semibold text-lg" {...props}>
+          Continue
+        </Text>
+      </View>
+    );
+  };
+
+  const Dotcomponent = ({ selected }: any) => {
+    let backgroundColor;
+    backgroundColor = selected ? "#3f51b5" : "#ccc";
+    return (
+      <View
+        className="mx-1 mb-40"
+        style={{ width: 10, height: 10, borderRadius: 5, backgroundColor }}
+      />
+    );
+  };
+
   return (
     <SafeAreaView className="flex-1 relative justify-between ">
       <Onboarding
@@ -105,9 +112,8 @@ export default function Index() {
                 />
               </View>
             ),
-            title: "Votre succès commence ici !",
-            subtitle:
-              "La plateforme qui transforme vos révisions en véritable expérience d'apprentissage. Préparez-vous à exceller dans tous vos examens officiels !",
+            title: t("onboarding.lottie1.title"),
+            subtitle: t("onboarding.lottie1.subtitle"),
           },
           {
             backgroundColor: "#FFF",
@@ -127,9 +133,8 @@ export default function Index() {
                 />
               </View>
             ),
-            title: "Maîtrisez tous les types d'épreuves",
-            subtitle:
-              "Accédez à des centaines d'examens blancs, évaluations et exercices types avec corrections détaillées. Entraînez-vous comme jamais !",
+            title: t("onboarding.lottie2.title"),
+            subtitle: t("onboarding.lottie2.subtitle"),
           },
           {
             backgroundColor: "#FFF",
@@ -149,9 +154,8 @@ export default function Index() {
                 />
               </View>
             ),
-            title: "Défie et progresse",
-            subtitle:
-              "participe à des compétitions contre d'autres élèves, crée tes propres défis et mesure ton niveau en temps réel. L'apprentissage n'a jamais été aussi stimulant !",
+            title: t("onboarding.lottie3.title"),
+            subtitle: t("onboarding.lottie3.subtitle"),
           },
           {
             backgroundColor: "#FFF",
@@ -171,9 +175,8 @@ export default function Index() {
                 />
               </View>
             ),
-            title: "Apprendre ensemble",
-            subtitle:
-              "Propose des épreuves, obtiens des corrections personnalisées des professeurs et évolue dans une communauté qui te motive à donner le meilleur de toi-même !",
+            title: t("onboarding.lottie4.title"),
+            subtitle: t("onboarding.lottie4.subtitle"),
           },
         ]}
       />

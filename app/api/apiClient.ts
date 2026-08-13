@@ -20,6 +20,7 @@ apiClient.interceptors.request.use(async (config) => {
   const token = await getItem("accessToken");
   const refreshToken = await getItem("refreshToken");
   const keys = await AsyncStorage.getAllKeys();
+  console.log("token :", token);
   // console.log("all keys :", keys);
   // console.log("🚀 REQUEST:");
   // console.log("METHOD:", config.method);
@@ -52,7 +53,7 @@ apiClient.interceptors.response.use(
       originalRequest._retry = true;
       console.log("STATUS ERROR 👉", error.response?.status);
       try {
-        console.log("enter refresh fonction")
+        console.log("enter refresh fonction");
         const refresh_Token = await getItem("refreshToken");
         console.log("refresh Token ApiClient:", refresh_Token);
         if (!refresh_Token) throw new Error("No refresh token found");
@@ -62,16 +63,19 @@ apiClient.interceptors.response.use(
         await setItem("accessToken", res.data.accessToken);
         await setItem("refreshToken", res.data.refreshToken);
 
-        store.dispatch(updateTokens({
-          accessToken: res.data.accessToken,
-          refreshToken: res.data.refreshToken
-        }))
-        
+        store.dispatch(
+          updateTokens({
+            accessToken: res.data.accessToken,
+            refreshToken: res.data.refreshToken,
+          }),
+        );
+
         console.log(
           "les keys dans refresh function :",
           res.data.accessToken,
           res.data.refreshToken,
-          "res:", res
+          "res:",
+          res,
         );
 
         //réessaye la requete avec le nouveau accessToken
@@ -87,8 +91,9 @@ apiClient.interceptors.response.use(
       }
       return Promise.reject(error);
     }
+
     return Promise.reject(error);
-  },
+  }
 );
 
 export default apiClient;

@@ -9,6 +9,12 @@
     "scheme": "examboost",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "packagerOpts": {
+      "config": {
+        "blacklistRE": ["/[/\\].vscode[/\\]/"],
+        "blocklistRE": ["/[/\\].vscode[/\\]/"]
+      }
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.genesys.examBoost",

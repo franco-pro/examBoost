@@ -503,7 +503,7 @@ export default function Index() {
                         } else {
                           Alert.alert(
                             "Erreur",
-                            "Ce document ne fait pas partie de votre pack !",
+                            "Aucun packs disponible !",
                           );
                           router.push("/pack"); // S'exécutera juste après l'apparition de l'alerte
                         }

@@ -65,7 +65,7 @@ export const registerUser = createAsyncThunk(
       const data = await authService.register(payload);
       return data;
     } catch (err: any) {
-      console.log("❌ Erreur pendant register dans slice user:", err);
+      console.log(" remplissez les champs:", err);
       return rejectWithValue(
         err.response?.data?.message ||
           err?.message ||
