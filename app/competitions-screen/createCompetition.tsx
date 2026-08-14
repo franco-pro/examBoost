@@ -358,7 +358,6 @@ export default function CreateCompetitionForm() {
       }
     }
   
-    // --- S’IL Y A DES ERREURS ---
     if (errors) {
       setFormError(errors);
       console.log("Formulaire invalide");
@@ -413,23 +412,27 @@ export default function CreateCompetitionForm() {
       return;
     }
   
-    if (selectedDate) {
+    if (!selectedDate) return;
+  
+    const fieldToUpdate = currentField; // on fige la valeur au moment de l'appel
+  
+    if (Platform.OS === "ios") {
       setFormData((prev: any) => ({
         ...prev,
-        [currentField]: mergeDateTime(prev[currentField], selectedDate, androidPickerMode),
+        [fieldToUpdate]: new Date(selectedDate),
       }));
+      setShowDatePicker(false);
+      return;
     }
   
-    if (Platform.OS === "android") {
-      if (androidPickerMode === "date") {
-        // On vient de choisir la date -> on passe à l'étape "heure"
-        setAndroidPickerMode("time");
-      } else {
-        // On vient de choisir l'heure -> on ferme
-        setShowDatePicker(false);
-      }
+    setFormData((prev: any) => ({
+      ...prev,
+      [fieldToUpdate]: mergeDateTime(prev[fieldToUpdate], selectedDate, androidPickerMode),
+    }));
+  
+    if (androidPickerMode === "date") {
+      setAndroidPickerMode("time");
     } else {
-      // iOS: mode "datetime" gère les deux d'un coup
       setShowDatePicker(false);
     }
   };
@@ -579,7 +582,7 @@ const mergeDateTime = (prevDate: Date | undefined, picked: Date, mode: "date" | 
               </TouchableOpacity>
 
               {
-                Platform.OS === "ios" && showDatePicker && isFirstCalendarOpen && (
+                Platform.OS === "ios" && showDatePicker && currentField === "date" && (
                   
                     <DateTimePicker
                       value={getValidDate(formData[currentField])  || new Date()}
@@ -591,7 +594,7 @@ const mergeDateTime = (prevDate: Date | undefined, picked: Date, mode: "date" | 
                 )
               }
             {
-              Platform.OS === "android" && showDatePicker && isFirstCalendarOpen && (
+              Platform.OS === "android" && showDatePicker && currentField === "date" && (
                   <>
                     {androidPickerMode === "date" && (
                       <DateTimePicker
@@ -633,7 +636,7 @@ const mergeDateTime = (prevDate: Date | undefined, picked: Date, mode: "date" | 
               </TouchableOpacity>
                 {/* Affichage du calendrier */}
                 {
-                Platform.OS === "ios" && showDatePicker && !isFirstCalendarOpen && (
+                Platform.OS === "ios" && showDatePicker && currentField === "registration_deadline" && (
                   
                     <DateTimePicker
                       value={getValidDate(formData[currentField])  || new Date()}
@@ -646,7 +649,7 @@ const mergeDateTime = (prevDate: Date | undefined, picked: Date, mode: "date" | 
               }
               {
               
-                  Platform.OS === "android" && showDatePicker && !isFirstCalendarOpen && (
+                  Platform.OS === "android" && showDatePicker && currentField === "registration_deadline" && (
                       <>
                         {androidPickerMode === "date" && (
                           <DateTimePicker
