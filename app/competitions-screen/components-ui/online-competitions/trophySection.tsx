@@ -1,4 +1,6 @@
-import { useAppSelector } from "@/app/hooks/redux/redux.hooks";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
+import { updateBalanceUser } from "@/app/hooks/redux/users/users.slice";
+import { useSoundAud } from "@/app/hooks/useSound.hook";
 import { Button } from "@/components/ui/button";
 import { HStack } from "@/components/ui/hstack";
 import { Image } from '@/components/ui/image';
@@ -19,7 +21,9 @@ export default function QuizResultScreen() {
     const [competition_totalPoint, setPoint] = useState(0); 
     const router = useRouter()
     const navigation = useNavigation();
-    
+    const {play} = useSoundAud();
+    const dispatch = useAppDispatch();
+
     useFocusEffect(
       useCallback(() => {
         if (roomResult && Array.isArray(roomResult.questions)) {
@@ -28,7 +32,14 @@ export default function QuizResultScreen() {
             total += Number(q.points);
           });
           setPoint(total);
-        }
+
+          if(roomResult.competitionInfo.winnerPrice != 0 && 
+            roomResult.competitionInfo.type !== "TOTAL_FREE_NO_PRICE_TO_WIN"
+          ){
+              play("TopUpSuccess");
+              dispatch(updateBalanceUser(roomResult.competitionInfo.winnerPrice));
+          }
+      }
     
         const unsubscribe = navigation.addListener("beforeRemove", (e) => {
         
