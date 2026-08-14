@@ -273,7 +273,7 @@ async function onClosingConfirm() {
             </>) : (question !== null && !loading) && waitingAnswerConfirmation ? (   // <-- corrigé
                     <VStack className="justify-center items-center">
                       <Spinner size="large" color="blue" />
-                      <Text size="xl">{ 'test' + t("mycompetition.competition.online_game.waiting_qts")}</Text>
+                      <Text size="xl">{t("mycompetition.competition.online_game.waiting_qts")}</Text>
                     </VStack>
                   ) : competitionStop ? (
                     <CompetitionStopedAlert

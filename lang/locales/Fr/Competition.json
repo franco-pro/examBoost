@@ -260,7 +260,8 @@
     "participationFee": "Frais de participation",
     "free": "Gratuit",
     "errors": {
-      "participantNbr_not_reached": "Le nombre minimum de participants n'est pas atteint pour démarrer la compétition."
+      "participantNbr_not_reached": "Le nombre minimum de participants n'est pas atteint pour démarrer la compétition.",
+      "competition_delete_error": "Une erreur est survenue lors de la suppression de la compétition. impossible de supprimer une competition ayant des inscrit qui ont payé pour l'inscription."
     },
     "success": {
       "subscriptionDone": "Inscription réussie !",

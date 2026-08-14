@@ -113,7 +113,7 @@ export default class QuestionAnswerManager{
 
         let isCurrentUser = false;
         if(this.room){
-            if(this.room.creatorID == user.userID) return;
+            if(user.role !== "participant") return;
 
             //check if user already exists
             for(let existingUser of this.room.users){

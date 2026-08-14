@@ -1,4 +1,5 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
+import { RootState } from "@/app/hooks/redux/store";
 import { updateBalanceUser } from "@/app/hooks/redux/users/users.slice";
 import { useSoundAud } from "@/app/hooks/useSound.hook";
 import { Button } from "@/components/ui/button";
@@ -12,11 +13,15 @@ import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ImageBackground, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useSelector } from "react-redux";
 
 export default function QuizResultScreen() {
     // simple unique user
     const {roomResult} = useAppSelector(state => state.rooms);
     const {t} = useTranslation("competition")
+    const { user: currentUser } = useSelector(
+      (state: RootState) => state.user
+    );
     const user = roomResult && roomResult.users ? roomResult.users[0]: null;
     const [competition_totalPoint, setPoint] = useState(0); 
     const router = useRouter()
@@ -37,7 +42,7 @@ export default function QuizResultScreen() {
             roomResult.competitionInfo.type !== "TOTAL_FREE_NO_PRICE_TO_WIN"
           ){
               play("TopUpSuccess");
-              dispatch(updateBalanceUser(roomResult.competitionInfo.winnerPrice));
+              dispatch(updateBalanceUser((Number.parseInt(currentUser && currentUser.wallet ? currentUser.wallet:"0") + roomResult.competitionInfo.winnerPrice)));
           }
       }
     
@@ -136,7 +141,7 @@ return (
             <View className="flex-row items-center">
               <Ionicons name="cash" size={22} color="#FFD700" />
               <Text className="text-[#E8720C] text-2xl font-black ml-1.5">
-                {roomResult ? roomResult.competitionInfo.winnerPrice : 0}
+                {roomResult ? roomResult.competitionInfo.winnerPrice.toLocaleString("fr-FR") : 0}
               </Text>
             </View>
           </View>

@@ -169,6 +169,7 @@ useFocusEffect(
      <View className="mt-[50%] mb-[10px] justify-center items-center">
          <MiniDashboard 
               questionAnswered={questionAnswered} 
+              totalQuestion={room ? (room.competitionInfo ? room.competitionInfo.questionsNbr : 0):0}
               score={score}
               manager={room ? (room.isManagedByIA ? " Genesys-In IA" : "Owner"): ''}
               winnerPrice={room ? (room.competitionInfo ? room.competitionInfo.winnerPrice : 0):0}

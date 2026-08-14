@@ -78,9 +78,7 @@ import { fetchRoomCreate } from './rooms.thunks';
                 if(state.room){
                     const currentUserIndex = state.room.users.findIndex(user => user.userID == action.payload.userID);
                     if(currentUserIndex == -1){
-                        //without creator
-                        let isCreator = action.payload.userID === state.room.creatorID;
-                        if(!isCreator){
+                        if(action.payload.role === 'participant'){
                           state.room.users.push(action.payload);
                         }
                     }

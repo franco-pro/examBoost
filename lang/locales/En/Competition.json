@@ -258,7 +258,8 @@
   "participationFee": "Participation Fees",
   "free": "Free",
   "errors": {
-     "participantNbr_not_reached": "The minimum number of participants to start the competition has not been reached."
+     "participantNbr_not_reached": "The minimum number of participants to start the competition has not been reached.",
+     "competition_delete_error": "An error occurred while deleting the competition. It is impossible to delete a competition that has registered participants who have paid for registration."
   },
   "success": {
     "subscriptionDone": "Registration successful !",

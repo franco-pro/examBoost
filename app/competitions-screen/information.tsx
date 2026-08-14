@@ -100,7 +100,10 @@ export default function Information() {
               }
             }
            ));
-      router.back();
+          showToast(t("mycompetition.information.success.subscriptionDone"), "Success", "success");
+             setTimeout(() => {
+                router.back();
+           }, 1000);
 
       }else{
         if(errorSuscription){
@@ -155,10 +158,17 @@ export default function Information() {
 
   function deleteCompetition(competitionID: number){
       if(competitionID){
+        if(selectedCompetition?.suscribers && selectedCompetition?.suscribers.length > 0 &&
+          (selectedCompetition?.type !== "TOTAL_FREE_NO_PRICE_TO_WIN" && selectedCompetition?.type !== "FREE_REGISTRATION_WITH_WINNER_PRICE")
+         ){
           dispatch(deleteOne(competitionID))
           router.back();
+      }else{
+        //show toast impossible de supprimer une competition ayant des inscrit qui ont payé pour l'inscription
+        showToast(t("mycompetition.information.errors.competition_delete_error"), "Error", "error");
       }
   }
+}
 
   function goToUpdatePage(competitionData: Competition){
     // console.log('competition registration deadline ', new Date(competitionData.registration_deadline).toLocaleString("fr-FR",{timeZone: "Africa/douala"}));
@@ -278,7 +288,6 @@ function userJoinCompetition(){
      } as any;
 
      dispatch(createSubscription(data));
-     router.back();
   }
   
 
@@ -682,7 +691,7 @@ function userJoinCompetition(){
               </TouchableOpacity>
             )}
 
-          {canStillRegister && !isSubscribed && (selectedCompetition.isPublic || isCreator) && (
+          {canStillRegister && !isSubscribed && ((isCreator && selectedCompetition?.isManagedByIA) || (!isCreator)) && (
             <TouchableOpacity 
               className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto" 
               onPress={() => registerToCompetition()}
@@ -744,7 +753,7 @@ function userJoinCompetition(){
 
           {(!isSubscribed || errorType === "USER_HAS_LEAVED_ROOM") && 
           (room || selectedCompetition?.roomID) && 
-          selectedCompetition?.statut === "ONGOING" && (
+          selectedCompetition?.statut === "ONGOING" && ((isCreator && selectedCompetition?.isManagedByIA) || (!isCreator) ) && (
             <TouchableOpacity
               className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto"
               onPress={() => observeCompetition()}
