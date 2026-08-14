@@ -281,7 +281,30 @@
   "label": "IT'S THE END!",
   "text": "The competition is over, you can view the overall results of the competition, thank you for your participation!"
 },
-  "no_competition_available": "No competition available..."
+  "no_competition_available": "No competition available...",
+  "card": {
+    "type": {
+      "paid_prize": "Paid/Prize",
+      "free_prize": "Free/Prize",
+      "paid_and_prize": "Paid+Prize",
+      "free": "Free"
+    },
+    "status": {
+      "UPCOMING": "Upcoming",
+      "ONGOING": "Ongoing",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled"
+    },
+    "visibility": {
+      "public": "Public",
+      "private": "Private"
+    },
+    "date": "Date",
+    "deadline": "Closing",
+    "subscribers": "Registered",
+    "free_amount": "Free",
+    "totally_free": "Fully free"
+  }
 },
 
 "participation" : {

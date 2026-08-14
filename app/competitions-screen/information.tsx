@@ -25,6 +25,7 @@ import Toast from "react-native-toast-message";
 import { RootState } from "../hooks/redux/store";
 import { useSelector } from "react-redux";
 import { toastConfig } from "../config/toast.config";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Information() {
   const router = useRouter();
@@ -302,7 +303,7 @@ function userJoinCompetition(){
   }
 
   return (
-    <View className="flex-1 bg-gray-50 pt-[40px] pb-[10px] px-4">
+    <SafeAreaView className="flex-1 bg-gray-50 pt-[40px] pb-[10px] px-4" edges={["bottom"]}>
       {/* Bouton Retour */}
       <TouchableOpacity
         className="flex-row items-center mb-6"
@@ -342,13 +343,51 @@ function userJoinCompetition(){
         className="p-6 rounded-2xl mb-5 mt-5 shadow-lg items-center"
         style={{ minHeight: 255, borderRadius: 30 }}
       >
-        <View className="w-20 h-20 rounded-full bg-white/20 items-center justify-center mb-4">
-          <Ionicons name="code-slash-outline" size={40} color="white" />
-        </View>
+         {/* Boutons edit / delete en haut à droite */}
+          {selectedCompetition && selectedCompetition?.creatorData.id === userId && (
+            <HStack style={{ position: "absolute", top: 12, right: 12, zIndex: 10 }}>
+              <Button
+                className={
+                  "mb-2 rounded-2xl " +
+                  (selectedCompetition.statut !== "UPCOMING" ? "" : "bg-primary-defaultBlue")
+                }
+                disabled={selectedCompetition.statut !== "UPCOMING"}
+                onPress={() => goToUpdatePage(selectedCompetition)}
+              >
+                <ButtonText size="sm" className="text-typography-white">
+                  <Ionicons name="pencil" size={22} color={"#fffff"} />
+                </ButtonText>
+              </Button>
 
-        <Text className="text-2xl font-bold text-center text-white mb-2">
-          {selectedCompetition?.name}
-        </Text>
+              <Button
+                action="negative"
+                className="ml-2 rounded-2xl "
+                disabled={selectedCompetition.statut !== "UPCOMING"}
+                onPress={() => setDeleteIsOpen(true)}
+              >
+                <ButtonText size="sm" className="text-typography-white">
+                  <Ionicons name="trash" size={22} color={"#fffff"} />
+                </ButtonText>
+              </Button>
+
+              <DialogDelete
+                isOpen={isDeleteOpen}
+                onClose={() => setDeleteIsOpen(false)}
+                onConfirm={() => deleteCompetition(selectedCompetition.id)}
+                bodyText={t(DialogDeleteText.competition_delete_body)}
+                headText={t(DialogDeleteText.competition_delete_head)}
+                isLoading={loading}
+              />
+            </HStack>
+          )}
+
+          <View className="w-20 h-20 rounded-full bg-white/20 items-center justify-center mb-4">
+            <Ionicons name="code-slash-outline" size={40} color="white" />
+          </View>
+
+          <Text className="text-2xl font-bold text-center text-white mb-2">
+            {selectedCompetition?.name}
+          </Text>
 
          <View className="h-[65px] max-h-[65px] justify-center text-center m-3 ">
           <ScrollView>
@@ -387,7 +426,7 @@ function userJoinCompetition(){
 
       {/* --- Deuxième carte : Détails rapides --- */}
       {/* <ScrollView className="h-[300px] max-h-[100%]"> */}
-      <ScrollView>
+      <ScrollView contentContainerStyle={{ paddingBottom: 30 }}>
 
       <View className="bg-white rounded-2xl py-4 px-5 mt-2 shadow-md border border-gray-100">
         <Text
@@ -536,38 +575,6 @@ function userJoinCompetition(){
                    {t("mycompetition.information.more_info")}
             </Text>
           </View>
-          {
-             selectedCompetition && selectedCompetition?.creatorData.id === userId &&
-             <HStack className="">
-                <Button className={"mb-2 rounded-2xl " + (selectedCompetition.statut !== "UPCOMING" ? "": "bg-primary-defaultBlue") } disabled={selectedCompetition.statut !== "UPCOMING"} onPress={()=> goToUpdatePage(selectedCompetition)} >
-                  <ButtonText size="sm" className='text-typography-white'>
-                        <Ionicons
-                            name="pencil"
-                            size={22}
-                            color={"#fffff"}
-                          />
-                  </ButtonText>
-                </Button>
-
-                <Button action="negative" className="ml-2 rounded-2xl " disabled={selectedCompetition.statut !== "UPCOMING"}  onPress={()=> setDeleteIsOpen(true)}>
-                  <ButtonText size="sm" className='text-typography-white'>
-                        <Ionicons
-                            name="trash"
-                            size={22}
-                            color={"#fffff"}
-                          />
-                  </ButtonText>
-                </Button>
-
-                <DialogDelete isOpen={isDeleteOpen} 
-                              onClose={() => setDeleteIsOpen(false)} 
-                              onConfirm={() =>deleteCompetition(selectedCompetition.id)}
-                              bodyText={t(DialogDeleteText.competition_delete_body)}
-                              headText={t(DialogDeleteText.competition_delete_head)}
-                              isLoading={loading}
-                              />
-          </HStack>
-          }
           
           </View>
 
@@ -780,11 +787,11 @@ function userJoinCompetition(){
 
        </ScrollView>
 
-       <FullscreenLoader visible={waitingLaunching || loading || waitingJoining || suscriptionLoading} />
       </ScrollView>
       <Toast config={toastConfig} />
+      <FullscreenLoader visible={waitingLaunching || loading || waitingJoining || suscriptionLoading} />
      
       
-    </View>
+    </SafeAreaView>
   );
 }
