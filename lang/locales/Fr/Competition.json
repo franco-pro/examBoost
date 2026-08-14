@@ -283,7 +283,32 @@
       "label": "C'EST LA FIN !",
       "text": "La Compétition est terminée, vous pouvez consulter les resultats generaux de la competition, merci pour votre participation !"
    },
-  "no_competition_available": "Aucune competition disponible..."
+  "no_competition_available": "Aucune competition disponible...",
+  
+    "card": {
+      "type": {
+        "paid_prize": "Payant/Prix",
+        "free_prize": "Gratuit/Prix",
+        "paid_and_prize": "Payant+Prix",
+        "free": "Gratuit"
+      },
+      "status": {
+        "UPCOMING": "À venir",
+        "ONGOING": "En cours",
+        "COMPLETED": "Terminé",
+        "CANCELLED": "Annulé"
+      },
+      "visibility": {
+        "public": "Public",
+        "private": "Privé"
+      },
+      "date": "Date",
+      "deadline": "Clôture",
+      "subscribers": "Inscrits",
+      "free_amount": "Gratuit",
+      "totally_free": "Entièrement gratuit"
+    }
+  
 },
 
 "participation": {

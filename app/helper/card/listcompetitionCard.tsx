@@ -1,14 +1,15 @@
 import Competition from "@/app/hooks/services/competitions/competition.entity";
 import { Ionicons } from "@expo/vector-icons";
 import { useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { Animated, TouchableOpacity, View, Text } from "react-native";
 
 
-const TYPE_SHORT: Record<Competition["type"], string> = {
-  PAID_REGISTRATION_AS_WINNER_PRICE: "Payant/Prix",
-  FREE_REGISTRATION_WITH_WINNER_PRICE: "Gratuit/Prix",
-  PAID_REGISTRATION_WITH_WINNER_PRICE: "Payant+Prix",
-  TOTAL_FREE_NO_PRICE_TO_WIN: "Gratuit",
+const TYPE_KEY: Record<Competition["type"], string> = {
+  PAID_REGISTRATION_AS_WINNER_PRICE: "paid_prize",
+  FREE_REGISTRATION_WITH_WINNER_PRICE: "free_prize",
+  PAID_REGISTRATION_WITH_WINNER_PRICE: "paid_and_prize",
+  TOTAL_FREE_NO_PRICE_TO_WIN: "free",
 };
 
 export const C = {
@@ -59,42 +60,17 @@ export const C = {
     statusCancelledAccent: "#e05252",
   };
 
-const STATUT_CONFIG = {
-    UPCOMING: {
-      bg: C.statusUpcomingBg,
-      text: C.statusUpcomingText,
-      dot: C.statusUpcomingDot,
-      accent: C.statusUpcomingAccent,
-      label: "À venir",
-    },
-    ONGOING: {
-      bg: C.statusOngoingBg,
-      text: C.statusOngoingText,
-      dot: C.statusOngoingDot,
-      accent: C.statusOngoingAccent,
-      label: "En cours",
-    },
-    COMPLETED: {
-      bg: C.statusCompletedBg,
-      text: C.statusCompletedText,
-      dot: C.statusCompletedDot,
-      accent: C.statusCompletedAccent,
-      label: "Terminé",
-    },
-    CANCELLED: {
-      bg: C.statusCancelledBg,
-      text: C.statusCancelledText,
-      dot: C.statusCancelledDot,
-      accent: C.statusCancelledAccent,
-      label: "Annulé",
-    },
+  const STATUT_CONFIG = {
+    UPCOMING: { bg: C.statusUpcomingBg, text: C.statusUpcomingText, dot: C.statusUpcomingDot, accent: C.statusUpcomingAccent },
+    ONGOING: { bg: C.statusOngoingBg, text: C.statusOngoingText, dot: C.statusOngoingDot, accent: C.statusOngoingAccent },
+    COMPLETED: { bg: C.statusCompletedBg, text: C.statusCompletedText, dot: C.statusCompletedDot, accent: C.statusCompletedAccent },
+    CANCELLED: { bg: C.statusCancelledBg, text: C.statusCancelledText, dot: C.statusCancelledDot, accent: C.statusCancelledAccent },
   };
 
-
 function TypeTag({ type }: { type: Competition["type"] }) {
-  const isPaid =
-    type === "PAID_REGISTRATION_AS_WINNER_PRICE" ||
-    type === "PAID_REGISTRATION_WITH_WINNER_PRICE";
+  const { t } = useTranslation("competition");
+  const isPaid = type === "PAID_REGISTRATION_AS_WINNER_PRICE" || type === "PAID_REGISTRATION_WITH_WINNER_PRICE";
+
   return (
     <View
       style={{
@@ -114,7 +90,7 @@ function TypeTag({ type }: { type: Competition["type"] }) {
           letterSpacing: 0.4,
         }}
       >
-        {TYPE_SHORT[type].toUpperCase()}
+        {t(`mycompetition.card.type.${TYPE_KEY[type]}`).toUpperCase()}
       </Text>
     </View>
   );
@@ -122,6 +98,7 @@ function TypeTag({ type }: { type: Competition["type"] }) {
 
 function StatusBadge({ statut }: { statut: Competition["statut"] }) {
   const cfg = STATUT_CONFIG[statut];
+  const { t } = useTranslation("competition");
   return (
     <View
       style={{
@@ -142,8 +119,8 @@ function StatusBadge({ statut }: { statut: Competition["statut"] }) {
           marginRight: 5,
         }}
       />
-      <Text style={{ color: cfg.text, fontSize: 11, fontWeight: "700" }}>
-        {cfg.label}
+     <Text style={{ color: cfg.text, fontSize: 11, fontWeight: "700" }}>
+        {t(`mycompetition.card.status.${statut}`)}
       </Text>
     </View>
   );
@@ -179,8 +156,8 @@ function InfoItem({
   );
 }
 
-function formatCFA(amount: number) {
-  if (amount === 0) return "Gratuit";
+function formatCFA(amount: number, freeLabel: string) {
+  if (amount === 0) return freeLabel;
   return amount.toLocaleString("fr-FR") + " U";
 }
 
@@ -200,7 +177,8 @@ export function CompetitionCard({
   }) {
     const scale = useRef(new Animated.Value(1)).current;
     const cfg = STATUT_CONFIG[item.statut];
-   
+    const { t } = useTranslation("competition");
+  
     const onPressIn = () =>
       Animated.spring(scale, {
         toValue: 0.975,
@@ -389,7 +367,7 @@ export function CompetitionCard({
                       color={C.textSecondary}
                     />
                     <Text style={{ color: C.textSecondary, fontSize: 12 }}>
-                      {formatCFA(item.entryFee)}
+                      {formatCFA(item.entryFee, t("mycompetition.card.free_amount"))}
                     </Text>
                   </View>
                 )}
@@ -405,7 +383,7 @@ export function CompetitionCard({
                         fontWeight: "700",
                       }}
                     >
-                      {formatCFA(item.winnerPrice)}
+                      {formatCFA(item.winnerPrice, t("mycompetition.card.free_amount"))}
                     </Text>
                   </View>
                 )}
@@ -425,7 +403,7 @@ export function CompetitionCard({
                         fontWeight: "600",
                       }}
                     >
-                      Entièrement gratuit
+                    {t("mycompetition.card.totally_free")}
                     </Text>
                   </View>
                 )}
