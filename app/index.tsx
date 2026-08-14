@@ -3,6 +3,7 @@ import { getItem } from "./utils/asyncStorage";
 import { Redirect } from "expo-router";
 import { useSelector } from "react-redux";
 import { RootState } from "./hooks/redux/store";
+import i18n from "@/lang/i18n";
 
 export default function Index() {
     const [accessToken, setAccesToken] = useState("")
@@ -32,6 +33,7 @@ export default function Index() {
                 setOnboarding(isOnboarded);
             } else {
                 console.log("la sauvegarde de ONBOARD n'a pas pris :", isOnboarded)
+                console.log("langue:", i18n.language, "langue dans asyn:", await getItem("language"))
             }
             
             setLoading(false)

@@ -40,6 +40,7 @@ import { PlusCircle, RefreshCcwIcon } from "lucide-react-native";
 import { useUserQuery } from "../features/user/hooks.rq";
 import { isNotificationsConnected } from "../hooks/services/socket/socket.init";
 import { getItem } from "../utils/asyncStorage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface subjectType {
   id: number;
@@ -98,6 +99,11 @@ export default function Index() {
     const data = await getRecentDocuments();
     setRecentDocument(data);
   };
+
+  const reset = async () => {
+    AsyncStorage.clear()
+    console.log("Le stockage de l'iPhone a été vidé !");
+  }
 
   useFocusEffect(
     useCallback(() => {
@@ -272,7 +278,7 @@ export default function Index() {
     colors,
     images,
     sombreColors,
-    user,
+    // user,
   ]);
   // console.log("images: ", others.subject[0])
   // console.log("datas subjects:", DataSubjectsTab);
@@ -349,16 +355,21 @@ export default function Index() {
               {user?.username || user?.surname || "Unknown"} 👋
             </Text>
 
-              <TouchableOpacity
-                onPress={() => navigation.push({ pathname: "/payment-transactions/deposit", params: {type: "DEPOSIT"}})}
-                className="bg-orange-500 px-4 h-12 rounded-lg flex-row items-center justify-center"
-              >
-                <Icon as={PlusCircle} className="text-white mr-2" />
-                <Text className="text-white font-semibold">
-                  {t("accueil.load")}
-                </Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.push({
+                  pathname: "/payment-transactions/deposit",
+                  params: { type: "DEPOSIT" },
+                })
+              }
+              className="bg-orange-500 px-4 h-12 rounded-lg flex-row items-center justify-center"
+            >
+              <Icon as={PlusCircle} className="text-white mr-2" />
+              <Text className="text-white font-semibold">
+                {t("accueil.load")}
+              </Text>
+            </TouchableOpacity>
+          </View>
           <Card
             size={"lg"}
             variant={"filled"}
@@ -419,38 +430,51 @@ export default function Index() {
               </View>
             </View>
           </Card>
-            {
-            others && Array.isArray(others.other) && others.other[0].time_of_exam_result && <View 
-              className="p-5 rounded-2xl shadow-sm border border-blue-100"
-              style={{ backgroundColor: '#2E5DA6' }}
-            >
-              <Text className="text-xl font-bold text-white mb-2">
-              {t("accueil.exam_info.title")}
-              </Text>
-              <Text className="text-blue-50 text-sm leading-5 mb-4">
-              {t("accueil.exam_info.text.main")}{' '}
-                <Text className="font-bold text-white">{t("accueil.exam_info.text.subtext1")}</Text> {t("accueil.exam_info.text.text_link")}
-                <Text className="font-bold text-white">{t("accueil.exam_info.text.subtext2")}</Text>{' '}
-              </Text>
 
-              <TouchableOpacity
-                className="flex-row items-center justify-center space-x-2 py-2.5 px-4 rounded-xl border border-white/30 active:opacity-80 align-self-start"
-                style={{ backgroundColor: 'rgba(255, 255, 255, 0.15)' }}
-                onPress={()=> navigation.push("/settings/examen") }
+          {others &&
+            Array.isArray(others.other) &&
+            others.other[0].time_of_exam_result && (
+              <View
+                className="p-5 rounded-2xl shadow-sm border border-blue-100"
+                style={{ backgroundColor: "#2E5DA6" }}
               >
-                <Text className="text-white text-xs font-semibold">
-                  {t("accueil.exam_info.btnText")}
+                <Text className="text-xl font-bold text-white mb-2">
+                  {t("accueil.exam_info.title")}
                 </Text>
-                <Ionicons name="arrow-forward" size={16} color="#ffffff" />
+                <Text className="text-blue-50 text-sm leading-5 mb-4">
+                  {t("accueil.exam_info.text.main")}{" "}
+                  <Text className="font-bold text-white">
+                    {t("accueil.exam_info.text.subtext1")}
+                  </Text>{" "}
+                  {t("accueil.exam_info.text.text_link")}
+                  <Text className="font-bold text-white">
+                    {t("accueil.exam_info.text.subtext2")}
+                  </Text>{" "}
+                </Text>
 
+                <TouchableOpacity
+                  className="flex-row items-center justify-center space-x-2 py-2.5 px-4 rounded-xl border border-white/30 active:opacity-80 align-self-start"
+                  style={{ backgroundColor: "rgba(255, 255, 255, 0.15)" }}
+                  onPress={() => navigation.push("/settings/examen")}
+                >
+                  <Text className="text-white text-xs font-semibold">
+                    {t("accueil.exam_info.btnText")}
+                  </Text>
+                  <Ionicons name="arrow-forward" size={16} color="#ffffff" />
               </TouchableOpacity>
-            </View>
-            }
+              <TouchableOpacity className="border-4 border-red-700" onPress={()=> navigation.navigate("/dev-admin/pages/documents/view")}>teacher</TouchableOpacity>
+              </View>
+            )}
 
           {/* Ton contenu */}
-          <View className="flex-row justify-between items-center mt-10">
-            <Text className="font-bold text-typography-default text-xl">
-              {" "}
+          <View className="flex-row justify-between items-center mt-10 " >
+            {/* <TouchableOpacity
+              className="border-4 border-red-600"
+              onPress={() => reset()}
+            >
+              reset all
+            </TouchableOpacity> */}
+            <Text className="font-bold text-typography-default text-xl ">
               {t("accueil.explore_subjets")}
             </Text>
             <Button
@@ -501,10 +525,7 @@ export default function Index() {
                         ) {
                           handlePressDocument(item);
                         } else {
-                          Alert.alert(
-                            "Erreur",
-                            "Aucun packs disponible !",
-                          );
+                          Alert.alert("Erreur", "Aucun packs disponible !");
                           router.push("/pack"); // S'exécutera juste après l'apparition de l'alerte
                         }
                       }}

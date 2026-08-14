@@ -1,5 +1,13 @@
 {
   "onboarding": {
+    "language":{
+        "welcome": "Welcome on",
+        "favorite_language": "Choose your favorite language",
+        "english": "English",
+        "french":"French",
+        "changeLanguageText": "Your favorite language can change everywhere in your setting !",
+        "button":"Next"
+    },
     "lottie1": {
       "title": "Master All Types of Tests",
       "subtitle": "Access hundreds of practice exams, assessments, and sample exercises with detailed answer keys. Practice like never before!"

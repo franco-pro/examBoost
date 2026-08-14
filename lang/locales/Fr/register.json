@@ -16,11 +16,11 @@
       "loginPhrase": "Vous avez déja un compte ?"
     },
     "label":{
-      "name": "Votre Nom",
-      "lastName": "Votre Prenom",
-      "email": "Votre Email",
+      "name": "Nom",
+      "lastName": "Prenom",
+      "email": "Email",
       "phone": "Numero de téléphone",
-      "cycle": "Votre Cycle",
+      "cycle": "Cycle",
       "secondary": "Secondaire",
       "higher": "Superieur",
       "password": "Mot de passe",
@@ -28,7 +28,7 @@
       "title": "Creer un Compte",
       "subtitle": "Rejoignez la communauté EXAMBOOST !",
       "option": "Selectionner une option",
-      "level": "Votre Niveau"
+      "level": "Niveau"
       
     }
   }
