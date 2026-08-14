@@ -71,6 +71,7 @@ export default function CreateCompetitionForm() {
   const userId = user?.id;
   const [formError, setFormError] = useState<string>("");
   const [isFirstCalendarOpen, setIsFirstCalendarOpen] = useState(true);
+  const [androidPickerMode, setAndroidPickerMode] = useState<"date" | "time">("date");
 
   const dispatch = useAppDispatch()
   const {error, actionDone,loading} = useAppSelector((state)=> state.competitions)
@@ -85,7 +86,6 @@ export default function CreateCompetitionForm() {
   );
   const [isExamBoostCompetition, setIsExamBoostCompetition] = useState(false);
   const isSuperAdmin = user && user.role === "SUPERADMIN" ? true : false;
-
   const [type, setType]= useState<
                                 "PAID_REGISTRATION_AS_WINNER_PRICE"
                                 |"FREE_REGISTRATION_WITH_WINNER_PRICE"
@@ -407,33 +407,49 @@ export default function CreateCompetitionForm() {
   };
   
 
-  const handleDateChange = (event: any, selectedDate:any) => {
+  const handleDateChange = (event: any, selectedDate: any) => {
     if (event.type === "dismissed") {
       setShowDatePicker(false);
       return;
     }
-
-    // const cameroonDate = new Date(selectedDate.getTime() + 1 * 60 * 60 * 1000);
-
+  
     if (selectedDate) {
       setFormData((prev: any) => ({
         ...prev,
-        [currentField]: selectedDate,
+        [currentField]: mergeDateTime(prev[currentField], selectedDate, androidPickerMode),
       }));
     }
-
+  
     if (Platform.OS === "android") {
+      if (androidPickerMode === "date") {
+        // On vient de choisir la date -> on passe à l'étape "heure"
+        setAndroidPickerMode("time");
+      } else {
+        // On vient de choisir l'heure -> on ferme
+        setShowDatePicker(false);
+      }
+    } else {
+      // iOS: mode "datetime" gère les deux d'un coup
       setShowDatePicker(false);
     }
-    setShowDatePicker(false);
-
   };
 
-  const openCalendar = (field: any) => {
-    setIsFirstCalendarOpen(field === "date");
+  const openCalendar = (field: "date" | "registration_deadline") => {
     setCurrentField(field);
+    setIsFirstCalendarOpen(field === "date");
+    setAndroidPickerMode("date"); // on repart toujours par l'étape "date"
     setShowDatePicker(true);
   };
+
+const mergeDateTime = (prevDate: Date | undefined, picked: Date, mode: "date" | "time") => {
+  const base = prevDate ? new Date(prevDate) : new Date();
+  if (mode === "date") {
+    base.setFullYear(picked.getFullYear(), picked.getMonth(), picked.getDate());
+  } else {
+    base.setHours(picked.getHours(), picked.getMinutes(), 0, 0);
+  }
+  return base;
+};
 
   return (
     <KeyboardAvoidingView
@@ -541,7 +557,7 @@ export default function CreateCompetitionForm() {
               </Text>
               <TextInput
                 className="border border-gray-300 p-2 rounded mb-4"
-                placeholder="Ex: Intelligence Artificielle"
+                placeholder="Ex: Mathématique basique"
                 value={formData.topic}
                 onChangeText={(text) =>
                   setFormData({ ...formData, topic: text })
@@ -574,25 +590,27 @@ export default function CreateCompetitionForm() {
                   
                 )
               }
-              {
-                Platform.OS === "android" && showDatePicker && isFirstCalendarOpen && (
-                  <View className="flex-row justify-between">
-                    <DateTimePicker
-                      value={getValidDate(formData[currentField])  || new Date()}
-                      mode="date"
-                      display="default"
-                      onChange={handleDateChange}
-                    />
-
-                    <DateTimePicker
-                      value={getValidDate(formData[currentField])  || new Date()}
-                      mode="time"
-                      display="default"
-                      onChange={handleDateChange}
-                    />
-                  </View>
-                )
-              }
+            {
+              Platform.OS === "android" && showDatePicker && isFirstCalendarOpen && (
+                  <>
+                    {androidPickerMode === "date" && (
+                      <DateTimePicker
+                        value={getValidDate(formData[currentField]) || new Date()}
+                        mode="date"
+                        display="default"
+                        onChange={handleDateChange}
+                      />
+                    )}
+                    {androidPickerMode === "time" && (
+                      <DateTimePicker
+                        value={getValidDate(formData[currentField]) || new Date()}
+                        mode="time"
+                        display="default"
+                        onChange={handleDateChange}
+                      />
+                    )}
+                  </>
+              )}
              
               {/* <Text className="mb-1 font-semibold">date de fin: d'enregistrement</Text> */}
 
@@ -627,24 +645,27 @@ export default function CreateCompetitionForm() {
                 )
               }
               {
-                Platform.OS === "android" && showDatePicker && !isFirstCalendarOpen && (
-                  <View className="flex-row">
-                    <DateTimePicker
-                      value={getValidDate(formData[currentField])  || new Date()}
-                      mode="date"
-                      display="default"
-                      onChange={handleDateChange}
-                    />
-
-                    <DateTimePicker
-                      value={getValidDate(formData[currentField])  || new Date()}
-                      mode="time"
-                      display="default"
-                      onChange={handleDateChange}
-                    />
-                  </View>
-                )
-              }
+              
+                  Platform.OS === "android" && showDatePicker && !isFirstCalendarOpen && (
+                      <>
+                        {androidPickerMode === "date" && (
+                          <DateTimePicker
+                            value={getValidDate(formData[currentField]) || new Date()}
+                            mode="date"
+                            display="default"
+                            onChange={handleDateChange}
+                          />
+                        )}
+                        {androidPickerMode === "time" && (
+                          <DateTimePicker
+                            value={getValidDate(formData[currentField]) || new Date()}
+                            mode="time"
+                            display="default"
+                            onChange={handleDateChange}
+                          />
+                        )}
+                      </>
+              )}
 
               {/* Nombre max d'utilisateurs */}
 
