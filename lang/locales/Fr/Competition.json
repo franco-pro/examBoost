@@ -307,8 +307,17 @@
       "subscribers": "Inscrits",
       "free_amount": "Gratuit",
       "totally_free": "Entièrement gratuit"
-    }
-  
+    },
+  "list":{
+    "no_competition": "Aucune compétition",
+    "all_loaded": "Toutes les compétitions sont affichées",
+    "loading": "Chargement des competitions…",
+    "searchProgress": "Recherche en cours…",
+    "filter_no_result": "Aucun résultat trouvé pour ces filtres",
+    "search_no_result": "Aucun résultat trouvé pour cette recherche",
+    "competition": "Compétition",
+    "discover": "Découvrez"
+  }
 },
 
 "participation": {
