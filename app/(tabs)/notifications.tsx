@@ -6,7 +6,7 @@ import { ActivityIndicator, FlatList, Pressable, RefreshControl, Text, View } fr
 import Toast from "react-native-toast-message";
 
 import NotificationSwipeableItem from '@/app/features/notifications/NotificationSwipeableItem';
-import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { BottomSheetModal, BottomSheetModalProvider, BottomSheetView } from '@gorhom/bottom-sheet';
 import * as Haptics from 'expo-haptics';
 import { useFocusEffect, useNavigation, useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
@@ -329,116 +329,164 @@ export default function NotificationsScreen() {
   }
   return (
     <>
-
-    <BottomSheetModalProvider>
-      <View className="flex-1 bg-background-light dark:bg-background-dark">
-        {Header}
-        {items.length === 0 ? (
-          <View className="flex-1 items-center justify-center px-8">
-            <Ionicons name="notifications-off" size={48} color="#9CA3AF" />
-            <Text className="mt-3 text-typography-gray">{t("notification.no_notifications")} </Text>
-          </View>
-        ) : (
-          <FlatList<Notification>
-            data={items}
-            renderItem={renderItem}
-            contentContainerStyle={{ paddingVertical: 8 }}
-            refreshControl={<RefreshControl refreshing={loading} onRefresh={() => dispatch(getNotification(userID)) } />}
-          />
-        )}
-
-        {/* */}
-        <BottomSheetModal
-          ref={modalRef}
-          snapPoints={snapPoints}
-          backgroundStyle={{ backgroundColor: 'transparent' }}
-          handleIndicatorStyle={{ backgroundColor: '#9CA3AF' }}
-        >
-          <View className="flex-1 rounded-t-2xl bg-background-light dark:bg-background-dark p-4">
-            <View className="flex-row items-start gap-3">
-              {selected && (
-                <Ionicons
-                  name={iconFor(selected.type)}
-                  size={24}
-                  color={colorFor(selected.type)}
-                />
-              )}
-              <View className="flex-1">
-                <Text className="text-base font-extrabold text-typography-default dark:text-typography-white" numberOfLines={2}>
-                  {selected?.title}
-                </Text>
-                <Text className="mt-1 text-xs text-typography-gray">{selected ? relativeTime(selected.created_at) : ''}</Text>
+      <BottomSheetModalProvider>
+        <View className="flex-1 bg-background-light dark:bg-background-dark">
+          {Header}
+  
+          {/* État vide */}
+          {items.length === 0 ? (
+            <View className="flex-1 items-center justify-center px-8">
+              <View className="w-20 h-20 rounded-full bg-outline-100 dark:bg-outline-800 items-center justify-center mb-4">
+                <Ionicons name="notifications-off-outline" size={36} color="#9CA3AF" />
               </View>
-              <Pressable onPress={closeDetails} className="-mr-2 -mt-2 p-2 rounded-full active:opacity-80">
-                <Ionicons name="close" size={20} color="#9CA3AF" />
-              </Pressable>
+              <Text className="text-base font-medium text-typography-gray text-center">
+                {t("notification.no_notifications")}
+              </Text>
             </View>
-
-            <Text className="mt-4 text-typography-default dark:text-typography-white">{selected?.text}</Text>
-
-            <View className="mt-6 flex-row items-center gap-3">
-              {selected?.link && (
-                <Pressable
-                  onPress={() => (selected?.type === "COMPETITION_START" ? loadCompetitionDetails(selected.competionID, "joinRoom") : loadCompetitionDetails(selected.competionID, "openDetails"))}
-                  className="px-3 py-2 rounded-md bg-primary-500 active:opacity-90"
-                  accessibilityRole="button"
-                  accessibilityLabel={selected?.type === 'COMPETITION_START' ? 'Rejoindre la compétition' : 'Ouvrir le lien associé'}
-                >
-                  <Text className="text-white font-semibold">
-                    {selected?.type === 'COMPETITION_START' ? 'Rejoindre la compétition' : 'Ouvrir'}
+          ) : (
+            <FlatList<Notification>
+              data={items}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.id.toString()}
+              contentContainerStyle={{ paddingVertical: 12, paddingHorizontal: 16 }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={loading}
+                  onRefresh={() => dispatch(getNotification(userID))}
+                />
+              }
+            />
+          )}
+  
+          {/* Modal Détails Notification */}
+          <BottomSheetModal
+            ref={modalRef}
+            snapPoints={snapPoints}
+            handleIndicatorStyle={{ backgroundColor: '#D1D5DB', width: 40 }}
+            backgroundStyle={{ backgroundColor: 'transparent' }}
+          >
+            <BottomSheetView className="flex-1 rounded-t-3xl bg-background-light dark:bg-background-dark p-5 shadow-2xl">
+              {/* Header de la Modal */}
+              <View className="flex-row items-start gap-3">
+                {selected && (
+                  <View 
+                    className="p-2.5 rounded-2xl items-center justify-center"
+                    style={{ backgroundColor: `${colorFor(selected.type)}15` }}
+                  >
+                    <Ionicons
+                      name={iconFor(selected.type)}
+                      size={22}
+                      color={colorFor(selected.type)}
+                    />
+                  </View>
+                )}
+  
+                <View className="flex-1 pr-2">
+                  <Text 
+                    className="text-lg font-bold text-typography-default dark:text-typography-white leading-tight"
+                    numberOfLines={2}
+                  >
+                    {selected?.title}
                   </Text>
-                </Pressable>
-              )}
-
-              {selected && (
-                <Pressable
-                  onPress={() => {
-                    void Haptics.selectionAsync();
-                    if (selected.isRead) return;
-                    markAsRead(selected.id);
-                    setSelected((s) => (s ? { ...s, read: true } : s));
-                  }}
-                  disabled={!!selected?.isRead}
-                  className="px-3 py-2 rounded-md bg-outline-50 dark:bg-outline-800 active:opacity-90"
-                >
-                  <Text className="text-typography-default dark:text-typography-white font-semibold">
-                    Marquer lu
+                  <Text className="mt-1 text-xs text-typography-gray font-medium">
+                    {selected ? relativeTime(selected.created_at) : ''}
                   </Text>
-                </Pressable>
-              )}
-
-              {selected && (
-                <Pressable
-                  onPress={() => {
-                    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                    deleteOne(selected.id);
-                    closeDetails();
-                  }}
-                  disabled={selected.id===undefined || selected.id === null}
-                  className="px-3 py-2 rounded-md bg-error-400 active:opacity-90 ml-auto"
+                </View>
+  
+                <Pressable 
+                  onPress={closeDetails} 
+                  className="p-2 -mr-1 -mt-1 rounded-full bg-outline-100 dark:bg-outline-800 active:opacity-70"
+                  hitSlop={8}
                 >
-                  <Text className="text-white font-semibold">{t("delete")}</Text>
+                  <Ionicons name="close" size={18} color="#9CA3AF" />
                 </Pressable>
-              )}
-            </View>
-          </View>
-        </BottomSheetModal>
-        
-      </View>
-
-      {isOpenConfirmation && isPageActive && (
+              </View>
+  
+              {/* Content Body */}
+              <View className="my-5 flex-1">
+                <Text className="text-sm leading-relaxed text-typography-default dark:text-typography-white">
+                  {selected?.text}
+                </Text>
+              </View>
+  
+              {/* Actions Footer */}
+              <View className="pt-3 border-t border-outline-100 dark:border-outline-800 flex-row items-center justify-between gap-2">
+                <View className="flex-row items-center gap-2 flex-1">
+                  {selected?.link && (
+                    <Pressable
+                      onPress={() => 
+                        selected?.type === "COMPETITION_START" 
+                          ? loadCompetitionDetails(selected.competionID, "joinRoom") 
+                          : loadCompetitionDetails(selected.competionID, "openDetails")
+                      }
+                      className="flex-1 px-4 py-3 rounded-xl bg-primary-500 active:opacity-90 items-center justify-center"
+                      accessibilityRole="button"
+                      accessibilityLabel={
+                        selected?.type === 'COMPETITION_START' 
+                          ? 'Rejoindre la compétition' 
+                          : 'Ouvrir le lien associé'
+                      }
+                    >
+                      <Text className="text-white font-bold text-sm">
+                        {selected?.type === 'COMPETITION_START' ? 'Rejoindre' : 'Ouvrir'}
+                      </Text>
+                    </Pressable>
+                  )}
+  
+                  {selected && (
+                    <Pressable
+                      onPress={() => {
+                        void Haptics.selectionAsync();
+                        if (selected.isRead) return;
+                        markAsRead(selected.id);
+                        setSelected((s) => (s ? { ...s, isRead: true } : s));
+                      }}
+                      disabled={!!selected?.isRead}
+                      className={`px-4 py-3 rounded-xl items-center justify-center ${
+                        selected.isRead 
+                          ? 'bg-outline-100 dark:bg-outline-800 opacity-60' 
+                          : 'bg-outline-200 dark:bg-outline-700 active:opacity-80'
+                      }`}
+                    >
+                      <Text className="text-typography-default dark:text-typography-white font-semibold text-sm">
+                        {selected.isRead ? 'Déjà lu' : 'Marquer lu'}
+                      </Text>
+                    </Pressable>
+                  )}
+                </View>
+  
+                {selected && (
+                  <Pressable
+                    onPress={() => {
+                      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                      deleteOne(selected.id);
+                      closeDetails();
+                    }}
+                    disabled={selected.id === undefined || selected.id === null}
+                    className="p-3 rounded-xl bg-error-50 dark:bg-error-950/30 active:opacity-80 items-center justify-center"
+                  >
+                    <Ionicons name="trash-outline" size={20} color="#EF4444" />
+                  </Pressable>
+                )}
+              </View>
+            </BottomSheetView>
+          </BottomSheetModal>
+        </View>
+  
+        {/* Confirmation d'invitation */}
+        {isOpenConfirmation && isPageActive && (
           <InvitationConfirm
             onConfirm={() => doInscription(true)}
             onClose={() => setIsOpen(false)}
             isOpen={isOpenConfirmation}
-            inscriptionFees={selectedCompetition ? selectedCompetition.entryFee: 0}
+            inscriptionFees={selectedCompetition ? selectedCompetition.entryFee : 0}
           />
         )}
-
-    <FullscreenLoader visible={competitionLoading} />
-
-    </BottomSheetModalProvider>
-    <Toast config={toastConfig} />
+  
+        <FullscreenLoader visible={competitionLoading} />
+      </BottomSheetModalProvider>
+  
+      <Toast config={toastConfig} />
     </>
   );
 }

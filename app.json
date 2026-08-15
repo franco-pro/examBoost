@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "examBoost",
-    "slug": "examBoost",
+    "name": "ExamBoost",
+    "slug": "ExamBoost",
     "owner": "franck_lf",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -30,7 +30,8 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./app/assets/icons/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#ffffff",
+        "softwareKeyboardLayoutMode": "pan"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.genesys.examBoost"

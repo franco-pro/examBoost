@@ -17,7 +17,7 @@ interface MiniDashboardProps{
 export default function MiniDashboard({questionAnswered, totalQuestion, score, manager, winnerPrice}: MiniDashboardProps) {
   const {t} = useTranslation("competition");
   return (
-    <Card size="lg"  className="w-[90%] h-[130px] mt-20 mb-2 bg-primary-defaultBlue shadow-xl">
+    <Card size="lg"  className="w-[90%] h-[130px] mt-10 mb-2 bg-primary-defaultBlue shadow-xl">
         <Box>
           <HStack className='px-2 justify-between'>
                 <VStack className="items-center mt-[7%] pb-2 sm:flex-1 sm:pb-0 sm:border-r sm:border-outline-300">
@@ -46,7 +46,7 @@ export default function MiniDashboard({questionAnswered, totalQuestion, score, m
           <View className='mt-2 mb-0 items-center justify-center'>
             <Text className="text-sm font-normal mb-2 text-typography-white text-center">
             {'\n'}
-            {t("mycompetition.competition.result_screen.gain")}:  <Text size='xl' className='text-primary-defaultOrange'> {winnerPrice.toLocaleString("fr-FR") +"U" } </Text>
+            {t("mycompetition.competition.result_screen.gain")}:  <Text size='xl' className='text-primary-defaultOrange'> {winnerPrice.toLocaleString("fr-FR") + " U" } </Text>
             </Text>
           </View>
 

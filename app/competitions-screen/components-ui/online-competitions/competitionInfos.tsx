@@ -25,12 +25,21 @@ export default function CompetitionInfos({data, competitionInfo}: CompetitionInf
     function onFinish(){
         // dispatch(setTimeOff())
     }
+
+    function truncateWord(word: string, maxLength = 8): string {
+        if (!word) return "";
+        return word.length <= maxLength ? word : word.slice(0, maxLength).trimEnd() + "…";
+      }
+      
+      function formatCreatorName(surname: string, name: string): string {
+        return `${truncateWord(surname)} ${truncateWord(name)}`.trim();
+      }
     return (
-        <VStack className="absolute top-0 left-0 w-[48%] max-w-[50%]"  space="xs">
+        <VStack className="w-full max-w-[400px]"  space="xs">
             <Card className="bg-primary-defaultBlue p-5 shadow-xl  rounded-lg h-24 m-3 flex items-center justify-center">
                 <Text className="text-1xl  font-bold text-typography-white">
                    {
-                        competitionInfo.isIA ? 'Temps Restant':'Temps de Jeu'
+                        competitionInfo.isIA ? t("mycompetition.competition.online_game.remainig_time") :t("mycompetition.competition.online_game.game_time")
                    } 
                 </Text>
                 <Heading size="lg" className="text-primary-defaultOrange">
@@ -53,7 +62,7 @@ export default function CompetitionInfos({data, competitionInfo}: CompetitionInf
                 <Text className="text- font-normal mb-2 text-typography-white">
                    {data.roomName} 🏆
                 </Text>
-                <Box className="flex-row">
+                <Box className="flex-row" style={{ width: "100%" }}>
                     <Avatar size="sm" className="mr-3">
 
                     {data.imgUrl ? (
@@ -74,16 +83,21 @@ export default function CompetitionInfos({data, competitionInfo}: CompetitionInf
                     }
                 
                     </Avatar>
-                    <VStack>
-                        <HStack>
-                            <Heading size="sm" className="mb-1 text-typography-white">
-                            { 
-                                data.isExamBoostCompetition ? "ExamBoost":
-                                data.creatorSurname + " " + data.creatorName
-                            } 
-                            </Heading>
-                            <Text><Ionicons name="checkmark-circle" size={16} color="blue" /> </Text>
-                        </HStack>
+                    <VStack style={{ flex: 1, minWidth: 0 }}>
+                    <HStack style={{ flexDirection: "row", alignItems: "center", minWidth: 0 }}>
+                    <Text 
+                        style={{ flexShrink: 1, minWidth: 0, color: "white", fontWeight: "bold" }}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                    >
+                        {data.isExamBoostCompetition ? "ExamBoost" : formatCreatorName(data.creatorSurname, data.creatorName)}
+                    </Text>
+                    {
+                        data.isExamBoostCompetition && (
+                            <Ionicons name="checkmark-circle" size={16} color="blue" style={{ marginLeft: 4 }} />
+                        )
+                    }
+                    </HStack>
 
                     <Text size="xs" className="text-primary-defaultOrange">{t("mycompetition.competition.online_game.owner")} </Text>
                     </VStack>

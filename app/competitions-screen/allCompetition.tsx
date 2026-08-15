@@ -703,6 +703,7 @@ export default function CompetitionListScreen() {
             }}
           >
             {t("mycompetition.list.no_result")}
+            {t("mycompetition.list.no_competition")}
           </Text>
           <Text
             style={{

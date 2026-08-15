@@ -7,7 +7,7 @@ import { UsersTest } from '@/app/services/entities/users.test';
 import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
-import { AppState, ScrollView, StatusBar, View } from 'react-native';
+import { AppState, Platform, ScrollView, StatusBar, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CompetitionInfos from './components-ui/online-competitions/competitionInfos';
 import MiniDashboard from './components-ui/online-competitions/miniDashboard';
@@ -15,6 +15,7 @@ import OnlineUsers from './components-ui/online-competitions/onlineusers';
 import QuestionAnswer from './components-ui/online-competitions/questionAnswer';
 import { RootState } from '../hooks/redux/store';
 import { useSelector } from 'react-redux';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default function User() {
   const router = useRouter();
@@ -137,76 +138,88 @@ useFocusEffect(
             };
           }, [])
         );
-  return (
-  <SafeAreaView style={{ flex: 1 }}>
-    <StatusBar hidden={true} />
-    
-    <ScrollView style={{ flex: 1, backgroundColor: "#E8F5FA" }}
-    contentContainerStyle={{ flexGrow: 1 }}>
-
-    <View>
-     <OnlineUsers user={room ? (room.users ?? []) : []} max={room ? (room.competitionInfo ? room.competitionInfo.maxUsers: 0):0}/>
-    <CompetitionInfos data={{
-                                          creatorName: room ? (room.creatorInfo ? room.creatorInfo.username: ''):'',
-                                          creatorSurname: room ? (room.creatorInfo ? room.creatorInfo.surname: ''):'',
-                                          imgUrl : room ? (room.creatorInfo ? room.creatorInfo.imgUrl: ''):'',
-                                          roomName: room ? (room.roomName ? room.roomName : ''):'',
-                                          viewers: room ? (room.spectators ? room.spectators : 0):0,
-                                          isExamBoostCompetition : room ? (room.competitionInfo && room.competitionInfo.isExamBoostCompetition ? room.competitionInfo.isExamBoostCompetition : false):false
-                            }}
-                      competitionInfo={{
-                                questionNbr: room ? (room.competitionInfo ? room.competitionInfo.questionsNbr : 0):0,
-                                CreatorName: room ? (room.creatorInfo ? room.creatorInfo.username: ''):'',
-                                CreatorSurname: room ? (room.creatorInfo ? room.creatorInfo.surname: ''):'',
-                                instrunctions: text as any,
-                                isIA: room ? (room.isManagedByIA ? true: false) : false,
-                                totalMinutes: room ? room.totalTimes: null,
-                                endTime: room ? room.finalHour : null,
-                                serverNow: room ? room.serverNow : null
-                      }}          
-      />
-
-     <View className="mt-[50%] mb-[10px] justify-center items-center">
-         <MiniDashboard 
-              questionAnswered={questionAnswered} 
-              totalQuestion={room ? (room.competitionInfo ? room.competitionInfo.questionsNbr : 0):0}
-              score={score}
-              manager={room ? (room.isManagedByIA ? " Genesys-In IA" : "Owner"): ''}
-              winnerPrice={room ? (room.competitionInfo ? room.competitionInfo.winnerPrice : 0):0}
-         />
-        <QuestionAnswer 
-                competitionInfo={
-                  {
-                    creatorAvatarUrl: room ? (room.creatorInfo ? room.creatorInfo.imgUrl: ''):'',
-                    creatorName: room ? (room.creatorInfo ? room.creatorInfo.username: ''):'',
-                    competitionName: room ? (room.roomName ? room.roomName : ''):'',
-                    createdAt: room && room.createdAt ? (new Date(room.createdAt)) : null,
+        return (
+          <SafeAreaView style={{ flex: 1, backgroundColor: "#E8F5FA" }}>
+            <StatusBar hidden={true} />
+        
+            <KeyboardAwareScrollView
+              style={{ flex: 1 }}
+              contentContainerStyle={{ flexGrow: 1, paddingBottom: 30 }}
+              enableOnAndroid={true}
+              extraScrollHeight={Platform.OS === "android" ? 30 : 20}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+            >
+              <View style={{ flexDirection: "row" }} className="w-full">
+                <View style={{ flex: 1 }}>
+                  <CompetitionInfos
+                    data={{
+                      creatorName: room?.creatorInfo?.username ?? "",
+                      creatorSurname: room?.creatorInfo?.surname ?? "",
+                      imgUrl: room?.creatorInfo?.imgUrl ?? "",
+                      roomName: room?.roomName ?? "",
+                      viewers: room?.spectators ?? 0,
+                      isExamBoostCompetition: room?.competitionInfo?.isExamBoostCompetition ?? false,
+                    }}
+                    competitionInfo={{
+                      questionNbr: room?.competitionInfo?.questionsNbr ?? 0,
+                      CreatorName: room?.creatorInfo?.username ?? "",
+                      CreatorSurname: room?.creatorInfo?.surname ?? "",
+                      instrunctions: text as any,
+                      isIA: room?.isManagedByIA ?? false,
+                      totalMinutes: room?.totalTimes ?? null,
+                      endTime: room?.finalHour ?? null,
+                      serverNow: room?.serverNow ?? null,
+                    }}
+                  />
+                </View>
+        
+                <View style={{ flex: 1 }}>
+                  <OnlineUsers
+                    user={room?.users ?? []}
+                    max={room?.competitionInfo?.maxUsers ?? 0}
+                  />
+                </View>
+              </View>
+        
+              <View className="mb-4 items-center px-2">
+                <MiniDashboard
+                  questionAnswered={questionAnswered}
+                  totalQuestion={room?.competitionInfo?.questionsNbr ?? 0}
+                  score={score}
+                  manager={room?.isManagedByIA ? "Genesys-In IA" : "Owner"}
+                  winnerPrice={room?.competitionInfo?.winnerPrice ?? 0}
+                />
+        
+                <QuestionAnswer
+                  competitionInfo={{
+                    creatorAvatarUrl: room?.creatorInfo?.imgUrl ?? "",
+                    creatorName: room?.creatorInfo?.username ?? "",
+                    competitionName: room?.roomName ?? "",
+                    createdAt: room?.createdAt ? new Date(room.createdAt) : null,
                     questionAnswered: questionAnswered,
-                    totalQuestions: room && room.competitionInfo ? room.competitionInfo.questionsNbr: 0,
+                    totalQuestions: room?.competitionInfo?.questionsNbr ?? 0,
+                  }}
+                  question={
+                    room?.questions
+                      ? room.isManagedByIA
+                        ? currentQuestion ?? null
+                        : room.questions[0] ?? null
+                      : null
                   }
-                } 
-                question={room && room.questions ? 
-                                    room.isManagedByIA ?
-                                        (currentQuestion ? currentQuestion: null)
-                                        : (room.questions.length > 0 ? room.questions[0]: null)
-                                    : null 
-                                } 
-                loading={socketWaiting}   
-                userData={{
-                    id: user ? user.id: 0, 
-                    username: user ? user.username : "",
-                    surname: user ? user.surname : "",
-                    imgUrl : user ? user.imgUrl : "",
-                    email : user ? user.email : "",
-                    score: 0
-                }}   
-                onAnswer={handleAnswered}
-          />
-      </View>
-    </View>
-
-    </ScrollView>
-    </SafeAreaView>
-    
-  );
+                  loading={socketWaiting}
+                  userData={{
+                    id: user?.id ?? 0,
+                    username: user?.username ?? "",
+                    surname: user?.surname ?? "",
+                    imgUrl: user?.imgUrl ?? "",
+                    email: user?.email ?? "",
+                    score: 0,
+                  }}
+                  onAnswer={handleAnswered}
+                />
+              </View>
+            </KeyboardAwareScrollView>
+          </SafeAreaView>
+        );
 }

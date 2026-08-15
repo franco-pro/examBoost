@@ -72,69 +72,71 @@ export default function ViewerScreen() {
     }
   }, [competitionFinished])
 
-    return (
-      <SafeAreaView style={{ flex: 1 }}>
-        <StatusBar hidden={true} />
-        {
-          !competitionFinished && !competitionStop && (
-             <ScrollView   style={{ flex: 1, backgroundColor: "#E8F5FA" }}
-            contentContainerStyle={{ flexGrow: 1 }}>
-        
-            <View>
-             <OnlineUsers user={room ? (room.users ?? []):[]} max={room ? (room.competitionInfo ? room.competitionInfo.maxUsers: 0):0} />
-             <CompetitionInfos data={{
-                                      creatorName: room ? (room.creatorInfo ? room.creatorInfo.username: ''):'',
-                                      creatorSurname: room ? (room.creatorInfo ? room.creatorInfo.surname: ''):'',
-                                      imgUrl : room ? (room.creatorInfo ? room.creatorInfo.imgUrl: ''):'',
-                                      roomName: room ? (room.roomName ? room.roomName : ''):'',
-                                      viewers: room ? (room.spectators ? room.spectators : 0):0,
-                                      isExamBoostCompetition : room ? (room.competitionInfo && room.competitionInfo.isExamBoostCompetition ? room.competitionInfo.isExamBoostCompetition : false):false
-                                      }}
-                              competitionInfo={{
-                                        questionNbr: room ? (room.competitionInfo ? room.competitionInfo.questionsNbr : 0):0,
-                                        CreatorName: room ? (room.creatorInfo ? room.creatorInfo.username: ''):'',
-                                        CreatorSurname: room ? (room.creatorInfo ? room.creatorInfo.surname: ''):'',
-                                        instrunctions: text as any,
-                                        isIA: room ? room.isManagedByIA: false,
-                                        totalMinutes: room ? room.totalTimes: null,
-                                        endTime: room ? room.finalHour : null,
-                                        serverNow: room ? room.serverNow : null
-                             }} 
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#E8F5FA" }}>
+      <StatusBar hidden={true} />
+  
+      {!competitionFinished && !competitionStop && (
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 30 }}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={{ flexDirection: "row" }} className="w-full">
+            <View style={{ flex: 1 }}>
+              <CompetitionInfos
+                data={{
+                  creatorName: room?.creatorInfo?.username ?? "",
+                  creatorSurname: room?.creatorInfo?.surname ?? "",
+                  imgUrl: room?.creatorInfo?.imgUrl ?? "",
+                  roomName: room?.roomName ?? "",
+                  viewers: room?.spectators ?? 0,
+                  isExamBoostCompetition:
+                    room?.competitionInfo?.isExamBoostCompetition ?? false,
+                }}
+                competitionInfo={{
+                  questionNbr: room?.competitionInfo?.questionsNbr ?? 0,
+                  CreatorName: room?.creatorInfo?.username ?? "",
+                  CreatorSurname: room?.creatorInfo?.surname ?? "",
+                  instrunctions: text as any,
+                  isIA: room?.isManagedByIA ?? false,
+                  totalMinutes: room?.totalTimes ?? null,
+                  endTime: room?.finalHour ?? null,
+                  serverNow: room?.serverNow ?? null,
+                }}
               />
-        
-             
-             <View className="mt-[65%] mb-[10px] justify-center items-center"> 
-   
-                  <UsersAnswers competitionName={room ? room.roomName: ''} />
-
-                
-              </View>
             </View>
-        
-            </ScrollView>
-          )
-        }
-           
-
-            {
-              !competitionStop && competitionFinished && (
-                 <CompetitionEndedAlert isOpen={isAlertCompetOpen} onClose={onCompetitionEndAlertConfirm} />
-                
-              )
-            }
-
-            {
-              competitionStop && !competitionFinished && (
-                <CompetitionStopedAlert
-                              isOpen={isAlertOpen}
-                              message={message ?? null }
-                              onClose={() => onClosingConfirm()}
-                              
-                            />
-              )
-            }
-          </SafeAreaView>
-    );
+  
+            <View style={{ flex: 1 }}>
+              <OnlineUsers
+                user={room?.users ?? []}
+                max={room?.competitionInfo?.maxUsers ?? 0}
+              />
+            </View>
+          </View>
+  
+          <View className="mt-6 mb-2 justify-center items-center px-2">
+            <UsersAnswers competitionName={room?.roomName ?? ""} />
+          </View>
+        </ScrollView>
+      )}
+  
+      {!competitionStop && competitionFinished && (
+        <CompetitionEndedAlert
+          isOpen={isAlertCompetOpen}
+          onClose={onCompetitionEndAlertConfirm}
+        />
+      )}
+  
+      {competitionStop && (
+        <CompetitionStopedAlert
+          isOpen={isAlertOpen}
+          message={message ?? null}
+          onClose={() => onClosingConfirm()}
+        />
+      )}
+    </SafeAreaView>
+  );
 
 
 }

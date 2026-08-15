@@ -23,12 +23,12 @@ export default function CompetitionStopedAlert({isOpen, onClose, message}: Dialo
             </Box>
             <AlertDialogHeader>
             <Heading className="text-typography-950 font-semibold" size="xl">
-                {t("mycompetition.competition.stoppped.label")}
+                {t("mycompetition.competition.actions.stopped.label")}
             </Heading>
           </AlertDialogHeader>
           <AlertDialogBody className="mt-3 mb-4">
             <Text size="xl">
-            {message ?? t("mycompetition.competition.stopped.text")}
+            {message ?? t("mycompetition.competition.actions.stopped.text")}
              {' \n'}
             
              
@@ -41,7 +41,7 @@ export default function CompetitionStopedAlert({isOpen, onClose, message}: Dialo
               size="lg"
             
             >
-              <ButtonText> {t("mycompetition.competition.quit")}  </ButtonText>
+              <ButtonText> {t("mycompetition.competition.actions.quit")}  </ButtonText>
             </Button>
           </AlertDialogFooter>
           </AlertDialogContent>

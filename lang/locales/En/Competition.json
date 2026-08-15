@@ -158,10 +158,12 @@
     "no_connected_user": "No participant",
     "question_answered": "Questions answered",
     "question_manager": "Manager of the process",
-    "owner": "Owner"
+    "owner": "Owner",
+    "remainig_time": "Remaining time",
+    "game_time": "Game time"
  },
  "form_question": {
-    "choice_mistake_error": "Invalid form. No choice matches the correct answer.",
+    "choice_mistake_error": "Invalid form. No choice matches the correct answer. Pay attention to unnecessary spaces in the input fields.",
     "send": "Send",
     "invalid": {
       "question": "Invalid Question",
@@ -187,7 +189,7 @@
         "nb": "Invalid choice" 
       },
       "third_choice": {
-        "label": "Third  choice",
+        "label": "Third choice",
         "nb": "Invalid choice" 
       },
       "correctAnswwer": {
@@ -246,6 +248,8 @@
         }
       }
     },
+  "registered": "Already registered",
+  "registed": "Registered",
   "competitionDetails": "Competition Details",
   "totalQuestion": "Total Questions",
   "see_result": "View Results",

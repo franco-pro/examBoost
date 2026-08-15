@@ -60,8 +60,9 @@ const Leaderboard = () => {
     const data = roomResult && roomResult.users ? roomResult.users : []
 
     const top3 = data.length > 2 ? data.slice(0, 3): data.slice(0, 2);
+
     const others = data.length > 2 ? data.slice(3): [];  
-        
+    console.log('others :', others);
     const getInitials = (name: any) => {
       return name ? name.split(" ").map((n: any) => n[0]).join("").toUpperCase() : "";
     };
