@@ -354,14 +354,6 @@ export default function Creation() {
                     })}
                   </Text>
 
-                {/* Sujet / date */}
-                <Text className="text-gray-500 text-sm mt-1">
-                  {new Date(comp.date).toLocaleDateString("fr-FR", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </Text>
 
                 {/* Participants et statut */}
                 <View className="flex-row justify-between items-center mt-2">
@@ -392,8 +384,10 @@ export default function Creation() {
                     </Text>
                   </View>
                 </View>
-
-                 <Ionicons name="chevron-forward" size={22} color="#9ca3af" />
+                    <Text>
+                       Consulter &nbsp; &nbsp;
+                       <Ionicons name="chevron-forward" size={22} color="#9ca3af" />
+                    </Text>
                 </View>
 
               </TouchableOpacity>

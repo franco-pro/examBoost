@@ -2,7 +2,7 @@ import { LanguageContext } from "@/app/context/LanguageProvider";
 import DialogDelete from "@/app/helper/Dialogs/delete";
 import InvitationPrompts from "@/app/helper/Dialogs/invitation";
 import FullscreenLoader from "@/app/helper/Dialogs/loaderFullScreen";
-import { setActionDoneNULL, setSuscriptionErrorNULL } from "@/app/hooks/redux/competitions-suscriptions/subscription.slice";
+import { addSusbcriptions, setActionDoneNULL, setSuscriptionErrorNULL } from "@/app/hooks/redux/competitions-suscriptions/subscription.slice";
 import { createSubscription } from "@/app/hooks/redux/competitions-suscriptions/subscription.thunks";
 import { setCompetitioErrorNull, setSelectedCompetitionNull, updateSelectedCompetition, updateStatut, updateSuscribers } from "@/app/hooks/redux/competitions/competitions.slice";
 import { deleteOne } from "@/app/hooks/redux/competitions/competitions.thunks";
@@ -101,6 +101,9 @@ export default function Information() {
               }
             }
            ));
+           dispatch(addSusbcriptions(
+            selectedCompetition as Competition
+           ));
           showToast(t("mycompetition.information.success.subscriptionDone"), "Success", "success");
              setTimeout(() => {
                 router.back();
@@ -156,6 +159,11 @@ export default function Information() {
      
     
   }, [waitingJoining])
+
+  function changeDeleteBoolStatut(){
+    setDeleteIsOpen(!isDeleteOpen)
+
+  }
 
   function deleteCompetition(competitionID: number){
       if(competitionID){
@@ -362,22 +370,15 @@ function userJoinCompetition(){
               <Button
                 action="negative"
                 className="ml-2 rounded-2xl "
-                disabled={selectedCompetition.statut !== "UPCOMING"}
-                onPress={() => setDeleteIsOpen(true)}
+                disabled={selectedCompetition.statut === "ONGOING"}
+                onPress={changeDeleteBoolStatut}
               >
                 <ButtonText size="sm" className="text-typography-white">
                   <Ionicons name="trash" size={22} color={"#fffff"} />
                 </ButtonText>
               </Button>
 
-              <DialogDelete
-                isOpen={isDeleteOpen}
-                onClose={() => setDeleteIsOpen(false)}
-                onConfirm={() => deleteCompetition(selectedCompetition.id)}
-                bodyText={t(DialogDeleteText.competition_delete_body)}
-                headText={t(DialogDeleteText.competition_delete_head)}
-                isLoading={loading}
-              />
+             
             </HStack>
           )}
 
@@ -643,9 +644,9 @@ function userJoinCompetition(){
                 />
                 
                 <Text className="ml-2 text-gray-700">
-                  
+                   
                   {
-                    selectedCompetition?.statut == "UPCOMING" ? 'Déjà inscrits':'Inscrits'
+                    selectedCompetition?.statut == "UPCOMING" ?  t("mycompetition.information.registered"): t("mycompetition.information.registed")
                   }
                 </Text>
               </View>
@@ -688,10 +689,10 @@ function userJoinCompetition(){
           >
 
           {(user?.role.toLowerCase() === "superadmin") &&
-            (selectedCompetition?.statut === "UPCOMING" || selectedCompetition?.statut === "CANCELLED") && (
+            (selectedCompetition?.statut !== "ONGOING") && (
               <TouchableOpacity
                 className="flex-row items-center bg-red-500 self-start px-4 py-2 rounded-full"
-                onPress={() => setDeleteIsOpen(true)}
+                onPress={changeDeleteBoolStatut}
               >
                 <Ionicons name="trash-outline" size={16} color="#ffffff" />
                 <Text className="text-white text-xs font-semibold ml-2">Suppression Admin</Text>
@@ -790,7 +791,14 @@ function userJoinCompetition(){
       </ScrollView>
       <Toast config={toastConfig} />
       <FullscreenLoader visible={waitingLaunching || loading || waitingJoining || suscriptionLoading} />
-     
+      <DialogDelete
+                isOpen={isDeleteOpen}
+                onClose={() => setDeleteIsOpen(false)}
+                onConfirm={() => deleteCompetition((selectedCompetition && selectedCompetition.id) ? selectedCompetition.id:0)}
+                bodyText={t(DialogDeleteText.competition_delete_body)}
+                headText={t(DialogDeleteText.competition_delete_head)}
+                isLoading={loading}
+              />
       
     </SafeAreaView>
   );

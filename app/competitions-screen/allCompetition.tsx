@@ -20,6 +20,7 @@ import { getCompetitionList, searchCompetitions } from "../hooks/redux/competiti
 import { clearData, setSelectedCompetition } from "../hooks/redux/competitions/competitions.slice";
 import Competition from "../hooks/services/competitions/competition.entity";
 import { C, CompetitionCard } from "../helper/card/listcompetitionCard";
+import { useTranslation } from "react-i18next";
 
 const PAGE_SIZE = 20;
 
@@ -330,7 +331,7 @@ export default function CompetitionListScreen() {
   const { user } = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
   const router = useRouter();
-
+  const {t} = useTranslation("competition")
   const [selectedType, setSelectedType] = useState<Competition["type"] | "ALL">("ALL");
   const [selectedStatut, setSelectedStatut] = useState<Competition["statut"] | "ALL">("ALL");
   const [searchQuery, setSearchQuery] = useState("");
@@ -538,7 +539,7 @@ export default function CompetitionListScreen() {
             textTransform: "uppercase",
           }}
         >
-          Découvrez
+          {t("mycompetition.list.discover")}
         </Text>
         <Text
           style={{
@@ -550,11 +551,11 @@ export default function CompetitionListScreen() {
             marginTop: 2,
           }}
         >
-          Compétitions
+          {t("mycompetition.list.competition")}
         </Text>
         <Text style={{ color: C.orange, fontSize: 12, marginTop: 4 }}>
           {searchLoading
-            ? "Recherche en cours…"
+            ? t("mycompetition.list.searchProgress")
             : `${resultCount} résultat${resultCount > 1 ? "s" : ""}`}
         </Text>
       </View>
@@ -662,7 +663,7 @@ export default function CompetitionListScreen() {
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
           <ActivityIndicator color={C.orange} />
           <Text style={{ color: C.textSecondary, fontSize: 13 }}>
-            Chargement…
+            {t("mycompetition.list.competition")}…
           </Text>
         </View>
       )}
@@ -674,7 +675,7 @@ export default function CompetitionListScreen() {
             color={C.textMuted}
           />
           <Text style={{ color: C.textMuted, fontSize: 12 }}>
-            Toutes les compétitions sont affichées
+           {t("mycompetition.list.all_loaded")}
           </Text>
         </View>
       )}
@@ -701,7 +702,7 @@ export default function CompetitionListScreen() {
               marginBottom: 6,
             }}
           >
-            Aucune compétition
+            {t("mycompetition.list.no_result")}
           </Text>
           <Text
             style={{
@@ -711,8 +712,8 @@ export default function CompetitionListScreen() {
             }}
           >
             {isSearchMode
-              ? "Aucun résultat pour cette recherche."
-              : "Aucun résultat pour ces filtres."}
+              ? t("mycompetition.list.search_no_result")
+              : t("mycompetition.list.filter_no_result")}
           </Text>
         </View>
       )}

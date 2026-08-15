@@ -246,18 +246,14 @@ export default function FormQuestion({ competitionInfo }: { competitionInfo: Com
   };
 
   return (
-    <KeyboardAvoidingView
-      className="flex-1 bg-gray-50 pt-[40px] w-full max-w-full pb-[50px] px-4"
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={0}
-    >
+
       <Card size="lg" variant="elevated" className="p-5 shadow-xl rounded-lg max-w-[500px] w-full self-center">
         <Text className="text-sm font-normal mb-2 text-typography-700">
           {t("mycompetition.competition.online_game.created_at")}: {competitionInfo.createdAt}
         </Text>
 
         <VStack className="mb-6 max-h-[400px]">
-          <ScrollView>
+          <ScrollView nestedScrollEnabled={true} keyboardShouldPersistTaps="handled">
             <Heading size="md" className="mb-4 flex items-center justify-center">
               {competitionInfo.competitionName}
             </Heading>
@@ -396,7 +392,7 @@ export default function FormQuestion({ competitionInfo }: { competitionInfo: Com
 
                 <FormControl isInvalid={touched.corretAnswer && !!errors.corretAnswer} isRequired className="mt-3">
                   <FormControlLabel>
-                    <FormControlLabelText>Reponse correct</FormControlLabelText>
+                    <FormControlLabelText>{t("mycompetition.competition.form_question.model.correctAnswer.label")}  </FormControlLabelText>
                   </FormControlLabel>
                   <Input>
                     <InputField
@@ -471,6 +467,5 @@ export default function FormQuestion({ competitionInfo }: { competitionInfo: Com
           </Button>}
         <StopCompetition isOpen={isOpen} onClose={() => setIsOpen(false)} onConfirm={handleLeavingCompetition} isAI={competitionInfo.isAI} />
       </Card>
-    </KeyboardAvoidingView>
   );
 }

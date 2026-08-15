@@ -16,11 +16,11 @@
       "loginPhrase": "Already have an account? "
     },
     "label": {
-      "name": "Your Name",
-      "lastName": "Your First Name",
-      "email": "Your Email",
+      "name": "Name",
+      "lastName": "First Name",
+      "email": "Email",
       "phone": "Phone Number",
-      "cycle": "Your current Cycle",
+      "cycle": "current Cycle",
       "secondary": "Secondary",
       "higher": "Higher",
       "password": "Password",
@@ -28,7 +28,7 @@
       "title": "Create an Account",
       "subtitle": "Join the EXAMBOOST community!",
       "option":"Select Option",
-      "level": "Your Level"
+      "level": "Level"
     }
   }
 }

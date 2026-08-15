@@ -1,5 +1,13 @@
 {
   "onboarding": {
+    "language":{
+      "welcome": "Bienvenue sur",
+      "favorite_language": "Choisir votre langue favorite",
+      "english": "Anglais",
+      "french": "Francais",
+      "changeLanguageText": "Votre langue favorite peut être modifiée à n`importe quel moment dans les paramètres !",
+      "button": "Suivant"
+    },
     "lottie1": {
       "title": "Votre succès commence ici !",
       "subtitle": "La plateforme qui transforme vos révisions en véritable expérience d'apprentissage. Préparez-vous à exceller dans tous vos examens officiels !"

@@ -158,7 +158,9 @@
     "no_connected_user": "No participant",
     "question_answered": "Questions answered",
     "question_manager": "Manager of the process",
-    "owner": "Owner"
+    "owner": "Owner",
+    "remainig_time": "Remaining time",
+    "game_time": "Game time"
  },
  "form_question": {
     "choice_mistake_error": "Invalid form. No choice matches the correct answer.",
@@ -246,6 +248,8 @@
         }
       }
     },
+  "registered": "Already registered",
+  "registed": "Registered",
   "competitionDetails": "Competition Details",
   "totalQuestion": "Total Questions",
   "see_result": "View Results",
@@ -304,7 +308,17 @@
     "subscribers": "Registered",
     "free_amount": "Free",
     "totally_free": "Fully free"
-  }
+  },
+"list":{
+  "no_competition": "No competitions available",
+  "all_loaded": "All competitions loaded",
+  "loading": "Loading competitions...",
+  "competition": "Competition",
+  "discover": "Discover",
+  "filter_no_result": "No competitions found for this filter",
+  "search_no_result": "No results found for this search"
+}
+
 },
 
 "participation" : {

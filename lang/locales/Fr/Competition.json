@@ -160,7 +160,9 @@
       "no_connected_user": "Aucun participant",
       "question_answered": "Questions répondues",
       "question_manager": "Gérant du déroulement",
-      "owner": "Organisateur"
+      "owner": "Organisateur",
+      "remainig_time": "Temps Restant",
+      "game_time": "Temps de Jeu"
    },
    "form_question": {
       "choice_mistake_error": "Formulaire invalide Aucun choix ne correspond à la reponse correct.",
@@ -193,7 +195,7 @@
           "nb": "Choix invalide" 
         },
         "correctAnswwer": {
-          "label": "Réponse correct",
+          "label": "Réponse correcte",
           "nb": "reponse invalide"
         },
         "questionLeft": "Nombre de question restantes",
@@ -248,6 +250,8 @@
         }
       }
     },
+    "registered": "Déjà inscrits",
+    "registed": "Inscrit",
     "competitionDetails": "Détails du concours",
     "totalQuestion": "Questions totales",
     "see_result": "Voir les résultats",
@@ -307,8 +311,17 @@
       "subscribers": "Inscrits",
       "free_amount": "Gratuit",
       "totally_free": "Entièrement gratuit"
-    }
-  
+    },
+  "list":{
+    "no_competition": "Aucune compétition",
+    "all_loaded": "Toutes les compétitions sont affichées",
+    "loading": "Chargement des competitions…",
+    "searchProgress": "Recherche en cours…",
+    "filter_no_result": "Aucun résultat trouvé pour ces filtres",
+    "search_no_result": "Aucun résultat trouvé pour cette recherche",
+    "competition": "Compétition",
+    "discover": "Découvrez"
+  }
 },
 
 "participation": {

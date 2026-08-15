@@ -26,19 +26,24 @@ export default function CompetitionInfos({data, competitionInfo}: CompetitionInf
         // dispatch(setTimeOff())
     }
     return (
-        <VStack className="absolute top-0 left-0 w-[48%] max-w-[50%]"  space="xs">
-            <Card className="bg-primary-defaultBlue p-5 shadow-xl  rounded-lg h-24 m-3 flex items-center justify-center">
+        <VStack className="w-full" space="xs">
+        <Card className="bg-primary-defaultBlue p-5 shadow-xl rounded-lg h-24 m-3 flex items-center justify-center">
                 <Text className="text-1xl  font-bold text-typography-white">
                    {
-                        competitionInfo.isIA ? 'Temps Restant':'Temps de Jeu'
+                        competitionInfo.isIA ? t("mycompetition.competition.online_game.remainig_time") :t("mycompetition.competition.online_game.game_time")
                    } 
                 </Text>
-                <Heading size="lg" className="text-primary-defaultOrange">
-                    {/* {heure}:{minute}:{seconde} */}
-                    {
-                        !competitionInfo.isIA ? (<Timer />):(<Countdown serverNowUTC={competitionInfo.serverNow ? competitionInfo.serverNow:null} targetDateUTC={competitionInfo.endTime ? competitionInfo.endTime : null } onFinish={onFinish}/>)
-                    } 
-                </Heading>
+                <HStack className="flex-1">
+                    <Heading 
+                        size="sm" 
+                        className="mb-1 text-typography-white flex-shrink"
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                    >
+                        {data.isExamBoostCompetition ? "ExamBoost" : data.creatorSurname + " " + data.creatorName}
+                    </Heading>
+                    <Text><Ionicons name="checkmark-circle" size={16} color="blue" /></Text>
+                    </HStack>
                 <Box>
                     <HStack>
                          <Icon className="text-primary-defaultOrange" as={EyeIcon} />
@@ -74,8 +79,8 @@ export default function CompetitionInfos({data, competitionInfo}: CompetitionInf
                     }
                 
                     </Avatar>
-                    <VStack>
-                        <HStack>
+                    <VStack className="flex-1">
+                        <HStack className="flex-1">
                             <Heading size="sm" className="mb-1 text-typography-white">
                             { 
                                 data.isExamBoostCompetition ? "ExamBoost":

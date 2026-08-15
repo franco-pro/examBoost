@@ -13,16 +13,22 @@ import {
 } from "@/components/ui/radio";
 import { ArrowRightIcon, CircleIcon } from "@/components/ui/icon";
 import { BASE_URL } from "../api/apiClient";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Index() {
   const navigation = useRouter();
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation("onboarding");
 
   // On s'assure d'avoir une valeur par défaut propre ("fr" ou "en")
   const [selected, setSelected] = useState<"fr" | "en">(
     (i18n.language?.split("-")[0] as "fr" | "en") || "fr",
   );
+
+  useEffect(() => {
+    if (i18n.language) {
+      setSelected(i18n.language.split("-")[0] as "fr" | "en");
+    }
+  },[i18n.language])
 
   const changeLanguage = async (lang: "fr" | "en") => {
     try {
@@ -44,11 +50,11 @@ export default function Index() {
       <View className="flex-1 justify-between items-center bg-gray-200">
         <View className="header mt-10">
           <Text className="font-semibold text-2xl text-center">
-            Bienvenue sur{" "}
+            {t("onboarding.language.welcome")}{" "}
             <Text className="text-secondary-custom-400">Examboost.</Text>
           </Text>
           <Text className="font-medium text-xl text-center mt-2">
-            Choisissez votre langue favorite
+            {t("onboarding.language.favorite_language")}
           </Text>
         </View>
 
@@ -61,10 +67,10 @@ export default function Index() {
             {/* Option Anglais */}
             <Radio value="en" size="md">
               {/* CORRECTIF : L'indicateur est placé AVANT le label */}
-              <RadioIndicator >
+              <RadioIndicator>
                 <RadioIcon as={CircleIcon} />
               </RadioIndicator>
-              <RadioLabel>Anglais</RadioLabel>
+              <RadioLabel>{t("onboarding.language.english")}</RadioLabel>
             </Radio>
 
             {/* Option Français */}
@@ -72,15 +78,14 @@ export default function Index() {
               <RadioIndicator>
                 <RadioIcon as={CircleIcon} />
               </RadioIndicator>
-              <RadioLabel>Français</RadioLabel>
+              <RadioLabel>{t("onboarding.language.french")}</RadioLabel>
             </Radio>
           </RadioGroup>
         </View>
 
         <View className="footer gap-10">
           <Text className="text-center font-light text-base mx-5">
-            Votre langue favorite peut être modifiée à n`importe quel moment
-            dans les paramètres
+            {t("onboarding.language.changeLanguageText")}
           </Text>
 
           <Button
@@ -90,7 +95,7 @@ export default function Index() {
             action="primary"
             className="w-[200px] mx-auto mb-10 rounded-xl bg-primary-custom-300 items-center justify-center"
           >
-            <ButtonText>Suivant</ButtonText>
+            <ButtonText>{t("onboarding.language.button")}</ButtonText>
             <ButtonIcon as={ArrowRightIcon} />
           </Button>
         </View>
