@@ -384,10 +384,10 @@ export default function Creation() {
                     </Text>
                   </View>
                 </View>
-                    <Text>
+                    {/* <Text>
                        Consulter &nbsp; &nbsp;
                        <Ionicons name="chevron-forward" size={22} color="#9ca3af" />
-                    </Text>
+                    </Text> */}
                 </View>
 
               </TouchableOpacity>
