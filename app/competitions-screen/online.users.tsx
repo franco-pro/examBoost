@@ -142,36 +142,44 @@ useFocusEffect(
     <StatusBar hidden={true} />
     
     <ScrollView style={{ flex: 1, backgroundColor: "#E8F5FA" }}
-    contentContainerStyle={{ flexGrow: 1 }}>
+              contentContainerStyle={{ flexGrow: 1 }}
+     >
+        <View style={{ flexDirection: "row" }} className="w-full">
+                <View style={{ flex: 1 }}>
+                  <CompetitionInfos data={{
+                                                                creatorName: room ? (room.creatorInfo ? room.creatorInfo.username: ''):'',
+                                                                creatorSurname: room ? (room.creatorInfo ? room.creatorInfo.surname: ''):'',
+                                                                imgUrl : room ? (room.creatorInfo ? room.creatorInfo.imgUrl: ''):'',
+                                                                roomName: room ? (room.roomName ? room.roomName : ''):'',
+                                                                viewers: room ? (room.spectators ? room.spectators : 0):0,
+                                                                isExamBoostCompetition : room ? (room.competitionInfo && room.competitionInfo.isExamBoostCompetition ? room.competitionInfo.isExamBoostCompetition : false):false
+                                                                }}
+                                              competitionInfo={{
+                                                                  questionNbr: room ? (room.competitionInfo ? room.competitionInfo.questionsNbr : 0):0,
+                                                                  CreatorName: room ? (room.creatorInfo ? room.creatorInfo.username: ''):'',
+                                                                  CreatorSurname: room ? (room.creatorInfo ? room.creatorInfo.surname: ''):'',
+                                                                  instrunctions: text as any,
+                                                                  isIA: room ? room.isManagedByIA: false,
+                                                                  totalMinutes: room ? room.totalTimes: null,
+                                                                  endTime: room ? room.finalHour : null,
+                                                                  serverNow: room ? room.serverNow : null
+                                                      }}                    
+                            />
+                </View>
 
-    <View>
-     <OnlineUsers user={room ? (room.users ?? []) : []} max={room ? (room.competitionInfo ? room.competitionInfo.maxUsers: 0):0}/>
-    <CompetitionInfos data={{
-                                          creatorName: room ? (room.creatorInfo ? room.creatorInfo.username: ''):'',
-                                          creatorSurname: room ? (room.creatorInfo ? room.creatorInfo.surname: ''):'',
-                                          imgUrl : room ? (room.creatorInfo ? room.creatorInfo.imgUrl: ''):'',
-                                          roomName: room ? (room.roomName ? room.roomName : ''):'',
-                                          viewers: room ? (room.spectators ? room.spectators : 0):0,
-                                          isExamBoostCompetition : room ? (room.competitionInfo && room.competitionInfo.isExamBoostCompetition ? room.competitionInfo.isExamBoostCompetition : false):false
-                            }}
-                      competitionInfo={{
-                                questionNbr: room ? (room.competitionInfo ? room.competitionInfo.questionsNbr : 0):0,
-                                CreatorName: room ? (room.creatorInfo ? room.creatorInfo.username: ''):'',
-                                CreatorSurname: room ? (room.creatorInfo ? room.creatorInfo.surname: ''):'',
-                                instrunctions: text as any,
-                                isIA: room ? (room.isManagedByIA ? true: false) : false,
-                                totalMinutes: room ? room.totalTimes: null,
-                                endTime: room ? room.finalHour : null,
-                                serverNow: room ? room.serverNow : null
-                      }}          
-      />
+                <View style={{ flex: 1 }}>
+                  <OnlineUsers user={room ? (room.users ?? []) : []} max={room ? (room.competitionInfo ? room.competitionInfo.maxUsers: 0):0} />
+                </View>
 
-     <View className="mt-[50%] mb-[10px] justify-center items-center">
+        </View>
+   
+
+     <View className="mt-6 mb-[10px] justify-center items-center">
          <MiniDashboard 
               questionAnswered={questionAnswered} 
               totalQuestion={room ? (room.competitionInfo ? room.competitionInfo.questionsNbr : 0):0}
               score={score}
-              manager={room ? (room.isManagedByIA ? " Genesys-In IA" : "Owner"): ''}
+              manager={room ? (room.isManagedByIA ? "Genesys-In IA" : "Owner"): ''}
               winnerPrice={room ? (room.competitionInfo ? room.competitionInfo.winnerPrice : 0):0}
          />
         <QuestionAnswer 
@@ -203,10 +211,9 @@ useFocusEffect(
                 onAnswer={handleAnswered}
           />
       </View>
-    </View>
 
     </ScrollView>
-    </SafeAreaView>
+  </SafeAreaView>
     
   );
 }
