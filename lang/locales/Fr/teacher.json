@@ -1,0 +1,28 @@
+{
+    "teacher":{
+        "title":"Portal Enseignant",
+        "subtitle":"Envoyez des épreuves et leurs corrections aux élèves et étudiants.",
+        "form":{
+            "name":"Nom du sujet",
+            "placeHolder":"ex. Mathematique",
+            "cycle":"Cycle",
+            "secondary": "Secondaire",
+            "higher":"Higher",
+            "level":"Niveau Scolaire",
+            "placeHolder2":"Sélectioner un niveau",
+            "type":"Type de document",
+            "select_subject":"Épreuve sélectionnée",
+            "add_subject":"Ajouter une epreuve",
+            "warning":"Format PDF uniquement",
+            "add_correction":"Ajouter une Correction",
+            "warning2":"Facultatif",
+            "button":"Envoyer les documents"
+        },
+        "error":{
+            "select_subject":"Veuillez sélectionner une épreuve",
+            "no_canSubmit":"Vous ne pouvez plus envoyer de documents pour le moment. Veuillez reessayer plus tard.",
+            "send_success":"Documents envoyés avec succès",
+            "send_error":"Erreur lors de l'envoi , veuillez reesayer plus tard."
+        }
+    }
+}
