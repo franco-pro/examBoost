@@ -178,6 +178,7 @@ export default function NotificationsScreen() {
         roomId: selectedCompetition?.roomID as any,
         userID: userID,
         appLang: (language as any),
+        role: "participant",
         username: user ? user.username:"Dems",
         imgUrl: user ? user.imgUrl: "https://i.ibb.co/7R4DyhQ/Avatar-1.jpg",
         surname: user ? user.surname : "",

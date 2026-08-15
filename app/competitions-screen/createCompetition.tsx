@@ -205,7 +205,13 @@ export default function CreateCompetitionForm() {
     }
   }, [actionDone])
 
-
+  function changeExamBoostCompetition(){
+      if(isExamBoostCompetition){
+        setIsExamBoostCompetition(false)
+      }else{
+        setIsExamBoostCompetition(true)
+      }
+  }
   function showToast(message: string, title: string, type: "success"|"error"){
         Toast.show({
           type: type,
@@ -936,7 +942,7 @@ const mergeDateTime = (prevDate: Date | undefined, picked: Date, mode: "date" | 
                 <View className="flex-row items-center mb-4">
                   <Switch
                     value={isExamBoostCompetition}
-                    onValueChange={() => setIsExamBoostCompetition(true)}
+                    onValueChange={() => changeExamBoostCompetition()}
                   />
                   <Text className="ml-2">
                     {t(
