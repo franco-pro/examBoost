@@ -24,7 +24,7 @@ export default function OnlineUsers({user, max}: OnlineUsersProps) {
   const {t} = useTranslation("competition")
   return (
     //check if the list contain user
-    <Card size="lg" variant="elevated" className="p-5 shadow-xl w-[48%] max-w-[50%] absolute top-0 right-0 rounded-lg  h-64 m-3">
+    <Card size="lg" variant="elevated" className="p-5 shadow-xl w-full max-w-[400px] rounded-lg  h-64 m-3">
     <Text className="text-sm font-normal mb-2 text-typography-700">
         {date}
     </Text>

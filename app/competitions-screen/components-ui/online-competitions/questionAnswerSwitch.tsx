@@ -11,7 +11,7 @@ interface SwitchQuestionAnswerProps {
 export default function SwitchQuestionAnswer({onValueChange, value}: SwitchQuestionAnswerProps) {
   const {t} = useTranslation("competition");
   return (
-    <HStack space="md" className='mb-4'>
+    <HStack space="md" className='mb-4 mt-10'>
       <Text size="xl">Questions</Text>
 
       <Switch

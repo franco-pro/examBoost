@@ -702,7 +702,7 @@ export default function CompetitionListScreen() {
               marginBottom: 6,
             }}
           >
-            {t("mycompetition.list.no_result")}
+            {t("mycompetition.list.no_competition")}
           </Text>
           <Text
             style={{

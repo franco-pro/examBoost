@@ -71,7 +71,7 @@
         "label": "Compétition Annulée !",
         "text": "Competition Arrêter par le propriétaire de la compétition !"
       },
-      "quit": "Sortir"
+      "quit": "Quitter"
     },
    "creations_screen": {
         "new_competition": "Nouvelle competition", 
@@ -165,7 +165,7 @@
       "game_time": "Temps de Jeu"
    },
    "form_question": {
-      "choice_mistake_error": "Formulaire invalide Aucun choix ne correspond à la reponse correct.",
+      "choice_mistake_error": "Formulaire invalide Aucun choix ne correspond à la reponse correct. Faites attention aux espaces inutiles dans les champs de saisie.",
       "all_questions_sent": "Toutes les questions ont été envoyées, veuillez attendre la fin de la compétition.",
       "pleas_wait": "Veuillez patienter...",
       "send": "Envoyer",

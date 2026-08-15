@@ -163,7 +163,7 @@
     "game_time": "Game time"
  },
  "form_question": {
-    "choice_mistake_error": "Invalid form. No choice matches the correct answer.",
+    "choice_mistake_error": "Invalid form. No choice matches the correct answer. Pay attention to unnecessary spaces in the input fields.",
     "send": "Send",
     "invalid": {
       "question": "Invalid Question",
@@ -189,7 +189,7 @@
         "nb": "Invalid choice" 
       },
       "third_choice": {
-        "label": "Third  choice",
+        "label": "Third choice",
         "nb": "Invalid choice" 
       },
       "correctAnswwer": {

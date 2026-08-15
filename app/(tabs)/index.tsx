@@ -462,7 +462,6 @@ export default function Index() {
                   </Text>
                   <Ionicons name="arrow-forward" size={16} color="#ffffff" />
               </TouchableOpacity>
-              <TouchableOpacity className="border-4 border-red-700" onPress={()=> navigation.navigate("/dev-admin/pages/documents/view")}>teacher</TouchableOpacity>
               </View>
             )}
 

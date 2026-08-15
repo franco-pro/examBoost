@@ -246,226 +246,227 @@ export default function FormQuestion({ competitionInfo }: { competitionInfo: Com
   };
 
   return (
-
-      <Card size="lg" variant="elevated" className="p-5 shadow-xl rounded-lg max-w-[500px] w-full self-center">
-        <Text className="text-sm font-normal mb-2 text-typography-700">
-          {t("mycompetition.competition.online_game.created_at")}: {competitionInfo.createdAt}
-        </Text>
-
-        <VStack className="mb-6 max-h-[400px]">
-          <ScrollView nestedScrollEnabled={true} keyboardShouldPersistTaps="handled">
-            <Heading size="md" className="mb-4 flex items-center justify-center">
-              {competitionInfo.competitionName}
-            </Heading>
-
-            {allQuestionsSent ? (
-              // ---- Quota atteint : plus de formulaire, on attend la fin ----
-              <VStack className="items-center py-6" space="sm">
-                <Text className="text-typography-700 text-center font-semibold">
-                  {t("mycompetition.competition.form_question.all_questions_sent") ??
-                    "Toutes les questions ont été envoyées."}
-                </Text>
-                <Text className="text-typography-500 text-center text-sm">
-                  {t("mycompetition.competition.form_question.pleas_wait") ??
-                    "En attente de la fin de la compétition..."}
-                </Text>
-              </VStack>
-            ) : (
-              <>
-                <FormControl isInvalid={touched.timeToAnswer && !!errors.timeToAnswer} isRequired className="pt-2">
-                  <FormControlLabel>
-                    <FormControlLabelText>
-                      {t("mycompetition.competition.form_question.model.timeToAnswer.label")}:
-                    </FormControlLabelText>
-                  </FormControlLabel>
-                  <Input>
-                    <InputField
-                      value={form.timeToAnswer}
-                      onChangeText={(text) => {
-                        const numericValue = text.replace(/[^0-9]/g, "");
-                        updateField("timeToAnswer", numericValue);
-                      }}
-                      onBlur={() => handleBlur("timeToAnswer")}
-                      keyboardType="numeric"
-                    />
-                  </Input>
-                  {touched.timeToAnswer && errors.timeToAnswer.length !== 0 ? (
-                    <FormControlError>
-                      <FormControlErrorText>{errors.timeToAnswer}</FormControlErrorText>
-                    </FormControlError>
-                  ) : (
-                    <FormControlHelper>
-                      <FormControlHelperText>
-                        {t("mycompetition.competition.form_question.model.timeToAnswer.nb")}
-                      </FormControlHelperText>
-                    </FormControlHelper>
-                  )}
-                </FormControl>
-
-                <FormControl isInvalid={touched.points && !!errors.points} isRequired className="mt-3">
-                  <FormControlLabel>
-                    <FormControlLabelText>Points</FormControlLabelText>
-                  </FormControlLabel>
-                  <Input>
-                    <InputField
-                      value={form.points}
-                      onChangeText={(text) => {
-                        const numericValue = text.replace(/[^0-9]/g, "");
-                        updateField("points", numericValue);
-                      }}
-                      onBlur={() => handleBlur("points")}
-                      keyboardType="numeric"
-                    />
-                  </Input>
-                  {touched.points && errors.points.length !== 0 ? (
-                    <FormControlError>
-                      <FormControlErrorText>{errors.points}</FormControlErrorText>
-                    </FormControlError>
-                  ) : null}
-                </FormControl>
-
-                <FormControl isInvalid={touched.firsChoice && !!errors.firsChoice} isRequired className="mt-3">
-                  <FormControlLabel>
-                    <FormControlLabelText>
-                      {t("mycompetition.competition.form_question.model.first_choice.label")}
-                    </FormControlLabelText>
-                  </FormControlLabel>
-                  <Input>
-                    <InputField
-                      type="text"
-                      placeholder="First Choice"
-                      value={form.firsChoice}
-                      onChangeText={(text) => updateField("firsChoice", text)}
-                      onBlur={() => handleBlur("firsChoice")}
-                    />
-                  </Input>
-                  {touched.firsChoice && errors.firsChoice.length !== 0 ? (
-                    <FormControlError>
-                      <FormControlErrorText>{errors.firsChoice}</FormControlErrorText>
-                    </FormControlError>
-                  ) : null}
-                </FormControl>
-
-                <FormControl isInvalid={touched.secondChoice && !!errors.secondChoice} isRequired className="mt-3">
-                  <FormControlLabel>
-                    <FormControlLabelText>
-                      {t("mycompetition.competition.form_question.model.second_choice.label")}
-                    </FormControlLabelText>
-                  </FormControlLabel>
-                  <Input>
-                    <InputField
-                      type="text"
-                      placeholder="Second Choice"
-                      value={form.secondChoice}
-                      onChangeText={(text) => updateField("secondChoice", text)}
-                      onBlur={() => handleBlur("secondChoice")}
-                    />
-                  </Input>
-                  {touched.secondChoice && errors.secondChoice.length !== 0 ? (
-                    <FormControlError>
-                      <FormControlErrorText>{errors.secondChoice}</FormControlErrorText>
-                    </FormControlError>
-                  ) : null}
-                </FormControl>
-
-                <FormControl isInvalid={touched.thirdChoice && !!errors.thirdChoice} isRequired className="mt-3">
-                  <FormControlLabel>
-                    <FormControlLabelText>
-                      {t("mycompetition.competition.form_question.model.third_choice.label")}
-                    </FormControlLabelText>
-                  </FormControlLabel>
-                  <Input>
-                    <InputField
-                      type="text"
-                      placeholder="Third Choice"
-                      value={form.thirdChoice}
-                      onChangeText={(text) => updateField("thirdChoice", text)}
-                      onBlur={() => handleBlur("thirdChoice")}
-                    />
-                  </Input>
-                  {touched.thirdChoice && errors.thirdChoice.length !== 0 ? (
-                    <FormControlError>
-                      <FormControlErrorText>{errors.thirdChoice}</FormControlErrorText>
-                    </FormControlError>
-                  ) : null}
-                </FormControl>
-
-                <FormControl isInvalid={touched.corretAnswer && !!errors.corretAnswer} isRequired className="mt-3">
-                  <FormControlLabel>
-                    <FormControlLabelText>{t("mycompetition.competition.form_question.model.correctAnswer.label")}  </FormControlLabelText>
-                  </FormControlLabel>
-                  <Input>
-                    <InputField
-                      type="text"
-                      placeholder="The Correct Answer"
-                      value={form.corretAnswer}
-                      onChangeText={(text) => updateField("corretAnswer", text)}
-                      onBlur={() => handleBlur("corretAnswer")}
-                    />
-                  </Input>
-                  {touched.corretAnswer && errors.corretAnswer.length !== 0 ? (
-                    <FormControlError>
-                      <FormControlErrorText>{errors.corretAnswer}</FormControlErrorText>
-                    </FormControlError>
-                  ) : null}
-                </FormControl>
-
-                <FormControl isInvalid={touched.text && !!errors.text} isRequired size="sm" className="mt-3 max-w-[100%] w-full">
-                  <FormControlLabel>
-                    <FormControlLabelText>Question</FormControlLabelText>
-                  </FormControlLabel>
-                  <Textarea>
-                    <TextareaInput
-                      className="w-[100%]"
-                      placeholder="Enter the question..."
-                      value={form.text}
-                      onChangeText={(text) => updateField("text", text)}
-                      onBlur={() => handleBlur("text")}
-                    />
-                  </Textarea>
-                  {touched.text && errors.text.length !== 0 ? (
-                    <FormControlError>
-                      <FormControlErrorText>{errors.text}</FormControlErrorText>
-                    </FormControlError>
-                  ) : (
-                    <FormControlHelper>
-                      <FormControlHelperText>
-                        {t("mycompetition.competition.form_question.model.inf")}
-                        {'\n'}
-                        {t("mycompetition.competition.form_question.model.questionLeft")}: {questionsNbr - questionSended}
-                      </FormControlHelperText>
-                    </FormControlHelper>
-                  )}
-                </FormControl>
-
-                <Button
-                  disabled={competitionInfo.isAI || isWaiting}
-                  className={`mt-4 ${isWaiting ? "bg-gray-700" : "bg-primary-defaultBlue" }`}
-                  variant="outline"
-                  size="md"
-                  action="secondary"
-                  onPress={handleSubmitForm}
-                >
-                  <ButtonText className="text-typography-white" size="xl">
-                    {sendingBtnText}
-                  </ButtonText>
-                </Button>
-              </>
-            )}
-          </ScrollView>
+    <Card size="lg" variant="elevated" className="p-5 shadow-xl rounded-lg max-w-[400px] w-full self-center">
+      <Text className="text-sm font-normal mb-2 text-typography-700">
+        {t("mycompetition.competition.online_game.created_at")}: {competitionInfo.createdAt}
+      </Text>
+  
+      <Heading size="md" className="mb-4 text-center">
+        {competitionInfo.competitionName}
+      </Heading>
+  
+      {allQuestionsSent ? (
+        <VStack className="items-center py-6" space="sm">
+          <Text className="text-typography-700 text-center font-semibold">
+            {t("mycompetition.competition.form_question.all_questions_sent") ??
+              "Toutes les questions ont été envoyées."}
+          </Text>
+          <Text className="text-typography-500 text-center text-sm">
+            {t("mycompetition.competition.form_question.pleas_wait") ??
+              "En attente de la fin de la compétition..."}
+          </Text>
         </VStack>
-
-        <CompetitionEndedAlert isOpen={isAlertCompetOpen} onClose={onCompetitionEndAlertConfirm} />
-
-       {competitionInfo.type 
-       && (competitionInfo.type === "FREE_REGISTRATION_WITH_WINNER_PRICE" 
-       || competitionInfo.type === "TOTAL_FREE_NO_PRICE_TO_WIN") 
-       &&  <Button onPress={() => setIsOpen(true)} action="negative" className="py-2 px-4 mt-4 border-0 w-[90%] max-w-[500px] self-center">
+      ) : (
+        <VStack space="md">
+          <FormControl isInvalid={touched.timeToAnswer && !!errors.timeToAnswer} isRequired className="pt-2">
+            <FormControlLabel>
+              <FormControlLabelText>
+                {t("mycompetition.competition.form_question.model.timeToAnswer.label")}:
+              </FormControlLabelText>
+            </FormControlLabel>
+            <Input>
+              <InputField
+                value={form.timeToAnswer}
+                onChangeText={(text) => updateField("timeToAnswer", text.replace(/[^0-9]/g, ""))}
+                onBlur={() => handleBlur("timeToAnswer")}
+                keyboardType="numeric"
+              />
+            </Input>
+            {touched.timeToAnswer && errors.timeToAnswer.length !== 0 ? (
+              <FormControlError>
+                <FormControlErrorText>{errors.timeToAnswer}</FormControlErrorText>
+              </FormControlError>
+            ) : (
+              <FormControlHelper>
+                <FormControlHelperText>
+                  {t("mycompetition.competition.form_question.model.timeToAnswer.nb")}
+                </FormControlHelperText>
+              </FormControlHelper>
+            )}
+          </FormControl>
+  
+          <FormControl isInvalid={touched.points && !!errors.points} isRequired>
+            <FormControlLabel>
+              <FormControlLabelText>Points</FormControlLabelText>
+            </FormControlLabel>
+            <Input>
+              <InputField
+                value={form.points}
+                onChangeText={(text) => updateField("points", text.replace(/[^0-9]/g, ""))}
+                onBlur={() => handleBlur("points")}
+                keyboardType="numeric"
+              />
+            </Input>
+            {touched.points && errors.points.length !== 0 && (
+              <FormControlError>
+                <FormControlErrorText>{errors.points}</FormControlErrorText>
+              </FormControlError>
+            )}
+          </FormControl>
+  
+          <FormControl isInvalid={touched.firsChoice && !!errors.firsChoice} isRequired>
+            <FormControlLabel>
+              <FormControlLabelText>
+                {t("mycompetition.competition.form_question.model.first_choice.label")}
+              </FormControlLabelText>
+            </FormControlLabel>
+            <Input>
+              <InputField
+                type="text"
+                placeholder="First Choice"
+                value={form.firsChoice}
+                onChangeText={(text) => updateField("firsChoice", text)}
+                onBlur={() => handleBlur("firsChoice")}
+              />
+            </Input>
+            {touched.firsChoice && errors.firsChoice.length !== 0 && (
+              <FormControlError>
+                <FormControlErrorText>{errors.firsChoice}</FormControlErrorText>
+              </FormControlError>
+            )}
+          </FormControl>
+  
+          <FormControl isInvalid={touched.secondChoice && !!errors.secondChoice} isRequired>
+            <FormControlLabel>
+              <FormControlLabelText>
+                {t("mycompetition.competition.form_question.model.second_choice.label")}
+              </FormControlLabelText>
+            </FormControlLabel>
+            <Input>
+              <InputField
+                type="text"
+                placeholder="Second Choice"
+                value={form.secondChoice}
+                onChangeText={(text) => updateField("secondChoice", text)}
+                onBlur={() => handleBlur("secondChoice")}
+              />
+            </Input>
+            {touched.secondChoice && errors.secondChoice.length !== 0 && (
+              <FormControlError>
+                <FormControlErrorText>{errors.secondChoice}</FormControlErrorText>
+              </FormControlError>
+            )}
+          </FormControl>
+  
+          <FormControl isInvalid={touched.thirdChoice && !!errors.thirdChoice} isRequired>
+            <FormControlLabel>
+              <FormControlLabelText>
+                {t("mycompetition.competition.form_question.model.third_choice.label")}
+              </FormControlLabelText>
+            </FormControlLabel>
+            <Input>
+              <InputField
+                type="text"
+                placeholder="Third Choice"
+                value={form.thirdChoice}
+                onChangeText={(text) => updateField("thirdChoice", text)}
+                onBlur={() => handleBlur("thirdChoice")}
+              />
+            </Input>
+            {touched.thirdChoice && errors.thirdChoice.length !== 0 && (
+              <FormControlError>
+                <FormControlErrorText>{errors.thirdChoice}</FormControlErrorText>
+              </FormControlError>
+            )}
+          </FormControl>
+  
+          <FormControl isInvalid={touched.corretAnswer && !!errors.corretAnswer} isRequired>
+            <FormControlLabel>
+              <FormControlLabelText>
+                {t("mycompetition.competition.form_question.model.correctAnswwer.label")}
+              </FormControlLabelText>
+            </FormControlLabel>
+            <Input>
+              <InputField
+                type="text"
+                placeholder="The Correct Answer"
+                value={form.corretAnswer}
+                onChangeText={(text) => updateField("corretAnswer", text)}
+                onBlur={() => handleBlur("corretAnswer")}
+              />
+            </Input>
+            {touched.corretAnswer && errors.corretAnswer.length !== 0 && (
+              <FormControlError>
+                <FormControlErrorText>{errors.corretAnswer}</FormControlErrorText>
+              </FormControlError>
+            )}
+          </FormControl>
+  
+          <FormControl isInvalid={touched.text && !!errors.text} isRequired size="sm" className="w-full">
+            <FormControlLabel>
+              <FormControlLabelText>Question</FormControlLabelText>
+            </FormControlLabel>
+            <Textarea>
+              <TextareaInput
+                className="w-full"
+                placeholder="Enter the question..."
+                value={form.text}
+                onChangeText={(text) => updateField("text", text)}
+                onBlur={() => handleBlur("text")}
+              />
+            </Textarea>
+            {touched.text && errors.text.length !== 0 ? (
+              <FormControlError>
+                <FormControlErrorText>{errors.text}</FormControlErrorText>
+              </FormControlError>
+            ) : (
+              <FormControlHelper>
+                <FormControlHelperText>
+                  {t("mycompetition.competition.form_question.model.inf")}
+                  {"\n"}
+                  {t("mycompetition.competition.form_question.model.questionLeft")}: {questionsNbr - questionSended}
+                </FormControlHelperText>
+              </FormControlHelper>
+            )}
+          </FormControl>
+  
+          <Button
+            disabled={competitionInfo.isAI || isWaiting}
+            className={`mt-4 ${isWaiting ? "bg-gray-700" : "bg-primary-defaultBlue"}`}
+            variant="outline"
+            size="md"
+            action="secondary"
+            onPress={handleSubmitForm}
+          >
+            <ButtonText className="text-typography-white" size="xl">
+              {sendingBtnText}
+            </ButtonText>
+          </Button>
+        </VStack>
+      )}
+  
+      <CompetitionEndedAlert isOpen={isAlertCompetOpen} onClose={onCompetitionEndAlertConfirm} />
+  
+      {competitionInfo.type &&
+        (competitionInfo.type === "FREE_REGISTRATION_WITH_WINNER_PRICE" ||
+          competitionInfo.type === "TOTAL_FREE_NO_PRICE_TO_WIN") && (
+          <Button
+            onPress={() => setIsOpen(true)}
+            action="negative"
+            className="py-2 px-4 mt-4 border-0 w-[90%] max-w-[500px] self-center"
+          >
             <ButtonText size="sm" className="text-typography-white">
               {t("mycompetition.competition.form_question.model.stop")}
             </ButtonText>
-          </Button>}
-        <StopCompetition isOpen={isOpen} onClose={() => setIsOpen(false)} onConfirm={handleLeavingCompetition} isAI={competitionInfo.isAI} />
-      </Card>
+          </Button>
+        )}
+  
+      <StopCompetition
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        onConfirm={handleLeavingCompetition}
+        isAI={competitionInfo.isAI}
+      />
+    </Card>
   );
 }

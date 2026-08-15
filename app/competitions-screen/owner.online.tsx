@@ -9,6 +9,7 @@ import FormQuestion from "./components-ui/online-competitions/formQuestion";
 import OnlineUsers from "./components-ui/online-competitions/onlineusers";
 import SwitchQuestionAnswer from "./components-ui/online-competitions/questionAnswerSwitch";
 import UsersAnswers from "./components-ui/online-competitions/userAnswer";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function OwnerCompetitionsScreen() {
 
@@ -30,10 +31,12 @@ export default function OwnerCompetitionsScreen() {
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <StatusBar hidden={true} />
-            <KeyboardAvoidingView
-                style={{ flex: 1 }}
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
-                keyboardVerticalOffset={Platform.OS === "android" ? 24 : 0}
+            <KeyboardAwareScrollView
+               style={{ flex: 1 }}
+               contentContainerStyle={{ flexGrow: 1 }}
+               enableOnAndroid={true}
+               extraScrollHeight={Platform.OS === "android" ? 30 : 20}
+               keyboardShouldPersistTaps="handled"
             >
 
            <View style={{ flexDirection: "row" }} className="w-full">
@@ -67,10 +70,10 @@ export default function OwnerCompetitionsScreen() {
             
              <View>
              
-              <View className="mt-6 mb-[10px] justify-center items-center" style={{ zIndex: 10, elevation: 10 }}> 
-            
+              <View className="mt-[15px] mb-[10px] justify-center items-center" style={{ zIndex: 10, elevation: 10 }}> 
+                                                      
                 <SwitchQuestionAnswer value={switchQA} onValueChange={setSwitchQA}/>
-                  <View className="w-full" style={{ display: !switchQA ? 'flex' : 'none' }}>
+                  <View className="w-[90%]" style={{ display: !switchQA ? 'flex' : 'none' }}>
                     <FormQuestion competitionInfo={
                               {
                                 creatorAvatarUrl: room ? (room.creatorInfo ? room.creatorInfo.imgUrl: ''):'',
@@ -99,7 +102,7 @@ export default function OwnerCompetitionsScreen() {
               </View>
             </View>
         
-            </KeyboardAvoidingView>
+            </KeyboardAwareScrollView>
           </SafeAreaView>
     );
 
