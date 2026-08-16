@@ -1,11 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
-import type { Notification } from './types';
+import { useTranslation } from 'react-i18next';
 import { HStack } from '@/components/ui/hstack';
+import { isEphemeralNotification } from './types';
+import type { Notification } from './types';
 
 export default memo(function NotificationItem({
   notification,
+  isEphemeral,
   onDelete,
   onToggleRead,
   onPress,
@@ -14,6 +17,7 @@ export default memo(function NotificationItem({
   onAcceptInvitation,
 }: {
   notification: Notification;
+  isEphemeral?: boolean;
   onDelete?: () => void;
   onToggleRead?: () => void;
   onPress?: () => void;
@@ -21,31 +25,38 @@ export default memo(function NotificationItem({
   onOpenLink?: (id: number, actionType: string) => void;
   onAcceptInvitation?: () => void;
 }) {
-  const { title, text, type, isRead, created_at, id , competionID} = notification;
+  const { t } = useTranslation('notification');
+  const { title, text, type, isRead, created_at, id, competionID } = notification;
+
+  const ephemeral = isEphemeral ?? isEphemeralNotification(notification);
 
   const iconByType: Record<Notification['type'], keyof typeof Ionicons.glyphMap> = {
-    "INVITATION": 'information-circle',
-    "INVITATION_ACCEPTED": 'checkmark-circle',
-    "ADMIN_ALERT": 'warning',
-    "COMPETITION_START": 'alert-circle',
-    "SYSTEM": 'cog',
-    "INVITATION_DECLINED": 'close-circle',
+    INVITATION: 'information-circle',
+    INVITATION_ACCEPTED: 'checkmark-circle',
+    ADMIN_ALERT: 'warning',
+    COMPETITION_START: 'alert-circle',
+    SYSTEM: 'cog',
+    INVITATION_DECLINED: 'close-circle',
+    COMPETITION_CREATED: 'trophy',
+  } as const;
+
+  const typeColor: Record<Notification['type'], string> = {
+    INVITATION: '#38bdf8',
+    INVITATION_ACCEPTED: '#22c55e',
+    ADMIN_ALERT: '#f59e0b',
+    INVITATION_DECLINED: '#ef4444',
+    SYSTEM: '#6b7280',
+    COMPETITION_START: '#8b5cf6',
+    COMPETITION_CREATED: '#0ea5e9', 
   } as const;
 
   const iconName = iconByType[type];
-  const typeColor: Record<Notification['type'], string> = {
-    "INVITATION": '#38bdf8', // text-info-400
-    "INVITATION_ACCEPTED": '#22c55e', // text-success-500
-    "ADMIN_ALERT": '#f59e0b', // text-warning-500
-    "INVITATION_DECLINED": '#ef4444', // text-error-500
-    "SYSTEM": '#6b7280', // text-gray-500
-    "COMPETITION_START": '#8b5cf6', // text-purple-500
-  } as const;
+  const color = typeColor[type];
 
   const time = new Date(created_at);
-  const rel = timeAgo(time); 
+  const rel = timeAgo(time, t);
 
-  // Gestion du texte long: on tronque par défaut et on propose "Voir plus"
+  // Gestion du texte long : troncature par défaut avec "Voir plus"
   const [expanded, setExpanded] = useState(false);
   const isLong = useMemo(() => (text?.length ?? 0) > 140, [text]);
   const toggleExpanded = useCallback(() => setExpanded((s) => !s), []);
@@ -53,90 +64,108 @@ export default memo(function NotificationItem({
   return (
     <Pressable
       onPress={onPress}
-      className="px-4 py-3 bg-background-light dark:bg-background-dark border-b border-outline-100 dark:border-outline-800"
+      className="mx-3 my-1.5 rounded-2xl border border-outline-100 dark:border-outline-800 bg-background-light dark:bg-background-dark px-4 py-3"
       style={({ pressed }) => [{ opacity: pressed ? 0.85 : 1 }]}
       accessibilityRole="button"
       accessibilityLabel={`Notification ${title}`}
-      accessibilityHint="Appuyer pour afficher les détails"
+      accessibilityHint={t('notification.a11y_open_details')}
       hitSlop={8}
       testID={`notification-item-${id}`}
     >
       <View className="flex-row items-start gap-3">
-        <View className="mt-0.5">
-          <Ionicons name={iconName as any} size={22} color={typeColor[type]} />
+        <View
+          className="w-10 h-10 rounded-full items-center justify-center mt-0.5"
+          style={{ backgroundColor: `${color}1A` }}
+        >
+          <Ionicons name={iconName as any} size={20} color={color} />
         </View>
+
         <View className="flex-1">
           <View className="flex-row items-center gap-2">
-            {!isRead && <View className="w-2 h-2 rounded-full bg-indicator-primary" accessibilityLabel="Non lu" />}
-            <Text className={`text-base ${isRead ? 'font-medium text-typography-default/90 dark:text-typography-white/90' : 'font-semibold text-typography-default dark:text-typography-white'}`} numberOfLines={1}>
+            {!isRead && (
+              <View
+                className="w-2 h-2 rounded-full bg-indicator-primary"
+                accessibilityLabel={t('notification.unread')}
+              />
+            )}
+            <Text
+              className={`flex-1 text-base ${
+                isRead
+                  ? 'font-medium text-typography-default/90 dark:text-typography-white/90'
+                  : 'font-semibold text-typography-default dark:text-typography-white'
+              }`}
+              numberOfLines={1}
+            >
               {title}
             </Text>
           </View>
+
           <Text className="mt-0.5 text-typography-bold" numberOfLines={expanded ? undefined : 3}>
             {text}
           </Text>
-          {/*  direct pour les compétitions */}
-          {(type === "COMPETITION_START") && onOpenLink && (
+
+          {ephemeral && (
+            <View className="mt-1.5 flex-row items-center gap-1">
+              <Ionicons name="time-outline" size={12} color="#9CA3AF" />
+              <Text className="text-[11px] italic text-typography-gray">
+                {t('notification.ephemeral_notice')}
+              </Text>
+            </View>
+          )}
+
+          {type === 'COMPETITION_START' && onOpenLink && (
             <Pressable
-              onPress={() => onOpenLink(notification.competionID, "joinRoom")}
+              onPress={() => onOpenLink(competionID, 'joinRoom')}
               accessibilityRole="button"
-              accessibilityLabel="Rejoindre la compétition"
+              accessibilityLabel={t('notification.join_competition')}
               hitSlop={8}
-              className="mt-2 self-start px-2 py-1 rounded-md bg-primary-500 active:opacity-90"
+              className="mt-2 self-start flex-row items-center gap-1 px-3 py-1.5 rounded-md bg-primary-500 active:opacity-90"
             >
-              <Text className="text-xs text-white font-semibold">Rejoindre</Text>
+              <Ionicons name="enter-outline" size={14} color="#FFFFFF" />
+              <Text className="text-xs text-white font-semibold">{t('notification.join')}</Text>
             </Pressable>
           )}
 
-           {(type === "INVITATION") && onAcceptInvitation && onOpenDetails && (
-            //Hstack for multiple btns
+          {type === 'INVITATION' && onAcceptInvitation && onOpenDetails && (
             <HStack className="mt-2 self-start gap-2">
               <Pressable
-                onPress={onAcceptInvitation}// add the user as participant to the competition
+                onPress={onAcceptInvitation}
                 accessibilityRole="button"
-                accessibilityLabel="Accepter"
+                accessibilityLabel={t('notification.accept')}
                 hitSlop={8}
-                className="mt-2 self-start px-2 py-1 rounded-md bg-primary-500 active:opacity-90"
+                className="flex-row items-center gap-1 px-3 py-1.5 rounded-md bg-primary-500 active:opacity-90"
               >
-                <Text className="text-xs text-white font-semibold">Accepter 👌</Text>
+                <Ionicons name="checkmark-outline" size={14} color="#FFFFFF" />
+                <Text className="text-xs text-white font-semibold">{t('notification.accept')}</Text>
               </Pressable>
 
               <Pressable
-                onPress={()=> onOpenDetails(id, "openDetails")}
+                onPress={() => onOpenDetails(id, 'openDetails')}
                 accessibilityRole="button"
-                accessibilityLabel="Details"
+                accessibilityLabel={t('notification.details')}
                 hitSlop={8}
-                className="mt-2 self-start px-2 py-1 rounded-md bg-secondary-500 active:opacity-90"
+                className="flex-row items-center gap-1 px-3 py-1.5 rounded-md bg-secondary-500 active:opacity-90"
               >
-                <Text className="text-xs text-white font-semibold"> Details 👁️ </Text>
+                <Ionicons name="eye-outline" size={14} color="#FFFFFF" />
+                <Text className="text-xs text-white font-semibold">{t('notification.details')}</Text>
               </Pressable>
-{/* 
-              <Pressable
-                onPress={onOpenLink}
-                accessibilityRole="button"
-                accessibilityLabel="Refusé"
-                hitSlop={8}
-                className="mt-2 self-start px-2 py-1 rounded-md bg-error-500 active:opacity-90"
-              >
-                <Text className="text-xs text-white font-semibold">Refusé et supprimé 🚫</Text>
-              </Pressable> */}
             </HStack>
-          
           )}
 
           {isLong && (
             <Pressable
               onPress={toggleExpanded}
               accessibilityRole="button"
-              accessibilityLabel={expanded ? 'Réduire le texte' : 'Voir plus'}
+              accessibilityLabel={expanded ? t('notification.see_less') : t('notification.see_more')}
               hitSlop={8}
-              className="mt-1 self-start px-2 py-0.5 rounded-md bg-outline-50 dark:bg-outline-800 active:opacity-80"
+              className="mt-1.5 self-start px-2 py-0.5 rounded-md bg-outline-50 dark:bg-outline-800 active:opacity-80"
             >
               <Text className="text-xs text-typography-default dark:text-typography-white">
-                {expanded ? 'Voir moins' : 'Voir plus'}
+                {expanded ? t('notification.see_less') : t('notification.see_more')}
               </Text>
             </Pressable>
           )}
+
           <View className="mt-2 flex-row items-center gap-4">
             <Text className="text-xs text-typography-gray">{rel}</Text>
             <View className="flex-row items-center gap-2 ml-auto">
@@ -145,25 +174,25 @@ export default memo(function NotificationItem({
                   onPress={onToggleRead}
                   className="p-2 rounded-md bg-outline-50 dark:bg-outline-800 active:opacity-80"
                   accessibilityRole="button"
-                  accessibilityLabel={'Marquer comme non lu'}
+                  accessibilityLabel={t('notification.mark_unread')}
                   hitSlop={8}
                   testID={`notification-toggle-${id}`}
                 >
-                  <Ionicons name="mail-unread" size={16} color="#374151" />
+                  <Ionicons name="mail-unread-outline" size={16} color="#374151" />
                 </Pressable>
               )}
-              {onDelete && (
+              {!ephemeral && onDelete && (
                 <Pressable
                   onPress={onDelete}
-                  disabled={id ===undefined || id === null}
+                  disabled={id === undefined || id === null}
                   className="p-2 rounded-md bg-error-400 active:opacity-80"
                   accessibilityRole="button"
-                  accessibilityLabel="Supprimer"
-                  accessibilityHint="Supprime cette notification"
+                  accessibilityLabel={t('notification.delete')}
+                  accessibilityHint={t('notification.a11y_delete')}
                   hitSlop={8}
                   testID={`notification-delete-${id}`}
                 >
-                  <Ionicons name="trash" size={16} color="#FFFFFF" />
+                  <Ionicons name="trash-outline" size={16} color="#FFFFFF" />
                 </Pressable>
               )}
             </View>
@@ -174,16 +203,15 @@ export default memo(function NotificationItem({
   );
 });
 
-function timeAgo(date: Date) {
+function timeAgo(date: Date, t: (key: string, opts?: any) => string) {
   const diff = Math.floor((Date.now() - date.getTime()) / 1000);
-  if (diff < 60) return `il y a ${diff}s`;
+  if (diff < 60) return t('notification.time_seconds', { count: diff });
   const m = Math.floor(diff / 60);
-  if (m < 60) return `il y a ${m}m`;
+  if (m < 60) return t('notification.time_minutes', { count: m });
   const h = Math.floor(m / 60);
-  if (h < 24) return `il y a ${h}h`;
+  if (h < 24) return t('notification.time_hours', { count: h });
   const d = Math.floor(h / 24);
-  return `il y a ${d}j`;
+  return t('notification.time_days', { count: d });
 }
 
-export { };
-
+export {};

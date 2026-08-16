@@ -228,9 +228,7 @@ export default function NotificationsScreen() {
   
   //rafraîchir hors de cette page
 
-  const navigation = useNavigation();
   const router = useRouter();
-  const unreadCount = useMemo(() => (data?.filter((n: any) => !n.isRead).length ?? 0), [data]);
 
   // useEffect(() => {
   //   // Dynamically update the tab badge for the Notifications tab
@@ -280,7 +278,6 @@ export default function NotificationsScreen() {
     />
   ), [showToast]);
 
-  const keyExtractor = useCallback((n: Notification) => n.id, []);
 
   const items = data ?? [];
 
