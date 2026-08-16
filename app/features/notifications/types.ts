@@ -13,11 +13,6 @@ export interface Notification {
   link?: string;
 }
 
-/**
- * Une notification est "éphémère" quand son id a été généré côté client
- * sous la forme "0" + competionID (notification temps réel liée à une
- * compétition, non persistée en base). Elle ne peut pas être supprimée.
- */
 export function isEphemeralNotification(notification: Pick<Notification, 'id' | 'competionID'>): boolean {
   return notification.id?.toString() === `0${notification.competionID}`;
 }
