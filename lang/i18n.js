@@ -21,6 +21,8 @@ import registerEN from "./locales/En/register.json";
 import registerFR from "./locales/Fr/register.json";
 import loginFr from "./locales/Fr/login.json";
 import loginEn from "./locales/En/login.json";
+import teacherFr from "./locales/Fr/teacher.json"
+import teacherEn from "./locales/En/teacher.json"
 
 const resources = {
   en: {
@@ -34,6 +36,7 @@ const resources = {
     register: registerEN,
     onboarding: onboardingEN,
     login: loginEn,
+    teacher:teacherEn
   },
   fr: {
     transaction: transactionFR,
@@ -46,6 +49,7 @@ const resources = {
     register: registerFR,
     onboarding: onboardingFR,
     login: loginFr,
+    teacher:teacherFr
   },
 };
 

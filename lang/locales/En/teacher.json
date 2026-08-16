@@ -1,0 +1,28 @@
+{
+  "teacher": {
+    "title": "Teacher Portal",
+    "subtitle": "Send tests and answer keys to pupils and students.",
+    "form": {
+      "name": "Subject Name",
+      "placeHolder": "ex. Mathematics",
+      "cycle": "Cycle",
+      "secondary": "Secondaire",
+      "higher": "Higher",
+      "level": "Grade Level",
+      "placeHolder2": "Select a Level",
+      "type": "Document Type",
+      "select_subject": "Selected subject",
+      "add_subject": "Add Test",
+      "warning": "PDF Format Only",
+      "add_correction": "Add Answer Key",
+      "warning2": "Optional",
+      "button": "Send Documents"
+    },
+    "error": {
+      "select_subject": "Please select a proof",
+      "no_canSubmit": "You cannot submit any more documents at this time. Please try again later.",
+      "send_success": "Documents sent successfully",
+      "send_error": "Error sending, please try again later."
+    }
+  }
+}

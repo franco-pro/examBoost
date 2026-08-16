@@ -462,6 +462,7 @@ export default function Index() {
                   </Text>
                   <Ionicons name="arrow-forward" size={16} color="#ffffff" />
               </TouchableOpacity>
+              {/* <TouchableOpacity className="border-4 border-red-700" onPress={()=> navigation.navigate("/dev-admin/pages/documents/view")}>teacher</TouchableOpacity> */}
               </View>
             )}
 
@@ -524,7 +525,7 @@ export default function Index() {
                         ) {
                           handlePressDocument(item);
                         } else {
-                          Alert.alert("Erreur", "Aucun packs disponible !");
+                          // Alert.alert("Erreur", "Aucun packs disponible !");
                           router.push("/pack"); // S'exécutera juste après l'apparition de l'alerte
                         }
                       }}
