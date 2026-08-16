@@ -27,7 +27,7 @@ export function Timer() {
   }, []);
 
   return (
-    <Text size="lg" className="text-primary-defaultOrange">
+    <Text size="lg" className="text-primary-defaultOrange h-auto">
       {heure.toString().padStart(2, "0")}:
       {minute.toString().padStart(2, "0")}:
       {seconde.toString().padStart(2, "0")}

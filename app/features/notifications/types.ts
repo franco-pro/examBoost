@@ -4,7 +4,7 @@ export interface Notification {
   id: number;
   title: string;
   text: string;
-  type: 'INVITATION' | 'ADMIN_ALERT' | 'SYSTEM' | 'INVITATION_ACCEPTED' | 'INVITATION_DECLINED' | 'COMPETITION_START';
+  type: 'INVITATION' | 'ADMIN_ALERT' | 'SYSTEM' | 'INVITATION_ACCEPTED' | 'INVITATION_DECLINED' | 'COMPETITION_START'|'COMPETITION_CREATED';
   isRead: boolean;
   senderID?: number;
   receiverID: number;

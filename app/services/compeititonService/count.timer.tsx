@@ -55,7 +55,7 @@ export default function Countdown({ serverNowUTC, targetDateUTC, onFinish }: Cou
   const seconds = timeLeft % 60;
 
   return (
-    <View style={{ alignItems: "center" }}>
+    <View style={{ alignItems: "center" }} className="h-auto">
       <Text style={{ fontSize: 24 }} className="text-primary-defaultOrange">
         {String(minutes).padStart(2, "0")} : {String(seconds).padStart(2, "0")}
       </Text>
