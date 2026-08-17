@@ -23,6 +23,7 @@ import { Button, ButtonText } from '@/components/ui/button';
 import { Box } from '@/components/ui/box';
 import apiClient from "@/app/api/apiClient";
 import { updateSendingStatut } from "@/app/hooks/redux/documents/document.slice";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const ALL_TYPES: DocType[] = [
     "CONTROLE CONTINU",
@@ -41,6 +42,7 @@ export default function DocumentListScreen() {
   const [validFilter, setValidFilter] = useState<"ALL" | "validated" | "pending">("ALL");
   const {documentsList, isSendingSuspended, loading} = useAppSelector(state => state.documents);
   const {niveauxList} = useAppSelector(state => state.niveaux);
+  const insets = useSafeAreaInsets();
   
   const doGlobalActivation = async ()=>{
     try {
@@ -384,6 +386,7 @@ export default function DocumentListScreen() {
       <Box className="absolute bottom-6 right-6 z-50">
         <Button
           onPress={handleToggle}
+          style={{ bottom: Math.max(insets.bottom, 16) + 8 }}
           className={`h-16 w-20 rounded-full shadow-lg ${
             isSendingSuspended ?   "bg-green-500" : "bg-orange-500"
           }`}
