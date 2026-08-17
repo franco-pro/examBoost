@@ -33,6 +33,11 @@ export default function Deposit() {
   const [operator, setOperator] = useState<"MTN" | "ORANGE" | null>('ORANGE');
   const [loading, setLoading] = useState(false);
   const  {user, others} = useAppSelector((state) => state.user);
+  const is_orange_payment_work = others.is_orange_payement_work === "true";
+  const is_mtn_payment_work = others.is_mtn_payement_work === "true"; 
+
+  console.log('oooo', is_mtn_payment_work, is_orange_payment_work)
+
   const dispatch = useAppDispatch();
   const isPhoneValid = /^6\d{8}$/.test(phone);
   const isAmountValid = (type === "WITHDRAWAL" && Number(amount) >= 1000) || (type === "DEPOSIT" && Number(amount) >= 100);
@@ -223,27 +228,29 @@ export default function Deposit() {
 
         </Text>
 
-        <Text className="text-gray-500 mt-2">
+        <Text className="text-gray-500 mt-2 mb-7">
                  {type === "DEPOSIT" ? t("deposit.sub_text"):t("withdrawal.sub_text") }
 
 
         </Text>
 
         {
-          others && (others.is_orange_payment_work || others.is_mtn_payment_work) && (
+          (is_orange_payment_work || is_mtn_payment_work) && (
             <View
-            className={"p-5 rounded-2xl shadow-sm border border-blue-100"+ others.is_mtn_payment_work ? "border-yellow-100": "border-orange-100"}
+            className={"bg-blue-50 rounded-2xl p-4 flex-row items-center border "}
             style={{ backgroundColor: "#2E5DA6" }}
           >
+            <View className="mt-4 ml-3 flex-1">
             <Text className="text-xl font-bold text-white mb-2">
               {t("deposit.pay_failed.title_pay")}
             </Text>
             <Text className="text-blue-50 text-sm leading-5 mb-4">
-             {(others.is_orange_payment_work && !others.is_mtn_payment_work) && t("deposit.pay_failed.orange_pay_statut")} 
-             {(!others.is_orange_payment_work && others.is_mtn_payment_work) && t("deposit.pay_failed.mtn_pay_statut")} 
-             {(!others.is_orange_payment_work && !others.is_mtn_payment_work) && t("deposit.pay_failed.mtn_and_orange_pay_statut")} 
+             {(!is_orange_payment_work && is_mtn_payment_work) && t("deposit.pay_failed.orange_pay_statut")} 
+             {(is_orange_payment_work && !is_mtn_payment_work) && t("deposit.pay_failed.mtn_pay_statut")} 
+             {(!is_orange_payment_work && !is_mtn_payment_work) && t("deposit.pay_failed.mtn_and_orange_pay_statut")} 
              
             </Text>
+            </View>
           </View>
           ) 
         }
