@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "ExamBoost",
-    "slug": "ExamBoost",
+    "slug": "examBoost",
     "owner": "franck_lf",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -47,10 +47,10 @@
         "expo-build-properties",
         {
           "android": {
-            "usesCleartextTraffic": true,
-            "enableProguardInReleaseBuilds": true,
-            "enableShrinkResourcesInReleaseBuilds": true,
-            "useLegacyPackaging": true
+            "usesCleartextTraffic": false,
+            "enableProguardInReleaseBuilds": false,
+            "enableShrinkResourcesInReleaseBuilds": false,
+            "useLegacyPackaging": false
           }
         }
       ],

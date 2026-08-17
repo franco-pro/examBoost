@@ -7,7 +7,12 @@
       },
       "pay_failed": {
         "title": "Error",
-        "text": "An error occurred during your transaction!"
+        "text": "An error occurred during your transaction!",
+        "title_pay": "Operator Instability",
+        "insufficient_balence": "Insufficient balance to complete the transaction.",
+        "mtn_pay_statut": "Due to current instability at the operator, top-ups via MTN MOMO are currently unavailable, please try again later.",
+        "orange_pay_statut": "Due to current instability at the operator, top-ups via Orange Money are currently unavailable, please try again later.",
+        "mtn_and_orange_pay_statut": "Due to current instability at the operator, top-ups via MTN MOMO and Orange Money are currently unavailable, please try again later."
       },
       "first_title": "Mobile Money Top Up",
       "sub_text": "Top up your account quickly and securely.",
@@ -54,7 +59,6 @@
         "error" : {
           "title": "Error",
           "text": "An error occurred during your transaction!",
-          "insufficient_balence": "Insufficient balance to complete the transaction.",
           "invalid_amount": "The minimum withdrawal amount is 1000 Unity(U)."
         }
       }

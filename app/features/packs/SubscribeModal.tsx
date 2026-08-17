@@ -4,7 +4,7 @@ import React, { useMemo, useState } from 'react';
 import { Modal, Platform, Pressable, Text, View } from 'react-native';
 import { packProps } from '@/app/api/packService';
 import { Icon } from '@/components/ui/icon';
-
+import { Translation, useTranslation } from 'react-i18next';
 export default function SubscribeModal({
   visible,
   pack,
@@ -19,7 +19,8 @@ export default function SubscribeModal({
   onConfirm: (payload: { accept: boolean }) => void;
   wallet?: number;
   onRecharge?: () => void;
-}) {
+  }) {
+  const {t} = useTranslation("subscribe")
   const [accept, setAccept] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
 
@@ -73,8 +74,8 @@ export default function SubscribeModal({
                   </Text>
                   {pack.durationDays != null ? (
                     <Text className="text-xxs text-typography-black/80">
-                      Durée {pack.durationDays} jours
-                      {expiredAt ? ` · jusqu'au ${expiredAt}` : ""}
+                      {t("subscribe.duration")} {pack.durationDays} {t("subscribe.days")}
+                      {expiredAt ? ` · ${t("subscribe.until")} ${expiredAt}` : ""}
                     </Text>
                   ) : null}
                 </View>
@@ -89,28 +90,28 @@ export default function SubscribeModal({
             {/* Message d'accroche + avantages */}
             <Text className="mt-3 text-sm text-typography-default dark:text-typography-white">
               {
-                "Confirmez votre achat pour débloquer l'accès immédiat aux matières, sujets et contenus inclus."
+                t("subscribe.confirm")
               }
             </Text>
             <View className="mt-3 gap-2">
               <View className="flex-row items-center gap-2">
                 <Ionicons name="checkmark-circle" size={16} color="#22c55e" />
                 <Text className="text-xs text-typography-default dark:text-typography-white">
-                  Accès instantané après paiement
+                  {t("subscribe.acces")}
                 </Text>
               </View>
               {typeof pack.durationDays === "number" ? (
                 <View className="flex-row items-center gap-2">
                   <Ionicons name="checkmark-circle" size={16} color="#22c55e" />
                   <Text className="text-xs text-typography-default dark:text-typography-white">
-                    Valable {pack.durationDays} jours
+                    {t("subscribe.valid")} {pack.durationDays} {t("subscribe.days")}
                   </Text>
                 </View>
               ) : null}
               <View className="flex-row items-center gap-2">
                 <Ionicons name="checkmark-circle" size={16} color="#22c55e" />
                 <Text className="text-xs text-typography-default dark:text-typography-white">
-                  Support prioritaire
+                  {t("subscribe.support")}
                 </Text>
               </View>
             </View>
@@ -119,7 +120,7 @@ export default function SubscribeModal({
             {pack.price != null ? (
               <View className="mt-4 gap-1">
                 <Text className="text-xs text-typography-gray">
-                  Montant qui sera prélevé
+                  {t("subscribe.amount")}
                 </Text>
                 <Text className="text-sm font-extrabold text-typography-default dark:text-typography-white">
                   {formatPriceXOF(pack.price)}
@@ -135,7 +136,7 @@ export default function SubscribeModal({
                   className="flex-row items-center gap-2"
                   accessibilityRole="checkbox"
                   accessibilityState={{ checked: accept }}
-                  accessibilityLabel="J’accepte de payer via mon wallet"
+                  accessibilityLabel={t("subscribe.accept")}
                 >
                   <View
                     className={`w-5 h-5 rounded-md items-center justify-center border ${accept ? "bg-primary-defaultOrange border-primary-defaultOrange" : "bg-white dark:bg-outline-900 border-outline-300 dark:border-outline-700"}`}
@@ -145,16 +146,15 @@ export default function SubscribeModal({
                     ) : null}
                   </View>
                   <Text className="text-xs text-typography-default w-2/3 dark:text-typography-white">
-                    J’accepte de payer via mon wallet
+                    {t("subscribe.balance")}
                   </Text>
                 </Pressable>
 
                 {!hasFunds && (
                   <>
                     <Text className="text-xxs text-error-500">
-                      Solde insuffisant: votre solde est de{" "}
-                      {wallet != null ? formatPriceXOF(wallet) : "—"}, prix du
-                      pack{" "}
+                      {t("subscribe.balance")}{" "}
+                      {wallet != null ? formatPriceXOF(wallet) : "—"}, { t("subscribe.pack_price") }{" "}
                       {pack.price != null ? formatPriceXOF(pack.price) : "—"}.
                     </Text>
                     {onRecharge && (
@@ -163,7 +163,7 @@ export default function SubscribeModal({
                         className="self-start px-3 py-1.5 rounded-md bg-primary-defaultOrange/15 border border-primary-defaultOrange/40 active:opacity-90"
                       >
                         <Text className="text-xs font-extrabold text-primary-defaultBlue">
-                          Recharger
+                          {t("subscribe.recharge")}
                         </Text>
                       </Pressable>
                     )}
@@ -175,17 +175,17 @@ export default function SubscribeModal({
                 className="px-4 py-2 rounded-md bg-white dark:bg-outline-900 border border-outline-200 dark:border-outline-700 active:opacity-90"
               >
                 <Text className="text-sm text-typography-default dark:text-typography-white">
-                  Annuler
+                  {t("subscribe.cancel")}
                 </Text>
               </Pressable>
               <Pressable
                 disabled={!accept || !hasFunds}
                 onPress={() => onConfirm({ accept })}
                 className={`px-4 py-2 rounded-md ${!accept || !hasFunds ? "bg-primary-defaultOrange/60" : "bg-primary-defaultOrange active:opacity-90"} `}
-                accessibilityLabel="Confirmer l'achat"
+                accessibilityLabel={t("subscribe.confirm2")}
               >
                 <Text className="text-sm font-extrabold text-primary-defaultBlue">
-                  {isLoading ? "Loading ..." : "Confirmer"}
+                  {isLoading ? "Loading ..." : `${t("subscribe.button")}`}
                 </Text>
               </Pressable>
             </View>

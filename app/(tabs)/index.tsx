@@ -433,7 +433,7 @@ export default function Index() {
 
           {others &&
             Array.isArray(others.other) &&
-            others.other[0].time_of_exam_result && (
+            others.other[0]?.time_of_exam_result && (
               <View
                 className="p-5 rounded-2xl shadow-sm border border-blue-100"
                 style={{ backgroundColor: "#2E5DA6" }}

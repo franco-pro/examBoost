@@ -158,7 +158,7 @@ export default function Submit() {
       // console.log("payload:", {subject,niveauID,fileType, userID})
 
       await apiClient.post("/document", payload);
-      alert("Documents envoyés avec succès");
+      alert(`${t("teacher.error.send_success")}`);
 
       setDocFile(null);
       setCorrectionFile(null);
@@ -167,7 +167,7 @@ export default function Submit() {
       setFileType("");
     } catch (error) {
       console.log("l'erreur:", error);
-      alert(`${t("teacher.error.send_error")}`);
+      alert(`${t("teacher.error.send_error")} : ${JSON.stringify(error)}`);
     } finally {
       setLoading(false);
     }
