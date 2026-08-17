@@ -7,7 +7,11 @@
         },
         "pay_failed": {
             "title": "Erreur",
-            "text": "Une erreur est survénue lors de votre transaction !"
+            "text": "Une erreur est survénue lors de votre transaction !",
+            "title_pay": "Instabilité de l'opérateur",
+            "mtn_pay_statut": "En raison d'instabilité actuelle chez l'opérateur, les recharges par MTN MOMO sont inacessible pour le moment, veuillez ressayer plus tard.",
+            "orange_pay_statut": "En raison d'instabilité actuelle chez l'opérateur, les recharges par Orange Money sont inacessible pour le moment, veuillez ressayer plus tard.",
+            "mtn_and_orange_pay_statut": "En raison d'instabilité actuelle chez l'opérateur, les recharges par MTN MOMO et Orange Money sont inacessible pour le moment, veuillez ressayer plus tard."
         },
         "first_title" : "Recharge Mobile Money",
         "sub_text": "Effectuez votre recharge de compte rapidement et en toute sécurité.",

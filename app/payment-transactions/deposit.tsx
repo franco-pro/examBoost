@@ -32,7 +32,7 @@ export default function Deposit() {
   const [amount, setAmount] = useState("");
   const [operator, setOperator] = useState<"MTN" | "ORANGE" | null>('ORANGE');
   const [loading, setLoading] = useState(false);
-  const  {user} = useAppSelector((state) => state.user);
+  const  {user, others} = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
   const isPhoneValid = /^6\d{8}$/.test(phone);
   const isAmountValid = (type === "WITHDRAWAL" && Number(amount) >= 1000) || (type === "DEPOSIT" && Number(amount) >= 100);
@@ -229,6 +229,24 @@ export default function Deposit() {
 
         </Text>
 
+        {
+          others && (others.is_orange_payment_work || others.is_mtn_payment_work) && (
+            <View
+            className={"p-5 rounded-2xl shadow-sm border border-blue-100"+ others.is_mtn_payment_work ? "border-yellow-100": "border-orange-100"}
+            style={{ backgroundColor: "#2E5DA6" }}
+          >
+            <Text className="text-xl font-bold text-white mb-2">
+              {t("deposit.pay_failed.title_pay")}
+            </Text>
+            <Text className="text-blue-50 text-sm leading-5 mb-4">
+             {(others.is_orange_payment_work && !others.is_mtn_payment_work) && t("deposit.pay_failed.orange_pay_statut")} 
+             {(!others.is_orange_payment_work && others.is_mtn_payment_work) && t("deposit.pay_failed.mtn_pay_statut")} 
+             {(!others.is_orange_payment_work && !others.is_mtn_payment_work) && t("deposit.pay_failed.mtn_and_orange_pay_statut")} 
+             
+            </Text>
+          </View>
+          ) 
+        }
 
         <View className="bg-blue-50 border border-blue-200 rounded-2xl p-4 mt-6 mb-8 flex-row items-center">
 
