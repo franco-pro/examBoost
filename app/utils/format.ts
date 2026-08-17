@@ -8,7 +8,7 @@ export function formatPriceXOF(price?: number): string {
       maximumFractionDigits: 0,
     }).format(price);
   } catch {
-    return `${price} F CFA`;
+    return `${price} U`;
   }
 }
 
