@@ -5,6 +5,23 @@
             "loading_text": "Notifications are loading...",
             "error_on_loading": "Error while loading notifications.",
             "try_again": "Try Again",
-            "no_notifications": "No notifications available."
+            "no_notifications": "No notifications available.",
+            "mark_read": "Mark read",
+            "mark_unread": "Mark unread",
+            "join": "Join",
+            "join_competition": "Join the competition",
+            "accept": "Accept",
+            "details": "Details",
+            "see_more": "See more",
+            "see_less": "See less",
+            "unread": "Unread",
+            "ephemeral_notice": "Temporary information, not retained",
+            "a11y_open_details": "Tap to view details",
+            "a11y_delete": "Delete this notification",
+            "time_seconds": "{{count}}s ago",
+            "time_minutes": "{{count}}m ago",
+            "time_hours": "{{count}}h ago",
+            "time_days": "{{count}}d ago"
         }
+        
 }

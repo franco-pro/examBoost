@@ -10,6 +10,7 @@ import { getAllOthers } from "@/app/hooks/redux/others/others.thunks";
 import { Others } from "@/app/hooks/services/others/others.entitie";
 import { setSelectedOther } from "@/app/hooks/redux/others/others.slice";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 
 // const data: Others[] = [
@@ -42,7 +43,8 @@ import { Ionicons } from "@expo/vector-icons";
 export default function OthersListScreen() {
   const {othersList: data} = useAppSelector(state => state.others);
   const dispatch = useAppDispatch();
-
+  const insets = useSafeAreaInsets();
+  
   useFocusEffect(
     useCallback(() => {
         if(data.length == 0){
@@ -112,32 +114,29 @@ export default function OthersListScreen() {
     dispatch(getAllOthers())
   }
   return (
-  <View className="flex-1 bg-gray-50 pt-[40px] pb-[10px] px-4">
-     <TouchableOpacity
+    <View className="flex-1 bg-gray-50 pt-[40px] pb-[10px] px-4">
+      <TouchableOpacity
         className="flex-row items-center mb-6"
         onPress={() => router.back()}
       >
         <Ionicons name="arrow-back" size={24} color={"gray"} />
         <Text className="ml-2 text-lg font-semibold text-gray-800">Retour</Text>
       </TouchableOpacity>
-      
-     {
-      (Array.isArray(data) && data.length !== 0) ? (
+
+      {Array.isArray(data) && data.length !== 0 ? (
         <Box className="bg-slate-50">
           <FlatList
-          data={data}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={renderItem}
-          contentContainerStyle={{
-            paddingTop: 16,
-            paddingBottom: 100,
-          }}
+            data={data}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderItem}
+            contentContainerStyle={{
+              paddingTop: 16,
+              paddingBottom: 100,
+            }}
           />
         </Box>
-      
-      )
-      :
-        (<Box className="flex-1 items-center justify-center bg-slate-50">
+      ) : (
+        <Box className="flex-1 items-center justify-center bg-slate-50">
           <Text className="text-lg font-semibold text-slate-700">
             Aucune mise à jour disponible.
           </Text>
@@ -152,15 +151,14 @@ export default function OthersListScreen() {
           >
             <ButtonText>Créer une mise à jour</ButtonText>
           </Button>
-        </Box>)
-      }
-      
+        </Box>
+      )}
 
-     
-     {/* FAB */}
-     <Pressable
+      {/* FAB - Ajusté dynamiquement avec insets.bottom */}
+      <Pressable
         onPress={() => navigateToForm(false)}
-        className="absolute bottom-6 right-6 h-16 w-16 items-center justify-center rounded-full bg-blue-600 shadow-lg"
+        style={{ bottom: Math.max(insets.bottom, 16) + 8 }}
+        className="absolute right-6 h-16 w-16 items-center justify-center rounded-full bg-blue-600 shadow-lg z-50"
       >
         <Text className="text-3xl font-bold text-white">+</Text>
       </Pressable>

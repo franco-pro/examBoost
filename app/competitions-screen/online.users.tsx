@@ -187,7 +187,7 @@ useFocusEffect(
                   questionAnswered={questionAnswered}
                   totalQuestion={room?.competitionInfo?.questionsNbr ?? 0}
                   score={score}
-                  manager={room?.isManagedByIA ? "Genesys-In IA" : "Owner"}
+                  manager={room?.isManagedByIA ? "IA" : "Owner"}
                   winnerPrice={room?.competitionInfo?.winnerPrice ?? 0}
                 />
         

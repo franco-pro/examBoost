@@ -1,9 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
+import { useTranslation } from 'react-i18next';
 import NotificationItem from './NotificationItem';
+import { isEphemeralNotification } from './types';
 import type { Notification } from './types';
 
 export default function NotificationSwipeableItem({
@@ -21,23 +23,30 @@ export default function NotificationSwipeableItem({
   onOpenLink?: (id: number, actionType: string) => void;
   onAcceptInvitation?: () => void;
 }) {
+  const { t } = useTranslation('notification');
   const ref = useRef<Swipeable>(null);
+
+  const isEphemeral = useMemo(() => isEphemeralNotification(notification), [notification]);
 
   const close = () => ref.current?.close();
 
   const LeftAction = () => (
     <View className="flex-1 flex-row items-center bg-outline-50 dark:bg-outline-800 px-4">
-      <Ionicons name={notification.isRead ? 'mail-unread' : 'mail-open'} size={22} color="#181c5c" />
+      <Ionicons
+        name={notification.isRead ? 'mail-unread-outline' : 'mail-open-outline'}
+        size={22}
+        color="#181c5c"
+      />
       <Text className="ml-2 text-typography-default dark:text-typography-white font-semibold">
-        {notification.isRead ? 'Marquer non lu' : 'Marquer lu'}
+        {notification.isRead ? t('notification.mark_unread') : t('notification.mark_read')}
       </Text>
     </View>
   );
 
   const RightAction = () => (
     <View className="flex-1 flex-row justify-end items-center bg-error-400 px-4">
-      <Text className="mr-2 text-white font-semibold">Supprimer</Text>
-      <Ionicons name="trash" size={22} color="#FFFFFF" />
+      <Text className="mr-2 text-white font-semibold">{t('notification.delete')}</Text>
+      <Ionicons name="trash-outline" size={22} color="#FFFFFF" />
     </View>
   );
 
@@ -61,7 +70,7 @@ export default function NotificationSwipeableItem({
           : undefined
       }
       renderRightActions={
-        onDelete
+        !isEphemeral && onDelete
           ? () => (
               <Pressable
                 onPress={() => {
@@ -82,17 +91,22 @@ export default function NotificationSwipeableItem({
     >
       <NotificationItem
         notification={notification}
-        onDelete={() => {
-          void Haptics.selectionAsync();
-          onDelete?.();
-          close();
-        }}
+        isEphemeral={isEphemeral}
+        onDelete={
+          isEphemeral
+            ? undefined
+            : () => {
+                void Haptics.selectionAsync();
+                onDelete?.();
+                close();
+              }
+        }
         onToggleRead={() => {
           void Haptics.selectionAsync();
           onToggleRead?.();
         }}
-        onOpenLink={onOpenLink ? () => onOpenLink(notification.competionID, "joinRoom") : undefined}
-        onOpenDetails={onOpenDetails ? () => onOpenDetails(notification.competionID, "openDetails") : undefined}
+        onOpenLink={onOpenLink ? () => onOpenLink(notification.competionID, 'joinRoom') : undefined}
+        onOpenDetails={onOpenDetails ? () => onOpenDetails(notification.competionID, 'openDetails') : undefined}
         onAcceptInvitation={onAcceptInvitation}
       />
     </Swipeable>

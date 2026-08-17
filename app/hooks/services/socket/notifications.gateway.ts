@@ -26,7 +26,7 @@ export interface NotificationPayload {
   created_at: Date;
   roomId?: string;
   statut?: string;
-  competionID?: number;
+  competionID: number;
 }
 
 interface InvitationPaylod {

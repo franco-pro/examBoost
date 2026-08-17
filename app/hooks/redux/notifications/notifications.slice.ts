@@ -35,7 +35,8 @@ export interface Notification {
   senderID?: number;
   receiverID: number;
   created_at: Date;
-  competionID?: number;
+  competionID: number;
+  link?: string;
 }
 
 // export interface NotificationAdmin {
