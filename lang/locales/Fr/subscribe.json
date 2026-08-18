@@ -1,17 +1,20 @@
 {
-    "duration": "Durée",
-    "day":"jours",
-    "until":"Jusqu'au",
-    "confirm": "Confirmez votre achat pour débloquer l'accès immédiat aux matières, sujets et contenus inclus.",
-    "acces":"Accès instantané après paiement",
-    "valable":"Valable",
-    "support": "Support prioritaire",
-    "amount":"Montant qui sera prélevé",
-    "accept": "J’accepte de payer via mon wallet",
-    "solde": "Solde insuffisant: votre solde est de",
-    "pack_price":"prix du pack",
-    "recharge":"Recharger",
-    "cancel":"Annuler",
-    "confirm2": "Confirmer l'achat",
-    "button":"Confirmer"
+    "subscribe":{
+      "duration": "Durée",
+      "day": "jours",
+      "until": "Jusqu'au",
+      "confirm": "Confirmez votre achat pour débloquer l'accès immédiat aux matières, sujets et contenus inclus.",
+      "acces": "Accès instantané après paiement",
+      "valable": "Valable",
+      "support": "Support prioritaire",
+      "amount": "Montant qui sera prélevé",
+      "accept": "J’accepte de payer via mon wallet",
+      "solde": "Solde insuffisant: votre solde est de",
+      "pack_price": "prix du pack",
+      "recharge": "Recharger",
+      "cancel": "Annuler",
+      "confirm2": "Confirmer l'achat",
+      "button": "Confirmer",
+      "free":"Gratuit"
+    }
 }

@@ -91,6 +91,7 @@ i18n
       "login",
       "register",
       "onboarding",
+      "subscribeModal"
     ],
     defaultNS: "home",
     interpolation: {

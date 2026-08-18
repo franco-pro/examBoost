@@ -1,6 +1,8 @@
+import i18n from "i18next";
+
 export function formatPriceXOF(price?: number): string {
   if (price == null) return '';
-  if (price === 0) return 'Gratuit';
+  if (price === 0) return i18n.t('subscribe.free', { ns: 'subscribe' });
   try {
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
