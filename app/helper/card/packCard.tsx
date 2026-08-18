@@ -3,6 +3,7 @@ import { useState } from "react";
 import { TouchableOpacity, View, Text } from "react-native";
 import { styleList as packStyles } from "@/app/dev-admin/pages/packs-niveaux/packs.style";
 import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 
 type PackType =
   | "CONTROLE CONTINU"
@@ -12,8 +13,7 @@ type PackType =
   | "EXAMEN BLANC"
   | "EVALUATION";
 
-const formatPrice = (price: number) =>
-  price === 0 ? "Gratuit" : `${price.toLocaleString()} U`;
+  
 
 const TYPE_CONFIG: Record<
   PackType,
@@ -30,8 +30,12 @@ const TYPE_CONFIG: Record<
 interface PackCardProps {
   pack: Pack;
 }
-
 export const PackCard = ({ pack }: PackCardProps) => {
+  const { i18n, t } = useTranslation("subscribe");
+
+  const formatPrice = (price: number) =>
+    price === 0 ? `${t("subscribe.free")}` : `${price.toLocaleString()} U`;
+
   const [expanded, setExpanded] = useState(true);
   const typeConf = TYPE_CONFIG[pack.type];
   const router = useRouter();

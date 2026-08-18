@@ -154,7 +154,7 @@ export default function SubscribeModal({
                   <>
                     <Text className="text-xxs text-error-500">
                       {t("subscribe.balance")}{" "}
-                      {wallet != null ? formatPriceXOF(wallet) : "—"}, { t("subscribe.pack_price") }{" "}
+                      {wallet != null && typeof(wallet)? formatPriceXOF(wallet) : "—"}, { t("subscribe.pack_price") }{" "}
                       {pack.price != null ? formatPriceXOF(pack.price) : "—"}.
                     </Text>
                     {onRecharge && (
