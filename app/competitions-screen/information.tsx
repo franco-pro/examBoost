@@ -761,7 +761,21 @@ function userJoinCompetition(){
 
           {(!isSubscribed || errorType === "USER_HAS_LEAVED_ROOM") && 
           (room || selectedCompetition?.roomID) && 
-          selectedCompetition?.statut === "ONGOING" && ((isCreator && selectedCompetition?.isManagedByIA) || (!isCreator) ) && (
+          selectedCompetition?.statut === "ONGOING" && !isCreator &&  (
+            <TouchableOpacity
+              className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto"
+              onPress={() => observeCompetition()}
+            >
+              <Text className="text-white text-xs font-semibold mr-2">
+                {t("mycompetition.information.look_comp")}
+              </Text>
+              <Ionicons name="eye-outline" size={22} color="#ffffff" />
+            </TouchableOpacity>
+          )}
+
+        {(!isSubscribed || errorType === "USER_HAS_LEAVED_ROOM") && 
+          (room || selectedCompetition?.roomID) && 
+          selectedCompetition?.statut === "ONGOING" && isCreator && selectedCompetition?.isManagedByIA &&  (
             <TouchableOpacity
               className="flex-row items-center bg-primary-defaultBlue self-start px-4 py-2 rounded-full ml-auto"
               onPress={() => observeCompetition()}

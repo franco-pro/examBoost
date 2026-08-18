@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import Toast from "react-native-toast-message";
 import { useAppDispatch, useAppSelector } from "../hooks/redux/redux.hooks";
 import { getCompetitionList, searchCompetitions } from "../hooks/redux/competitions/competitions.thunks";
@@ -21,6 +21,7 @@ import { clearData, setSelectedCompetition } from "../hooks/redux/competitions/c
 import Competition from "../hooks/services/competitions/competition.entity";
 import { C, CompetitionCard } from "../helper/card/listcompetitionCard";
 import { useTranslation } from "react-i18next";
+import { useSoundAud } from "../hooks/useSound.hook";
 
 const PAGE_SIZE = 20;
 
@@ -351,6 +352,8 @@ export default function CompetitionListScreen() {
     return typeOk && statutOk;
   });
 
+    const {stop} = useSoundAud()
+  
   const hasMore = !isSearchMode && page < pagination.totalPages;
 
 
@@ -380,6 +383,11 @@ export default function CompetitionListScreen() {
     }).start();
   }, []);
 
+  useFocusEffect(
+      useCallback(()=>{
+          stop()
+      }, [])
+    )
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
