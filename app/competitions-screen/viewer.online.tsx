@@ -76,13 +76,9 @@ export default function ViewerScreen() {
     <SafeAreaView style={{ flex: 1, backgroundColor: "#E8F5FA" }}>
       <StatusBar hidden={true} />
   
-      {!competitionFinished && !competitionStop && (
-        <ScrollView
-          style={{ flex: 1 }}
-          contentContainerStyle={{ flexGrow: 1, paddingBottom: 30 }}
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={{ flexDirection: "row" }} className="w-full">
+          {!competitionFinished && !competitionStop && (
+        <View style={{ flex: 1 }}>
+          <View style={{ flexDirection: "row", zIndex: 10 }} className="w-full">
             <View style={{ flex: 1 }}>
               <CompetitionInfos
                 data={{
@@ -106,7 +102,7 @@ export default function ViewerScreen() {
                 }}
               />
             </View>
-  
+
             <View style={{ flex: 1 }}>
               <OnlineUsers
                 user={room?.users ?? []}
@@ -114,20 +110,26 @@ export default function ViewerScreen() {
               />
             </View>
           </View>
-  
-          <View className="mt-6 mb-2 justify-center items-center px-2">
-            <UsersAnswers competitionName={room?.roomName ?? ""} />
-          </View>
-        </ScrollView>
+
+          <ScrollView
+            style={{ flex: 1 }}
+            contentContainerStyle={{ paddingBottom: 30 }}
+            showsVerticalScrollIndicator={false}
+          >
+            <View className="mt-6 mb-2 justify-center items-center px-2">
+              <UsersAnswers competitionName={room?.roomName ?? ""} isIA={room ? room.isManagedByIA: false} />
+            </View>
+          </ScrollView>
+        </View>
       )}
-  
+
       {!competitionStop && competitionFinished && (
         <CompetitionEndedAlert
           isOpen={isAlertCompetOpen}
           onClose={onCompetitionEndAlertConfirm}
         />
       )}
-  
+
       {competitionStop && (
         <CompetitionStopedAlert
           isOpen={isAlertOpen}

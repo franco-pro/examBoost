@@ -138,19 +138,12 @@ useFocusEffect(
             };
           }, [])
         );
+        // console.log('competition indo', room?.competitionInfo)
         return (
           <SafeAreaView style={{ flex: 1, backgroundColor: "#E8F5FA" }}>
             <StatusBar hidden={true} />
-        
-            <KeyboardAwareScrollView
-              style={{ flex: 1 }}
-              contentContainerStyle={{ flexGrow: 1, paddingBottom: 30 }}
-              enableOnAndroid={true}
-              extraScrollHeight={Platform.OS === "android" ? 30 : 20}
-              keyboardShouldPersistTaps="handled"
-              showsVerticalScrollIndicator={false}
-            >
-              <View style={{ flexDirection: "row" }} className="w-full">
+
+            <View style={{ flexDirection: "row", zIndex: 10 }} className="w-full">
                 <View style={{ flex: 1 }}>
                   <CompetitionInfos
                     data={{
@@ -181,6 +174,16 @@ useFocusEffect(
                   />
                 </View>
               </View>
+        
+            <KeyboardAwareScrollView
+              style={{ flex: 1 }}
+              contentContainerStyle={{ flexGrow: 1, paddingBottom: 30 }}
+              enableOnAndroid={true}
+              extraScrollHeight={Platform.OS === "android" ? 30 : 20}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+            >
+              
         
               <View className="mb-4 items-center px-2">
                 <MiniDashboard

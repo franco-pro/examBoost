@@ -40,7 +40,7 @@ export default function Result() {
               roomName: resp.data.backup.competitionInfo.name,
               users: resp.data.backup.participants
             } as Room;
-            console.log('result', response);
+            // console.log('result', response);
             setRoomResult({
               ...response,
               users: response.users.sort((a, b) => {
@@ -493,7 +493,7 @@ function showToast(message: string){
   
             {/* Liste des autres participants */}
             {!showResult && others.length > 0 && others.map((item, index) => (
-              <HStack key={item.id.toString()} className="bg-white/5 backdrop-blur-sm rounded-xl p-3.5 items-center justify-between mb-2.5 border border-white/10">
+              <HStack key={item.userID ? item.userID.toString():"0"+index} className="bg-white/5 backdrop-blur-sm rounded-xl p-3.5 items-center justify-between mb-2.5 border border-white/10">
                       <HStack className="items-center space-x-3">
                         {/* Rang */}
                         <View className="w-8 h-8 rounded-full bg-[#1A2F52] items-center justify-center border border-white/10">

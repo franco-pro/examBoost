@@ -67,7 +67,7 @@ export default function UsersResult({ room }: UsersAnswersProps) {
                           <View className="w-6 h-6 rounded-full bg-[#2E5DA6] items-center justify-center">
                             <Text className="text-white text-xs font-bold">{index + 1}</Text>
                           </View>
-                          <AccordionTitleText className="text-white flex-1" numberOfLines={2}>
+                          <AccordionTitleText className="text-white flex-1 shrink break-words">
                             {q.text} ?
                           </AccordionTitleText>
                         </HStack>

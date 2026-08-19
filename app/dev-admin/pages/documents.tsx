@@ -13,6 +13,7 @@ import {
   Platform,
   Linking,
   Alert,
+  RefreshControl,
 } from "react-native";
 import { Document } from "@/app/hooks/entities/document";
 import { DocumentCard } from "@/app/helper/card/documentCard";
@@ -234,168 +235,193 @@ export default function DocumentListScreen() {
       ? documentsList.length
       : documentsList.filter((d) => d.type === t).length;
 
-  return (
-    <View className='flex-1 bg-gray-50 pt-[40px] pb-[50px] px-4'>
-        <TouchableOpacity
-        className="flex-row items-center mb-4"
-        onPress={() => router.back()}
-        >
-        <Ionicons name="arrow-back" size={24} color="#181c5c" />
-        <Text className="ml-2 text-lg font-semibold text-gray-800">Retour</Text>
-        </TouchableOpacity>
-
-      <View style={styles.header}>
-        <View style={styles.headerTop}>
-          <View>
-            <Text style={styles.headerSub}>Bibliothèque</Text>
-            <Text className="text-xl font-semibold">Documents</Text>
-          </View>
-          <View style={styles.headerCount}>
-            <Text className="text-xl font-semibold">{filtered.length}</Text>
-            <Text style={styles.headerCountLabel}>résultats</Text>
-          </View>
-        </View>
-
-        {/* Search */}
-        <View style={styles.searchBar}>
-          <Text style={styles.searchIcon}><Ionicons name="search" size={24} color="black" /></Text>
-          <TextInput
-            style={styles.searchInput}
-            value={search}
-            onChangeText={setSearch}
-            placeholder="Rechercher un document…"
-            placeholderTextColor={T.textMuted}
-          />
-          {search.length > 0 && (
-            <TouchableOpacity onPress={() => setSearch("")}>
-              <Text style={styles.searchClear}>✕</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      </View>
-
-      <View style={styles.typeFilterWrap}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.typeFilterScroll}
-        >
-          <TouchableOpacity
-            style={[
-              styles.typeChip,
-              activeType === "ALL" && styles.typeChipActive,
-            ]}
-            onPress={() => setActiveType("ALL")}
-          >
-            <Text
-              style={[
-                styles.typeChipText,
-                activeType === "ALL" && styles.typeChipTextActive,
-              ]}
+      return (
+        <View className='flex-1 bg-gray-50 pt-[40px] pb-[50px] px-4'>
+            <TouchableOpacity
+            className="flex-row items-center mb-4"
+            onPress={() => router.back()}
             >
-              Tous ({documentsList.length})
-            </Text>
-          </TouchableOpacity>
-
-          {ALL_TYPES.map((t) => {
-            const m = TYPE_META[t];
-            const isActive = activeType === t;
-            return (
+            <Ionicons name="arrow-back" size={24} color="#181c5c" />
+            <Text className="ml-2 text-lg font-semibold text-gray-800">Retour</Text>
+            </TouchableOpacity>
+    
+          <View style={styles.header}>
+            <View style={styles.headerTop}>
+              <View>
+                <Text style={styles.headerSub}>Bibliothèque</Text>
+                <Text className="text-xl font-semibold">Documents</Text>
+              </View>
+              <View style={styles.headerCount}>
+                <Text className="text-xl font-semibold">{filtered.length}</Text>
+                <Text style={styles.headerCountLabel}>résultats</Text>
+              </View>
+            </View>
+    
+            {/* Search */}
+            <View style={styles.searchBar}>
+              <Text style={styles.searchIcon}><Ionicons name="search" size={24} color="black" /></Text>
+              <TextInput
+                style={styles.searchInput}
+                value={search}
+                onChangeText={setSearch}
+                placeholder="Rechercher un document…"
+                placeholderTextColor={T.textMuted}
+              />
+              {search.length > 0 && (
+                <TouchableOpacity onPress={() => setSearch("")}>
+                  <Ionicons name="close-circle" size={20} color={T.textMuted ?? "gray"} />
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+    
+          <View style={styles.typeFilterWrap}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.typeFilterScroll}
+             
+            >
               <TouchableOpacity
-                key={t}
                 style={[
                   styles.typeChip,
-                  isActive && { backgroundColor: m.color, borderColor: m.color },
+                  activeType === "ALL" && styles.typeChipActive,
                 ]}
-                onPress={() => setActiveType(t)}
+                onPress={() => setActiveType("ALL")}
               >
-                <Text style={styles.typeChipIcon}>{m.icon}</Text>
                 <Text
                   style={[
                     styles.typeChipText,
-                    isActive && { color: T.white },
+                    activeType === "ALL" && styles.typeChipTextActive,
                   ]}
                 >
-                  {m.label} ({countForType(t)})
+                  Tous ({documentsList.length})
                 </Text>
               </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
-      </View>
+    
+              {ALL_TYPES.map((t) => {
+                const m = TYPE_META[t];
+                const isActive = activeType === t;
+                return (
+                  <TouchableOpacity
+                    key={t}
+                    style={[
+                      styles.typeChip,
+                      isActive && { backgroundColor: m.color, borderColor: m.color },
+                    ]}
+                    onPress={() => setActiveType(t)}
+                  >
+                    {/* Remplacement du <Text>{m.icon}</Text> par le composant Ionicons */}
+                    <Ionicons 
+                      name={m.icon} 
+                      size={16} 
+                      color={isActive ? T.white : m.color} 
+                      style={{ marginRight: 6 }} 
+                    />
 
-      {activeType !== "ALL" && (
-        <View style={styles.validFilterWrap}>
-          <Text style={styles.validFilterLabel}>Statut :</Text>
-          {(
-            [
-              { key: "ALL", label: "Tous" },
-              { key: "validated", label: <Ionicons name="checkmark" size={24} color="black" /> },
-              { key: "pending", label: <Ionicons name="timer" size={24} color="black" /> },
-            ] as const
-          ).map(({ key, label }) => (
-            <TouchableOpacity
-              key={key}
-              style={[
-                styles.validChip,
-                validFilter === key && styles.validChipActive,
-              ]}
-              onPress={() => setValidFilter(key)}
+                    <Text
+                      style={[
+                        styles.typeChipText,
+                        isActive && { color: T.white },
+                      ]}
+                    >
+                      {m.label} ({countForType(t)})
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+          </View>
+    
+          {activeType !== "ALL" && (
+            <View style={styles.validFilterWrap}>
+              <Text style={styles.validFilterLabel}>Statut :</Text>
+              {(
+                [
+                  { key: "ALL", label: "Tous" },
+                  { key: "validated", label: <Ionicons name="checkmark" size={24} color="black" /> },
+                  { key: "pending", label: <Ionicons name="timer" size={24} color="black" /> },
+                ] as const
+              ).map(({ key, label }) => (
+                <TouchableOpacity
+                  key={key}
+                  style={[
+                    styles.validChip,
+                    validFilter === key && styles.validChipActive,
+                  ]}
+                  onPress={() => setValidFilter(key)}
+                >
+                  <Text
+                    style={[
+                      styles.validChipText,
+                      validFilter === key && styles.validChipTextActive,
+                    ]}
+                  >
+                    {label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+    
+          <ScrollView
+            style={styles.scroll}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={loading}
+                onRefresh={() => dispatch(getAllDocs())}
+              />
+            }
+          >
+            {filtered.length === 0 && !loading ? (
+              <View style={styles.empty}>
+                <Text style={styles.emptyIcon}><Ionicons name="alert-sharp" size={24} color="black" /></Text>
+                <Text style={styles.emptyTitle}>Aucun document</Text>
+                <Text style={styles.emptyText}>
+                  Modifiez les filtres pour afficher des résultats.
+                </Text>
+              </View>
+            ) : filtered.length !== 0 && !loading ? (
+              filtered.map((doc) => <DocumentCard key={doc.id} doc={doc} />)
+            ): (
+              <View style={styles.empty}>
+                <Text style={styles.emptyIcon}><Ionicons name="hourglass" size={24} color="black" /></Text>
+                <Text style={styles.emptyTitle}>Chargement...</Text>
+                <Text style={styles.emptyText}>
+                  Veuillez patienter pendant le chargement des documents.
+                </Text>
+              </View>
+            ) 
+            }
+            <View style={{ height: 40 }} />
+          </ScrollView>
+    
+          <Box 
+              className="absolute right-6 z-50 items-center space-y-3"
+              style={{ bottom: Math.max(insets.bottom, 16) + 8 }}
             >
-              <Text
-                style={[
-                  styles.validChipText,
-                  validFilter === key && styles.validChipTextActive,
-                ]}
+              {/* Nouveau bouton de navigation (au-dessus) */}
+              <Button
+                onPress={() => router.push("/others-admin/submit-doc/submit")} // Remplacez par votre route
+                className="h-14 w-18 rounded-full bg-blue-600 shadow-lg items-center justify-center mb-8"
               >
-                {label}
-              </Text>
-            </TouchableOpacity>
-          ))}
+                <Ionicons name="navigate-outline" size={20} color="white" />
+              </Button>
+
+              {/* Bouton existant ON/OFF (en dessous) */}
+              <Button
+                onPress={handleToggle}
+                className={`h-16 w-20 rounded-full shadow-lg ${
+                  isSendingSuspended ? "bg-green-500" : "bg-orange-500"
+                }`}
+              >
+                <ButtonText className="text-sm font-bold text-white">
+                  {isSendingSuspended ? "ON" : "OFF"}
+                </ButtonText>
+              </Button>
+            </Box>
         </View>
-      )}
-
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {filtered.length === 0 && !loading ? (
-          <View style={styles.empty}>
-            <Text style={styles.emptyIcon}><Ionicons name="alert-sharp" size={24} color="black" /></Text>
-            <Text style={styles.emptyTitle}>Aucun document</Text>
-            <Text style={styles.emptyText}>
-              Modifiez les filtres pour afficher des résultats.
-            </Text>
-          </View>
-        ) : filtered.length !== 0 && !loading ? (
-          filtered.map((doc) => <DocumentCard key={doc.id} doc={doc} />)
-        ): (
-          <View style={styles.empty}>
-            <Text style={styles.emptyIcon}><Ionicons name="hourglass" size={24} color="black" /></Text>
-            <Text style={styles.emptyTitle}>Chargement...</Text>
-            <Text style={styles.emptyText}>
-              Veuillez patienter pendant le chargement des documents.
-            </Text>
-          </View>
-        ) 
-        }
-        <View style={{ height: 40 }} />
-      </ScrollView>
-
-      <Box className="absolute bottom-6 right-6 z-50">
-        <Button
-          onPress={handleToggle}
-          style={{ bottom: Math.max(insets.bottom, 16) + 8 }}
-          className={`h-16 w-20 rounded-full shadow-lg ${
-            isSendingSuspended ?   "bg-green-500" : "bg-orange-500"
-          }`}
-        >
-          <ButtonText className="text-sm font-bold text-white">
-            {isSendingSuspended ? "ON" : "OFF"}
-          </ButtonText>
-        </Button>
-      </Box>
-    </View>
-  );
+      );
 }

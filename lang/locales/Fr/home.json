@@ -14,8 +14,8 @@
       "title": "Consulter les resultats d'examen OBC",
       "text": {
         "main": "Accédez instantanément à votre resultat ou à celui de vos proches. Saisissez votre/leurs ",
-        "subtext1": "matricule.",
-        "subtext2": "année de session",
+        "subtext1": "matricule ",
+        "subtext2": "année de session.",
         "text_link": "ainsi que l'",
         "end": "dans les champs suivant pour obtenir le resultat definitif."
       }

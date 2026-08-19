@@ -1,14 +1,21 @@
 import {StyleSheet} from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import { ComponentProps } from "react";
 
-export const TYPE_META: Record<DocType, { label: string; icon: string; color: string; bg: string }> = {
-    "CONTROLE CONTINU": { label: "CC",   icon: "📝", color: "#1565C0", bg: "#E3F2FD" },
-    "EXAMEN SEMESTRE":  { label: "ES",   icon: "📘", color: "#6A1B9A", bg: "#F3E5F5" },
-    "TD":               { label: "TD",   icon: "🔬", color: "#1B5E20", bg: "#E8F5E9" },
-    "EXAMEN":           { label: "EX",   icon: "📋", color: "#E65100", bg: "#FFF3E0" },
-    "EXAMEN BLANC":     { label: "EB",   icon: "📄", color: "#BF360C", bg: "#FBE9E7" },
-    "EVALUATION":       { label: "EV",   icon: "✅", color: "#880E4F", bg: "#FCE4EC" },
-    "CORRECTION":       { label: "COR",  icon: "🔑", color: "#004D40", bg: "#E0F2F1" },
-  };
+type IoniconsName = ComponentProps<typeof Ionicons>['name'];
+
+export const TYPE_META: Record<
+  DocType,
+  { label: string; icon: IoniconsName; color: string; bg: string }
+> = {
+  "CONTROLE CONTINU": { label: "CC",   icon: "pencil-outline",            color: "#1565C0", bg: "#E3F2FD" },
+  "EXAMEN SEMESTRE":  { label: "ES",   icon: "book-outline",              color: "#6A1B9A", bg: "#F3E5F5" },
+  "TD":               { label: "TD",   icon: "flask-outline",             color: "#1B5E20", bg: "#E8F5E9" },
+  "EXAMEN":           { label: "EX",   icon: "clipboard-outline",         color: "#E65100", bg: "#FFF3E0" },
+  "EXAMEN BLANC":     { label: "EB",   icon: "document-text-outline",     color: "#BF360C", bg: "#FBE9E7" },
+  "EVALUATION":       { label: "EV",   icon: "checkmark-circle-outline",  color: "#880E4F", bg: "#FCE4EC" },
+  "CORRECTION":       { label: "COR",  icon: "key-outline",               color: "#004D40", bg: "#E0F2F1" },
+};
 
   export type DocType =
   | "CONTROLE CONTINU"
