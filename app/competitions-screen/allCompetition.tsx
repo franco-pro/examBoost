@@ -555,7 +555,7 @@ export default function CompetitionListScreen() {
         </Text>
         <Text style={{ color: C.orange, fontSize: 12, marginTop: 4 }}>
           {searchLoading
-            ? t("mycompetition.list.searchProgress")
+            ? t("mycompetition.list.loading")
             : `${resultCount} résultat${resultCount > 1 ? "s" : ""}`}
         </Text>
       </View>
@@ -702,7 +702,6 @@ export default function CompetitionListScreen() {
               marginBottom: 6,
             }}
           >
-            {t("mycompetition.list.no_result")}
             {t("mycompetition.list.no_competition")}
           </Text>
           <Text

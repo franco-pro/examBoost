@@ -55,7 +55,7 @@ const Leaderboard = () => {
     }
   }
 
-  console.log('result rooom result', roomResult);
+  // console.log('result rooom result', roomResult);
     const competitionName = roomResult ? roomResult?.roomName : null;
     const data = roomResult && roomResult.users ? roomResult.users : []
 
@@ -200,7 +200,7 @@ const Leaderboard = () => {
               others.length > 0 ? (
                 <FlatList
                   data={others}
-                  keyExtractor={(item) => item.id.toString()}
+                  keyExtractor={(item, index) => item.userID ? item.userID.toString():"0"+index}
                   contentContainerStyle={{ paddingBottom: 20 }}
                   showsVerticalScrollIndicator={false}
                   renderItem={({ item, index }) => (

@@ -31,15 +31,8 @@ export default function OwnerCompetitionsScreen() {
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <StatusBar hidden={true} />
-            <KeyboardAwareScrollView
-               style={{ flex: 1 }}
-               contentContainerStyle={{ flexGrow: 1 }}
-               enableOnAndroid={true}
-               extraScrollHeight={Platform.OS === "android" ? 30 : 20}
-               keyboardShouldPersistTaps="handled"
-            >
 
-           <View style={{ flexDirection: "row" }} className="w-full">
+         <View style={{ flexDirection: "row", zIndex: 10}} className="w-full">
                 <View style={{ flex: 1 }}>
                   <CompetitionInfos data={{
                                                                 creatorName: room ? (room.creatorInfo ? room.creatorInfo.username: ''):'',
@@ -67,6 +60,16 @@ export default function OwnerCompetitionsScreen() {
                 </View>
 
            </View>
+
+            <KeyboardAwareScrollView
+               style={{ flex: 1 }}
+               contentContainerStyle={{ flexGrow: 1 }}
+               enableOnAndroid={true}
+               extraScrollHeight={Platform.OS === "android" ? 30 : 20}
+               keyboardShouldPersistTaps="handled"
+            >
+
+          
             
              <View>
              
@@ -96,7 +99,7 @@ export default function OwnerCompetitionsScreen() {
                 </View>
 
                  <View className="w-full justify-center items-center" style={{ display: switchQA ? 'flex' : 'none' }}>
-                     <UsersAnswers  competitionName={room ? room.roomName: ''} />
+                     <UsersAnswers  competitionName={room ? room.roomName: ''} isIA={room ? room.isManagedByIA: false} />
                   </View>
                 
               </View>

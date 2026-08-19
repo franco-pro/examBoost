@@ -174,7 +174,7 @@ export default function QuestionAnswer({question, competitionInfo, loading, user
     Envets.sendAnswer(answer);
     // onAnswer()
   }
-
+  console.log('question', question, 'loading', loading, 'waitingAnswerConfirmation', waitingAnswerConfirmation, (competitionInfo.totalQuestions))
  async function handleLeavingCompetition() {
     Envets.leaveCompetition(userData.id, room?.roomId as any);
     dispatch(userLeaveRoom());
@@ -265,15 +265,24 @@ async function onClosingConfirm() {
 
               <Box className="flex-row flex-wrap justify-center">
                 {question.choices.map((choice, index) => (
-                  <Button key={index} variant="outline" action="positive" onPress={() => sendChoice(choice, question.id)} size="sm" className="min-w-[90px] m-2 px-4 py-1 flex-shrink w-auto">
-                    <ButtonText size="lg">{choice}</ButtonText>
+                  <Button 
+                    key={index} 
+                    variant="outline" 
+                    action="positive" 
+                    onPress={() => sendChoice(choice, question.id)} 
+                    size="sm" 
+                    className="min-w-[90px] m-2 px-4 py-2 flex-shrink w-auto h-auto min-h-[40px]"
+                  >
+                    <ButtonText size="lg" className="text-center whitespace-normal break-words">
+                      {choice}
+                    </ButtonText>
                   </Button>
                 ))}
               </Box>
             </>) : (question !== null && !loading) && waitingAnswerConfirmation ? (   // <-- corrigé
                     <VStack className="justify-center items-center">
                       <Spinner size="large" color="blue" />
-                      <Text size="xl">{t("mycompetition.competition.online_game.waiting_qts")}</Text>
+                      <Text size="xl">{ t("mycompetition.competition.online_game.waiting_qts")}</Text>
                     </VStack>
                   ) : competitionStop ? (
                     <CompetitionStopedAlert
