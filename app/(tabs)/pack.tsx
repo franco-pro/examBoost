@@ -119,27 +119,6 @@ const packsQuery = usePacksQuery(currentUserId ?? 0);
         ) : (
           <PackList
             packs={filtered}
-            // refreshing={packs.isRefetching}
-            // onRefresh={() => {
-            //   void packs.refetch();
-            // }}
-            // onPressPack={(p) => {
-            //   void Haptics.selectionAsync();
-            //   if (p.isSubscribed) {
-            //     router.push({
-            //       pathname: "/(tabs)/packs/[packId]/subjects",
-            //       params: {
-            //         packId: p.id,
-            //         ...(p.niveauID != null
-            //           ? { niveauID: String(p.niveauID) }
-            //           : {}),
-            //       },
-            //     } as any);
-            //   } else {
-            //     setSelected(p);
-            //     setSubscribeOpen(true);
-            //   }
-            // }}
             onPressCTA={(p) => {
               void Haptics.selectionAsync();
               // const {data: isSubscribed} =  usePackSubscription(p.id)
