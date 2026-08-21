@@ -167,15 +167,22 @@ export default function Information() {
 
   function deleteCompetition(competitionID: number){
       if(competitionID){
-        if(selectedCompetition?.suscribers && selectedCompetition?.suscribers.length > 0 &&
-          (selectedCompetition?.type !== "TOTAL_FREE_NO_PRICE_TO_WIN" && selectedCompetition?.type !== "FREE_REGISTRATION_WITH_WINNER_PRICE")
-         ){
+        if(selectedCompetition?.statut === "CANCELLED" || selectedCompetition?.statut === "COMPLETED"){
           dispatch(deleteOne(competitionID))
           router.back();
-      }else{
-        //show toast impossible de supprimer une competition ayant des inscrit qui ont payé pour l'inscription
-        showToast(t("mycompetition.information.errors.competition_delete_error"), "Error", "error");
-      }
+        }else if(selectedCompetition?.statut === "UPCOMING") {
+          if(selectedCompetition?.suscribers && selectedCompetition?.suscribers.length > 0 &&
+            (selectedCompetition?.type !== "TOTAL_FREE_NO_PRICE_TO_WIN" && selectedCompetition?.type !== "FREE_REGISTRATION_WITH_WINNER_PRICE")
+           ){
+            dispatch(deleteOne(competitionID))
+            router.back();
+          }else{
+            //show toast impossible de supprimer une competition ayant des inscrit qui ont payé pour l'inscription
+            showToast(t("mycompetition.information.errors.competition_delete_error"), "Error", "error");
+          }
+          return;
+        }
+        
   }
 }
 
