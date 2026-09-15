@@ -1,6 +1,7 @@
 import { BASE_URL } from "../api/apiClient";
 
 export const API_URL = `${BASE_URL}:3000`;
+export const EXPO_PUBLIC_USE_NATIVE_PDF = true;
 
 export const toAbsoluteUrl = (u: string): string => {
   const base = API_URL;

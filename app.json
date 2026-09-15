@@ -1,18 +1,23 @@
 {
   "expo": {
     "name": "ExamBoost",
-    "slug": "examBoost",
-    "owner": "franck_lf",
+    "slug": "examboost",
+    "owner": "lefutes-team",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "examboost",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+     "jsEngine": "hermes",
     "packagerOpts": {
       "config": {
-        "blacklistRE": ["/[/\\].vscode[/\\]/"],
-        "blocklistRE": ["/[/\\].vscode[/\\]/"]
+        "blacklistRE": [
+          "/[/\\].vscode[/\\]/"
+        ],
+        "blocklistRE": [
+          "/[/\\].vscode[/\\]/"
+        ]
       }
     },
     "ios": {
@@ -50,7 +55,8 @@
             "usesCleartextTraffic": true,
             "enableProguardInReleaseBuilds": true,
             "enableShrinkResourcesInReleaseBuilds": true,
-            "useLegacyPackaging": true
+            "useLegacyPackaging": true,
+            "enableMinifyInReleaseBuilds": true
           }
         }
       ],
@@ -77,7 +83,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "f9ffc836-af18-4c21-a9b2-d01c05a710d1"
+        "projectId": "8a5037bc-9bfe-4fe8-bdb2-dd20bae476f4"
       }
     }
   }
