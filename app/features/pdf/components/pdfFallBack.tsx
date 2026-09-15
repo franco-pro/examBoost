@@ -20,7 +20,7 @@ export default function PdfFallback({ localUri }: Props) {
   //sur android
   const formattedUri =
     Platform.OS === "android"
-      ? `https://google.com{encodeURIComponent(localUri)}`
+      ? `https://google.com${encodeURIComponent(localUri)}`
       : localUri;
   const isAndroidLocal =
     Platform.OS === "android" && localUri.includes("192.168.");

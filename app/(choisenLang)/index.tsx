@@ -14,6 +14,7 @@ import {
 import { ArrowRightIcon, CircleIcon } from "@/components/ui/icon";
 import { BASE_URL } from "../api/apiClient";
 import { useEffect, useState } from "react";
+import { getItem, setItem } from "../utils/asyncStorage";
 
 export default function Index() {
   const navigation = useRouter();
@@ -41,8 +42,17 @@ export default function Index() {
   };
 
   const handleNext = async () => {
-    // Remplacement de .navigate() par .replace() pour l'onboarding
-    navigation.replace("/(onboarding)");
+    try {
+      const savedLanguage = await getItem("language")
+      if (!savedLanguage) {
+        await setItem("language", selected)
+        await i18n.changeLanguage(selected)
+      }
+    } catch (error) {
+      console.log("Erreur lors de la sauvegarde initiale :", error);
+    } finally {
+      navigation.replace("/(onboarding)");
+    }
   };
 
   return (
