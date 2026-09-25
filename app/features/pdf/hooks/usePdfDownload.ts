@@ -30,24 +30,17 @@ export function usePdfDownload() {
         setLoading(true);
         setError(null);
         // const absoluteUrl = buildFileUrl(pdfUrl);
-          console.log("pdfuri:", absoluteUrl)
+          console.log("pdfuri 1:", absoluteUrl)
 
         const fileName =
           pdfUrl.split("/").pop() ?? `document-${Date.now()}.pdf`;
 
-          const file = new File(Paths.cache, fileName)
-          const localUri = file.uri;
-          setLocalUri(absoluteUrl)
-        // Le fichier existe déjà → inutile de le télécharger
-        // const info = file.info;
-
-        if (file.exists) {
-          return {
-            localUri,
-            fileName,
-          };
-        }
+          
+        
         const downLoadLocalUri = await pdfStorage.savePdf(absoluteUrl, fileName)
+        console.log("✅ PDF téléchargé :", downLoadLocalUri);
+
+        setLocalUri(downLoadLocalUri);
         return {
           localUri:downLoadLocalUri,
           fileName, 

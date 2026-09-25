@@ -10,16 +10,6 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
      "jsEngine": "hermes",
-    "packagerOpts": {
-      "config": {
-        "blacklistRE": [
-          "/[/\\].vscode[/\\]/"
-        ],
-        "blocklistRE": [
-          "/[/\\].vscode[/\\]/"
-        ]
-      }
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.genesys.examBoost",
@@ -35,9 +25,9 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./app/assets/icons/adaptive-icon.png",
-        "backgroundColor": "#ffffff",
-        "softwareKeyboardLayoutMode": "pan"
+        "backgroundColor": "#ffffff"
       },
+      "softwareKeyboardLayoutMode": "pan",
       "edgeToEdgeEnabled": true,
       "package": "com.genesys.examBoost"
     },

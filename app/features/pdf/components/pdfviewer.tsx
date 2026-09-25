@@ -10,6 +10,7 @@ import PdfWatermark from "./pdfWatermark";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/hooks/redux/store";
 
+
 import { EXPO_PUBLIC_USE_NATIVE_PDF } from "@/app/config/env";
 
 interface PdfViewerProps {
@@ -34,11 +35,20 @@ export default function PdfViewer({
   onPageChanged,
 }: PdfViewerProps) {
   const user = useSelector((state: RootState) => state?.user?.user);
-
-usePdfSecurity()
-  if (loading) {
-    return <PdfLoading />;
-  }
+ console.log("========== PDF VIEWER ==========");
+ console.log("📍 localUri :", localUri);
+ console.log("⏳ loading :", loading);
+ console.log("❌ error :", error);
+ console.log("📄 currentPage :", currentPage);
+  usePdfSecurity()
+  console.log("🔎 PDF VIEWER DECISION :", {
+    loading,
+    error,
+    localUri,
+  });
+  // if (loading) {
+  //   return <PdfLoading />;
+  // }
 
   if (error) {
     return <PdfError message={error} />;
@@ -67,38 +77,34 @@ usePdfSecurity()
    * ===========================
    */
 
-  
+  console.log("🔍 PDF URI :", localUri);
+  console.log("🔍 IS LOCAL :", localUri.startsWith("file://"));
+  console.log("🔍 IS HTTPS :", localUri.startsWith("https://"));
   return (
     <View style={{ flex: 1 }}>
       <Pdf
         source={{
           uri: localUri,
-          cache: true,
         }}
-        style={{
-          flex: 1,
+        style={{ flex: 1 }}
+        onLoadComplete={(pages, filePath) => {
+          console.log("🎉 PDF LOAD COMPLETE");
+          console.log("📄 pages :", pages);
+          console.log("📄 filePath :", filePath);
         }}
-        page={currentPage}
-        onLoadComplete={(pages) => {
-          onLoadComplete(pages);
+        onLoadProgress={(percent) => {
+          console.log("📥 PDF PROGRESS :", percent);
         }}
-        onPageChanged={(page) => {
-          onPageChanged(page);
+        onError={(error) => {
+          console.log("💥 PDF ERROR :", error);
         }}
-        onError={(pdfError) => {
-          console.log("PDF ERROR:", pdfError);
-        }}
-        enablePaging={false}
-        horizontal={false}
-        fitPolicy={0}
-        trustAllCerts={false}
       />
 
       <PdfWatermark
-                username={`${user?.username} ${user?.surname}`}
-                email={user?.email}
-                // logo={require("@/app/assets/images/logo.png")}
-              />
+        username={`${user?.username} ${user?.surname}`}
+        email={user?.email}
+        // logo={require("@/app/assets/images/logo.png")}
+      />
     </View>
   );
 }
