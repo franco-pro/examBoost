@@ -483,31 +483,33 @@ export default function DocumentView() {
                         Niveau scolaire <Text className="text-red-500">*({allLevels.length != 0 ? ("Pour : " + allLevels.find(level => level.id === Number(niveauID))?.name): ''} ) </Text>
                       </FormControlLabelText>
                     </FormControlLabel>
-                    <Select onValueChange={(value) => setNiveau(value)}>
-                      <SelectTrigger
-                        variant="outline"
-                        size="lg"
-                        className="flex-1 justify-between"
-                      >
-                        <SelectInput placeholder="Select option" />
-                        <SelectIcon className="mr-3" as={ChevronDownIcon} />
-                      </SelectTrigger>
-                      <SelectPortal>
-                        <SelectBackdrop />
-                        <SelectContent>
-                          <SelectDragIndicatorWrapper>
-                            <SelectDragIndicator />
-                          </SelectDragIndicatorWrapper>
-                          {allLevels.map((level, index) => (
-                            <SelectItem
-                              key={index}
-                              value={String(level.id)}
-                              label={level.name}
-                            />
-                          ))}
-                        </SelectContent>
-                      </SelectPortal>
-                    </Select>
+                    <Select
+                      onValueChange={(value) => setNiveau(value)}
+                     >
+                        <SelectTrigger
+                          variant="outline"
+                          size="lg"
+                          className="mt-2 rounded-2xl border-outline-200 dark:border-outline-700"
+                        >
+                          <SelectInput placeholder={"Select Option"} />
+                          <SelectIcon as={ChevronDownIcon} className="mr-3" />
+                        </SelectTrigger>
+
+                        <SelectPortal>
+                          <SelectBackdrop />
+
+                          <SelectContent className="rounded-3xl">
+                            <SelectDragIndicatorWrapper>
+                              <SelectDragIndicator />
+                            </SelectDragIndicatorWrapper>
+
+                            {allLevels.map((item, index) => (
+                                <SelectItem key={index} label={String(item)} value={item.name} />
+                              ))}
+                          </SelectContent>
+                        </SelectPortal>
+                 </Select>
+                  
               </FormControl>
         </View>
 

@@ -131,9 +131,12 @@ export default function Deposit() {
               },
             });
         }
+        setLoading(false);
       } catch(error: any) {
         showToast("Impossible d'effectuer une recharge pour le moment.", "Error", "error");
         console.log('error', error);
+        setLoading(false);
+
       } 
     }else{
       if(Number(amount) < 1000) {
@@ -188,8 +191,6 @@ export default function Deposit() {
           showToast("Impossible d'effecter un retrait pour le moment", "Error", "error");
           console.log('Payement error :', error)
         } 
-        
-
    }
   };    
       
