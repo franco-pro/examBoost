@@ -14,30 +14,33 @@ export function usePdfDownload() {
   const [localUri, setLocalUri] = useState<string | null>(null);
 
   const downloadPdf = useCallback(
-    async (pdfUrl: string): Promise<DownloadResult> => {
+    async (pdfUrl: any): Promise<DownloadResult> => {
+      let absoluteUrl = "";
+       if (typeof pdfUrl === "object" && pdfUrl !== null) {
+         // Si c'est un objet contenant une propriété uri ou url (ajustez selon votre structure)
+         absoluteUrl = pdfUrl.uri || pdfUrl.url || pdfUrl.pdfUrl;
+         console.log("pdf utl :", pdfUrl)
+       } else {
+         absoluteUrl = pdfUrl;
+      }
+       if (!absoluteUrl || typeof absoluteUrl !== "string") {
+         throw new Error("L'URL fournie n'est pas valide.");
+       }
       try {
         setLoading(true);
         setError(null);
         // const absoluteUrl = buildFileUrl(pdfUrl);
-          const absoluteUrl = pdfUrl;
-        //   console.log("pdfuri:", absoluteUrl)
+          console.log("pdfuri 1:", absoluteUrl)
 
         const fileName =
           pdfUrl.split("/").pop() ?? `document-${Date.now()}.pdf`;
 
-        const localUri = Paths.cache + fileName;
-          const file = new File(localUri)
-          setLocalUri(absoluteUrl)
-        // Le fichier existe déjà → inutile de le télécharger
-        // const info = file.info;
-
-        if (file.exists) {
-          return {
-            localUri,
-            fileName,
-          };
-        }
+          
+        
         const downLoadLocalUri = await pdfStorage.savePdf(absoluteUrl, fileName)
+        console.log("✅ PDF téléchargé :", downLoadLocalUri);
+
+        setLocalUri(downLoadLocalUri);
         return {
           localUri:downLoadLocalUri,
           fileName, 

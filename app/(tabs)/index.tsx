@@ -307,24 +307,28 @@ export default function Index() {
       durationDays: pack.durationDays,
     };
   });
-  const handlePressDocument = async (doc: subjectDocumentype) => {
-    try {
-      setLoading(true);
-      const result = await handleOpenDocument(doc);
-      if (!result) {
-        console.log("result data: ", result);
-        return "";
-      }
+const handlePressDocument = async (doc: subjectDocumentype) => {
+  try {
+    setLoading(true);
 
-      setSelectedUri(result.localUri);
-      setSelectedTitle(result.title);
-      setViewerVisible(true);
-    } catch (err) {
-      console.log("erreur lors de l'ouverture du fichier dans tabs:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const result = await handleOpenDocument(doc);
+
+    console.log("📍 PDF LOCAL :", result.localUri);
+
+     router.push({
+       pathname: "/pdf/[id]",
+       params: {
+         id: result.fileName,
+         title: result.title,
+         documentId: String(doc.id)
+       },
+     });
+  } catch (error) {
+    console.log("❌ OPEN PDF ERROR :", error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const refreshWalletHandle = async () => {
     try {

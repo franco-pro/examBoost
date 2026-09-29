@@ -43,7 +43,7 @@ import { RootState } from "@/app/hooks/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess, loginUser } from "@/app/hooks/redux/users/users.slice";
 import GoogleAuth from "./googleAuth";
-import { setItem } from "../utils/asyncStorage";
+import { getItem, setItem } from "../utils/asyncStorage";
 import { useTranslation } from "react-i18next";
 
 export default function Login() {
@@ -244,6 +244,9 @@ export default function Login() {
                   <Text style={{ color: "red" }}>
                     {(() => {
                       console.log("load payload 1:", err?.payload);
+                      getItem("onboarded").then((value) =>
+                        console.log("onboaded value :", value),
+                      );
                       if (!err || !err?.payload) {
                         console.log("load payload 1:", err?.payload);
                         return "";
