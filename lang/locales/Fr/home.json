@@ -19,6 +19,19 @@
         "text_link": "ainsi que l'",
         "end": "dans les champs suivant pour obtenir le resultat definitif."
       }
+    },
+    "update": {
+      
+      "title": "Mise à jour disponible",
+      "version": "Version {{version}}",
+      "grace_period_expired_title": "La période de grâce est expirée",
+      "grace_period_expired_message": "Une mise à jour est maintenant obligatoire pour continuer à utiliser l'application.",
+      "recommended_title": "Mise à jour recommandée",
+      "recommended_message_one": "Il vous reste <bold>{{count}} jour</bold> avant que la mise à jour devienne obligatoire.",
+      "recommended_message_other": "Il vous reste <bold>{{count}} jours</bold> avant que la mise à jour devienne obligatoire.",
+      "button_update_now": "Mettre à jour maintenant",
+      "button_quit_app": "Quitter l'application",
+      "button_later": "Plus tard"
     }
   }
 }

@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import AppLayout from "../styles/AppLayout";
 import LogoHeaderComponent from "@/components/personalizedComponents/logoApplication";
 import RightBtn from "@/components/personalizedComponents/rightBtn";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../hooks/redux/store";
 import { useRouter } from "expo-router";
@@ -18,7 +18,8 @@ export default function RootLayout() {
   const { t } = useTranslation("competition");
   const {user, others} = useSelector((state: RootState) => state.user);
   const [showModal, setShowModal] = useState(false);
-  const isNotifConnected = isNotificationsConnected();
+  const [isNotifConnected, setIsNotifConnected] = useState(isNotificationsConnected());
+
   function isCurrentVersionOld(newVersion: string): boolean {
     const currentAppVersion = Config.APP_VERSION;
 
@@ -37,6 +38,14 @@ export default function RootLayout() {
     }
     return false; 
   }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsNotifConnected(isNotificationsConnected());
+    }, 5000); // Check every 5 seconds
+
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []);
   
   useEffect(() =>{
     if( others && others.other && others.other.length > 0){

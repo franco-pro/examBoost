@@ -19,6 +19,18 @@
         "text_link": "and",
         "end": "in the fields below to start the verification."
       }
+    },
+    "update": {
+      "title": "Update available",
+      "version": "Version {{version}}",
+      "grace_period_expired_title": "Grace period has expired",
+      "grace_period_expired_message": "An update is now required to continue using the application.",
+      "recommended_title": "Recommended update",
+      "recommended_message_one": "You have <bold>{{count}} day</bold> remaining before the update becomes mandatory.",
+      "recommended_message_other": "You have <bold>{{count}} days</bold> remaining before the update becomes mandatory.",
+      "button_update_now": "Update now",
+      "button_quit_app": "Quit application",
+      "button_later": "Later"
     }
   }
 }
