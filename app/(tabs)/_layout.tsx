@@ -11,12 +11,14 @@ import { RootState } from "../hooks/redux/store";
 import { useRouter } from "expo-router";
 import UpdateRequiredModal from "../helper/Dialogs/maj.inform";
 import { Config } from "../config/version";
+import { isNotificationsConnected } from "../hooks/services/socket/socket.init";
 
 export default function RootLayout() {
   const navigation = useRouter();
   const { t } = useTranslation("competition");
   const {user, others} = useSelector((state: RootState) => state.user);
   const [showModal, setShowModal] = useState(false);
+  const isNotifConnected = isNotificationsConnected();
   function isCurrentVersionOld(newVersion: string): boolean {
     const currentAppVersion = Config.APP_VERSION;
 
@@ -156,7 +158,7 @@ export default function RootLayout() {
             tabBarIcon: ({ focused, color }) => (
               <Ionicons
                 name={focused ? "notifications" : "notifications-outline"}
-                color={color}
+                color={isNotifConnected ?  "green" : "red"}
                 size={24}
               />
             ),

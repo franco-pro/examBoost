@@ -171,6 +171,12 @@ export default function Information() {
           dispatch(deleteOne(competitionID))
           router.back();
         }else if(selectedCompetition?.statut === "UPCOMING") {
+          if(user?.role.toLowerCase() === "superadmin"){
+            dispatch(deleteOne(competitionID))
+            router.back();
+            return;
+          }
+
           if(selectedCompetition?.suscribers && selectedCompetition?.suscribers.length > 0 &&
             (selectedCompetition?.type !== "TOTAL_FREE_NO_PRICE_TO_WIN" && selectedCompetition?.type !== "FREE_REGISTRATION_WITH_WINNER_PRICE")
            ){

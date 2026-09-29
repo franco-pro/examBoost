@@ -1,8 +1,9 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks/redux/redux.hooks";
+import { isRoomsConnected } from "@/app/hooks/services/socket/socket.init";
 import Countdown from "@/app/services/compeititonService/count.timer";
 import PopoverInstructions from "@/app/services/compeititonService/popover";
 import Timer from "@/app/services/compeititonService/timer.function";
-import { Avatar, AvatarFallbackText, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarBadge, AvatarFallbackText, AvatarImage } from "@/components/ui/avatar";
 import { Box } from "@/components/ui/box";
 import { Card } from "@/components/ui/card";
 import { Heading } from "@/components/ui/heading";
@@ -20,6 +21,7 @@ interface CompetitionInfosProps{
 
 export default function CompetitionInfos({data, competitionInfo}: CompetitionInfosProps) {
     const {room} = useAppSelector(state => state.rooms);
+    const {user: u} = useAppSelector(state => state.user);
     const dispatch = useAppDispatch();
     const {t} = useTranslation("competition")
     function onFinish(){
@@ -81,6 +83,13 @@ export default function CompetitionInfos({data, competitionInfo}: CompetitionInf
                                 {data.creatorName ? data.creatorName.split(" ").map((n) => n[0]).join(""): 'O'}
                         </AvatarFallbackText>
                     }
+                    {
+                    u?.surname.toLowerCase() === data.creatorSurname.toLowerCase() && 
+                    isRoomsConnected()
+                    ? (
+                        <AvatarBadge />
+                    ): null
+                }
                 
                     </Avatar>
                     <VStack style={{ flex: 1, minWidth: 0 }}>

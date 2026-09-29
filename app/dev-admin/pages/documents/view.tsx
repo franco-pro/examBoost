@@ -476,14 +476,44 @@ export default function DocumentView() {
           </View>
         </View>
 
-        <View className="niveau">
-           <FormControl>
+           <FormControl className="mb-6">
                     <FormControlLabel>
                       <FormControlLabelText>
                         Niveau scolaire <Text className="text-red-500">*({allLevels.length != 0 ? ("Pour : " + allLevels.find(level => level.id === Number(niveauID))?.name): ''} ) </Text>
                       </FormControlLabelText>
                     </FormControlLabel>
-                    <Select onValueChange={(value) => setNiveau(value)}>
+                    <Select
+                      onValueChange={(value) => setNiveau(value)}
+                     >
+                        <SelectTrigger
+                          variant="outline"
+                          size="lg"
+                          className="mt-2 rounded-2xl border-outline-200 dark:border-outline-700"
+                        >
+                          <SelectInput placeholder={"Select Option"} />
+                          <SelectIcon as={ChevronDownIcon} className="mr-3" />
+                        </SelectTrigger>
+
+                        <SelectPortal>
+                          <SelectBackdrop />
+
+                          <SelectContent className="rounded-3xl"  style={{ maxHeight: 300, width: "100%" }}>
+                            <SelectDragIndicatorWrapper>
+                              <SelectDragIndicator />
+                            </SelectDragIndicatorWrapper>
+                            <ScrollView
+                              style={{ width: "100%" }}
+                              showsVerticalScrollIndicator={true}
+                            >
+                              {allLevels.map((item, index) => (
+                                <SelectItem key={index} label={String(item.name)} value={String(item.id)} />
+                              ))}
+                            </ScrollView>
+                            
+                          </SelectContent>
+                        </SelectPortal>
+                 </Select>
+                    {/* <Select onValueChange={(value) => setNiveau(value)}>
                       <SelectTrigger
                         variant="outline"
                         size="lg"
@@ -507,9 +537,8 @@ export default function DocumentView() {
                           ))}
                         </SelectContent>
                       </SelectPortal>
-                    </Select>
+                    </Select> */}
               </FormControl>
-        </View>
 
         <View style={styles.fieldGroup}>
           <Text style={styles.fieldLabel}>Statut de validation</Text>
