@@ -2,6 +2,7 @@ import { Others } from "@/app/hooks/services/others/others.entitie";
 import { Box } from "@/components/ui/box";
 import { Button, ButtonText } from "@/components/ui/button";
 import React, { useMemo } from "react";
+import { Trans, useTranslation } from "react-i18next";
 import {
   Linking,
   Modal,
@@ -24,7 +25,6 @@ export default function UpdateRequiredModal({
 }: Props) {
   const remainingDays = useMemo(() => {
     const now = new Date();
-
     const deadline = new Date(data.updateDeadline);
 
     const diff =
@@ -36,6 +36,7 @@ export default function UpdateRequiredModal({
   }, [data]);
 
   const isExpired = remainingDays <= 0;
+  const {t} = useTranslation("home")
 
   const handleUpdate = async () => {
     const url =
@@ -61,111 +62,92 @@ export default function UpdateRequiredModal({
         }
       }}
     >
-      <Box className="flex-1 items-center justify-center bg-black/60 px-6">
-        <Box className="w-full rounded-3xl bg-white p-6">
-
-          {/* Header */}
-          <Box className="mb-4 items-center">
-
-            <Box
-              className={`mb-3 h-16 w-16 items-center justify-center rounded-full ${
-                isExpired
-                  ? "bg-red-100"
-                  : "bg-orange-100"
-              }`}
-            >
-              <Text className="text-3xl">
-                🚀
-              </Text>
-            </Box>
-
-            <Text className="text-center text-2xl font-bold text-blue-700">
-              Mise à jour disponible
-            </Text>
-
-            <Text className="mt-1 text-center text-slate-500">
-              Version {data.version_available}
-            </Text>
-          </Box>
-
-          {/* Message */}
-          <Box className="mb-5 rounded-2xl bg-blue-50 p-4">
-            <Text className="text-center leading-6 text-slate-700">
-              {data.text}
-            </Text>
-          </Box>
-
-          {/* Deadline */}
+     <Box className="flex-1 items-center justify-center bg-black/60 px-6">
+      <Box className="w-full rounded-3xl bg-white p-6">
+        
+        {/* Header */}
+        <Box className="mb-4 items-center">
           <Box
-            className={`mb-6 rounded-2xl p-4 ${
-              isExpired
-                ? "bg-red-50"
-                : "bg-orange-50"
+            className={`mb-3 h-16 w-16 items-center justify-center rounded-full ${
+              isExpired ? "bg-red-100" : "bg-orange-100"
             }`}
           >
-            {isExpired ? (
-              <>
-                <Text className="text-center font-semibold text-red-600">
-                  La période de grâce est expirée
-                </Text>
-
-                <Text className="mt-2 text-center text-red-500">
-                  Une mise à jour est maintenant
-                  obligatoire pour continuer à
-                  utiliser l'application.
-                </Text>
-              </>
-            ) : (
-              <>
-                <Text className="text-center font-semibold text-orange-600">
-                  Mise à jour recommandée
-                </Text>
-
-                <Text className="mt-2 text-center text-orange-500">
-                  Il vous reste{" "}
-                  <Text className="font-bold">
-                    {remainingDays} jour
-                    {remainingDays > 1 ? "s" : ""}
-                  </Text>{" "}
-                  avant que la mise à jour
-                  devienne obligatoire.
-                </Text>
-              </>
-            )}
+            <Text className="text-3xl">🚀</Text>
           </Box>
 
-          {/* Actions */}
-          <Button
-            className="mb-3 rounded-2xl bg-orange-500"
-            onPress={handleUpdate}
-          >
-            <ButtonText>
-              Mettre à jour maintenant
-            </ButtonText>
-          </Button>
+          <Text className="text-center text-2xl font-bold text-blue-700">
+            {t("accueil.update.title")}
+          </Text>
 
+          <Text className="mt-1 text-center text-slate-500">
+            {t("accueil.update.version", { version: data.version_available })}
+          </Text>
+        </Box>
+
+        {/* Message dynamique depuis l'API ou le state */}
+        <Box className="mb-5 rounded-2xl bg-blue-50 p-4">
+          <Text className="text-center leading-6 text-slate-700">
+            {data.text}
+          </Text>
+        </Box>
+
+        {/* Status & Deadline */}
+        <Box
+          className={`mb-6 rounded-2xl p-4 ${
+            isExpired ? "bg-red-50" : "bg-orange-50"
+          }`}
+        >
           {isExpired ? (
-            <Button
-              className="rounded-2xl bg-red-600"
-              onPress={handleQuit}
-            >
-              <ButtonText>
-                Quitter l'application
-              </ButtonText>
-            </Button>
+            <>
+              <Text className="text-center font-semibold text-red-600">
+                {t("accueil.update.grace_period_expired_title")}
+              </Text>
+
+              <Text className="mt-2 text-center text-red-500">
+                {t("accueil.update.grace_period_expired_message")}
+              </Text>
+            </>
           ) : (
-            <Button
-              variant="outline"
-              className="rounded-2xl border-slate-300"
-              onPress={onClose}
-            >
-              <ButtonText>
-                Plus tard
-              </ButtonText>
-            </Button>
+            <>
+              <Text className="text-center font-semibold text-orange-600">
+                {t("accueil.update.recommended_title")}
+              </Text>
+
+              {/* Utilisation de <Trans> pour injecter le texte en gras dans la phrase traduite */}
+              <Text className="mt-2 text-center text-orange-500">
+                <Trans
+                  i18nKey="accueil.update.recommended_message"
+                  count={remainingDays}
+                  components={{ bold: <Text className="font-bold" /> }}
+                />
+              </Text>
+            </>
           )}
         </Box>
+
+        {/* Actions */}
+        <Button
+          className="mb-3 rounded-2xl bg-orange-500"
+          onPress={handleUpdate}
+        >
+          <ButtonText>{t("accueil.update.button_update_now")}</ButtonText>
+        </Button>
+
+        {isExpired ? (
+          <Button className="rounded-2xl bg-red-600" onPress={handleQuit}>
+            <ButtonText>{t("accueil.update.button_quit_app")}</ButtonText>
+          </Button>
+        ) : (
+          <Button
+            variant="outline"
+            className="rounded-2xl border-slate-300"
+            onPress={onClose}
+          >
+            <ButtonText>{t("accueil.update.button_later")}</ButtonText>
+          </Button>
+        )}
       </Box>
+    </Box>
     </Modal>
   );
 }
