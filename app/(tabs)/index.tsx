@@ -69,7 +69,6 @@ export default function Index() {
   const [selectedTitle, setSelectedTitle] = useState("");
   const [packs, setPacks] = useState<any[]>([]);
   const navigation = useRouter();
-
   const { t } = useTranslation("home");
   const { width } = Dimensions.get("window");
   // console.log("LANG:", i18n.language);

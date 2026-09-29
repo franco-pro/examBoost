@@ -476,8 +476,7 @@ export default function DocumentView() {
           </View>
         </View>
 
-        <View className="niveau">
-           <FormControl>
+           <FormControl className="mb-6">
                     <FormControlLabel>
                       <FormControlLabelText>
                         Niveau scolaire <Text className="text-red-500">*({allLevels.length != 0 ? ("Pour : " + allLevels.find(level => level.id === Number(niveauID))?.name): ''} ) </Text>
@@ -498,20 +497,48 @@ export default function DocumentView() {
                         <SelectPortal>
                           <SelectBackdrop />
 
-                          <SelectContent className="rounded-3xl">
+                          <SelectContent className="rounded-3xl"  style={{ maxHeight: 300, width: "100%" }}>
                             <SelectDragIndicatorWrapper>
                               <SelectDragIndicator />
                             </SelectDragIndicatorWrapper>
-
-                            {allLevels.map((item, index) => (
-                                <SelectItem key={index} label={String(item)} value={item.name} />
+                            <ScrollView
+                              style={{ width: "100%" }}
+                              showsVerticalScrollIndicator={true}
+                            >
+                              {allLevels.map((item, index) => (
+                                <SelectItem key={index} label={String(item.name)} value={String(item.id)} />
                               ))}
+                            </ScrollView>
+                            
                           </SelectContent>
                         </SelectPortal>
                  </Select>
-                  
+                    {/* <Select onValueChange={(value) => setNiveau(value)}>
+                      <SelectTrigger
+                        variant="outline"
+                        size="lg"
+                        className="flex-1 justify-between"
+                      >
+                        <SelectInput placeholder="Select option" />
+                        <SelectIcon className="mr-3" as={ChevronDownIcon} />
+                      </SelectTrigger>
+                      <SelectPortal>
+                        <SelectBackdrop />
+                        <SelectContent>
+                          <SelectDragIndicatorWrapper>
+                            <SelectDragIndicator />
+                          </SelectDragIndicatorWrapper>
+                          {allLevels.map((level, index) => (
+                            <SelectItem
+                              key={index}
+                              value={String(level.id)}
+                              label={level.name}
+                            />
+                          ))}
+                        </SelectContent>
+                      </SelectPortal>
+                    </Select> */}
               </FormControl>
-        </View>
 
         <View style={styles.fieldGroup}>
           <Text style={styles.fieldLabel}>Statut de validation</Text>
