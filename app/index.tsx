@@ -18,7 +18,7 @@ export default function Index() {
             const token = await getItem("accessToken")
             const currentLang = await getItem("language");
             const isOnboarded = await getItem("onboarded");
-            // console.log("value onboarded:", isOnboarded)
+            console.log("value onboarded:", isOnboarded)
             if (token) {
                 setAccesToken(token);
             } else {

@@ -46,21 +46,49 @@ class PdfStorage {
   /**
    * Sauvegarde un PDF
    */
-  async savePdf(remoteUrl: string, fileName: string) {
+  async savePdf(remoteUrl: string, fileName: string, token?: string) {
     await this.initStorage();
     const destination = this.getLocalPdf(fileName);
     const exists = await this.fileExists(fileName);
+    const options: FileSystem.DownloadOptions = {};
+
+    if (token) {
+      options.headers = {
+        Authorization: `Bearer ${token}`,
+      };
+    }
 
     if (exists) {
-      console.log("this doc already downloaded:", destination)
+      console.log("this doc already downloaded:", destination);
       return destination;
     }
 
-    const result = await FileSystem.downloadAsync(remoteUrl, destination);
-    console.log("save success:", result)
+    const result = await FileSystem.downloadAsync(
+      remoteUrl,
+      destination,
+      options,
+    );
+    console.log("DOWNLOAD RESULT:", result);
+    console.log("result.status:", result.status);
+    console.log("📍 uri :", result.uri);
+    const info = await FileSystem.getInfoAsync(result.uri);
+
+    console.log("📦 FILE INFO :", info);
     return result.uri;
   }
 
+  //extraire le chemin du fichier telecharge
+  getFileNameFromUrl(url: string) {
+    const cleanUrl = url.split("?")[0];
+
+    const fileName = cleanUrl.split("/").pop();
+
+    if (!fileName) {
+      throw new Error("Impossible de déterminer le nom du PDF");
+    }
+
+    return fileName.endsWith(".pdf") ? fileName : `${fileName}.pdf`;
+  }
   /**
    * Supprimer un PDF
    */

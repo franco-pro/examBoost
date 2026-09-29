@@ -35,7 +35,7 @@ export default function DocumentViewerPage() {
    * ==========================
    */
 
-  const user = useSelector((state: RootState) => state.user.user);
+  const user = useSelector((state: RootState) => state?.user?.user);
 
   const userID = user?.id;
 
@@ -98,7 +98,7 @@ export default function DocumentViewerPage() {
 
   const absoluteUrl = useMemo(() => {
     if (!currentDocument) return "";
-
+console.log("current document :", currentDocument)
     return currentDocument.url;
   }, [currentDocument]);
 
@@ -111,10 +111,17 @@ export default function DocumentViewerPage() {
   const pdfDownload = usePdfDownload();
 
   useEffect(() => {
+    console.log(
+      "Type de absoluteUrl :",
+      typeof absoluteUrl,
+      "valeur :",
+      absoluteUrl,
+    );
+  
     if (!absoluteUrl) return;
 
     pdfDownload.downloadPdf(absoluteUrl);
-  }, [absoluteUrl]);
+  }, [pdfDownload, absoluteUrl]);
 
   /**
    * ==========================
