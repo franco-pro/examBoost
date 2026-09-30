@@ -12,6 +12,7 @@ import { EyeIcon, Icon } from '@/components/ui/icon';
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { Ionicons } from "@expo/vector-icons";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface CompetitionInfosProps{
@@ -23,10 +24,20 @@ export default function CompetitionInfos({data, competitionInfo}: CompetitionInf
     const {room} = useAppSelector(state => state.rooms);
     const {user: u} = useAppSelector(state => state.user);
     const dispatch = useAppDispatch();
+    const [isRoomConnected, setIsRoomConnected] = useState(isRoomsConnected());
+    
     const {t} = useTranslation("competition")
     function onFinish(){
         // dispatch(setTimeOff())
     }
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+          setIsRoomConnected(isRoomsConnected());
+        }, 5000); // Check every 5 seconds
+    
+        return () => clearInterval(interval); // Cleanup on unmount
+      }, []);
 
     function truncateWord(word: string, maxLength = 8): string {
         if (!word) return "";
@@ -85,7 +96,7 @@ export default function CompetitionInfos({data, competitionInfo}: CompetitionInf
                     }
                     {
                     u?.surname.toLowerCase() === data.creatorSurname.toLowerCase() && 
-                    isRoomsConnected()
+                    isRoomConnected
                     ? (
                         <AvatarBadge />
                     ): null
