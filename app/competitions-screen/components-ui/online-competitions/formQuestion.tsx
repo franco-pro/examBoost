@@ -4,6 +4,7 @@ import { Question } from '@/app/hooks/entities/question';
 import { useAppDispatch, useAppSelector } from '@/app/hooks/redux/redux.hooks';
 import { setEndOfCompetition } from '@/app/hooks/redux/rooms/rooms.slice';
 import { EmitEvent } from '@/app/hooks/services/socket/rooms.gateway';
+import { isRoomsConnected } from '@/app/hooks/services/socket/socket.init';
 import { useSoundAud } from '@/app/hooks/useSound.hook';
 import { Button, ButtonText } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -121,7 +122,7 @@ export default function FormQuestion({ competitionInfo }: { competitionInfo: Com
     }
 
     if (form.text.length === 0) {
-      newErrors.text = t("mycompetition.competition.form_question.model.invalid.question");
+      newErrors.text = t("mycompetition.competition.form_question.invalid.question");
       valid = false;
     }
 
@@ -210,11 +211,17 @@ export default function FormQuestion({ competitionInfo }: { competitionInfo: Com
       return;
     }
 
+    if(!isRoomsConnected()){
+      console.error("Socket not connected. Cannot send question.");
+      setBtnText('Conneection failed. Competition canceled.');
+      return;
+    }
+
     const question = {
       id: 0,
-      text: String(form.text),
-      choices: [String(form.firsChoice), String(form.secondChoice), String(form.thirdChoice)],
-      correctAnswer: String(form.corretAnswer),
+      text: String(form.text).trim(),
+      choices: [String(form.firsChoice).trim(), String(form.secondChoice).trim(), String(form.thirdChoice).trim()],
+      correctAnswer: String(form.corretAnswer).trim(),
       timeToAnswer: Number.parseInt(form.timeToAnswer),
       points: Number.parseInt(form.points),
       explanation: "",

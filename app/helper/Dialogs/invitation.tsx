@@ -24,6 +24,7 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import Toast from 'react-native-toast-message';
+import { isNotificationsConnected } from '@/app/hooks/services/socket/socket.init';
 
 interface InvitationPromptsProps {
     isOpen: boolean;
@@ -63,20 +64,29 @@ interface InvitationPromptsProps {
             if(response){
                 try{
                     setWaitingResponse(true);
-                    const eventNotf = EmitEventNotif(dispatch);
-                    eventNotf.sendInvitation(
-                      {
-                        receiverID: response.id,
-                        senderID: userDetails.id, // Remplacez par l'ID réel de l'expéditeur
-                        competitionId: competitionDetails.id, // Remplacez par l'ID réel de la compétition
-                        senderName: userDetails.username, // Remplacez par le nom réel de l'expéditeur
-                        competitionName: competitionDetails.name // Remplacez par le nom réel de la compétition
-                      }
-                    )
+                    if(isNotificationsConnected()){
+                      const eventNotf = EmitEventNotif(dispatch);
+                      console.log('competition id', competitionDetails.id);
+                      eventNotf.sendInvitation(
+                        {
+                          receiverID: response.id,
+                          senderID: userDetails.id, // Remplacez par l'ID réel de l'expéditeur
+                          competitionId: competitionDetails.id, // Remplacez par l'ID réel de la compétition
+                          senderName: userDetails.username, // Remplacez par le nom réel de l'expéditeur
+                          competitionName: competitionDetails.name // Remplacez par le nom réel de la compétition
+                        }
+                      )
+                      
+                      await new Promise((resolve) => setTimeout(resolve, 2000));
+                      setWaitingResponse(false);
                     
-                    await new Promise((resolve) => setTimeout(resolve, 2000));
-                    setWaitingResponse(false);
-                    showToast(t("mycompetition.information.invite.modal.success.send", {name: response.username }), "Succès");
+                      showToast(t("mycompetition.information.invite.modal.success.send", {name: response.username }), "Succès");
+                    }else{
+                      showToast(t("mycompetition.information.invite.modal.errors.sending"), "Error");
+                      setWaitingResponse(false);
+                      return;
+                    }
+                   
                     // Fermer la modal après l'envoi
                     onClose();
                 }catch(e: any){

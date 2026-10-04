@@ -66,7 +66,7 @@ export default function OwnerCompetitionsScreen() {
                contentContainerStyle={{ flexGrow: 1 }}
                enableOnAndroid={true}
                extraScrollHeight={Platform.OS === "android" ? 30 : 20}
-               keyboardShouldPersistTaps="handled"
+              //  keyboardShouldPersistTaps="handled"
             >
 
           
