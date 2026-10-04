@@ -90,7 +90,7 @@ export default class QuestionAnswerManager{
         this.room = null;
         this.current_userID = null;
         this.dispatch(clearRoom(message))
-        this.dispatch(updateStatut({competitionId: competitionId, statut:"CANCELED"}))
+        this.dispatch(updateStatut({competitionId: competitionId, statut:"CANCELLED"}))
 
     }
 

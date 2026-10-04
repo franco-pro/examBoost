@@ -115,28 +115,52 @@ export default function Index() {
     }, []),
   );
   
-  useEffect(() => {
-    if (!isAuthenticated || !currentUserId) return;
-    dispatch(userDatas()); //to work
+  useFocusEffect(
+    useCallback(() => {
+      if (!isAuthenticated || !currentUserId) return;
+      dispatch(userDatas()); //to work
+      
+      let timerId: any = null ;
     
-    let timerId: any = null ;
+      const connectWithRetry = async () => {
+        // console.log('connection status', isNotificationsConnected())
+        if (!isNotificationsConnected()) {
+          await initializeNotificationsGateway(dispatch, currentUserId);
+          //  console.log('connection executed try', isNotificationsConnected())
+          // console.log('access toke', await getItem("accessToken"))
+       
+          timerId = setTimeout(connectWithRetry, 3000); 
+        }
+      };
+    
+      connectWithRetry();
+      loadRecent();
+    
+      // return () => clearTimeout(timerId); 
+    }, [isAuthenticated, currentUserId, dispatch]));
+
+  // useEffect(() => {
+  //   if (!isAuthenticated || !currentUserId) return;
+  //   dispatch(userDatas()); //to work
+    
+  //   let timerId: any = null ;
   
-    const connectWithRetry = async () => {
-      // console.log('connection status', isNotificationsConnected())
-      if (!isNotificationsConnected()) {
-        await initializeNotificationsGateway(dispatch, currentUserId);
-        //  console.log('connection executed try', isNotificationsConnected())
-        // console.log('access toke', await getItem("accessToken"))
+  //   const connectWithRetry = async () => {
+  //     // console.log('connection status', isNotificationsConnected())
+  //     if (!isNotificationsConnected()) {
+  //       await initializeNotificationsGateway(dispatch, currentUserId);
+  //       //  console.log('connection executed try', isNotificationsConnected())
+  //       // console.log('access toke', await getItem("accessToken"))
      
-        timerId = setTimeout(connectWithRetry, 3000); 
-      }
-    };
+  //       timerId = setTimeout(connectWithRetry, 3000); 
+  //     }
+  //   };
   
-    connectWithRetry();
-    loadRecent();
+  //   connectWithRetry();
+  //   loadRecent();
   
-    return () => clearTimeout(timerId); 
-  }, [isAuthenticated, currentUserId, dispatch]);
+  //   // return () => clearTimeout(timerId); 
+  // }, [isAuthenticated, currentUserId, dispatch]);
 
   // console.log("useFocus after:", recentDocument);
   // console.log("user:", user);
