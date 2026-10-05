@@ -9,7 +9,7 @@ export const BASE_URL = "https://www.examboost.org/api";
 export const socketUrl = "https://www.examboost.org";
 export const apiClient = axios.create({
   baseURL:`${BASE_URL}`,
-  timeout: 10000,
+  timeout: 65000,
   headers: {
     "Content-Type": "application/json",
   },
