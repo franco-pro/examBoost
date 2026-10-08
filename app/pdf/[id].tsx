@@ -1,12 +1,12 @@
 import { View, Text } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import Pdf from "react-native-pdf";
-
+import { usePdfSecurity } from "../features/pdf/hooks/usePdfSecurity";
 import pdfStorage from "@/app/features/pdf/utils/pdfStorage";
 
 export default function PdfPage() {
   const router = useRouter();
-
+usePdfSecurity()
   const { id, title } = useLocalSearchParams<{
     id: string;
     title?: string;

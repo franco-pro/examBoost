@@ -16,6 +16,7 @@ export function usePdfDownload() {
   const downloadPdf = useCallback(
     async (pdfUrl: any): Promise<DownloadResult> => {
       let absoluteUrl = "";
+     
        if (typeof pdfUrl === "object" && pdfUrl !== null) {
          // Si c'est un objet contenant une propriété uri ou url (ajustez selon votre structure)
          absoluteUrl = pdfUrl.uri || pdfUrl.url || pdfUrl.pdfUrl;
@@ -30,7 +31,8 @@ export function usePdfDownload() {
         setLoading(true);
         setError(null);
         // const absoluteUrl = buildFileUrl(pdfUrl);
-          console.log("pdfuri 1:", absoluteUrl)
+        console.log("pdfuri 1:", absoluteUrl)
+         console.log("object pdf:", pdfUrl);
 
         const fileName =
           pdfUrl.split("/").pop() ?? `document-${Date.now()}.pdf`;

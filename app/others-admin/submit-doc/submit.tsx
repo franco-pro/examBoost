@@ -128,7 +128,7 @@ export default function Submit() {
       }
 
       if (user && !user.canSubmitDoc) {
-        Alert.alert(`${t("teacher.error.no_canSubmit")}`);
+        Alert.alert('Erreur',`${t("teacher.error.no_canSubmit")}`);
         return;
       }
       setLoading(true);
