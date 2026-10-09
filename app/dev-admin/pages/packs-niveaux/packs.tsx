@@ -20,6 +20,7 @@ type PackType =
   | "CONTROLE CONTINU"
   | "EXAMEN SEMESTRE"
   | "TD"
+  | "LIVRE"
   | "EXAMEN"
   | "EXAMEN BLANC"
   | "EVALUATION";

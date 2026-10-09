@@ -25,6 +25,7 @@ export type DocType =
 | "EXAMEN SEMESTRE"
 | "TD"
 | "EXAMEN"
+| "LIVRE"
 | "EXAMEN BLANC"
 | "EVALUATION"
 | "CORRECTION";

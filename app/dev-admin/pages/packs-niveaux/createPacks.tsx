@@ -23,10 +23,11 @@ type PackType =
   | "TD"
   | "EXAMEN"
   | "EXAMEN BLANC"
+  | "LIVRE"
   | "EVALUATION";
 
 const SUP_TYPES: PackType[] = ["CONTROLE CONTINU", "EXAMEN SEMESTRE", "TD"];
-const SECONDARY_TYPES: PackType[] = ["EXAMEN", "EXAMEN BLANC", "EVALUATION"];
+const SECONDARY_TYPES: PackType[] = ["EXAMEN", "EXAMEN BLANC", "EVALUATION", "TD", "LIVRE"];
 
 interface PackFormData {
   name: string;

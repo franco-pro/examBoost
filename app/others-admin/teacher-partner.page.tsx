@@ -53,6 +53,7 @@ const DOC_CONFIG = {
   "EXAMEN SEMESTRE":  { color: "#0EA5E9", bg: "#E0F2FE", iconName: "book-outline", short: "ES" },
   "TD":               { color: "#10B981", bg: "#D1FAE5", iconName: "clipboard-outline", short: "TD" },
   "EXAMEN":           { color: "#F59E0B", bg: "#FEF3C7", iconName: "document-outline", short: "EX" },
+  "LIVRE":            { color: "#0EA5E9", bg: "#E0F2FE", iconName: "book-outline", short: "LIV" },
   "EXAMEN BLANC":     { color: "#F97316", bg: "#FFF7ED", iconName: "reader-outline", short: "EB" },
   "EVALUATION":       { color: "#EC4899", bg: "#FDF2F8", iconName: "pencil-outline", short: "EV" },
   "CORRECTION":       { color: "#8B5CF6", bg: "#F5F3FF", iconName: "checkmark-circle-outline", short: "CR" },

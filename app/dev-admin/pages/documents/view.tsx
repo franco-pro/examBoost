@@ -41,6 +41,7 @@ type DocType =
   | "CONTROLE CONTINU"
   | "EXAMEN SEMESTRE"
   | "TD"
+  | "LIVRE"
   | "EXAMEN"
   | "EXAMEN BLANC"
   | "EVALUATION"
@@ -51,6 +52,7 @@ const ALL_TYPES: DocType[] = [
   "EXAMEN SEMESTRE",
   "TD",
   "EXAMEN",
+  "LIVRE",
   "EXAMEN BLANC",
   "EVALUATION",
   "CORRECTION",
@@ -61,6 +63,7 @@ const TYPE_META: Record<DocType, { icon: string; color: string; bg: string }> = 
   "EXAMEN SEMESTRE":  { icon: "📘", color: "#6A1B9A", bg: "#F3E5F5" },
   TD:                 { icon: "🔬", color: "#1B5E20", bg: "#E8F5E9" },
   EXAMEN:             { icon: "📋", color: "#E65100", bg: "#FFF3E0" },
+  "LIVRE":            { icon: "📘", color: "#6A1B9A", bg: "#FFF3E0" },
   "EXAMEN BLANC":     { icon: "📄", color: "#BF360C", bg: "#FBE9E7" },
   EVALUATION:         { icon: "✅", color: "#880E4F", bg: "#FCE4EC" },
   CORRECTION:         { icon: "🔑", color: "#004D40", bg: "#E0F2F1" },
