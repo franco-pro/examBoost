@@ -74,6 +74,7 @@ export default function Submit() {
     "CONTROLE CONTINU",
     "EXAMEN SEMESTRE",
     "TD",
+    "LIVRE",
     "EXAMEN",
     "EXAMEN BLANC",
     "EVALUATION",

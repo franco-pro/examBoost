@@ -9,6 +9,7 @@ type PackType =
   | "CONTROLE CONTINU"
   | "EXAMEN SEMESTRE"
   | "TD"
+  | "LIVRE"
   | "EXAMEN"
   | "EXAMEN BLANC"
   | "EVALUATION";
@@ -22,6 +23,7 @@ const TYPE_CONFIG: Record<
   "CONTROLE CONTINU": { color: "#1565C0", bg: "#DBEAFE", label: "CC" },
   "EXAMEN SEMESTRE":  { color: "#6A1B9A", bg: "#EDE7F6", label: "ES" },
   TD:                 { color: "#1B5E20", bg: "#DCFCE7", label: "TD" },
+  LIVRE:              { color: "#1B5E20", bg: "#DCFCE7", label: "LI" },
   EXAMEN:             { color: "#E65100", bg: "#FEF3C7", label: "EX" },
   "EXAMEN BLANC":     { color: "#BF360C", bg: "#FFE8D6", label: "EB" },
   EVALUATION:         { color: "#880E4F", bg: "#FCE4EC", label: "EV" },

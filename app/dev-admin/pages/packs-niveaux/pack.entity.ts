@@ -9,6 +9,7 @@ export interface Pack{
     | "EXAMEN SEMESTRE"    
     | "TD"
     | "EXAMEN" 
+    | "LIVRE"
     | "EXAMEN BLANC" 
     | "EVALUATION",
     durationDays: number,
