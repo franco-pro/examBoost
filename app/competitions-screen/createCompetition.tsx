@@ -66,8 +66,8 @@ export default function CreateCompetitionForm() {
   const MIN_PARTICIPANTS = homeBaseData ? homeBaseData.MIN_PARTICIPANTS: 2;
   const MAX_QUESTION_NUMBER = homeBaseData ? homeBaseData.MAX_QUESTION_NUMBER : 20;
   const MIN_QUESTION_NUMBER = homeBaseData ? homeBaseData.MIN_QUESTION_NUMBER: 5;
-  const MIN_TO_USE_IA_PRIVATE = homeBaseData ? homeBaseData.MIN_WINNERPRICE_TO_USE_AI_IN_PRIVATE_COMP : 8000;
-  const MIN_TO_USE_IA_PUBLIC = homeBaseData ? homeBaseData.MIN_WINNERPRICE_TO_USE_AI_IN_PUBLIC_COMP : 15000;
+  const MIN_TO_USE_IA_PRIVATE = homeBaseData ? homeBaseData.MIN_WINNERPRICE_TO_USE_AI_IN_PRIVATE_COMP : 2500;
+  const MIN_TO_USE_IA_PUBLIC = homeBaseData ? homeBaseData.MIN_WINNERPRICE_TO_USE_AI_IN_PUBLIC_COMP : 7000;
   const userId = user?.id;
   const [formError, setFormError] = useState<string>("");
   const [isFirstCalendarOpen, setIsFirstCalendarOpen] = useState(true);
@@ -146,7 +146,7 @@ export default function CreateCompetitionForm() {
   };
 
   // Validation min
-  const minWinnerPrice = !isPublic ? 8000 : 15000;
+  const minWinnerPrice = !isPublic ? (homeBaseData ? homeBaseData.MIN_WINNERPRICE_TO_USE_AI_IN_PRIVATE_COMP : 2500) : (homeBaseData ? homeBaseData.MIN_WINNERPRICE_TO_USE_AI_IN_PUBLIC_COMP : 7000);
   const [step, setStep] = useState(1);
   const totalSteps = 3;
   const progress = useRef(new Animated.Value(0)).current;
@@ -340,12 +340,13 @@ export default function CreateCompetitionForm() {
 
     if(type === "TOTAL_FREE_NO_PRICE_TO_WIN"){
       updatedData.entryFee = 0;
+      setWinnerPrice(0);
     }
     
       if(usePercentage){
         updatedData.winnerPrice = Number(percentageAmount);
       }else{
-        updatedData.winnerPrice = (Number(winnerPrice)*percentage)/100
+        updatedData.winnerPrice = winnerPrice;
       }
 
     if(lang){
