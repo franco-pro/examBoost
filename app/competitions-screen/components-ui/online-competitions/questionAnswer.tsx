@@ -41,7 +41,7 @@ interface ComepetitionInfo{
 export default function QuestionAnswer({question, competitionInfo, loading, userData, onAnswer}: {question: Question | null, competitionInfo: ComepetitionInfo, loading: boolean, userData: UsersTest, onAnswer: any}) {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { room, roomResult, competitionFinished, competitionStop, message, timerOff, waitingAnswerConfirmation} = useAppSelector(state => state.rooms);
+  const { room, roomResult, rangkingAtEnd, competitionFinished, competitionStop, message, timerOff, waitingAnswerConfirmation} = useAppSelector(state => state.rooms);
   const {homeBaseData} = useAppSelector((state)=> state.competitions);
   const  {t} = useTranslation("competition");
 
@@ -195,8 +195,13 @@ async function onClosingConfirm() {
   }
 
   function onCompetitionEndAlertConfirm(){
-
-      let am_winner = roomResult && roomResult.users ? roomResult.users.find((user)=>user.userID == userData.id)?.isWinner: null;
+    let am_winner = false;
+      if(roomResult && Array.isArray(roomResult.users) && Array.isArray(rangkingAtEnd)){
+        if(roomResult.users.length > 0 && rangkingAtEnd.length > 0){
+          am_winner = roomResult.users[0].userID === userData.id && rangkingAtEnd[0] === userData.id;
+        }
+      } 
+      //let am_winner = roomResult && roomResult.users ? roomResult.users.find((user)=>user.userID == userData.id)?.isWinner: null;
       const score = roomResult && roomResult.users ? roomResult.users.find((user)=>user.userID == userData.id)?.score: 0;
 
       console.log('roomRsult QA', roomResult)

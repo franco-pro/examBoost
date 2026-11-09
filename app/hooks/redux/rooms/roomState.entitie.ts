@@ -3,6 +3,7 @@ import { Room } from "../../entities/rooms.entity";
 export  interface RoomState {
     room: Room | null;
     roomLeaveed: string[];
+    rangkingAtEnd: number[];
     roomResult: Room | null;
     loading: boolean;
     socketWaiting: boolean;
