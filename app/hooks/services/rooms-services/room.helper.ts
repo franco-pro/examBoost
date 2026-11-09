@@ -10,6 +10,7 @@ export default function Rangking(usersOnline: UserOnline[], rangkingByID: {userI
             user = {
                 ...user,
                 score: incomingRanking.score,
+                isWinner: false,
                 totalTimeTaken: incomingRanking.totalTimeTaken
             }
             rankedUsers.push(user);

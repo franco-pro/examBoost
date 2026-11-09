@@ -93,7 +93,7 @@ export function initializeRoomsGateway(dispatch: any, room: Room|null, userID: n
 
   socket.on("competition-ended", (data: CompetitionStartEnd) => {
     console.log('competition ended', data);
-    RoomsQuestionManager.competitionEnded(data.competitionID, data.statut, data.roomId);
+    RoomsQuestionManager.competitionEnded(data.rangking, data.competitionID, data.statut, data.roomId);
   })
 
   socket.on("competition-started", (data: CompetitionStartEnd) => {
@@ -165,7 +165,7 @@ export function EmitEvent(dispatch: any, room: {isManagedByIA: boolean, roomId: 
         },
 
         setLocalCompetitionEnded: ()=>{
-          RoomsQuestionManager.competitionEnded();
+          RoomsQuestionManager.competitionEnded(null);
         },
 
         ViewerLeave: (roomId: string)=>{

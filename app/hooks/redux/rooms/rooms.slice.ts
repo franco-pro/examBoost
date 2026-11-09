@@ -6,6 +6,7 @@ import { fetchRoomCreate } from './rooms.thunks';
     const initialState: RoomState = {
         room: null,
         roomLeaveed: [],
+        rangkingAtEnd: [],
         roomResult: null,
         loading: false,
         error: null,
@@ -162,9 +163,14 @@ import { fetchRoomCreate } from './rooms.thunks';
                 }
             },
 
-            setEndOfCompetition(state){
+            setEndOfCompetition(state, action){
                 state.roomResult = null;
+                state.rangkingAtEnd = [];
                 
+                if(action.payload){
+                    state.rangkingAtEnd = action.payload
+                }
+
                 if(state.room && !state.roomResult){
                     state.roomResult = state.room
                 }

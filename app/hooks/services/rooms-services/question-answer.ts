@@ -94,9 +94,9 @@ export default class QuestionAnswerManager{
 
     }
 
-    competitionEnded(competitionId?: number, statut?: string, roomId?: string){
+    competitionEnded(rangking: any, competitionId?: number, statut?: string, roomId?: string){
         this.clear()
-        this.dispatch(setEndOfCompetition());
+        this.dispatch(setEndOfCompetition(rangking));
         if(competitionId && statut && roomId){
             this.dispatch(updateStatut({competitionId, statut, roomId}));
             this.dispatch(updateStatutSuscription({competitionId, statut, roomId}))
