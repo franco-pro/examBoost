@@ -171,9 +171,10 @@ export default function Deposit() {
 
             if(response.data && response.data.success){
               transactionID = response.data.transaction.id;
+              showToast(t("withdrawal.pay_done.text"), t("withdrawal.pay_done.title"), "success");
+
               dispatch(updateBalanceUser((user?.wallet ?  (Number(user?.wallet) - Number(amount)): 0))).payload;
               playSound("WithdrawSuccess");
-              showToast(t("withdrawal.pay_done.text", {amount: amount}), t("withdrawal.pay_done.title"), "success");
               console.log('response user reduicing', user?.wallet);
               dispatch(addTransaction(response.data.transaction));
               setLoading(false);

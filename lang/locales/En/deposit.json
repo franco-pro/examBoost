@@ -36,7 +36,7 @@
         "back": "Return",
         "pay_done":{
         "title": "Withdrawal",
-        "text": "Your request is being processed..."
+        "text": "Your request is being processed, this can take a few moment, please be patient..."
         },
 
         "pay_failed": {
