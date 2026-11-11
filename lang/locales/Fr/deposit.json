@@ -37,7 +37,7 @@
         "back": "Retour",
         "pay_done":{
             "title": "Retrait",
-            "text": "Votre demadne est en cours de traitement..."
+            "text": "Votre demadne est en cours de traitement, cela peut prendre un bon moment, veuillez patienter..."
         },
         "pay_failed": {
             "title": "Erreur",
